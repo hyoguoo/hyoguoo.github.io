@@ -1,0 +1,434 @@
+---
+import { getCollection } from 'astro:content';
+
+// Get latest blog posts (by lastUpdated)
+const allBlogPosts = await getCollection('docs', ({ id, data }) => {
+  return id.startsWith('blog/') && !data.draft;
+});
+const latestBlogPosts = allBlogPosts
+  .filter(post => post.data.date)
+  .sort((a, b) => {
+    const aDate = new Date(a.data.lastUpdated ?? a.data.date ?? 0);
+    const bDate = new Date(b.data.lastUpdated ?? b.data.date ?? 0);
+    return bDate.getTime() - aDate.getTime();
+  })
+  .slice(0, 3);
+
+// Get latest docs (by lastUpdated)
+const allDocs = await getCollection('docs', ({ id, data }) => {
+  return !id.startsWith('blog/') && id !== 'index' && !data.draft;
+});
+const latestDocs = allDocs
+  .filter(doc => doc.data.lastUpdated)
+  .sort((a, b) => {
+    const aDate = new Date(a.data.lastUpdated ?? 0);
+    const bDate = new Date(b.data.lastUpdated ?? 0);
+    return bDate.getTime() - aDate.getTime();
+  })
+  .slice(0, 3);
+
+function formatDate(date: Date | string | undefined) {
+  if (!date) return '';
+  return new Date(date).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function getDocCategory(id: string) {
+  const parts = id.split('/');
+  return parts[0] ?? '';
+}
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="hyoguoo - Backend Developer, Java & Spring" />
+    <title>hyoguoo</title>
+    <link rel="stylesheet" href="/src/styles/custom.css" />
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+
+      :root {
+        --color-bg: #0f172a;
+        --color-surface: #1e293b;
+        --color-border: #334155;
+        --color-text: #e2e8f0;
+        --color-text-muted: #94a3b8;
+        --color-accent: #3b82f6;
+        --color-accent-light: #60a5fa;
+        --max-width: 900px;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --color-bg: #f8fafc;
+          --color-surface: #ffffff;
+          --color-border: #e2e8f0;
+          --color-text: #0f172a;
+          --color-text-muted: #64748b;
+          --color-accent: #2563eb;
+          --color-accent-light: #3b82f6;
+        }
+      }
+
+      body {
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* Header */
+      header {
+        border-bottom: 1px solid var(--color-border);
+        padding: 1rem 0;
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--color-text);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links a {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover {
+        color: var(--color-accent-light);
+      }
+
+      /* Hero */
+      .hero {
+        padding: 5rem 0 4rem;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        margin: 0 0 0.75rem;
+        line-height: 1.2;
+      }
+
+      .hero .tagline {
+        font-size: 1.15rem;
+        color: var(--color-text-muted);
+        margin: 0 0 2rem;
+      }
+
+      .hero-links {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 1.2rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
+        transition: opacity 0.2s;
+      }
+
+      .btn:hover { opacity: 0.85; }
+
+      .btn-primary {
+        background: var(--color-accent);
+        color: #fff;
+      }
+
+      .btn-secondary {
+        background: var(--color-surface);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+      }
+
+      /* Sections */
+      .section {
+        padding: 3rem 0;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 1.5rem;
+      }
+
+      .section-header h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin: 0;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+      }
+
+      .section-header a {
+        font-size: 0.85rem;
+        color: var(--color-accent-light);
+        text-decoration: none;
+      }
+
+      .section-header a:hover { text-decoration: underline; }
+
+      /* Cards */
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+      }
+
+      .card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 1.25rem;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        transition: border-color 0.2s, transform 0.15s;
+      }
+
+      .card:hover {
+        border-color: var(--color-accent);
+        transform: translateY(-2px);
+      }
+
+      .card-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--color-text);
+      }
+
+      .card-meta {
+        font-size: 0.8rem;
+        color: var(--color-text-muted);
+      }
+
+      .card-tags {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-top: 0.25rem;
+      }
+
+      .tag {
+        font-size: 0.75rem;
+        padding: 0.2rem 0.5rem;
+        background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+        color: var(--color-accent-light);
+        border-radius: 4px;
+      }
+
+      .card-category {
+        font-size: 0.75rem;
+        padding: 0.15rem 0.5rem;
+        background: var(--color-border);
+        color: var(--color-text-muted);
+        border-radius: 4px;
+        text-transform: capitalize;
+        width: fit-content;
+      }
+
+      /* Nav section */
+      .sections-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 1rem;
+      }
+
+      .section-card {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+        transition: border-color 0.2s;
+      }
+
+      .section-card:hover { border-color: var(--color-accent); }
+
+      .section-card h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0 0 0.4rem;
+      }
+
+      .section-card p {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin: 0;
+      }
+
+      /* Footer */
+      footer {
+        border-top: 1px solid var(--color-border);
+        padding: 2rem 0;
+        text-align: center;
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+      }
+
+      .empty-state {
+        color: var(--color-text-muted);
+        font-size: 0.9rem;
+        padding: 1.5rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="container">
+        <a href="/" class="nav-brand">hyoguoo</a>
+        <ul class="nav-links">
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/docs/">Docs</a></li>
+          <li><a href="/about/">About</a></li>
+          <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="container">
+          <h1>hyoguoo</h1>
+          <p class="tagline">Backend Developer · Java &amp; Spring</p>
+          <div class="hero-links">
+            <a href="/about/" class="btn btn-primary">About Me</a>
+            <a href="https://github.com/hyoguoo" class="btn btn-secondary" target="_blank" rel="noopener">
+              GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Latest Blog Posts -->
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Latest Posts</h2>
+            <a href="/blog/">All posts →</a>
+          </div>
+          {latestBlogPosts.length > 0 ? (
+            <div class="card-grid">
+              {latestBlogPosts.map(post => (
+                <a href={`/${post.id}/`} class="card">
+                  <div class="card-title">{post.data.title}</div>
+                  <div class="card-meta">
+                    {formatDate(post.data.lastUpdated ?? post.data.date)}
+                  </div>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <div class="card-tags">
+                      {(post.data.tags as string[]).slice(0, 3).map((tag: string) => (
+                        <span class="tag">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="empty-state">포스팅 준비 중입니다.</p>
+          )}
+        </div>
+      </section>
+
+      <!-- Latest Docs -->
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Recent Docs</h2>
+            <a href="/docs/">All docs →</a>
+          </div>
+          {latestDocs.length > 0 ? (
+            <div class="card-grid">
+              {latestDocs.map(doc => (
+                <a href={`/${doc.id}/`} class="card">
+                  <div class="card-title">{doc.data.title}</div>
+                  <span class="card-category">{getDocCategory(doc.id)}</span>
+                  <div class="card-meta">
+                    {formatDate(doc.data.lastUpdated)}
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <p class="empty-state">문서 마이그레이션 준비 중입니다.</p>
+          )}
+        </div>
+      </section>
+
+      <!-- Section Navigation -->
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <h2>Explore</h2>
+          </div>
+          <div class="sections-grid">
+            <a href="/blog/" class="section-card">
+              <h3>Blog</h3>
+              <p>실무 경험과 기술적 시행착오를 기록합니다.</p>
+            </a>
+            <a href="/docs/" class="section-card">
+              <h3>Docs</h3>
+              <p>CS 기초부터 실무 기술 스택까지 정리한 학습 레퍼런스.</p>
+            </a>
+            <a href="/about/" class="section-card">
+              <h3>About</h3>
+              <p>Backend Developer로서의 여정과 자기소개.</p>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© {new Date().getFullYear()} hyoguoo · Built with Astro &amp; Starlight</p>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import Default from '@astrojs/starlight/components/Footer.astro';
+import Giscus from './Giscus.astro';
+
+const { entry } = Astro.props;
+
+// Show Giscus on docs and blog pages, not on splash/landing pages
+const isSplash = entry?.data?.template === 'splash';
+const isAbout = Astro.url.pathname.startsWith('/about');
+const showGiscus = !isSplash && !isAbout;
+---
+
+<Default {...Astro.props} />
+{showGiscus && <Giscus />}

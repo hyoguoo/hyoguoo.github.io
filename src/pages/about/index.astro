@@ -1,0 +1,278 @@
+---
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="hyoguoo - Backend Developer, Java & Spring" />
+    <title>About · hyoguoo</title>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; }
+
+      :root {
+        --color-bg: #0f172a;
+        --color-surface: #1e293b;
+        --color-border: #334155;
+        --color-text: #e2e8f0;
+        --color-text-muted: #94a3b8;
+        --color-accent: #3b82f6;
+        --color-accent-light: #60a5fa;
+        --max-width: 800px;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --color-bg: #f8fafc;
+          --color-surface: #ffffff;
+          --color-border: #e2e8f0;
+          --color-text: #0f172a;
+          --color-text-muted: #64748b;
+          --color-accent: #2563eb;
+          --color-accent-light: #3b82f6;
+        }
+      }
+
+      body {
+        background: var(--color-bg);
+        color: var(--color-text);
+        font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+        margin: 0;
+        padding: 0;
+        line-height: 1.7;
+      }
+
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 1.5rem;
+      }
+
+      /* Header */
+      header {
+        border-bottom: 1px solid var(--color-border);
+        padding: 1rem 0;
+      }
+
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .nav-brand {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: var(--color-text);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-links a {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+      }
+
+      .nav-links a:hover { color: var(--color-accent-light); }
+      .nav-links a[aria-current] { color: var(--color-text); font-weight: 500; }
+
+      /* Profile */
+      .profile {
+        padding: 4rem 0 2rem;
+      }
+
+      .profile h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+      }
+
+      .profile .role {
+        font-size: 1rem;
+        color: var(--color-text-muted);
+        margin: 0 0 1.5rem;
+      }
+
+      .profile-links {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 500;
+        border: 1px solid var(--color-border);
+        background: var(--color-surface);
+        color: var(--color-text);
+        transition: border-color 0.2s;
+      }
+
+      .btn:hover { border-color: var(--color-accent); }
+
+      /* Tech stack */
+      .section {
+        padding: 2.5rem 0;
+        border-top: 1px solid var(--color-border);
+      }
+
+      .section h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+        margin: 0 0 1.25rem;
+      }
+
+      .stack-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+      }
+
+      .stack-item {
+        padding: 0.35rem 0.75rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 6px;
+        font-size: 0.85rem;
+      }
+
+      .stack-item.main {
+        border-color: var(--color-accent);
+        color: var(--color-accent-light);
+      }
+
+      /* Posts list */
+      .post-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .post-list li a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.85rem 1rem;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--color-text);
+        transition: border-color 0.2s;
+      }
+
+      .post-list li a:hover { border-color: var(--color-accent); }
+
+      .post-list .post-title { font-size: 0.9rem; font-weight: 500; }
+      .post-list .post-arrow { color: var(--color-text-muted); }
+
+      /* Footer */
+      footer {
+        border-top: 1px solid var(--color-border);
+        padding: 2rem 0;
+        text-align: center;
+        color: var(--color-text-muted);
+        font-size: 0.85rem;
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="container">
+        <a href="/" class="nav-brand">hyoguoo</a>
+        <ul class="nav-links">
+          <li><a href="/blog/">Blog</a></li>
+          <li><a href="/docs/">Docs</a></li>
+          <li><a href="/about/" aria-current="page">About</a></li>
+          <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <div class="container">
+        <!-- Profile -->
+        <section class="profile">
+          <h1>hyoguoo</h1>
+          <p class="role">Backend Developer · Java & Spring</p>
+          <div class="profile-links">
+            <a href="https://github.com/hyoguoo" class="btn" target="_blank" rel="noopener">
+              GitHub
+            </a>
+          </div>
+        </section>
+
+        <!-- Tech Stack -->
+        <section class="section">
+          <h2>Tech Stack</h2>
+          <div class="stack-grid">
+            <span class="stack-item main">Java</span>
+            <span class="stack-item main">Spring Boot</span>
+            <span class="stack-item main">Spring Data JPA</span>
+            <span class="stack-item">MySQL</span>
+            <span class="stack-item">Redis</span>
+            <span class="stack-item">Kafka</span>
+            <span class="stack-item">Docker</span>
+            <span class="stack-item">Git</span>
+          </div>
+        </section>
+
+        <!-- Posts -->
+        <section class="section">
+          <h2>Posts</h2>
+          <ul class="post-list">
+            <li>
+              <a href="/about/why-developer/">
+                <span class="post-title">왜 개발자가 되었고, 어떤 개발자가 되고 싶은가?</span>
+                <span class="post-arrow">→</span>
+              </a>
+            </li>
+            <li>
+              <a href="/about/study-log/">
+                <span class="post-title">Study Log</span>
+                <span class="post-arrow">→</span>
+              </a>
+            </li>
+            <li>
+              <a href="/about/1-day-1-commit/">
+                <span class="post-title">1일 1커밋</span>
+                <span class="post-arrow">→</span>
+              </a>
+            </li>
+          </ul>
+        </section>
+      </div>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© {new Date().getFullYear()} hyoguoo</p>
+      </div>
+    </footer>
+  </body>
+</html>
