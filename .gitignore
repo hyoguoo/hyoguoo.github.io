@@ -15,7 +15,7 @@
 
 # AWS User-specific
 .idea/**/aws.xml
-0
+
 # Generated files
 .idea/**/contentModel.xml
 
@@ -119,3 +119,15 @@ fabric.properties
 
 # Mac
 .DS_Store
+
+# Node.js
+node_modules/
+
+# Astro
+dist/
+.astro/
+
+# Environment
+.env
+.env.*
+!.env.example

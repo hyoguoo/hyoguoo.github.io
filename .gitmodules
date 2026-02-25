@@ -1,0 +1,9 @@
+[submodule "_import/tech-log"]
+	path = _import/tech-log
+	url = git@github.com-hyoguoo:hyoguoo/tech-log.git
+[submodule "_import/docs"]
+	path = _import/docs
+	url = git@github.com-hyoguoo:hyoguoo/docs.git
+[submodule "_import/about"]
+	path = _import/about
+	url = git@github.com-hyoguoo:hyoguoo/about.git
