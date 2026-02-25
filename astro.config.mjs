@@ -13,6 +13,19 @@ export default defineConfig({
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/hyoguoo' },
 			],
+			head: [
+				{
+					tag: 'script',
+					attrs: {
+						src: 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8',
+						async: true,
+					},
+				},
+				{
+					tag: 'script',
+					content: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');`,
+				},
+			],
 			plugins: [
 				starlightBlog({
 					title: 'Blog',

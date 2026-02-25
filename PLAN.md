@@ -20,8 +20,7 @@
 ## Phase 3: 기능 연동
 
 - [x] Giscus 댓글 연동 — `src/components/Giscus.astro` 설정 완료
-- [ ] Google Analytics 연동
-  - `astro.config.mjs` → starlight에 `google: { id: 'G-XXXXXXXXXX' }` 추가
+- [x] Google Analytics 연동 (G-KBCBB0D7H8)
 
 ## Phase 4: 콘텐츠 마이그레이션
 
