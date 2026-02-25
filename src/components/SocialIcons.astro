@@ -1,0 +1,57 @@
+---
+const pathname = Astro.url.pathname;
+const isBlog = pathname.startsWith('/blog');
+const isDocs = pathname.startsWith('/docs');
+const isAbout = pathname.startsWith('/about');
+---
+
+<nav class="site-nav">
+  <a href="/blog/" class:list={['nav-link', { 'nav-link--active': isBlog }]}>Blog</a>
+  <a href="/docs/" class:list={['nav-link', { 'nav-link--active': isDocs }]}>Docs</a>
+  <a href="/about/" class:list={['nav-link', { 'nav-link--active': isAbout }]}>About</a>
+  <a href="https://github.com/hyoguoo" class="nav-link" target="_blank" rel="noopener noreferrer me">GitHub</a>
+</nav>
+
+<style>
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .nav-link {
+    font-size: var(--sl-text-sm);
+    font-weight: 500;
+    color: var(--sl-color-gray-2);
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover {
+    color: var(--sl-color-white);
+  }
+
+  .nav-link--active {
+    color: var(--sl-color-accent-high);
+    font-weight: 600;
+  }
+
+  .nav-link--active:hover {
+    color: var(--sl-color-accent-high);
+    opacity: 0.85;
+  }
+
+  :root[data-theme='light'] .nav-link {
+    color: var(--sl-color-gray-5);
+  }
+
+  :root[data-theme='light'] .nav-link:hover {
+    color: var(--sl-color-black);
+  }
+
+  :root[data-theme='light'] .nav-link--active {
+    color: var(--sl-color-accent-high);
+  }
+</style>

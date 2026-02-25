@@ -1,99 +1,117 @@
 ---
 import { getCollection } from 'astro:content';
 
+// docsLoader id format: 'docs/subcategory/slug' for docs, 'docs/subcategory' for index pages
+
+// Subcategories that have at least one doc (= migrated)
 const allDocs = await getCollection('docs', ({ id }) => {
-  return id.startsWith('docs/') && !id.endsWith('/index.mdx') && !id.endsWith('/index.md');
+  const parts = id.split('/');
+  return parts[0] === 'docs' && parts.length >= 3;
 });
 
-// Group by top-level category
-const categories = new Map<string, { id: string; title: string; url: string }[]>();
+const migratedSubcategories = new Set(
+  allDocs.map(doc => doc.id.split('/')[1])
+);
 
-for (const doc of allDocs) {
-  // Remove 'docs/' prefix → e.g. 'docs/java/class' → 'java/class'
-  const relativePath = doc.id.replace(/^docs\//, '');
-  const parts = relativePath.split('/');
-  const category = parts[0];
+// Subcategories that have an index page: id is exactly 'docs/subcategory' (2 parts)
+const indexPages = await getCollection('docs', ({ id }) => {
+  const parts = id.split('/');
+  return parts.length === 2 && parts[0] === 'docs';
+});
 
-  if (!categories.has(category)) {
-    categories.set(category, []);
-  }
+const subcategoriesWithIndex = new Set(indexPages.map(p => p.id.split('/')[1]));
 
-  categories.get(category)!.push({
-    id: doc.id,
-    title: doc.data.title,
-    url: `/${doc.id}/`,
-  });
-}
+const groups = [
+  { label: 'Computer Science', items: [
+    { key: 'computer-architecture', label: 'Computer Architecture' },
+    { key: 'operating-system', label: 'Operating System' },
+    { key: 'network', label: 'Network' },
+    { key: 'secure', label: 'Secure' },
+  ]},
+  { label: 'Database', items: [
+    { key: 'mysql', label: 'MySQL' },
+    { key: 'redis', label: 'Redis' },
+  ]},
+  { label: 'Language', items: [
+    { key: 'java', label: 'Java' },
+  ]},
+  { label: 'Framework', items: [
+    { key: 'spring', label: 'Spring' },
+  ]},
+  { label: 'Messaging & Streaming', items: [
+    { key: 'kafka', label: 'Kafka' },
+  ]},
+  { label: 'Software Engineering', items: [
+    { key: 'test', label: 'Test' },
+    { key: 'ai-assisted-development', label: 'AI-Assisted Development' },
+  ]},
+  { label: 'DevOps & Infra', items: [
+    { key: 'docker', label: 'Docker' },
+  ]},
+  { label: 'System Architecture', items: [
+    { key: 'large-scale-system', label: 'Large-Scale System' },
+  ]},
+  { label: 'Design Pattern', items: [
+    { key: 'oop', label: 'OOP' },
+  ]},
+  { label: 'ETC', items: [
+    { key: 'setting', label: 'Setting' },
+  ]},
+];
 
-// Sort categories alphabetically
-const sortedCategories = [...categories.entries()].sort(([a], [b]) => a.localeCompare(b));
-
-// Category label mapping (matches astro.config.mjs sidebar labels)
-const categoryLabels: Record<string, string> = {
-  'computer-architecture': 'Computer Architecture',
-  'operating-system': 'Operating System',
-  'network': 'Network',
-  'secure': 'Secure',
-  'java': 'Java',
-  'spring': 'Spring',
-  'oop': 'OOP',
-  'mysql': 'MySQL',
-  'redis': 'Redis',
-  'kafka': 'Kafka',
-  'docker': 'Docker',
-  'large-scale-system': 'Large-Scale System',
-  'test': 'Test',
-  'ai-assisted-development': 'AI-Assisted Development',
-  'setting': 'Setting',
-};
+const visibleGroups = groups.map(group => ({
+  ...group,
+  items: group.items.filter(item => migratedSubcategories.has(item.key)),
+})).filter(group => group.items.length > 0);
 ---
 
 <div class="docs-tree">
-  {sortedCategories.length === 0 ? (
+  {visibleGroups.length === 0 ? (
     <p class="empty-state">문서가 없습니다.</p>
-  ) : (
-    sortedCategories.map(([category, docs]) => (
-      <div class="category-section">
-        <h2 class="category-title">
-          {categoryLabels[category] ?? category}
-        </h2>
-        <ul class="doc-list">
-          {docs.sort((a, b) => a.title.localeCompare(b.title)).map(doc => (
-            <li>
-              <a href={doc.url} class="doc-link">{doc.title}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))
-  )}
+  ) : visibleGroups.map(group => (
+    <div class="group-section">
+      <h2 class="group-title">{group.label}</h2>
+      <ul class="item-list">
+        {group.items.map(item => (
+          <li>
+            {subcategoriesWithIndex.has(item.key)
+              ? <a href={`/docs/${item.key}/`} class="item-link">{item.label}</a>
+              : <span class="item-link">{item.label}</span>
+            }
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
 </div>
 
 <style>
   .docs-tree {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    display: flex;
+    flex-direction: column;
     gap: 2rem;
     padding: 1rem 0;
   }
 
-  .category-section {
+  .group-section {
     border: 1px solid var(--sl-color-hairline);
     border-radius: 8px;
     padding: 1.25rem 1.5rem;
     background: var(--sl-color-bg-nav);
   }
 
-  .category-title {
-    font-size: 1rem;
+  .group-title {
+    font-size: 0.75rem;
     font-weight: 600;
-    color: var(--sl-color-text-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sl-color-gray-3);
     margin: 0 0 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--sl-color-hairline);
   }
 
-  .doc-list {
+  .item-list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -102,16 +120,16 @@ const categoryLabels: Record<string, string> = {
     gap: 0.4rem;
   }
 
-  .doc-link {
-    font-size: 0.875rem;
-    color: var(--sl-color-text);
-    text-decoration: none;
+  .item-link {
+    font-size: 0.9rem;
     display: block;
     padding: 0.2rem 0;
+    text-decoration: none;
+    color: var(--sl-color-text);
     transition: color 0.15s;
   }
 
-  .doc-link:hover {
+  a.item-link:hover {
     color: var(--sl-color-text-accent);
     text-decoration: underline;
   }

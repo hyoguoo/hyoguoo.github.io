@@ -1,0 +1,140 @@
+---
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('docs', ({ id, data }) => {
+  return id.startsWith('blog/') && !data.draft;
+});
+
+type PostItem = { id: string; title: string; url: string; date: Date };
+
+const categories = new Map<string, PostItem[]>();
+
+for (const post of allPosts) {
+  const tags = post.data.tags as string[] | undefined;
+  const category = tags?.[0] ?? '기타';
+
+  if (!categories.has(category)) {
+    categories.set(category, []);
+  }
+
+  const date =
+    post.data.lastUpdated instanceof Date
+      ? post.data.lastUpdated
+      : (post.data.date ?? new Date(0));
+
+  categories.get(category)!.push({
+    id: post.id,
+    title: post.data.title,
+    url: `/${post.id}/`,
+    date,
+  });
+}
+
+for (const posts of categories.values()) {
+  posts.sort((a, b) => b.date.getTime() - a.date.getTime());
+}
+
+const categoryOrder = ['Java', 'Spring & JPA'];
+const sortedCategories = [...categories.entries()].sort(([a], [b]) => {
+  const ai = categoryOrder.indexOf(a);
+  const bi = categoryOrder.indexOf(b);
+  if (ai !== -1 && bi !== -1) return ai - bi;
+  if (ai !== -1) return -1;
+  if (bi !== -1) return 1;
+  return a.localeCompare(b);
+});
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+---
+
+<div class="blog-tree">
+  {sortedCategories.length === 0 ? (
+    <p class="empty-state">포스팅이 없습니다.</p>
+  ) : (
+    sortedCategories.map(([category, posts]) => (
+      <div class="category-section">
+        <h2 class="category-title">{category}</h2>
+        <ul class="post-list">
+          {posts.map(post => (
+            <li>
+              <a href={post.url} class="post-link">
+                <span class="post-title">{post.title}</span>
+                <span class="post-date">{formatDate(post.date)}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  )}
+</div>
+
+<style>
+  .blog-tree {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 1rem 0;
+  }
+
+  .category-section {
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    background: var(--sl-color-bg-nav);
+  }
+
+  .category-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sl-color-text-accent);
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .post-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    text-decoration: none;
+    padding: 0.2rem 0;
+  }
+
+  .post-title {
+    font-size: 0.875rem;
+    color: var(--sl-color-text);
+    transition: color 0.15s;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-link:hover .post-title {
+    color: var(--sl-color-text-accent);
+    text-decoration: underline;
+  }
+
+  .post-date {
+    font-size: 0.75rem;
+    color: var(--sl-color-gray-3);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .empty-state {
+    color: var(--sl-color-gray-3);
+    font-size: 0.9rem;
+  }
+</style>

@@ -1,0 +1,107 @@
+---
+import type { StarlightBlogAuthor } from 'starlight-blog/schema';
+
+interface Props {
+  date?: Date;
+  lastUpdated?: Date;
+  authors?: StarlightBlogAuthor[];
+}
+
+const { date, lastUpdated, authors = [] } = Astro.props;
+
+const showLastUpdated =
+  lastUpdated &&
+  date &&
+  lastUpdated.toISOString() !== date.toISOString();
+---
+
+{(date || authors.length > 0) && (
+  <div class="metadata not-content">
+    {date && (
+      <div class="dates">
+        <time datetime={date.toISOString()}>
+          {Astro.locals.t('starlightBlog.post.date', { date })}
+        </time>
+        {showLastUpdated && (
+          <span
+            class="metadata-alt"
+            set:html={Astro.locals.t('starlightBlog.post.lastUpdate', {
+              date: lastUpdated,
+              isoDate: lastUpdated!.toISOString(),
+            })}
+          />
+        )}
+      </div>
+    )}
+    {authors.length > 0 && (
+      <div class="authors">
+        {authors.map((author) => {
+          const isLink = author.url !== undefined;
+          const Element = isLink ? 'a' : 'div';
+          return (
+            <Element href={isLink ? author.url : undefined} class="author">
+              <div class="text">
+                <div class="name">{author.name}</div>
+                {author.title && <div class="title">{author.title}</div>}
+              </div>
+            </Element>
+          );
+        })}
+      </div>
+    )}
+  </div>
+)}
+
+<style>
+  /* Mirrors starlight-blog Metadata.astro + Author.astro */
+  .metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .dates {
+    font-size: var(--sl-text-sm);
+  }
+
+  .metadata-alt {
+    color: var(--sl-color-gray-3);
+  }
+
+  .authors {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+  }
+
+  .author {
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    line-height: var(--sl-line-height-headings);
+    text-decoration: none;
+  }
+
+  .text {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .name {
+    font-size: var(--sl-text-base);
+    font-weight: 600;
+  }
+
+  a.author .name {
+    color: var(--sl-color-text-accent);
+  }
+
+  a.author:hover .name {
+    color: var(--sl-color-text);
+  }
+
+  .title {
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-text);
+  }
+</style>

@@ -5,10 +5,11 @@ import Giscus from './Giscus.astro';
 
 const { entry } = Astro.props;
 
-// Show Giscus on docs and blog pages, not on splash/landing pages
+// Show Giscus on docs and blog pages, not on splash/landing/index pages
 const isSplash = entry?.data?.template === 'splash';
 const isAbout = Astro.url.pathname.startsWith('/about');
-const showGiscus = !isSplash && !isAbout;
+const isIndexPage = /^\/(blog|docs)\/?$/.test(Astro.url.pathname);
+const showGiscus = !isSplash && !isAbout && !isIndexPage;
 ---
 
 <Default {...Astro.props} />

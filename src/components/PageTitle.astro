@@ -1,58 +1,106 @@
 ---
-import Default from '@astrojs/starlight/components/PageTitle.astro';
+import EntryMeta from './EntryMeta.astro';
+import config from 'virtual:starlight-blog-config';
+import type { StarlightBlogAuthor } from 'starlight-blog/schema';
 
 const { entry } = Astro.locals.starlightRoute;
-const isBlog = Astro.url.pathname.startsWith('/blog');
-const isDocsPage = !isBlog && entry?.id?.startsWith('docs/');
 
-const date = isDocsPage ? entry?.data?.date : undefined;
-const lastUpdated = isDocsPage ? entry?.data?.lastUpdated : undefined;
+// Individual blog post: id starts with 'blog/' and has a date
+const isBlogPost = entry?.id?.startsWith('blog/') && !!entry?.data?.date;
+// Docs page: id starts with 'docs/'
+const isDocsPage = entry?.id?.startsWith('docs/');
+const showMeta = isBlogPost || isDocsPage;
 
-// Use authors from frontmatter if set, otherwise default to hyoguoo
-const rawAuthors = isDocsPage ? (entry?.data?.authors ?? []) : [];
-const authorNames: string[] = rawAuthors.length > 0
-  ? rawAuthors.map((a: string | { name: string }) => (typeof a === 'string' ? a : a.name))
-  : ['hyoguoo'];
-
-function formatDate(d: Date | string | undefined) {
-  if (!d) return '';
-  return new Date(d).toLocaleDateString('ko-KR', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC',
-  });
+function resolveAuthors(entry: typeof Astro.locals.starlightRoute.entry): StarlightBlogAuthor[] {
+  const rawAuthors = entry?.data?.authors;
+  if (!rawAuthors) {
+    return Object.values(config.authors);
+  }
+  if (typeof rawAuthors === 'string') {
+    const found = config.authors[rawAuthors];
+    return found ? [found] : [{ name: rawAuthors }];
+  }
+  if (Array.isArray(rawAuthors)) {
+    return rawAuthors.map((a: string | StarlightBlogAuthor) =>
+      typeof a === 'string' ? (config.authors[a] ?? { name: a }) : a
+    );
+  }
+  return [rawAuthors as StarlightBlogAuthor];
 }
+
+const date: Date | undefined = showMeta ? entry?.data?.date : undefined;
+const lastUpdated: Date | undefined =
+  showMeta &&
+  entry?.data?.lastUpdated &&
+  typeof entry.data.lastUpdated !== 'boolean'
+    ? entry.data.lastUpdated
+    : undefined;
+const authors: StarlightBlogAuthor[] = showMeta ? resolveAuthors(entry) : [];
+
+// Convert backtick-wrapped text to <code> for inline code in titles
+const rawTitle = entry?.data?.title ?? '';
+const titleHtml = rawTitle.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+// Back to parent button
+const pathname = Astro.url.pathname;
+const pathParts = pathname.replace(/\/$/, '').split('/').filter(Boolean);
+const showBackButton = isBlogPost || (isDocsPage && pathParts.length >= 3);
+const parentPath = showBackButton
+  ? (isBlogPost ? '/blog/' : '/' + pathParts.slice(0, -1).join('/') + '/')
+  : null;
+const parentName = parentPath
+  ? (isBlogPost ? 'Blog' : parentPath
+      .replace(/\/$/, '')
+      .split('/')
+      .pop()!
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, c => c.toUpperCase()))
+  : null;
 ---
 
-<Default />
-{isDocsPage && (date || lastUpdated || authorNames.length > 0) && (
-  <p class="doc-meta">
-    {authorNames.length > 0 && <span class="author">by {authorNames.join(', ')}</span>}
-    {authorNames.length > 0 && (date || lastUpdated) && <span class="separator">·</span>}
-    {date && <span>작성일: {formatDate(date)}</span>}
-    {date && lastUpdated && <span class="separator">·</span>}
-    {lastUpdated && <span>수정일: {formatDate(lastUpdated)}</span>}
-  </p>
+{showBackButton && parentPath && (
+  <div class="back-link">
+    <a href={parentPath}><span aria-hidden="true">←</span> {parentName}</a>
+  </div>
 )}
+<h1 id="_top" set:html={titleHtml} />
+{showMeta && <EntryMeta {date} {lastUpdated} {authors} />}
 
 <style>
-  .doc-meta {
-    display: flex;
-    gap: 0.5rem;
+  @layer starlight.core {
+    h1 {
+      margin-top: 1rem;
+      font-size: var(--sl-text-h1);
+      line-height: var(--sl-line-height-headings);
+      font-weight: 600;
+      color: var(--sl-color-white);
+    }
+  }
+
+  h1 :global(code) {
+    font-size: 0.9em;
+    background-color: var(--sl-color-bg-inline-code);
+    border-radius: 0.25rem;
+    padding: 0.1em 0.3em;
+  }
+
+  .back-link {
+    margin-bottom: 0.5rem;
+  }
+
+  .back-link a {
+    display: inline-flex;
     align-items: center;
-    flex-wrap: wrap;
-    font-size: 0.8rem;
-    color: var(--sl-color-gray-3);
-    margin-top: -0.25rem;
-    margin-bottom: 1rem;
+    gap: 0.25rem;
+    font-size: var(--sl-text-sm);
+    color: var(--sl-color-text-accent);
+    text-decoration: none;
+    opacity: 0.75;
+    transition: opacity 0.15s;
   }
 
-  .author {
-    font-weight: 500;
-  }
-
-  .separator {
-    color: var(--sl-color-hairline-light);
+  .back-link a:hover {
+    opacity: 1;
+    text-decoration: underline;
   }
 </style>

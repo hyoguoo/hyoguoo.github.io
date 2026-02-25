@@ -18,10 +18,34 @@ li:has(a[href$="rss.xml"]) {
   display: none !important;
 }
 
+/* Hide duplicate blog metadata in content area (rendered in title area via PageTitle override) */
+.sl-markdown-content > .metadata {
+  display: none !important;
+}
+
 /* Blog pages: hide the sidebar nav entirely and reset content width */
 [data-no-sidebar] nav.sidebar {
   display: none !important;
 }
 [data-no-sidebar] .main-frame {
   padding-inline-start: 0 !important;
+}
+
+/* Blog post: hide plugin's own prev/next navigation */
+.post-footer .pagination {
+  display: none;
+}
+
+/* Blog listing: show only first paragraph, truncated to 2 lines */
+.posts article.preview .sl-markdown-content > * {
+  display: none;
+}
+.posts article.preview .sl-markdown-content > p:first-child {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--sl-color-gray-3);
+  font-size: var(--sl-text-sm);
+  margin: 0;
 }

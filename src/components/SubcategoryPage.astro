@@ -1,0 +1,121 @@
+---
+import { getCollection } from 'astro:content';
+import { docsSections } from '../data/docsSections';
+
+interface Props {
+  subcategory: string;
+}
+
+const { subcategory } = Astro.props;
+
+const allDocs = await getCollection('docs', ({ id }) => {
+  const last = id.split('/').pop() ?? '';
+  return (
+    id.startsWith(`docs/${subcategory}/`) &&
+    !['index', 'index.md', 'index.mdx'].includes(last)
+  );
+});
+
+// Map slug → doc
+const docBySlug = new Map(
+  allDocs.map(doc => {
+    const slug = doc.id.replace(`docs/${subcategory}/`, '');
+    return [slug, { title: doc.data.title, url: `/${doc.id}/` }];
+  })
+);
+
+const sections = docsSections[subcategory];
+
+type DocItem = { title: string; url: string };
+
+let grouped: { label: string; docs: DocItem[] }[];
+
+if (sections) {
+  const accountedSlugs = new Set<string>();
+
+  grouped = sections
+    .map(section => {
+      const docs = section.slugs
+        .filter(slug => docBySlug.has(slug))
+        .map(slug => {
+          accountedSlugs.add(slug);
+          return docBySlug.get(slug)!;
+        });
+      return { label: section.label, docs };
+    })
+    .filter(s => s.docs.length > 0);
+
+  // Docs not in any section config → append as 기타
+  const uncategorized = [...docBySlug.entries()]
+    .filter(([slug]) => !accountedSlugs.has(slug))
+    .map(([, doc]) => doc)
+    .sort((a, b) => a.title.localeCompare(b.title));
+
+  if (uncategorized.length > 0) {
+    grouped.push({ label: '기타', docs: uncategorized });
+  }
+} else {
+  // No section config: flat list sorted alphabetically
+  const docs = [...docBySlug.values()].sort((a, b) => a.title.localeCompare(b.title));
+  grouped = [{ label: '', docs }];
+}
+---
+
+<div class="subcategory-page">
+  {grouped.map(({ label, docs }) => (
+    <div class="section">
+      {label && <h2 class="section-title">{label}</h2>}
+      <ul class="doc-list">
+        {docs.map(doc => (
+          <li>
+            <a href={doc.url} class="doc-link">{doc.title}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  ))}
+</div>
+
+<style>
+  .subcategory-page {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 0.5rem 0;
+  }
+
+  .section-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sl-color-gray-3);
+    margin: 0 0 0.6rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+
+  .doc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .doc-link {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--sl-color-text);
+    text-decoration: none;
+    padding: 0.25rem 0.75rem;
+    border-left: 2px solid var(--sl-color-hairline);
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .doc-link:hover {
+    color: var(--sl-color-text-accent);
+    border-left-color: var(--sl-color-accent);
+  }
+</style>

@@ -2,7 +2,7 @@
 title: "`@Trasncational`을 통한 선언적 트랜잭션 관리 방식에서 Self Invocation 문제가 발생하는 이유"
 date: 2023-12-11
 lastUpdated: 2024-11-20
-tags: []
+tags: [Spring & JPA]
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.5, MySQL 8.0.33
