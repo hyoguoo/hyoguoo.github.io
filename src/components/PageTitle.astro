@@ -8,6 +8,12 @@ const isDocsPage = !isBlog && entry?.id?.startsWith('docs/');
 const date = isDocsPage ? entry?.data?.date : undefined;
 const lastUpdated = isDocsPage ? entry?.data?.lastUpdated : undefined;
 
+// Use authors from frontmatter if set, otherwise default to hyoguoo
+const rawAuthors = isDocsPage ? (entry?.data?.authors ?? []) : [];
+const authorNames: string[] = rawAuthors.length > 0
+  ? rawAuthors.map((a: string | { name: string }) => (typeof a === 'string' ? a : a.name))
+  : ['hyoguoo'];
+
 function formatDate(d: Date | string | undefined) {
   if (!d) return '';
   return new Date(d).toLocaleDateString('ko-KR', {
@@ -20,8 +26,10 @@ function formatDate(d: Date | string | undefined) {
 ---
 
 <Default />
-{isDocsPage && (date || lastUpdated) && (
+{isDocsPage && (date || lastUpdated || authorNames.length > 0) && (
   <p class="doc-meta">
+    {authorNames.length > 0 && <span class="author">by {authorNames.join(', ')}</span>}
+    {authorNames.length > 0 && (date || lastUpdated) && <span class="separator">·</span>}
     {date && <span>작성일: {formatDate(date)}</span>}
     {date && lastUpdated && <span class="separator">·</span>}
     {lastUpdated && <span>수정일: {formatDate(lastUpdated)}</span>}
@@ -33,10 +41,15 @@ function formatDate(d: Date | string | undefined) {
     display: flex;
     gap: 0.5rem;
     align-items: center;
+    flex-wrap: wrap;
     font-size: 0.8rem;
     color: var(--sl-color-gray-3);
     margin-top: -0.25rem;
     margin-bottom: 1rem;
+  }
+
+  .author {
+    font-weight: 500;
   }
 
   .separator {

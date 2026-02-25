@@ -12,7 +12,16 @@
   --sl-color-accent-high: #1e40af;
 }
 
-/* Hide RSS icon from header social links */
-a[href$="rss.xml"] {
+/* Hide RSS icon and its container from header social links */
+a[href$="rss.xml"],
+li:has(a[href$="rss.xml"]) {
   display: none !important;
+}
+
+/* Blog pages: hide the sidebar nav entirely and reset content width */
+[data-no-sidebar] nav.sidebar {
+  display: none !important;
+}
+[data-no-sidebar] .main-frame {
+  padding-inline-start: 0 !important;
 }

@@ -26,31 +26,39 @@ export default defineConfig({
 					content: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');`,
 				},
 				{
+					// Synchronous: detect blog pages and remove sidebar data attribute before render
+					tag: 'script',
+					content: `(function(){if(window.location.pathname.startsWith('/blog')){document.documentElement.setAttribute('data-no-sidebar','');document.documentElement.removeAttribute('data-has-sidebar');}})();`,
+				},
+				{
 					tag: 'script',
 					attrs: { type: 'module' },
-					content: `
-import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-mermaid.initialize({ startOnLoad: false, theme: document.documentElement.dataset.theme === 'light' ? 'default' : 'dark' });
-async function renderMermaid() {
-  const blocks = document.querySelectorAll('pre[data-language="mermaid"] code');
-  if (!blocks.length) return;
-  for (const code of blocks) {
-    const source = code.textContent ?? '';
-    const wrapper = document.createElement('div');
-    wrapper.className = 'mermaid-diagram not-content';
-    try {
-      const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).slice(2), source);
-      wrapper.innerHTML = svg;
-      const pre = code.closest('pre');
-      const expressive = pre?.closest('.expressive-code');
-      (expressive ?? pre)?.replaceWith(wrapper);
-    } catch (e) {
-      console.error('Mermaid render error:', e);
-    }
-  }
-}
-document.addEventListener('DOMContentLoaded', renderMermaid);
-`,
+					content: [
+						`import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';`,
+						`mermaid.initialize({ startOnLoad: false, theme: document.documentElement.dataset.theme === 'light' ? 'default' : 'dark' });`,
+						`async function renderMermaid() {`,
+						`  const blocks = document.querySelectorAll('pre[data-language="mermaid"] code');`,
+						`  if (!blocks.length) return;`,
+						`  for (const code of blocks) {`,
+						`    const ecLines = code.querySelectorAll('.ec-line');`,
+						`    const source = ecLines.length > 0`,
+						`      ? Array.from(ecLines).map(l => (l.textContent || '').replace(/\\n$/, '')).join('\\n').trim()`,
+						`      : (code.textContent || '').trim();`,
+						`    if (!source) continue;`,
+						`    const wrapper = document.createElement('div');`,
+						`    wrapper.className = 'mermaid-diagram not-content';`,
+						`    wrapper.style.cssText = 'overflow-x:auto;padding:1rem;text-align:center;';`,
+						`    try {`,
+						`      const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).slice(2), source);`,
+						`      wrapper.innerHTML = svg;`,
+						`      const pre = code.closest('pre');`,
+						`      const expressive = pre && pre.closest('.expressive-code');`,
+						`      (expressive || pre).replaceWith(wrapper);`,
+						`    } catch (e) { console.error('Mermaid render error:', e); }`,
+						`  }`,
+						`}`,
+						`renderMermaid();`,
+					].join('\n'),
 				},
 			],
 			plugins: [
