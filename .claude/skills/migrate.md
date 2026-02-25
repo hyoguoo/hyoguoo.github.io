@@ -11,9 +11,14 @@
 ## Source / Target 경로 매핑
 | 소스 | 타겟 | 타입 |
 |------|------|------|
-| `_import/tech-log/posts/` | `src/content/blog/` | Blog |
-| `_import/docs/` | `src/content/docs/` | Docs |
+| `_import/tech-log/posts/` | `src/content/docs/blog/` | Blog |
+| `_import/docs/` | `src/content/docs/docs/` | Docs |
 | `_import/about/posts/` | `src/pages/about/` | About |
+
+> **Note**: Starlight의 `src/content/docs/`는 URL 루트 `/`에 매핑됨.
+> - Blog: `src/content/docs/blog/post.md` → `/blog/post/`
+> - Docs: `src/content/docs/docs/java/class.md` → `/docs/java/class/`
+> - `blog/`와 `docs/`가 같은 레벨의 형제 디렉토리로 구성됨.
 
 ## 절대 원칙: 본문 내용 수정 금지
 

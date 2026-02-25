@@ -43,63 +43,63 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Computer Architecture',
-					autogenerate: { directory: 'computer-architecture' },
+					autogenerate: { directory: 'docs/computer-architecture' },
 				},
 				{
 					label: 'Operating System',
-					autogenerate: { directory: 'operating-system' },
+					autogenerate: { directory: 'docs/operating-system' },
 				},
 				{
 					label: 'Network',
-					autogenerate: { directory: 'network' },
+					autogenerate: { directory: 'docs/network' },
 				},
 				{
 					label: 'Secure',
-					autogenerate: { directory: 'secure' },
+					autogenerate: { directory: 'docs/secure' },
 				},
 				{
 					label: 'Java',
-					autogenerate: { directory: 'java' },
+					autogenerate: { directory: 'docs/java' },
 				},
 				{
 					label: 'Spring',
-					autogenerate: { directory: 'spring' },
+					autogenerate: { directory: 'docs/spring' },
 				},
 				{
 					label: 'OOP',
-					autogenerate: { directory: 'oop' },
+					autogenerate: { directory: 'docs/oop' },
 				},
 				{
 					label: 'MySQL',
-					autogenerate: { directory: 'mysql' },
+					autogenerate: { directory: 'docs/mysql' },
 				},
 				{
 					label: 'Redis',
-					autogenerate: { directory: 'redis' },
+					autogenerate: { directory: 'docs/redis' },
 				},
 				{
 					label: 'Kafka',
-					autogenerate: { directory: 'kafka' },
+					autogenerate: { directory: 'docs/kafka' },
 				},
 				{
 					label: 'Docker',
-					autogenerate: { directory: 'docker' },
+					autogenerate: { directory: 'docs/docker' },
 				},
 				{
 					label: 'Large-Scale System',
-					autogenerate: { directory: 'large-scale-system' },
+					autogenerate: { directory: 'docs/large-scale-system' },
 				},
 				{
 					label: 'Test',
-					autogenerate: { directory: 'test' },
+					autogenerate: { directory: 'docs/test' },
 				},
 				{
 					label: 'AI-Assisted Development',
-					autogenerate: { directory: 'ai-assisted-development' },
+					autogenerate: { directory: 'docs/ai-assisted-development' },
 				},
 				{
 					label: 'Setting',
-					autogenerate: { directory: 'setting' },
+					autogenerate: { directory: 'docs/setting' },
 				},
 			],
 			components: {
