@@ -5,8 +5,6 @@ lastUpdated: 2024-11-20
 tags: []
 ---
 
-# `@Trasncational`을 통한 선언적 트랜잭션 관리 방식에서 Self Invocation 문제가 발생하는 이유
-
 > 실행 환경: Java 17, Spring Boot 3.1.5, MySQL 8.0.33
 
 Spring에서는 `@Transactional`을 통해 트랜잭션을 관리할 수 있으며, 이를 통해 트랜잭션을 쉽게 사용할 수 있다.

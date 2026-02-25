@@ -1,0 +1,45 @@
+---
+import Default from '@astrojs/starlight/components/PageTitle.astro';
+
+const { entry } = Astro.locals.starlightRoute;
+const isBlog = Astro.url.pathname.startsWith('/blog');
+const isDocsPage = !isBlog && entry?.id?.startsWith('docs/');
+
+const date = isDocsPage ? entry?.data?.date : undefined;
+const lastUpdated = isDocsPage ? entry?.data?.lastUpdated : undefined;
+
+function formatDate(d: Date | string | undefined) {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('ko-KR', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    timeZone: 'UTC',
+  });
+}
+---
+
+<Default />
+{isDocsPage && (date || lastUpdated) && (
+  <p class="doc-meta">
+    {date && <span>작성일: {formatDate(date)}</span>}
+    {date && lastUpdated && <span class="separator">·</span>}
+    {lastUpdated && <span>수정일: {formatDate(lastUpdated)}</span>}
+  </p>
+)}
+
+<style>
+  .doc-meta {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--sl-color-gray-3);
+    margin-top: -0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .separator {
+    color: var(--sl-color-hairline-light);
+  }
+</style>

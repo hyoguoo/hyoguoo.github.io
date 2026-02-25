@@ -1,0 +1,7 @@
+---
+import Default from '@astrojs/starlight/components/Sidebar.astro';
+
+const isBlog = Astro.url.pathname.startsWith('/blog');
+---
+
+{!isBlog && <Default {...Astro.props} />}

@@ -1,0 +1,123 @@
+---
+import { getCollection } from 'astro:content';
+
+const allDocs = await getCollection('docs', ({ id }) => {
+  return id.startsWith('docs/') && !id.endsWith('/index.mdx') && !id.endsWith('/index.md');
+});
+
+// Group by top-level category
+const categories = new Map<string, { id: string; title: string; url: string }[]>();
+
+for (const doc of allDocs) {
+  // Remove 'docs/' prefix → e.g. 'docs/java/class' → 'java/class'
+  const relativePath = doc.id.replace(/^docs\//, '');
+  const parts = relativePath.split('/');
+  const category = parts[0];
+
+  if (!categories.has(category)) {
+    categories.set(category, []);
+  }
+
+  categories.get(category)!.push({
+    id: doc.id,
+    title: doc.data.title,
+    url: `/${doc.id}/`,
+  });
+}
+
+// Sort categories alphabetically
+const sortedCategories = [...categories.entries()].sort(([a], [b]) => a.localeCompare(b));
+
+// Category label mapping (matches astro.config.mjs sidebar labels)
+const categoryLabels: Record<string, string> = {
+  'computer-architecture': 'Computer Architecture',
+  'operating-system': 'Operating System',
+  'network': 'Network',
+  'secure': 'Secure',
+  'java': 'Java',
+  'spring': 'Spring',
+  'oop': 'OOP',
+  'mysql': 'MySQL',
+  'redis': 'Redis',
+  'kafka': 'Kafka',
+  'docker': 'Docker',
+  'large-scale-system': 'Large-Scale System',
+  'test': 'Test',
+  'ai-assisted-development': 'AI-Assisted Development',
+  'setting': 'Setting',
+};
+---
+
+<div class="docs-tree">
+  {sortedCategories.length === 0 ? (
+    <p class="empty-state">문서가 없습니다.</p>
+  ) : (
+    sortedCategories.map(([category, docs]) => (
+      <div class="category-section">
+        <h2 class="category-title">
+          {categoryLabels[category] ?? category}
+        </h2>
+        <ul class="doc-list">
+          {docs.sort((a, b) => a.title.localeCompare(b.title)).map(doc => (
+            <li>
+              <a href={doc.url} class="doc-link">{doc.title}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  )}
+</div>
+
+<style>
+  .docs-tree {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 1rem 0;
+  }
+
+  .category-section {
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    background: var(--sl-color-bg-nav);
+  }
+
+  .category-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sl-color-text-accent);
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+
+  .doc-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .doc-link {
+    font-size: 0.875rem;
+    color: var(--sl-color-text);
+    text-decoration: none;
+    display: block;
+    padding: 0.2rem 0;
+    transition: color 0.15s;
+  }
+
+  .doc-link:hover {
+    color: var(--sl-color-text-accent);
+    text-decoration: underline;
+  }
+
+  .empty-state {
+    color: var(--sl-color-gray-3);
+    font-size: 0.9rem;
+  }
+</style>
