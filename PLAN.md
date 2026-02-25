@@ -8,9 +8,7 @@
 
 - [x] Astro + Starlight 프로젝트 초기화
 - [x] GitHub Pages 배포 파이프라인 구성 (GitHub Actions)
-- [ ] Giscus 설정 (GitHub Discussions 활성화) ← **수동 작업 필요**
-  - https://giscus.app 에서 repo/category ID 발급
-  - `src/components/Giscus.astro` 의 PLACEHOLDER 값 교체
+- [x] Giscus 설정 완료 (repo-id, category-id 적용)
 
 ## Phase 2: 기본 구조 구현
 
@@ -21,9 +19,9 @@
 
 ## Phase 3: 기능 연동
 
-- [ ] Giscus 댓글 연동 (blog + docs) ← Phase 1 Giscus 설정 후
+- [x] Giscus 댓글 연동 — `src/components/Giscus.astro` 설정 완료
 - [ ] Google Analytics 연동
-  - `astro.config.mjs` → `starlight({ ... google: { id: 'G-XXXXXXXXXX' } })`
+  - `astro.config.mjs` → starlight에 `google: { id: 'G-XXXXXXXXXX' }` 추가
 
 ## Phase 4: 콘텐츠 마이그레이션
 
