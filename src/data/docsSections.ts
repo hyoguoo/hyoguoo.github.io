@@ -46,7 +46,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Index',
-      slugs: ['index-overview', 'btree-index', 'etc-index', 'index-condition-pushdown'],
+      slugs: ['index-overview', 'btree-index', 'clustering-index', 'unique-index', 'foreign-key', 'etc-index', 'index-condition-pushdown'],
     },
     {
       label: 'Optimizer & Execution Plan',
