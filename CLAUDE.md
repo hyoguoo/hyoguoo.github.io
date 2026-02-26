@@ -71,6 +71,7 @@ lastUpdated: YYYY-MM-DD   # 수정 시 반드시 갱신, 정렬 기준
 
 - `date`: 마이그레이션 시 최초 커밋 날짜로 자동 설정
 - `lastUpdated`: 수동 입력, 목록 및 랜딩 페이지 정렬 기준
+- `description`: SEO용 og:description. 한 문장 요약 권장 (없으면 사이트 설명으로 대체됨)
 - 글 수정 시 반드시 `lastUpdated` 갱신
 
 ## 제목 컨벤션

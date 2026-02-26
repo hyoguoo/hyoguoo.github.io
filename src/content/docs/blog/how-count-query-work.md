@@ -3,6 +3,7 @@ title: "MySQL COUNT() 함수의 동작 원리와 성능"
 date: 2024-06-03
 lastUpdated: 2024-11-20
 tags: [MySQL]
+description: "MySQL에서 COUNT(*)·COUNT(1)·COUNT(column)의 동작 원리와 실행 계획 차이를 분석한다."
 ---
 
 > 실행 환경: MySQL 8.0.33, InnoDB Storage Engine

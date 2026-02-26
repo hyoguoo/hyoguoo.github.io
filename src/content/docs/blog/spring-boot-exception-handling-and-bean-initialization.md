@@ -3,6 +3,7 @@ title: "BeanCreationException 예외로 알아보는 빈 생명주기"
 date: 2023-10-25
 lastUpdated: 2024-03-10
 tags: [Spring & JPA]
+description: "BeanCreationException을 통해 스프링 빈 생명주기와 예외 처리 흐름이 어떻게 연관되는지 분석한다."
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.4

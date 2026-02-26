@@ -3,6 +3,7 @@ title: "Spring Data JPA Cursor 기반 페이징 성능 개선기"
 date: 2023-12-01
 lastUpdated: 2024-11-20
 tags: [Spring & JPA]
+description: "Offset이 아닌 Cursor 기반으로 페이징 처리를 적용하여 성능을 개선한 경험을 다룬다."
 ---
 > 실행 환경: Java 17, Spring Boot 3.1.5, MySQL 8.0.33
 

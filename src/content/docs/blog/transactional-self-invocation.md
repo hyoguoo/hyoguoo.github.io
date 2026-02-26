@@ -1,8 +1,9 @@
 ---
-title: "`@Trasncational`을 통한 선언적 트랜잭션 관리 방식에서 Self Invocation 문제가 발생하는 이유"
+title: "`@Transactional`을 통한 선언적 트랜잭션 관리 방식에서 Self Invocation 문제가 발생하는 이유"
 date: 2023-12-11
 lastUpdated: 2024-11-20
 tags: [Spring & JPA]
+description: "Spring에서 @Transactional을 선언적으로 사용할 때 같은 클래스 내 메서드 호출(Self Invocation)이 트랜잭션을 무시하는 이유를 분석한다."
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.5, MySQL 8.0.33

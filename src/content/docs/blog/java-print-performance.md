@@ -3,6 +3,7 @@ title: "System.out.println()의 동작 원리와 성능 이슈"
 date: 2025-08-05
 lastUpdated: 2025-08-05
 tags: [Java]
+description: "System.out.println()이 사용하는 PrintStream의 동작 원리와 멀티 스레드 환경에서의 성능 이슈를 분석한다."
 ---
 `PrintStream` 클래스는 `OutputStream`을 상속받아 출력 스트림을 구현하며, 다양한 타입의 데이터를 출력할 수 있는 메서드를 제공한다.
 

@@ -3,6 +3,7 @@ title: "@Builder 사용의 여러가지 방법과 안전하게 사용하기"
 date: 2023-11-06
 lastUpdated: 2024-03-10
 tags: [Spring & JPA]
+description: "@Builder 사용 시 발생할 수 있는 필수 값 누락 문제와 이를 방지하기 위해 안전하게 사용하는 방법을 알아본다."
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.4

@@ -3,8 +3,7 @@ title: "Logger 성능 저하 방지와 구조화된 로깅 설계"
 date: 2025-08-03
 lastUpdated: 2025-08-05
 tags: [Payment Platform Project]
----
-
+description: "구조화된 로깅 설계와 불필요한 연산을 줄이는 Logger 성능 저하 방지 방법을 다룬다."
 ---
 
 로그를 단순히 [`println()`으로 찍는 건 성능 이슈](/blog/java-print-performance/)와 레벨을 구분할 수 없기 때문에, 개발 초기 테스트 외엔 적절하지 않다.  

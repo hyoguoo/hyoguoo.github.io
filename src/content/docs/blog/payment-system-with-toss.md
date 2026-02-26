@@ -3,6 +3,7 @@ title: "결제 정보 검증을 통한 안전한 결제 연동 시스템 구현 
 date: 2023-11-09
 lastUpdated: 2025-08-03
 tags: [Payment Platform Project]
+description: "토스 페이먼츠를 이용하여 결제 정보를 서버에서 검증하는 안전한 결제 연동 시스템 구현 방법을 다룬다."
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.5  

@@ -71,9 +71,9 @@
     - 상대경로 `.md` 링크 → 절대경로 `/blog/` 또는 `/docs/` 경로로 변경 (26개 파일)
     - 기존 gitbook 링크 → 현재 사이트 내 경로로 변경 완료
 - [x] 게시글 추가 Skill 생성
-- [ ] SEO 검증 (sitemap, robots.txt, meta tag)
-- [ ] 모바일 반응형 확인
-- [ ] 최종 배포 확인
+- [x] SEO 검증 (sitemap, robots.txt, meta tag)
+- [x] 모바일 반응형 확인
+- [x] 최종 배포 확인
 
 ## Phase 7: 디자인 마무리
 

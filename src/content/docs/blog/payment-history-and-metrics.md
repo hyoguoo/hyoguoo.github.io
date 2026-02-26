@@ -3,6 +3,7 @@ title: "결제 이력 추적 및 핵심 지표 모니터링 시스템 구현"
 date: 2025-09-22
 lastUpdated: 2025-11-10
 tags: [Payment Platform Project]
+description: "결제 복구 시스템 구축 후 복잡해진 결제 상태를 추적하고 핵심 지표를 모니터링하는 시스템을 구현한 방법을 다룬다."
 ---
 
 > 실행 환경: Java 21, Spring Boot 3.3.3

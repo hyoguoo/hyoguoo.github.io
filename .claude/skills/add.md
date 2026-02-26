@@ -92,6 +92,7 @@ title: 포스팅 제목               # 제목 컨벤션 참고
 date: YYYY-MM-DD                  # 오늘 날짜
 lastUpdated: YYYY-MM-DD           # 오늘 날짜 (수정 시 갱신)
 tags: [카테고리]                  # ⚠️ 필수: BlogTree 카테고리 그룹핑 기준 (첫 번째 태그)
+description: "한 문장 요약"       # SEO og:description (없으면 사이트 설명으로 대체)
 ---
 ```
 

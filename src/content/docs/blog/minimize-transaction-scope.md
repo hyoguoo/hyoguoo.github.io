@@ -3,6 +3,7 @@ title: "트랜잭션 범위 최소화를 통한 성능 및 안정성 향상"
 date: 2024-02-23
 lastUpdated: 2025-08-01
 tags: [Payment Platform Project]
+description: "트랜잭션 범위를 최소화하여 Lock 경합과 커넥션 점유를 줄이는 성능 및 안정성 향상 방법을 다룬다."
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.5, MySQL 8.0.33  
