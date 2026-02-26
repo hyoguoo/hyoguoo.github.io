@@ -73,6 +73,36 @@ lastUpdated: YYYY-MM-DD   # 수정 시 반드시 갱신, 정렬 기준
 - `lastUpdated`: 수동 입력, 목록 및 랜딩 페이지 정렬 기준
 - 글 수정 시 반드시 `lastUpdated` 갱신
 
+## 제목 컨벤션
+
+**영문만 사용**, 한글 병기 금지.
+
+| 경우 | 처리 | 예시 |
+|------|------|------|
+| 일반 영문 | 그대로 | `Spring IoC Container` |
+| 약어 | 풀네임을 괄호 추가 | `AOP (Aspect-Oriented Programming)` |
+| SQL 키워드 | 그대로 (대문자) | `SELECT`, `INSERT`, `ENUM` |
+| API·메서드명·고유명사 | 공식 표기 그대로 | `@Transactional`, `Redis` |
+
+주요 약어: AOP, CAS, CORS, DNS, HTTP/HTTPS, JDBC, JPA, JWT, JVM, OAuth, SpEL, URI
+→ 상세 풀네임 목록: `/add` skill 참조
+
+## Blog 태그
+
+`tags` 배열의 **첫 번째 태그**가 BlogTree 카테고리 그룹핑 기준.
+
+현재 사용 중인 태그: `Java`, `Spring & JPA`, `MySQL`, `AI`
+
+새 태그 도입 전 기존 태그 재사용 여부 먼저 검토.
+
+## 내부 링크 형식
+
+본문 내 사이트 내부 링크는 **절대 경로**만 사용:
+- Blog: `/blog/<slug>/`
+- Docs: `/docs/<category>/<slug>/`
+
+상대 경로(`.md`, `../`) 및 구 Gitbook URL(`hyoguoo.gitbook.io`) 사용 금지.
+
 ## Skills
 프로젝트 전용 skills: `.claude/skills/`
 
@@ -82,6 +112,7 @@ lastUpdated: YYYY-MM-DD   # 수정 시 반드시 갱신, 정렬 기준
 | `/verify` | Phase 완료 후, 스펙 준수 확인 요청 시 |
 | `/migrate [경로]` | 콘텐츠 이전 작업 시 |
 | `/structure` | 사이트 구조·컴포넌트 역할 파악이 필요할 때 |
+| `/add [위치 또는 문서]` | 새 게시글·문서 추가 시 |
 
 ## 주요 원칙
 - 테마 커스터마이징은 Starlight CSS 변수 최소 수정 (accent 색상, 폰트만)
