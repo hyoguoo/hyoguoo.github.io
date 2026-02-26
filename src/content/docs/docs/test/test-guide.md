@@ -1,5 +1,5 @@
 ---
-title: "Test Guide(테스트 가이드)"
+title: "Test Guide"
 date: 2024-08-27
 lastUpdated: 2024-10-02
 ---

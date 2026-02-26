@@ -1,5 +1,5 @@
 ---
-title: "Garbage Collection(가비지 컬렉션)"
+title: "Garbage Collection"
 date: 2024-06-17
 lastUpdated: 2025-10-29
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Polymorphism(다형성)"
+title: "Polymorphism"
 date: 2022-11-28
 lastUpdated: 2025-11-05
 ---

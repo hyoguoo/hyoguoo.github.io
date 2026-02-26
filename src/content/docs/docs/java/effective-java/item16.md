@@ -1,5 +1,5 @@
 ---
-title: "Accessor Method(접근자 메서드)"
+title: "Accessor Method"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

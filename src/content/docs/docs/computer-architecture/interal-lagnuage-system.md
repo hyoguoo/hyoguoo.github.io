@@ -1,5 +1,5 @@
 ---
-title: "Internal Language System(내부 언어 체계)"
+title: "Internal Language System"
 date: 2024-03-07
 lastUpdated: 2026-01-15
 ---

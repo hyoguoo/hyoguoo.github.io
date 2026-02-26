@@ -1,5 +1,5 @@
 ---
-title: "JVM 실행 원리와 성능 최적화"
+title: "JVM (Java Virtual Machine) Execution and Optimization"
 date: 2026-01-31
 lastUpdated: 2026-02-05
 ---

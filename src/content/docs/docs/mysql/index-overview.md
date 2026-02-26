@@ -1,5 +1,5 @@
 ---
-title: "Index(인덱스)"
+title: "Index"
 date: 2023-04-14
 lastUpdated: 2025-09-11
 ---

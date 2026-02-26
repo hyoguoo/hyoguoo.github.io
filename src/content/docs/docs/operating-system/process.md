@@ -1,5 +1,5 @@
 ---
-title: "Process(프로세스)"
+title: "Process"
 date: 2024-03-07
 lastUpdated: 2026-01-03
 ---

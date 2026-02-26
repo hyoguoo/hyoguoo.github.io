@@ -1,5 +1,5 @@
 ---
-title: "reactive-programming"
+title: "Reactive Programming"
 date: 2025-10-01
 lastUpdated: 2025-10-01
 ---

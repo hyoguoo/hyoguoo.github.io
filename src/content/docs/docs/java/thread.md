@@ -1,5 +1,5 @@
 ---
-title: "Thread(스레드)"
+title: "Thread"
 date: 2023-01-16
 lastUpdated: 2025-11-17
 ---

@@ -1,5 +1,5 @@
 ---
-title: "중첩 클래스(nested class)"
+title: "Nested Class"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

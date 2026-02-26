@@ -1,5 +1,5 @@
 ---
-title: "Dependency Injection(의존성 주입)"
+title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2025-08-22
 ---

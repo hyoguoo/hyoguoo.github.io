@@ -1,5 +1,5 @@
 ---
-title: "Data Structure Use Case(자료 구조 활용 사례)"
+title: "Data Structure Use Case"
 date: 2024-10-08
 lastUpdated: 2025-10-06
 ---

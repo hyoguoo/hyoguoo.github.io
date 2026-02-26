@@ -152,7 +152,7 @@ export const docsSections: Record<string, SectionConfig> = {
       ],
     },
     {
-      label: 'Application Layer',
+      label: 'Application Layer - TCP/IP Layer 4',
       slugs: [
         'dns',
         'uri',

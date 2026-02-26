@@ -1,5 +1,5 @@
 ---
-title: "Encoding(인코딩)"
+title: "Encoding"
 date: 2023-08-09
 lastUpdated: 2025-12-28
 ---

@@ -1,5 +1,5 @@
 ---
-title: "JVM 버전 관리"
+title: "JVM (Java Virtual Machine) Version Control"
 date: 2024-03-07
 lastUpdated: 2026-01-26
 ---

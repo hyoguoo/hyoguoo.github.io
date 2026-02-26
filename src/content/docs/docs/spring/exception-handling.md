@@ -1,5 +1,5 @@
 ---
-title: "Exception Handling(예외 처리)"
+title: "Exception Handling"
 date: 2024-03-07
 lastUpdated: 2025-08-23
 ---

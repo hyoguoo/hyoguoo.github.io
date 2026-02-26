@@ -1,5 +1,5 @@
 ---
-title: "Marker Interface(마커 인터페이스)"
+title: "Marker Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

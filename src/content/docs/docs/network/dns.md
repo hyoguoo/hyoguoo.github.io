@@ -1,5 +1,5 @@
 ---
-title: "DNS(Domain Name System)"
+title: "DNS (Domain Name System)"
 date: 2023-11-01
 lastUpdated: 2025-12-09
 ---

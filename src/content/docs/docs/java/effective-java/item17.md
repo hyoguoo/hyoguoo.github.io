@@ -1,5 +1,5 @@
 ---
-title: "Minimize Mutability(가변성 최소화)"
+title: "Minimize Mutability"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

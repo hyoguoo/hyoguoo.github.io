@@ -1,5 +1,5 @@
 ---
-title: "Singleton(싱글톤)"
+title: "Singleton"
 date: 2022-11-01
 lastUpdated: 2025-08-23
 ---

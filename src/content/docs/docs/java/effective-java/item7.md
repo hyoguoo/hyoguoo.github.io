@@ -1,5 +1,5 @@
 ---
-title: "Obsolete Objects(다 쓴 객체)"
+title: "Obsolete Objects"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

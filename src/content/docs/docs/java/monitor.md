@@ -1,5 +1,5 @@
 ---
-title: "모니터(Monitor)"
+title: "Monitor"
 date: 2025-08-20
 lastUpdated: 2025-11-20
 ---

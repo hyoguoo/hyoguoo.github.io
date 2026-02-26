@@ -1,5 +1,5 @@
 ---
-title: "Dependency Injection(의존 객체 주입)"
+title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Reflection(리플렉션)"
+title: "Reflection"
 date: 2023-06-15
 lastUpdated: 2025-11-30
 ---

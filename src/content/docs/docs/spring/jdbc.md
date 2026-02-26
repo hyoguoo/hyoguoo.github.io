@@ -1,5 +1,5 @@
 ---
-title: "JDBC(Java Database Connectivity)"
+title: "JDBC (Java Database Connectivity)"
 date: 2023-08-09
 lastUpdated: 2025-09-03
 ---

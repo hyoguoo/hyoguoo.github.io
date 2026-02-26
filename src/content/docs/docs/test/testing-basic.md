@@ -1,5 +1,5 @@
 ---
-title: "Testing Basic(테스트 기초)"
+title: "Testing Basic"
 date: 2024-08-27
 lastUpdated: 2024-08-27
 ---

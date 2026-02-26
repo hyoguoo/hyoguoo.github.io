@@ -1,5 +1,5 @@
 ---
-title: "AI 어시스턴트의 작동 원리"
+title: "How AI Assistants Work"
 date: 2025-10-24
 lastUpdated: 2025-12-20
 ---

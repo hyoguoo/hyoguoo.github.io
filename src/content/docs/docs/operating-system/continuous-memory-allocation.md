@@ -1,5 +1,5 @@
 ---
-title: "Continuous Memory Allocation(연속 메모리 할당)"
+title: "Continuous Memory Allocation"
 date: 2024-03-07
 lastUpdated: 2026-01-09
 ---

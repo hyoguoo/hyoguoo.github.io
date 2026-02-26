@@ -1,5 +1,5 @@
 ---
-title: "URI(Uniform Resource Identifier)"
+title: "URI (Uniform Resource Identifier)"
 date: 2023-06-15
 lastUpdated: 2025-12-10
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Data Structure(자료구조)"
+title: "Data Structure"
 date: 2024-09-28
 lastUpdated: 2025-10-04
 ---

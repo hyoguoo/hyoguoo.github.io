@@ -1,5 +1,5 @@
 ---
-title: "Class(클래스)"
+title: "Class"
 date: 2022-11-20
 lastUpdated: 2025-11-03
 ---

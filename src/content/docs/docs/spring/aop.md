@@ -1,5 +1,5 @@
 ---
-title: "AOP(Aspect-Oriented Programming)"
+title: "AOP (Aspect-Oriented Programming)"
 date: 2023-06-16
 lastUpdated: 2025-09-03
 ---

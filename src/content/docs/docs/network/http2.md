@@ -1,5 +1,5 @@
 ---
-title: "HTTP/2.0"
+title: "HTTP/2.0 (HyperText Transfer Protocol 2.0)"
 date: 2023-08-09
 lastUpdated: 2025-12-24
 ---

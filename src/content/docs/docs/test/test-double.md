@@ -1,5 +1,5 @@
 ---
-title: "Test Double(테스트 더블)"
+title: "Test Double"
 date: 2024-08-27
 lastUpdated: 2026-01-25
 ---

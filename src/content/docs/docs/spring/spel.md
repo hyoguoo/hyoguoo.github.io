@@ -1,5 +1,5 @@
 ---
-title: "SpEL(Spring Expression Language)"
+title: "SpEL (Spring Expression Language)"
 date: 2025-09-01
 lastUpdated: 2025-09-01
 ---

@@ -1,5 +1,5 @@
 ---
-title: "모놀리식 & 마이크로서비스 아키텍처"
+title: "Monolithic & Microservices Architecture"
 date: 2025-10-21
 lastUpdated: 2025-10-21
 ---

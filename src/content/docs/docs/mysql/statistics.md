@@ -1,5 +1,5 @@
 ---
-title: "Statistics(통계)"
+title: "Statistics"
 date: 2023-05-03
 lastUpdated: 2025-09-16
 ---

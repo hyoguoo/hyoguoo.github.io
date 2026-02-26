@@ -1,5 +1,5 @@
 ---
-title: "HandlerMapping & HandlerAdapter(핸들러 매핑 & 핸들러 어댑터)"
+title: "HandlerMapping & HandlerAdapter"
 date: 2024-03-07
 lastUpdated: 2025-08-25
 ---

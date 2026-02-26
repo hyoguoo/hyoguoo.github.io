@@ -1,5 +1,5 @@
 ---
-title: "Validation(검증)"
+title: "Validation"
 date: 2023-06-15
 lastUpdated: 2025-08-27
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Transaction(트랜잭션)"
+title: "Transaction"
 date: 2023-03-21
 lastUpdated: 2025-09-08
 ---

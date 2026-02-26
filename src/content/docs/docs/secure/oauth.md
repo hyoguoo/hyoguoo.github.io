@@ -1,5 +1,5 @@
 ---
-title: "OAuth"
+title: "OAuth (Open Authorization)"
 date: 2026-02-16
 lastUpdated: 2026-02-16
 ---

@@ -1,5 +1,5 @@
 ---
-title: "CPU scheduling(CPU 스케줄링)"
+title: "CPU Scheduling"
 date: 2024-03-07
 lastUpdated: 2026-01-05
 ---

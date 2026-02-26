@@ -1,5 +1,5 @@
 ---
-title: "Spring Boot Test Context(스프링 부트 테스트 컨텍스트)"
+title: "Spring Boot Test Context"
 date: 2025-10-23
 lastUpdated: 2025-10-23
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Variable(변수)"
+title: "Variable"
 date: 2022-10-08
 lastUpdated: 2025-10-29
 ---

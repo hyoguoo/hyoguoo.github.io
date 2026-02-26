@@ -1,5 +1,5 @@
 ---
-title: "Generic Type(제네릭 타입)"
+title: "Generic Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

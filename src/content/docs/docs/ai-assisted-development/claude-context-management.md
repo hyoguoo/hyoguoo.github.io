@@ -1,5 +1,5 @@
 ---
-title: "Claude 컨텍스트 관리"
+title: "Claude Context Management"
 date: 2025-12-21
 lastUpdated: 2025-12-21
 ---

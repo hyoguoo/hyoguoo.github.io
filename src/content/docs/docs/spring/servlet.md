@@ -1,5 +1,5 @@
 ---
-title: "Servlet(서블릿)"
+title: "Servlet"
 date: 2023-11-16
 lastUpdated: 2025-08-23
 ---

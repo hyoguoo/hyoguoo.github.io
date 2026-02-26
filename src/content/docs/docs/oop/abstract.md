@@ -1,5 +1,5 @@
 ---
-title: "Abstract(추상화)"
+title: "Abstract"
 date: 2022-10-30
 lastUpdated: 2026-01-22
 ---

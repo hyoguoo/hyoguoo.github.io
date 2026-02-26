@@ -1,5 +1,5 @@
 ---
-title: "Transport Layer(전송 계층) - TCP/IP Layer 3"
+title: "Transport Layer - TCP/IP Layer 3"
 date: 2024-03-07
 lastUpdated: 2025-12-08
 ---

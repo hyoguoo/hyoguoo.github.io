@@ -1,5 +1,5 @@
 ---
-title: "Abstract Class & Interface(추상 클래스와 인터페이스)"
+title: "Abstract Class & Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

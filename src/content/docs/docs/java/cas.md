@@ -1,5 +1,5 @@
 ---
-title: "CAS(Compare And Swap)"
+title: "CAS (Compare-And-Swap)"
 date: 2025-01-24
 lastUpdated: 2025-11-15
 ---

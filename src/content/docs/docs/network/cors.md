@@ -1,5 +1,5 @@
 ---
-title: "CORS(Cross-Origin Resource Sharing)"
+title: "CORS (Cross-Origin Resource Sharing)"
 date: 2022-10-13
 lastUpdated: 2025-12-30
 ---

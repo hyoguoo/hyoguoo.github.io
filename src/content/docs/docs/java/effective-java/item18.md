@@ -1,5 +1,5 @@
 ---
-title: "Composition(컴포지션)"
+title: "Composition"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

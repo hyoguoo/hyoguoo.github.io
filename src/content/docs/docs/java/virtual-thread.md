@@ -1,5 +1,5 @@
 ---
-title: "가상 스레드 (Virtual Thread)"
+title: "Virtual Thread"
 date: 2026-02-19
 lastUpdated: 2026-02-20
 ---

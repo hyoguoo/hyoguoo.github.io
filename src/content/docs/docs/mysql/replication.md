@@ -1,5 +1,5 @@
 ---
-title: "Replication(레플리케이션)"
+title: "Replication"
 date: 2023-07-27
 lastUpdated: 2025-09-27
 ---

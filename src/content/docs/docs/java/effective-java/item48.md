@@ -1,5 +1,5 @@
 ---
-title: "Parallel Stream(병렬 스트림)"
+title: "Parallel Stream"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

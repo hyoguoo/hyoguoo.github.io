@@ -1,5 +1,5 @@
 ---
-title: "File System(파일 시스템)"
+title: "File System"
 date: 2024-03-07
 lastUpdated: 2026-01-12
 ---

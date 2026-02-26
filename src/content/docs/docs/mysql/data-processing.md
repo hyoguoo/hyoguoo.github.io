@@ -1,5 +1,5 @@
 ---
-title: "Data Processing(데이터 처리)"
+title: "Data Processing"
 date: 2023-04-26
 lastUpdated: 2025-09-13
 ---

@@ -1,5 +1,5 @@
 ---
-title: "ZooKeeper와 KRaft"
+title: "ZooKeeper & KRaft"
 date: 2025-09-30
 lastUpdated: 2025-09-30
 ---

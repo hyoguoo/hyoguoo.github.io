@@ -1,5 +1,5 @@
 ---
-title: "Query System Variable(쿼리 시스템 변수)"
+title: "Query System Variable"
 date: 2023-05-16
 lastUpdated: 2025-09-17
 ---

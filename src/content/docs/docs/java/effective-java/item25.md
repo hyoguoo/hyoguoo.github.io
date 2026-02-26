@@ -1,5 +1,5 @@
 ---
-title: "Limit File Top-level Class(톱레벨 클래스 제한)"
+title: "Limit File Top-level Class"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

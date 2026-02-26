@@ -1,5 +1,5 @@
 ---
-title: "스레드 동기화(Synchronization)"
+title: "Synchronization"
 date: 2025-01-07
 lastUpdated: 2025-11-26
 ---

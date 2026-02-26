@@ -1,5 +1,5 @@
 ---
-title: "Builder(빌더)"
+title: "Builder"
 date: 2023-09-21
 lastUpdated: 2024-03-07
 ---

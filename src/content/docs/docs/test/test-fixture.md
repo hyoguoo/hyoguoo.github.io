@@ -1,5 +1,5 @@
 ---
-title: "Test Fixture(테스트 픽스처)"
+title: "Test Fixture"
 date: 2024-08-27
 lastUpdated: 2024-08-27
 ---

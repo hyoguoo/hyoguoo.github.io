@@ -1,5 +1,5 @@
 ---
-title: "Network Access Layer(네트워크 엑세스 계층) - TCP/IP Layer 1"
+title: "Network Access Layer - TCP/IP Layer 1"
 date: 2024-03-07
 lastUpdated: 2025-12-05
 ---

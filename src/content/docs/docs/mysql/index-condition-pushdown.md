@@ -1,5 +1,5 @@
 ---
-title: "Index Condition Pushdown(인덱스 조건 푸시다운)"
+title: "Index Condition Pushdown"
 date: 2025-08-15
 lastUpdated: 2025-09-27
 ---

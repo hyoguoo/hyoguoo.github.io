@@ -1,5 +1,5 @@
 ---
-title: "CPU 동작 방식(CPU Work)"
+title: "CPU Work"
 date: 2024-03-07
 lastUpdated: 2026-01-14
 ---

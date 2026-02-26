@@ -1,5 +1,5 @@
 ---
-title: "Beans(빈)"
+title: "Beans"
 date: 2022-10-10
 lastUpdated: 2025-08-22
 ---

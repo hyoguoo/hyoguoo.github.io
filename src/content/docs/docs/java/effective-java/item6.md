@@ -1,5 +1,5 @@
 ---
-title: "Unnecessary Objects(불필요한 객체)"
+title: "Unnecessary Objects"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Function & Structure(기능 & 구조)"
+title: "Function & Structure"
 date: 2024-03-07
 lastUpdated: 2026-01-25
 ---

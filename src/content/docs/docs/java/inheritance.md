@@ -1,5 +1,5 @@
 ---
-title: "Inheritance(상속)"
+title: "Inheritance"
 date: 2022-11-21
 lastUpdated: 2025-11-04
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Design  Map"
+title: "Design Map"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Instruction Level Parallelism(명령어 병렬 처리 기법)"
+title: "Instruction Level Parallelism"
 date: 2024-03-07
 lastUpdated: 2026-01-17
 ---

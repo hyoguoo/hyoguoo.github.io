@@ -1,5 +1,5 @@
 ---
-title: "Type(타입)"
+title: "Type"
 date: 2022-10-30
 lastUpdated: 2026-01-23
 ---

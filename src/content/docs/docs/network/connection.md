@@ -1,5 +1,5 @@
 ---
-title: "Connection(커넥션)"
+title: "Connection"
 date: 2023-08-09
 lastUpdated: 2025-12-16
 ---

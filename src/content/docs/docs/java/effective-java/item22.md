@@ -1,5 +1,5 @@
 ---
-title: "Constant Interface(상수 인터페이스)"
+title: "Constant Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

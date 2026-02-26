@@ -1,5 +1,5 @@
 ---
-title: "Analyze Execution Plan(실행 계획 분석)"
+title: "Analyze Execution Plan"
 date: 2023-05-08
 lastUpdated: 2025-09-17
 ---

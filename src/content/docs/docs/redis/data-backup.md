@@ -1,5 +1,5 @@
 ---
-title: "Data Backup(데이터 백업)"
+title: "Data Backup"
 date: 2025-02-14
 lastUpdated: 2025-10-08
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Optimizer(옵티마이저)"
+title: "Optimizer"
 date: 2023-04-23
 lastUpdated: 2025-09-13
 ---

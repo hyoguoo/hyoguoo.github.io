@@ -1,5 +1,5 @@
 ---
-title: "Basic(기초)"
+title: "Basic"
 date: 2024-03-07
 lastUpdated: 2026-01-13
 ---

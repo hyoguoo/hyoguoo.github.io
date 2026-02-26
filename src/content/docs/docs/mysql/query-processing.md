@@ -1,5 +1,5 @@
 ---
-title: "Query Processing(쿼리 처리)"
+title: "Query Processing"
 date: 2025-08-15
 lastUpdated: 2025-08-16
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Method Reference(메서드 참조)"
+title: "Method Reference"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

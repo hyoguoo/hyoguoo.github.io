@@ -1,5 +1,5 @@
 ---
-title: "Literal Notation(리터럴 표기)"
+title: "Literal Notation"
 date: 2023-05-16
 lastUpdated: 2025-09-17
 ---

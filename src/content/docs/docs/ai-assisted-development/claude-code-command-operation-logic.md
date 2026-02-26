@@ -1,5 +1,5 @@
 ---
-title: "Claude Code 명령과 동작 원리"
+title: "Claude Code Command and Operation Logic"
 date: 2026-02-06
 lastUpdated: 2026-02-10
 ---

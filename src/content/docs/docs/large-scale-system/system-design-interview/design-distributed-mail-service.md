@@ -1,5 +1,5 @@
 ---
-title: "Distributed Mail Service Design(분산 메일 서비스 설계)"
+title: "Distributed Mail Service Design"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 ---

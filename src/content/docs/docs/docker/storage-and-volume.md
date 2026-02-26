@@ -1,5 +1,5 @@
 ---
-title: "Storage and Volume(스토리지와 볼륨)"
+title: "Storage and Volume"
 date: 2026-02-13
 lastUpdated: 2026-02-13
 ---

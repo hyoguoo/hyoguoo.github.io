@@ -1,5 +1,5 @@
 ---
-title: "Component Scan(컴포넌트 스캔)"
+title: "Component Scan"
 date: 2024-03-07
 lastUpdated: 2025-08-22
 ---

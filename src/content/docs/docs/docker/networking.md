@@ -1,5 +1,5 @@
 ---
-title: "Networking(네트워킹)"
+title: "Networking"
 date: 2026-02-06
 lastUpdated: 2026-02-06
 ---

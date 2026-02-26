@@ -1,5 +1,5 @@
 ---
-title: "보안(Security)"
+title: "Security"
 date: 2026-02-13
 lastUpdated: 2026-02-14
 ---

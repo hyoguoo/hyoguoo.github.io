@@ -1,5 +1,5 @@
 ---
-title: "View Resolver(뷰 리졸버)"
+title: "View Resolver"
 date: 2024-03-07
 lastUpdated: 2025-08-25
 ---

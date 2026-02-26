@@ -1,5 +1,5 @@
 ---
-title: "DispatcherServlet(디스패처 서블릿)"
+title: "DispatcherServlet"
 date: 2024-03-07
 lastUpdated: 2025-08-24
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Introduction(소개)"
+title: "Introduction"
 date: 2026-02-02
 lastUpdated: 2026-02-02
 ---

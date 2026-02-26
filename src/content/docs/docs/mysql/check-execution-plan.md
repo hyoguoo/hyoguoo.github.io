@@ -1,5 +1,5 @@
 ---
-title: "Check Execution Plan(실행 계획 확인)"
+title: "Check Execution Plan"
 date: 2023-05-07
 lastUpdated: 2025-09-16
 ---

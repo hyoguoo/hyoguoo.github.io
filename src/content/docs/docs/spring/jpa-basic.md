@@ -1,5 +1,5 @@
 ---
-title: "JPA"
+title: "JPA (Java Persistence API)"
 date: 2024-03-07
 lastUpdated: 2025-09-06
 ---

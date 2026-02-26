@@ -1,5 +1,5 @@
 ---
-title: "Array(배열)"
+title: "Array"
 date: 2022-11-20
 lastUpdated: 2024-08-30
 ---

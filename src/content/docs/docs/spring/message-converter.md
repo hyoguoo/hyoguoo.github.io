@@ -1,5 +1,5 @@
 ---
-title: "Message Converter(메시지 컨버터)"
+title: "Message Converter"
 date: 2024-03-07
 lastUpdated: 2025-08-26
 ---

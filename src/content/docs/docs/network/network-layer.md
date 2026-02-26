@@ -1,5 +1,5 @@
 ---
-title: "Network Layer(네트워크 계층) - TCP/IP Layer 2"
+title: "Network Layer - TCP/IP Layer 2"
 date: 2024-03-07
 lastUpdated: 2025-12-06
 ---

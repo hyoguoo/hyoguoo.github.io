@@ -1,5 +1,5 @@
 ---
-title: "Spring Container(컨테이너)"
+title: "Spring Container"
 date: 2025-07-08
 lastUpdated: 2025-08-22
 ---

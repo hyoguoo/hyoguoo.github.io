@@ -1,5 +1,5 @@
 ---
-title: "Subtyping(하위 타입)"
+title: "Subtyping"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

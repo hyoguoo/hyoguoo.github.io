@@ -1,5 +1,5 @@
 ---
-title: "Digital Cryptography Basic(디지털 암호학 기초)"
+title: "Digital Cryptography Basic"
 date: 2024-03-07
 lastUpdated: 2026-01-19
 ---

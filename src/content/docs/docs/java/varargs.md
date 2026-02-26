@@ -1,5 +1,5 @@
 ---
-title: "Varargs(가변인수)"
+title: "Varargs"
 date: 2023-10-28
 lastUpdated: 2025-11-22
 ---

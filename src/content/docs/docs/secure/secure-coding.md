@@ -1,5 +1,5 @@
 ---
-title: "Secure Coding(시큐어 코딩)"
+title: "Secure Coding"
 date: 2024-03-07
 lastUpdated: 2026-01-20
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Kernel(커널)"
+title: "Kernel"
 date: 2024-03-07
 lastUpdated: 2025-12-31
 ---

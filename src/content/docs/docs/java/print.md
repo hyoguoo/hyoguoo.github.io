@@ -1,5 +1,5 @@
 ---
-title: "Print(출력)"
+title: "Print"
 date: 2022-11-20
 lastUpdated: 2025-10-30
 ---

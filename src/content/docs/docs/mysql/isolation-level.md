@@ -1,5 +1,5 @@
 ---
-title: "Isolation Level(격리 수준)"
+title: "Isolation Level"
 date: 2023-03-25
 lastUpdated: 2025-09-10
 ---

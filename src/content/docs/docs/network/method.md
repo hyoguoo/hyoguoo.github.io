@@ -1,5 +1,5 @@
 ---
-title: "Method(메서드)"
+title: "Method"
 date: 2023-08-09
 lastUpdated: 2025-12-15
 ---

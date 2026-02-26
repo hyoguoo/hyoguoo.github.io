@@ -1,5 +1,5 @@
 ---
-title: "Modifier(제어자)"
+title: "Modifier"
 date: 2022-11-28
 lastUpdated: 2025-10-31
 ---

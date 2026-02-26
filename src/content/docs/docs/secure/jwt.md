@@ -1,5 +1,5 @@
 ---
-title: "JWT(JSON Web Token)"
+title: "JWT (JSON Web Token)"
 date: 2026-02-15
 lastUpdated: 2026-02-15
 ---

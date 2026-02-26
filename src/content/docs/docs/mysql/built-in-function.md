@@ -1,5 +1,5 @@
 ---
-title: "Built-in Function(내장 함수)"
+title: "Built-in Function"
 date: 2023-05-23
 lastUpdated: 2025-09-18
 ---

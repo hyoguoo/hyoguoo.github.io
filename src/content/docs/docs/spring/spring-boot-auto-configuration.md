@@ -1,5 +1,5 @@
 ---
-title: "Spring Boot Auto Configuration(스프링 부트 자동 설정)"
+title: "Spring Boot Auto Configuration"
 date: 2025-08-28
 lastUpdated: 2026-02-25
 ---

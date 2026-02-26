@@ -1,5 +1,5 @@
 ---
-title: "Interrupt(인터럽트)"
+title: "Interrupt"
 date: 2024-03-07
 lastUpdated: 2026-01-17
 ---

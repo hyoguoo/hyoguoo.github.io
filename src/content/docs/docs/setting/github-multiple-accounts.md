@@ -1,5 +1,5 @@
 ---
-title: "GitHub 다중 계정 설정"
+title: "GitHub Multiple Accounts"
 date: 2024-03-07
 lastUpdated: 2026-01-26
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Noninstantiability(인스턴스화 불가)"
+title: "Noninstantiability"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 ---

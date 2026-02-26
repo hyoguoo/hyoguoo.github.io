@@ -1,5 +1,5 @@
 ---
-title: "Interface(인터페이스)"
+title: "Interface"
 date: 2022-12-05
 lastUpdated: 2025-11-06
 ---

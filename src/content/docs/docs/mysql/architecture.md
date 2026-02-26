@@ -1,5 +1,5 @@
 ---
-title: "Architecture(아키텍처)"
+title: "Architecture"
 date: 2023-03-20
 lastUpdated: 2026-02-21
 ---

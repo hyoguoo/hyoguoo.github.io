@@ -1,5 +1,5 @@
 ---
-title: "Performance Test(성능 테스트)"
+title: "Performance Test"
 date: 2023-07-21
 lastUpdated: 2025-09-24
 ---

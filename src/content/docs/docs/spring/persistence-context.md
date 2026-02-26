@@ -1,5 +1,5 @@
 ---
-title: "Persistence Context(영속성 컨텍스트)"
+title: "Persistence Context"
 date: 2024-03-07
 lastUpdated: 2025-09-06
 ---

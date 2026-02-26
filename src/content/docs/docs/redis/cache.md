@@ -1,5 +1,5 @@
 ---
-title: "Cache(캐시)"
+title: "Cache"
 date: 2025-02-13
 lastUpdated: 2025-10-06
 ---

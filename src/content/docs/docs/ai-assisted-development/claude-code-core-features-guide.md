@@ -1,5 +1,5 @@
 ---
-title: "Claude Code - 핵심 기능 및 활용 가이드"
+title: "Claude Code - Core Features Guide"
 date: 2025-10-26
 lastUpdated: 2025-10-26
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Filter & Interceptor(필터 & 인터셉터)"
+title: "Filter & Interceptor"
 date: 2024-03-07
 lastUpdated: 2025-08-27
 ---

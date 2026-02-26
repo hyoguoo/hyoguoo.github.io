@@ -1,5 +1,5 @@
 ---
-title: "Spring Boot Properties(스프링 부트 설정)"
+title: "Spring Boot Properties"
 date: 2025-08-28
 lastUpdated: 2025-08-28
 ---

@@ -1,5 +1,5 @@
 ---
-title: "Role & Responsibility & Cooperation(역할 & 책임 & 협력)"
+title: "Role & Responsibility & Cooperation"
 date: 2024-03-07
 lastUpdated: 2026-01-24
 ---

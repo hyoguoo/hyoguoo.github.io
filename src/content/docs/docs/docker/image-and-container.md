@@ -1,5 +1,5 @@
 ---
-title: "Image and Container(이미지와 컨테이너)"
+title: "Image and Container"
 date: 2026-02-04
 lastUpdated: 2026-02-04
 ---

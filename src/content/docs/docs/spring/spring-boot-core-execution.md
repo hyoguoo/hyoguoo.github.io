@@ -1,5 +1,5 @@
 ---
-title: "Spring Boot(스프링 부트)"
+title: "Spring Boot"
 date: 2025-08-28
 lastUpdated: 2025-08-28
 ---

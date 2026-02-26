@@ -1,5 +1,5 @@
 ---
-title: "Collections(컬렉션)"
+title: "Collections"
 date: 2022-11-28
 lastUpdated: 2025-11-10
 ---

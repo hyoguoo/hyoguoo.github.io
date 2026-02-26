@@ -1,5 +1,5 @@
 ---
-title: "GitHub Verified Commit 설정"
+title: "GitHub Verified Commit"
 date: 2024-03-07
 lastUpdated: 2026-01-26
 ---

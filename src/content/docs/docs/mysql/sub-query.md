@@ -1,5 +1,5 @@
 ---
-title: "Sub Query(서브쿼리)"
+title: "Sub Query"
 date: 2023-07-13
 lastUpdated: 2025-09-20
 ---

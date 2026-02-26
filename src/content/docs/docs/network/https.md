@@ -1,5 +1,5 @@
 ---
-title: "HTTPS"
+title: "HTTPS (HyperText Transfer Protocol Secure)"
 date: 2023-08-09
 lastUpdated: 2025-12-20
 ---

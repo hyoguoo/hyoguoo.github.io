@@ -1,5 +1,5 @@
 ---
-title: "Operator(연산자)"
+title: "Operator"
 date: 2023-05-20
 lastUpdated: 2025-09-18
 ---
