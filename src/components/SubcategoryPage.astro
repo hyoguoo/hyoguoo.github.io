@@ -9,9 +9,13 @@ interface Props {
 const { subcategory } = Astro.props;
 
 const allDocs = await getCollection('docs', ({ id }) => {
-  const last = id.split('/').pop() ?? '';
+  const parts = id.split('/');
+  const last = parts[parts.length - 1];
+  // 직접 자식 depth만 포함 (docs/<subcategory>/<slug>)
+  // 더 깊은 경로(예: docs/java/effective-java/item1)는 제외
   return (
     id.startsWith(`docs/${subcategory}/`) &&
+    parts.length === 3 &&
     !['index', 'index.md', 'index.mdx'].includes(last)
   );
 });

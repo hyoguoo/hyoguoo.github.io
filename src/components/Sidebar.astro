@@ -2,6 +2,14 @@
 import Default from '@astrojs/starlight/components/Sidebar.astro';
 
 const isBlog = Astro.url.pathname.startsWith('/blog');
+const isAbout = Astro.url.pathname.startsWith('/about');
+const hideSidebar = isAbout;
 ---
 
-{!isBlog && <Default {...Astro.props} />}
+{hideSidebar && (
+  <style is:inline>
+    nav.sidebar { display: none !important; }
+    .main-frame { padding-inline-start: 0 !important; }
+  </style>
+)}
+{!isBlog && !hideSidebar && <Default {...Astro.props} />}

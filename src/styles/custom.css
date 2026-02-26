@@ -4,6 +4,7 @@
   --sl-color-accent: #3b82f6;
   --sl-color-accent-high: #93c5fd;
   --sl-font: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+  --sl-content-width: 67.5rem;
 }
 
 :root[data-theme='light'] {

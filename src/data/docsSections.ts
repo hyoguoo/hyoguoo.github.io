@@ -30,5 +30,19 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Advanced',
       slugs: ['varargs', 'generic', 'lambda', 'reflection', 'serialization'],
     },
+    {
+      label: 'Effective Java',
+      slugs: ['effective-java'],
+    },
+  ],
+  mysql: [
+    {
+      label: 'Index',
+      slugs: ['btree-index'],
+    },
+    {
+      label: 'Transaction',
+      slugs: ['transaction', 'isolation-level'],
+    },
   ],
 };
