@@ -44,7 +44,7 @@ const titleHtml = rawTitle.replace(/`([^`]+)`/g, '<code>$1</code>');
 // Back to parent button
 const pathname = Astro.url.pathname;
 const pathParts = pathname.replace(/\/$/, '').split('/').filter(Boolean);
-const showBackButton = isBlogPost || (isDocsPage && pathParts.length >= 3);
+const showBackButton = isBlogPost || (isDocsPage && pathParts.length >= 2);
 const parentPath = showBackButton
   ? (isBlogPost ? '/blog/' : '/' + pathParts.slice(0, -1).join('/') + '/')
   : null;
