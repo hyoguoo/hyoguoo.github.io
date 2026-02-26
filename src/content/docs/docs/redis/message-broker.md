@@ -2,6 +2,8 @@
 title: "Message Broker"
 date: 2025-08-07
 lastUpdated: 2025-10-07
+tags: [Redis]
+description: ""
 ---
 
 메시지 브로커는 크게 메시징 큐와 이벤트 스트림 두 가지 형태로 나뉘는데, 레디스는 일반적으로 List 자료구조를 활용한 메시징 큐(Message Queue)로 활용된다.

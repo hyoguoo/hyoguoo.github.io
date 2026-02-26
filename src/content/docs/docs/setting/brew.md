@@ -2,6 +2,8 @@
 title: "Homebrew"
 date: 2023-06-15
 lastUpdated: 2026-01-26
+tags: [Setting]
+description: ""
 ---
 
 Homebrew는 macOS용 패키지 관리자로, 커맨드라인 프로그램과 GUI 애플리케케이션의 설치, 업데이트, 삭제를 간편하게 관리할 수 있도록 돕는다.

@@ -2,6 +2,8 @@
 title: "Type Safe Heterogeneous Container"
 date: 2024-03-07
 lastUpdated: 2024-06-05
+tags: [Java]
+description: ""
 ---
 
 > 타입 안전 이종 컨테이너를 고려하라

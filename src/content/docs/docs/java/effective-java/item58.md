@@ -2,6 +2,8 @@
 title: "For-each Loop"
 date: 2024-03-07
 lastUpdated: 2024-06-04
+tags: [Java]
+description: ""
 ---
 
 > 전통적인 for 문 보다는 for-each 문을 사용하라

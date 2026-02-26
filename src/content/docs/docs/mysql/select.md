@@ -2,6 +2,8 @@
 title: "SELECT"
 date: 2023-06-03
 lastUpdated: 2025-09-22
+tags: [MySQL]
+description: ""
 ---
 
 ## SELECT 절의 인덱스 사용

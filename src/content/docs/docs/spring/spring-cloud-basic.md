@@ -2,6 +2,8 @@
 title: "Spring Cloud Basic"
 date: 2025-10-10
 lastUpdated: 2025-10-11
+tags: [Spring]
+description: ""
 ---
 
 Spring Cloud는 분산 시스템, 특히 마이크로서비스 아키텍처(MSA)를 구축할 때 공통적으로 발생하는 문제들을 해결하기 위한 기능들 제공하는 프레임워크다.

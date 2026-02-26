@@ -2,6 +2,8 @@
 title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2025-08-22
+tags: [Spring]
+description: ""
 ---
 
 > 객체 간 의존성을 자신이 아닌 외부에서 두 객체 간의 관계를 결정해주는 디자인 패턴

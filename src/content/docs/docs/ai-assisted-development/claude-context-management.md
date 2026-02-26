@@ -2,6 +2,8 @@
 title: "Claude Context Management"
 date: 2025-12-21
 lastUpdated: 2025-12-21
+tags: [AI-Assisted Development]
+description: ""
 ---
 
 Claude의 성능은 컨텍스트 윈도우를 얼마나 효율적으로 관리하느냐에 따라 결정된다. 제한된 토큰 공간에 필요한 정보만 정확히 담아야 높은 품질의 응답을 얻을 수 있다.

@@ -2,6 +2,8 @@
 title: "Interface"
 date: 2022-12-05
 lastUpdated: 2025-11-06
+tags: [Java]
+description: ""
 ---
 
 일종의 추상클래스로 추상클래스보다 추상화 정도가 더 높으며, 다음과 같은 특징이 있다.

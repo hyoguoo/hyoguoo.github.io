@@ -2,6 +2,8 @@
 title: "Basic"
 date: 2024-09-28
 lastUpdated: 2025-10-04
+tags: [Redis]
+description: ""
 ---
 
 Redis(Remote Dictionary Server)는 'Key-Value' 기반의 In-Memory 데이터 저장소로, 디스크 기반 데이터베이스보다 빠른 읽기/쓰기 속도를 제공하는 것이 가장 큰 특징이다.

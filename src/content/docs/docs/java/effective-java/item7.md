@@ -2,6 +2,8 @@
 title: "Obsolete Objects"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 다 쓴 객체 참조를 해제하라

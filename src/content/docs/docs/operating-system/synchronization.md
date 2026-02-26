@@ -2,6 +2,8 @@
 title: "Synchronization"
 date: 2024-03-07
 lastUpdated: 2026-01-06
+tags: [Operating System]
+description: ""
 ---
 
 다중 프로그래밍 환경에서 여러 프로세스나 스레드가 제한된 자원을 공유하며 실행될 때, 데이터의 일관성을 유지하고 실행 순서를 제어하는 메커니즘이다.

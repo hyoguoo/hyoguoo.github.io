@@ -2,6 +2,8 @@
 title: "Wildcard type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 한정적 와일드카드를 사용해 API 유연성을 높이라

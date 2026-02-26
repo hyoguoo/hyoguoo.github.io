@@ -2,6 +2,8 @@
 title: "Enums"
 date: 2023-06-15
 lastUpdated: 2025-11-01
+tags: [Java]
+description: ""
 ---
 
 열거형(Enums)은 서로 연관된 상수들의 집합을 정의할 때 사용하는 데이터 타입으로, 타입 안전성을 보장하고 코드의 가독성을 높이는 데 목적이 있다.

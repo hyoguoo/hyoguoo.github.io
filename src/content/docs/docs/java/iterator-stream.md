@@ -2,6 +2,8 @@
 title: "Iterator"
 date: 2024-03-07
 lastUpdated: 2025-11-12
+tags: [Java]
+description: ""
 ---
 
 `Iterator`는 컬렉션의 데이터를 순회하고 접근하기 위한 인터페이스로, 컬렉션 구현체의 내부 구조를 알지 못해도, 일관된 방식으로 요소에 접근할 수 있게 해준다.

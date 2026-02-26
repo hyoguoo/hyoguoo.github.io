@@ -2,6 +2,8 @@
 title: "Deadlock"
 date: 2024-03-07
 lastUpdated: 2026-01-08
+tags: [Operating System]
+description: ""
 ---
 
 두 개 이상의 프로세스가 서로 상대방이 점유하고 있는 자원을 요구하며 무한정 대기하는 상태다.

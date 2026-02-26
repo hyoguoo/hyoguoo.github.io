@@ -2,6 +2,8 @@
 title: "Image and Container"
 date: 2026-02-04
 lastUpdated: 2026-02-04
+tags: [Docker]
+description: ""
 ---
 
 실행 환경을 담은 이미지는 정적인 설계도이며, 컨테이너는 이 설계도를 기반으로 격리된 환경에서 돌아가는 동적인 프로세스다.

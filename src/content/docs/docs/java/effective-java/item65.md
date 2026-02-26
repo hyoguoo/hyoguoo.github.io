@@ -2,6 +2,8 @@
 title: "Reflection & Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 리플렉션보다는 인터페이스를 사용하라

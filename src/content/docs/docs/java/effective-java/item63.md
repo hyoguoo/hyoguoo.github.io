@@ -2,6 +2,8 @@
 title: "String Concat"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 문자열 연결은 느리니 주의해서 사용하라

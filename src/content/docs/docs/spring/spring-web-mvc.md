@@ -2,6 +2,8 @@
 title: "Spring Web MVC"
 date: 2025-06-27
 lastUpdated: 2025-08-23
+tags: [Spring]
+description: ""
 ---
 
 > Spring Web MVC는 Spring Framework에서 제공하는 웹 애플리케이션 프레임워크

@@ -2,6 +2,8 @@
 title: "equals"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > equals는 일반 규약을 지켜 재정의하라

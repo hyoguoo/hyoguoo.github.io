@@ -2,6 +2,8 @@
 title: "JDBC (Java Database Connectivity)"
 date: 2023-08-09
 lastUpdated: 2025-09-03
+tags: [Spring]
+description: ""
 ---
 
 자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API로, Java로 데이터베이스에 연결 및 쿼리를 실행하기 위한 표준 인터페이스를 제공한다.

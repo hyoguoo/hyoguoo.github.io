@@ -2,6 +2,8 @@
 title: "Decimal Calculation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 정확한 답이 필요하다면 float와 double은 피하라.

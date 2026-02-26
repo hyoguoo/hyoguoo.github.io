@@ -2,6 +2,8 @@
 title: "Proxy"
 date: 2023-06-15
 lastUpdated: 2025-12-30
+tags: [Network]
+description: ""
 ---
 
 클라이언트와 서버 사이에 위치하여 중개자 역할을 수행하는 서버 애플리케이션이다.

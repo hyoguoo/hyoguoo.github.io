@@ -2,6 +2,8 @@
 title: "Varargs"
 date: 2024-03-07
 lastUpdated: 2024-06-04
+tags: [Java]
+description: ""
 ---
 
 > 가변인수는 신중히 사용하라

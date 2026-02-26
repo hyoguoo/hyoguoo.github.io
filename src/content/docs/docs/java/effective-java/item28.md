@@ -2,6 +2,8 @@
 title: "List vs Array"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 배열보다는 리스트를 사용하라

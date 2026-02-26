@@ -2,6 +2,8 @@
 title: "Alternatives Serialization"
 date: 2024-08-19
 lastUpdated: 2024-08-19
+tags: [Java]
+description: ""
 ---
 
 > 자바 직렬화의 대안을 찾으라

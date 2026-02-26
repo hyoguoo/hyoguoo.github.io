@@ -2,6 +2,8 @@
 title: "Role & Responsibility & Cooperation"
 date: 2024-03-07
 lastUpdated: 2026-01-24
+tags: [OOP]
+description: ""
 ---
 
 객체지향 설계의 핵심은 동적인 객체 간의 협력으로, 협력을 통해 객체의 행동(책임)이 드러나고, 역할이 정의된다.

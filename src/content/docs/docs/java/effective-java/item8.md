@@ -2,6 +2,8 @@
 title: "Finalizer & Cleaner"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > Finalizer와 Cleaner 사용을 피하라

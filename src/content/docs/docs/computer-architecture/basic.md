@@ -2,6 +2,8 @@
 title: "Basic"
 date: 2024-03-07
 lastUpdated: 2026-01-13
+tags: [Computer Architecture]
+description: ""
 ---
 
 ## 컴퓨터가 이해하는 정보

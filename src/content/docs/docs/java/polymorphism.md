@@ -2,6 +2,8 @@
 title: "Polymorphism"
 date: 2022-11-28
 lastUpdated: 2025-11-05
+tags: [Java]
+description: ""
 ---
 
 자바는 조상 클래스 타입의 참조 변수로 그 자손 클래스의 인스턴스를 참조할 수 있도록 하여 다형성을 구현한다.

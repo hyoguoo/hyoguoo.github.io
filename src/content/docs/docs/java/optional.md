@@ -2,6 +2,8 @@
 title: "Optional"
 date: 2023-09-19
 lastUpdated: 2025-11-13
+tags: [Java]
+description: ""
 ---
 자바에서 원시 타입을 제외한 모든 참조 변수는 `null`을 가질 수 있어, 이로 인해 `NullPointerException`(NPE)이 빈번하게 발생한다.
 

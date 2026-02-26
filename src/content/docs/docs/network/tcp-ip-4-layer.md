@@ -2,6 +2,8 @@
 title: "TCP/IP 4 Layer"
 date: 2024-03-07
 lastUpdated: 2025-12-03
+tags: [Network]
+description: ""
 ---
 
 현대 네트워크 통신의 기반이 되는 프로토콜로, 이론적 모델인 OSI 7계층과 달리 실무적 구현과 효율성을 중시하여 설계되었다.

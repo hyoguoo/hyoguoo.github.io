@@ -2,6 +2,8 @@
 title: "JWT (JSON Web Token)"
 date: 2026-02-15
 lastUpdated: 2026-02-15
+tags: [Secure]
+description: ""
 ---
 
 JWT는 두 개체 간에 정보를 JSON 객체로서 안전하게 전송하기 위한 컴팩트하고 독립적인(self-contained) 방식의 공개 표준(RFC 7519)이다.

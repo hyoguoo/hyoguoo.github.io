@@ -2,6 +2,8 @@
 title: "Introduction"
 date: 2025-09-28
 lastUpdated: 2025-09-28
+tags: [Kafka]
+description: ""
 ---
 
 현대의 분산 시스템 환경에서 서비스 간의 데이터 연동 복잡성은 기하급수적으로 증가하는데, 카프카는 시스템 간의 결합도를 낮추고 데이터 흐름을 체계적으로 관리해준다.

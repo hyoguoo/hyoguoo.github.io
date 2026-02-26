@@ -2,6 +2,8 @@
 title: "Optimization"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 최적화는 신중히 하라

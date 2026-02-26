@@ -2,6 +2,8 @@
 title: "Query Processing"
 date: 2025-08-15
 lastUpdated: 2025-08-16
+tags: [MySQL]
+description: ""
 ---
 
 MySQL이 하나의 SQL 쿼리를 받아 결과를 반환하기까지, 내부는 MySQL 서버(Server)와 스토리지 엔진(Storage Engine) 두 컴포넌트가 핸들러 API를 통해 협력하여 처리한다.

@@ -2,6 +2,8 @@
 title: "Generic Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 이왕이면 제네릭 타입으로 만들라

@@ -2,6 +2,8 @@
 title: "Network Layer - TCP/IP Layer 2"
 date: 2024-03-07
 lastUpdated: 2025-12-06
+tags: [Network]
+description: ""
 ---
 
 TCP/IP 모델의 2계층으로 OSI 7계층의 네트워크 계층(Network Layer)으로, 물리적 연결을 넘어 최종 목적지까지 데이터를 안전하고 빠르게 전달하는 것이 주 목적이다.

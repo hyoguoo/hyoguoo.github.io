@@ -2,6 +2,8 @@
 title: "Consumer Internals"
 date: 2025-10-02
 lastUpdated: 2025-10-03
+tags: [Kafka]
+description: ""
 ---
 
 컨슈머는 토픽의 메시지를 읽어 처리하는 클라이언트이며, 내부적으로는 컨슈머 그룹이라는 개념을 통해 확장성과 안정성을 보장받는다.

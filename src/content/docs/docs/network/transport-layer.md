@@ -2,6 +2,8 @@
 title: "Transport Layer - TCP/IP Layer 3"
 date: 2024-03-07
 lastUpdated: 2025-12-08
+tags: [Network]
+description: ""
 ---
 
 네트워크 계층(IP)이 호스트(PC) 간의 데이터 전달을 담당한다면, 전송 계층은 호스트 내에서 실행 중인 어떤 프로세스(애플리케이션)에게 데이터를 전달할지 결정하고 데이터의 신뢰성을 관리하는 계층이다.

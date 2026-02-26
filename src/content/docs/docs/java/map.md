@@ -2,6 +2,8 @@
 title: "Map"
 date: 2023-06-15
 lastUpdated: 2025-11-11
+tags: [Java]
+description: ""
 ---
 
 키(Key)와 값(Value)을 하나의 쌍으로 묶어 저장하는 자료 구조로, 키를 통해 값을 빠르게 탐색하는 데 최적화되어 있다.

@@ -2,6 +2,8 @@
 title: "Index Condition Pushdown"
 date: 2025-08-15
 lastUpdated: 2025-09-27
+tags: [MySQL]
+description: ""
 ---
 
 인덱스 컨디션 푸시다운(ICP)은 MySQL 5.6부터 도입된 옵티마이저의 최적화 기능으로, 인덱스 스캔 효율을 극대화하는 기술이다.

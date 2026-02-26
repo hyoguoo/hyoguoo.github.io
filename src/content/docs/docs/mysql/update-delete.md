@@ -2,6 +2,8 @@
 title: "UPDATE / DELETE"
 date: 2023-07-18
 lastUpdated: 2025-09-22
+tags: [MySQL]
+description: ""
 ---
 
 `UPDATE` / `DELETE` 쿼리를 단일 테이블에 대해 한 건(또는 소량) 뿐만 아니라, 조인을 통해 여러 테이블을 동시에 대상으로 하여 `UPDATE` / `DELETE` 쿼리를 실행할 수 있다.

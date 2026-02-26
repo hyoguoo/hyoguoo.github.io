@@ -2,6 +2,8 @@
 title: "HandlerMapping & HandlerAdapter"
 date: 2024-03-07
 lastUpdated: 2025-08-25
+tags: [Spring]
+description: ""
 ---
 
 HandlerMapping 및 HandlerAdapter는 들어오는 HTTP 요청을 처리하고 적절한 Controller 메서드에 매핑하는 MVC 프레임워크의 중요한 역할을 한다.  

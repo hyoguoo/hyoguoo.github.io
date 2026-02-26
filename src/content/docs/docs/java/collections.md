@@ -2,6 +2,8 @@
 title: "Collections"
 date: 2022-11-28
 lastUpdated: 2025-11-10
+tags: [Java]
+description: ""
 ---
 컬렉션은 객체 그룹을 저장하고 조작하기 위한 표준화된 프레임워크를 제공한다.
 

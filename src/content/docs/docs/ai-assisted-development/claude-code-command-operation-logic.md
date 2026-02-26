@@ -2,6 +2,8 @@
 title: "Claude Code Command and Operation Logic"
 date: 2026-02-06
 lastUpdated: 2026-02-10
+tags: [AI-Assisted Development]
+description: ""
 ---
 
 ## 1. CLAUDE.md

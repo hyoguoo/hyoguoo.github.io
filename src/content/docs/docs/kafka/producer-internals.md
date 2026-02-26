@@ -2,6 +2,8 @@
 title: "Producer Internals"
 date: 2025-10-02
 lastUpdated: 2025-10-02
+tags: [Kafka]
+description: ""
 ---
 
 ## 프로듀서의 메시지 전송 과정

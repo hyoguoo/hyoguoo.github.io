@@ -2,6 +2,8 @@
 title: "Design Unique ID Generation For Distributed System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 유일 ID를 위해 관계형 데이터베이스의 `auto_increment` 베이스를 기본 키를 사용하는 방법도 존재한다.  

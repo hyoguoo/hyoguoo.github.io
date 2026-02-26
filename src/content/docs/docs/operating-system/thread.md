@@ -2,6 +2,8 @@
 title: "Thread"
 date: 2024-03-07
 lastUpdated: 2026-01-03
+tags: [Operating System]
+description: ""
 ---
 
 스레드는 프로세스 내에서 실행되는 흐름의 단위이자, CPU 스케줄링의 기본 단위다.

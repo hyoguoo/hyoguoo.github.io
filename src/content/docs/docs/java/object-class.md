@@ -2,6 +2,8 @@
 title: "Object class"
 date: 2024-03-07
 lastUpdated: 2025-11-07
+tags: [Java]
+description: ""
 ---
 
 `java.lang` 패키지는 자바 프로그래밍의 가장 기본이 되는 클래스들을 포함한다.

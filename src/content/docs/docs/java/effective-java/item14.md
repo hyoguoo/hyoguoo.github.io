@@ -2,6 +2,8 @@
 title: "Comparable"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > Comparable을 구현할지 고려하라

@@ -2,6 +2,8 @@
 title: "InnoDB Storage Engine Lock"
 date: 2023-03-23
 lastUpdated: 2025-09-10
+tags: [MySQL]
+description: ""
 ---
 
 InnoDB 스토리지 엔진의 다른 MySQL 스토리지 엔진과는 다음과 같은 차이점이 있다.

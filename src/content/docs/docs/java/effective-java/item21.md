@@ -2,6 +2,8 @@
 title: "Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 인터페이스는 구현하는 쪽을 생각해 설계하라.

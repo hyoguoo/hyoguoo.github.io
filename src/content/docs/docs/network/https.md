@@ -2,6 +2,8 @@
 title: "HTTPS (HyperText Transfer Protocol Secure)"
 date: 2023-08-09
 lastUpdated: 2025-12-20
+tags: [Network]
+description: ""
 ---
 
 HTTP의 보안 취약점을 보완하기 위해 설계된 프로토콜이다.

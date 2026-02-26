@@ -2,6 +2,8 @@
 title: "EventListener"
 date: 2025-09-14
 lastUpdated: 2025-09-14
+tags: [Spring]
+description: ""
 ---
 
 ## 스프링 이벤트

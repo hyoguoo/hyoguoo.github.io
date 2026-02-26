@@ -2,6 +2,8 @@
 title: "Annotation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 명명 패턴보다 애너테이션을 사용하라.

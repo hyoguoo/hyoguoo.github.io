@@ -2,6 +2,8 @@
 title: "Architecture"
 date: 2023-03-20
 lastUpdated: 2026-02-21
+tags: [MySQL]
+description: ""
 ---
 
 MySQL 서버는 논리적으로 MySQL 엔진과 스토리지 엔진으로 구성된다.

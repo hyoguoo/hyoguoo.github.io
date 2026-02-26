@@ -2,6 +2,8 @@
 title: "@Override"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > @Override 애너테이션을 일관되게 사용하라.

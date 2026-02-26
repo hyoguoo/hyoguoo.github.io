@@ -2,6 +2,8 @@
 title: "Thread"
 date: 2023-01-16
 lastUpdated: 2025-11-17
+tags: [Java]
+description: ""
 ---
 프로세스 내에서 실제로 작업을 수행하는 실행 단위로, 모든 프로세스는 최소 하나 이상의 스레드를 가지고 있다.
 

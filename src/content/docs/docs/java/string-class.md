@@ -2,6 +2,8 @@
 title: "String class"
 date: 2024-03-07
 lastUpdated: 2025-11-08
+tags: [Java]
+description: ""
 ---
 
 문자열을 다루기 위해 사용되는 핵심 클래스로, 다음과 같은 주요 특징을 가진다.

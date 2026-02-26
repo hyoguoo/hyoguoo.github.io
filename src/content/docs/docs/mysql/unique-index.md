@@ -2,6 +2,8 @@
 title: "Unique Index"
 date: 2023-04-19
 lastUpdated: 2025-09-12
+tags: [MySQL]
+description: ""
 ---
 
 유니크 인덱스는 특정 컬럼 또는 컬럼 조합에 대해 중복된 값이 저장될 수 없도록 보장하는 제약 조건이자 인덱스로, PK와는 다음과 같은 차이가 있다.

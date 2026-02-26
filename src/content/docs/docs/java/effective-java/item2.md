@@ -2,6 +2,8 @@
 title: "Builder"
 date: 2023-09-21
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 > 생성자에 매개변수가 많다면 빌더를 고려하라
 

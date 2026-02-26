@@ -2,6 +2,8 @@
 title: "Testing Basic"
 date: 2024-08-27
 lastUpdated: 2024-08-27
+tags: [Test]
+description: ""
 ---
 
 ## 테스트 자동화

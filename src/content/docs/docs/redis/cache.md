@@ -2,6 +2,8 @@
 title: "Cache"
 date: 2025-02-13
 lastUpdated: 2025-10-06
+tags: [Redis]
+description: ""
 ---
 
 캐시(Cache)는 데이터나 값을 미리 복사해두는 임시 저장소로, 데이터에 대한 접근을 더 빠르게 만드는 역할을 한다.

@@ -2,6 +2,8 @@
 title: "Design Object Storage System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 ## 저장소 시스템의 부류

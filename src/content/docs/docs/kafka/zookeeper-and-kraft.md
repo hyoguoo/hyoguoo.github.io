@@ -2,6 +2,8 @@
 title: "ZooKeeper & KRaft"
 date: 2025-09-30
 lastUpdated: 2025-09-30
+tags: [Kafka]
+description: ""
 ---
 
 주키퍼(ZooKeeper)는 카프카 클러스터의 상태 정보를 관리하고 동기화하는 분산 코디네이션 서비스로, 카프카는 자체적으로 클러스터의 상태를 관리하는 기능이 없어 이 역할을 외부 시스템인 주키퍼에 의존했다.

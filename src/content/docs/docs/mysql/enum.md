@@ -2,6 +2,8 @@
 title: "ENUM"
 date: 2023-07-25
 lastUpdated: 2025-09-26
+tags: [MySQL]
+description: ""
 ---
 
 `ENUM`은 테이블 생성 시 미리 정의한 문자열 목록 중에서 하나의 값만 저장할 수 있는 데이터 타입이다.

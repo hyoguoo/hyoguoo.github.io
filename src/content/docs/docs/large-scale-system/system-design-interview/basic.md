@@ -2,6 +2,8 @@
 title: "Basic"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 ## 수평적 규모 확장(Scale Out)

@@ -2,6 +2,8 @@
 title: "Class"
 date: 2022-11-20
 lastUpdated: 2025-11-03
+tags: [Java]
+description: ""
 ---
 
 ## 클래스의 구성 요소

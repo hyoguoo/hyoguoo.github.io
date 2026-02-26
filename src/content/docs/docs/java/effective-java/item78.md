@@ -2,6 +2,8 @@
 title: "Mutable Data Sharing"
 date: 2024-03-07
 lastUpdated: 2025-02-20
+tags: [Java]
+description: ""
 ---
 
 > 공유 중인 가변 데이터는 동기화해 사용하라

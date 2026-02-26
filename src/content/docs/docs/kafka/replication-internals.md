@@ -2,6 +2,8 @@
 title: "Replication Internals"
 date: 2025-10-02
 lastUpdated: 2025-10-02
+tags: [Kafka]
+description: ""
 ---
 
 데이터의 유실을 방지하고(Durability), 브로커 장애 시에도 서비스 중단 없이 운영될 수 있도록(High Availability) 하는 핵심적인 내부 동작 원리이다.

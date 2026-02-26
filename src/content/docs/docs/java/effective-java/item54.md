@@ -2,6 +2,8 @@
 title: "Empty Collection"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > null이 아닌, 빈 컬렉션이나 배열을 반환하라

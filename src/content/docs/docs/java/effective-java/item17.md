@@ -2,6 +2,8 @@
 title: "Minimize Mutability"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 변경 가능성을 최소화하라

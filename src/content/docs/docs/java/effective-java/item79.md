@@ -2,6 +2,8 @@
 title: "Excessive Synchronization"
 date: 2024-03-10
 lastUpdated: 2025-02-20
+tags: [Java]
+description: ""
 ---
 
 > 과도한 동기화는 피하라

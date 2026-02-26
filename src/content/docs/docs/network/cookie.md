@@ -2,6 +2,8 @@
 title: "Cookie"
 date: 2023-08-09
 lastUpdated: 2025-12-27
+tags: [Network]
+description: ""
 ---
 
 HTTP는 기본적으로 상태를 유지하지 않는 무상태(Stateless) 특성을 가지기 때문에, 클라이언트를 식별하고 상태 유지를 위해 브라우저(클라이언트)에 저장하는 작은 데이터 파일인 쿠키(Cookie)를 사용한다.

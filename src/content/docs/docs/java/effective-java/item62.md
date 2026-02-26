@@ -2,6 +2,8 @@
 title: "Avoid String Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 다른 타입이 적절하다면 문자열 사용을 피하라

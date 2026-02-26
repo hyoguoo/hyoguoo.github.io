@@ -2,6 +2,8 @@
 title: "Transactional"
 date: 2023-06-15
 lastUpdated: 2026-02-23
+tags: [Spring]
+description: ""
 ---
 
 스프링은 `PlatformTransactionManager` 인터페이스를 통해 트랜잭션을 추상화하고 선언적 트랜잭션을 지원하여 트랜잭션을 편리하게 사용할 수 있도록 지원한다.

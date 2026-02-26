@@ -2,6 +2,8 @@
 title: "toString"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > toString을 항상 재정의하라

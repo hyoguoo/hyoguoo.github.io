@@ -2,6 +2,8 @@
 title: "Encoding"
 date: 2023-08-09
 lastUpdated: 2025-12-28
+tags: [Network]
+description: ""
 ---
 
 HTTP 상에서 데이터를 전송할 때, 전송 효율(압축)이나 보안을 목적으로 데이터를 변환하는 기술로, 주로 두 가지 방식이 있다.

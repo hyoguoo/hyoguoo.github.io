@@ -2,6 +2,8 @@
 title: "Karabiner-Elements"
 date: 2024-03-07
 lastUpdated: 2026-01-26
+tags: [Setting]
+description: ""
 ---
 
 ## 사용자 정의 규칙 추가

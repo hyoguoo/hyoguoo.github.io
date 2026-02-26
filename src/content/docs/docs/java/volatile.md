@@ -2,6 +2,8 @@
 title: "volatile"
 date: 2025-01-07
 lastUpdated: 2025-11-14
+tags: [Java]
+description: ""
 ---
 
 CPU의 각 코어는 성능 향상을 위해 캐시(Cache)를 가지고 있다.

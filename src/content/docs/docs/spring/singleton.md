@@ -2,6 +2,8 @@
 title: "Singleton"
 date: 2022-11-01
 lastUpdated: 2025-08-23
+tags: [Spring]
+description: ""
 ---
 
 웹 애플리케이션은 보통 여러 고객이 동시에 요청을 하게 되는데, 아래와 같이 코드를 짠다면 고객이 요청을 할 때마다 새 객체가 생성된다.

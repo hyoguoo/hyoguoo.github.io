@@ -2,6 +2,8 @@
 title: "ExecutorService"
 date: 2024-03-11
 lastUpdated: 2024-03-11
+tags: [Java]
+description: ""
 ---
 
 > 스레드보다는 실행자, 테스크, 스트림을 애용하라

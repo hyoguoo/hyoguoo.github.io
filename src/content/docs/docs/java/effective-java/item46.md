@@ -2,6 +2,8 @@
 title: "Side-Effect-Free Function"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 스트림에서는 부작용 없는 함수를 사용하라

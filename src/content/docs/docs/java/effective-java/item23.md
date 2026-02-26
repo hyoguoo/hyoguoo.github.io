@@ -2,6 +2,8 @@
 title: "Subtyping"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 태그 달린 클래스보다는 클래스 계층구조를 활용하라

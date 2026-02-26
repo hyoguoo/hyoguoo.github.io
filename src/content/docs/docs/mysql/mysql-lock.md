@@ -2,6 +2,8 @@
 title: "MySQL Engine Lock"
 date: 2023-03-22
 lastUpdated: 2025-10-07
+tags: [MySQL]
+description: ""
 ---
 
 MySQL 엔진 레벨의 잠금은 MySQL 서버의 상위 레벨에서 동작한다.

@@ -2,6 +2,8 @@
 title: "Redis Cluster"
 date: 2025-08-12
 lastUpdated: 2025-10-10
+tags: [Redis]
+description: ""
 ---
 
 Redis Cluster는 데이터를 여러 노드에 분산 저장하여 수평적 확장을 지원하여, 큰 아키텍처 변경 없이 데이터 샤딩(Sharding)과 고가용성(High Availability)을 확보할 수 있다.

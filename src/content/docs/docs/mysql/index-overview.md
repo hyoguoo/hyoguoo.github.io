@@ -2,6 +2,8 @@
 title: "Index"
 date: 2023-04-14
 lastUpdated: 2025-09-11
+tags: [MySQL]
+description: ""
 ---
 
 인덱스는 데이터베이스 테이블의 검색 성능을 향상시키기 위해 사용하는 자료구조이다.

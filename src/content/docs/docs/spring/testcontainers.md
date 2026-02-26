@@ -2,6 +2,8 @@
 title: "Testcontainers"
 date: 2025-10-23
 lastUpdated: 2025-10-23
+tags: [Spring]
+description: ""
 ---
 
 테스트에 H2와 같은 인메모리 데이터베이스를 사용할 수 있지만, 실제 운영 환경의 데이터베이스(예: MySQL)와 문법(Dialect)이나 동작 방식이 달라 테스트의 신뢰도를 떨어뜨릴 수 있다.

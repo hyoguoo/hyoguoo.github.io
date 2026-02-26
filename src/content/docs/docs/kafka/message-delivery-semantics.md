@@ -2,6 +2,8 @@
 title: "Message Delivery Semantics"
 date: 2025-10-03
 lastUpdated: 2025-10-03
+tags: [Kafka]
+description: ""
 ---
 
 Kafka가 프로듀서에서 컨슈머까지 메시지를 전달할 때 보장하는 신뢰성 수준을 조절할 수 있으며, 이는 시스템의 요구사항에 따라 성능과 데이터 신뢰성 사이의 균형을 맞추는 중요한 설정이다.

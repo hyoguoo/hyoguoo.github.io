@@ -2,6 +2,8 @@
 title: "Date Time"
 date: 2023-07-25
 lastUpdated: 2025-09-26
+tags: [MySQL]
+description: ""
 ---
 
 MySQL은 날짜, 시간 또는 두 정보를 함께 저장할 수 있는 여러 데이터 타입을 제공한다.

@@ -2,6 +2,8 @@
 title: "Data Structure"
 date: 2024-09-28
 lastUpdated: 2025-10-04
+tags: [Redis]
+description: ""
 ---
 
 Redis는 다양한 자료구조를 지원하며, 각 자료구조의 내부 동작 방식과 시간 복잡도를 이해하는 것은 Redis의 성능을 최적화하는 데 중요하다.

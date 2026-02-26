@@ -2,6 +2,8 @@
 title: "Query System Variable"
 date: 2023-05-16
 lastUpdated: 2025-09-17
+tags: [MySQL]
+description: ""
 ---
 
 SQL은 표준 언어이지만, 실제 구문 작성 규칙이나 서버의 동작 방식은 MySQL 서버에 설정된 시스템 변수 값에 따라 달라질 수 있다.

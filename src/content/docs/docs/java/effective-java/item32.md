@@ -2,6 +2,8 @@
 title: "Varargs"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 제네릭과 가변인수를 함께 쓸 때는 신중하라

@@ -2,6 +2,8 @@
 title: "Spring Boot Test Context"
 date: 2025-10-23
 lastUpdated: 2025-10-23
+tags: [Spring]
+description: ""
 ---
 
 스프링 부트는 다양한 계층의 테스트를 지원하기 위해 여러 테스트 애노테이션을 제공한다.

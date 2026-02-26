@@ -2,6 +2,8 @@
 title: "WebFlux in API Gateway"
 date: 2025-10-02
 lastUpdated: 2025-10-11
+tags: [Spring]
+description: ""
 ---
 
 API Gateway의 주된 역할은 요청을 받아서 내부 서비스로 '전달'하고, 그 응답을 다시 클라이언트에게 '전달'하는 것이다.

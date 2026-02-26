@@ -2,6 +2,8 @@
 title: "Composition"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 상속보다 컴포지션을 사용하라

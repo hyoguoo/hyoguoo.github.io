@@ -2,6 +2,8 @@
 title: "Network Access Layer - TCP/IP Layer 1"
 date: 2024-03-07
 lastUpdated: 2025-12-05
+tags: [Network]
+description: ""
 ---
 
 TCP/IP 모델의 최하위 계층으로, OSI 7계층의 물리 계층(Physical Layer)과 데이터 링크 계층(Data Link Layer)을 포함한다.

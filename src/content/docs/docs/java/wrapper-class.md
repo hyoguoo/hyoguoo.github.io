@@ -2,6 +2,8 @@
 title: "Wrapper class"
 date: 2024-03-07
 lastUpdated: 2025-11-09
+tags: [Java]
+description: ""
 ---
 
 자바에서는 8개의 기본형을 객체로 다루지 않고 있는데, 이를 객체로 다루기 위해 Wrapper 클래스를 제공한다.

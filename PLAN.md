@@ -74,9 +74,18 @@
 - [x] SEO 검증 (sitemap, robots.txt, meta tag)
 - [x] 모바일 반응형 확인
 - [x] 최종 배포 확인
+- [x] docs frontmatter description, tags 추가 (tags: 카테고리 자동 적용, description: "" 추후 적용)
+- [ ] docs 컨텐츠의 태그가 최상단 랜딩페이지에서 카테고리로 보이도록 변경 (현재는 Docs로 고정되어 있음, Blogs 글은 태그가 카테고리로 보이도록 되어 있음)
+- [ ] docs 컨텐츠의 태그가 컨텐츠 최하단에도 보이도록 변경 (현재는 보이지 않으며, 블로그 글은 최하단에 태그가 보이도록 되어 있음)
+- [ ] 특정 문서 코드 스니펫 색상 적용 안되는 문제(payment-gateway-strategy-pattern.md)
+- [ ] docs 앞으로 가기 버튼 2 뎁스 부터 보이도록 변경 (현재는 3뎁스부터 보임, 예를들어 mysql/index.md 같은 경우 앞으로 가기 버튼이 보이지 않음, 그 안의 btree-index.md로 들어가야 앞으로 가기 버튼이 보임)
 
 ## Phase 7: 디자인 마무리
 
 - [ ] 파비콘 추가
 - [ ] About 컨택트 정보 및 개인 정보(실명, 이메일 등) 추가
 - [ ] 왼쪽 위 타이틀 이름 변경 및 아이콘 추가 (현재는 hyoguoo, blog / docs 안에서는 hyoguoo's notes 인데 통합 필요)
+
+## 추가 작업
+
+- [ ] docs description 추가 / blogs description 점검

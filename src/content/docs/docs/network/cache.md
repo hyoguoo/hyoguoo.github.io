@@ -2,6 +2,8 @@
 title: "Cache"
 date: 2023-08-09
 lastUpdated: 2025-12-23
+tags: [Network]
+description: ""
 ---
 
 웹 요청이 캐시에 도착했을 때, 로컬에 저장된 사본이 존재한다면 원 서버가 아닌 캐시로부터 문서를 제공하는 것을 캐싱이라고 한다.

@@ -2,6 +2,8 @@
 title: "Enum"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > int 상수 대신 열거 타입을 사용하라.

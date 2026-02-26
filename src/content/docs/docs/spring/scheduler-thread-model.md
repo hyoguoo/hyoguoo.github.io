@@ -2,6 +2,8 @@
 title: "Scheduler & Thread Model"
 date: 2025-10-02
 lastUpdated: 2025-10-02
+tags: [Spring]
+description: ""
 ---
 
 리액티브 스트림즈 명세 자체는 스레딩 모델을 강제하지 않아 특정 스레드에서 코드가 실행되도록 보장하지 않으며, 이는 개발자가 직접 관리해야 하는 영역이다.

@@ -2,6 +2,8 @@
 title: "Kernel"
 date: 2024-03-07
 lastUpdated: 2025-12-31
+tags: [Operating System]
+description: ""
 ---
 
 운영체제는 컴퓨터 자원을 관리하는 거대하고 복잡한 소프트웨어로, 그중 커널(Kernel)은 운영체제의 핵심 구성 요소다.

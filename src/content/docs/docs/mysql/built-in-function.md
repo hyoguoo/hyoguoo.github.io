@@ -2,6 +2,8 @@
 title: "Built-in Function"
 date: 2023-05-23
 lastUpdated: 2025-09-18
+tags: [MySQL]
+description: ""
 ---
 
 MySQL은 다양한 데이터 처리와 연산을 위해 풍부한 내장 함수를 제공한다.

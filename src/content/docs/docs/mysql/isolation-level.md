@@ -2,6 +2,8 @@
 title: "Isolation Level"
 date: 2023-03-25
 lastUpdated: 2025-09-10
+tags: [MySQL]
+description: ""
 ---
 격리 수준(Isolation Level)은 여러 트랜잭션이 동시에 실행될 때, 특정 트랜잭션이 다른 트랜잭션에서 변경하거나 조회하는 데이터에 접근하는 것을 어느 수준까지 허용할 것인지를 결정하는 설정이다.
 

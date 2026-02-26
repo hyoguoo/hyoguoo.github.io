@@ -2,6 +2,8 @@
 title: "Foreign Key"
 date: 2023-04-19
 lastUpdated: 2025-09-12
+tags: [MySQL]
+description: ""
 ---
 
 외래 키는 두 테이블 간의 관계를 정의하여 데이터의 참조 무결성을 보장하는 제약 조건으로, 참조하는 컬럼에 자동으로 인덱스가 생성된다.

@@ -2,6 +2,8 @@
 title: "Java Virtual Machine"
 date: 2022-09-28
 lastUpdated: 2025-10-28
+tags: [Java]
+description: ""
 ---
 자바 가상 머신(JVM)은 자바 애플리케이션을 실행하기 위한 런타임 엔진이다.
 

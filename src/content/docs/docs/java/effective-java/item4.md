@@ -2,6 +2,8 @@
 title: "Noninstantiability"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 인스턴스화를 막으려거든 private 생성자를 사용하라

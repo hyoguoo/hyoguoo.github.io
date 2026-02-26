@@ -2,6 +2,8 @@
 title: "Introduce"
 date: 2022-10-26
 lastUpdated: 2026-01-21
+tags: [OOP]
+description: ""
 ---
 
 객체지향의 목표는 실세계를 모방하는 것이 아니라 새로운 세계를 창조하는 것이다.

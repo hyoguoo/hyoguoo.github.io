@@ -2,6 +2,8 @@
 title: "OAuth (Open Authorization)"
 date: 2026-02-16
 lastUpdated: 2026-02-16
+tags: [Secure]
+description: ""
 ---
 
 OAuth(2.0)은 애플리케이션이 사용자 대신 리소스에 접근할 수 있도록 권한을 위임(Delegation)하는 업계 표준 프로토콜(RFC 6749)이다.

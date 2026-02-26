@@ -2,6 +2,8 @@
 title: "Thread Scheduler"
 date: 2024-03-14
 lastUpdated: 2024-03-14
+tags: [Java]
+description: ""
 ---
 
 > 프로그램 동작을 스레드 스케줄러에 기대지 말라

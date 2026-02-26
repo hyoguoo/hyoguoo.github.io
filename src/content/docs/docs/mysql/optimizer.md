@@ -2,6 +2,8 @@
 title: "Optimizer"
 date: 2023-04-23
 lastUpdated: 2025-09-13
+tags: [MySQL]
+description: ""
 ---
 
 옵티마이저는 사용자가 작성한 SQL 쿼리를 가장 효율적인 방법으로 실행하기 위한 최적의 실행 계획(Execution Plan)을 수립하는 데이터베이스 서버의 핵심 엔진이다.

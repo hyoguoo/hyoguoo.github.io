@@ -2,6 +2,8 @@
 title: "Serializable Interface"
 date: 2024-08-20
 lastUpdated: 2024-08-20
+tags: [Java]
+description: ""
 ---
 
 > Serializable 인터페이스는 신중히 구현하라

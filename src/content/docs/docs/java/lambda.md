@@ -2,6 +2,8 @@
 title: "Lambda"
 date: 2023-02-01
 lastUpdated: 2025-11-29
+tags: [Java]
+description: ""
 ---
 메서드를 하나의 식(Expression)으로 표현한 것으로, 자바는 객체지향 언어이지만 람다식을 통해 함수형 프로그래밍의 특징을 부분적으로 지원한다.
 

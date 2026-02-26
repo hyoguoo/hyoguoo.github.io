@@ -2,6 +2,8 @@
 title: "readObject Method"
 date: 2024-08-22
 lastUpdated: 2024-08-22
+tags: [Java]
+description: ""
 ---
 
 > readObject 메서드는 방어적으로 작성하라

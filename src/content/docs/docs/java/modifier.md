@@ -2,6 +2,8 @@
 title: "Modifier"
 date: 2022-11-28
 lastUpdated: 2025-10-31
+tags: [Java]
+description: ""
 ---
 
 > 클래스, 변수 또는 메서드의 선언부에 함께 사용되어 부가적인 의미를 부여하는 키워드

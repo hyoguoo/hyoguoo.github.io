@@ -2,6 +2,8 @@
 title: "Failure Atomic"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 가능한 한 실패 원자적으로 만들라

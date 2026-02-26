@@ -2,6 +2,8 @@
 title: "Virtual Memory"
 date: 2024-03-07
 lastUpdated: 2026-01-11
+tags: [Operating System]
+description: ""
 ---
 
 물리 메모리의 크기 한계를 극복하기 위해 나온 기술로, 프로세스 전체가 메모리에 적재되지 않아도 실행이 가능하다는 점에 착안하여 설계되었다.

@@ -2,6 +2,8 @@
 title: "Prompt Engineering for Developers"
 date: 2025-10-25
 lastUpdated: 2025-10-25
+tags: [AI-Assisted Development]
+description: ""
 ---
 
 ## 핵심 원칙 4가지

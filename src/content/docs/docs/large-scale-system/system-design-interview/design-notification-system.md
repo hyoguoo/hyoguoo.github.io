@@ -2,6 +2,8 @@
 title: "Design Notification System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 알림 시스템은 클라이언트에게 정보를 전달하는 시스템으로, 현대 서비스에서는 중요한 부분으로 자리 잡았다.  

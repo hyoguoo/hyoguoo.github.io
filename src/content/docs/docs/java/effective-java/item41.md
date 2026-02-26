@@ -2,6 +2,8 @@
 title: "Marker Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 정의하려는 것이 타입이라면 마커 인터페이스를 사용하라

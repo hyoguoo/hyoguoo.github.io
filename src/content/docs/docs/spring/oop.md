@@ -2,6 +2,8 @@
 title: "Spring & OOP"
 date: 2022-10-10
 lastUpdated: 2025-08-22
+tags: [Spring]
+description: ""
 ---
 
 스프링은 객체지향 설계를 가능하게 만드는 인프라를 제공한다.

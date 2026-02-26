@@ -2,6 +2,8 @@
 title: "Custom Serialization Form"
 date: 2024-08-21
 lastUpdated: 2024-08-21
+tags: [Java]
+description: ""
 ---
 
 > 커스텀 직렬화 형태를 고려해보라

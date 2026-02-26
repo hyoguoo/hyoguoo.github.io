@@ -2,6 +2,8 @@
 title: "SpEL (Spring Expression Language)"
 date: 2025-09-01
 lastUpdated: 2025-09-01
+tags: [Spring]
+description: ""
 ---
 
 SpEL은 Spring Framework 3.0부터 지원하는 강력한 표현 언어다. 객체 그래프를 런타임에 조회하고 조작하는 기능을 제공한다.

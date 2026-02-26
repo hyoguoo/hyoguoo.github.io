@@ -2,6 +2,8 @@
 title: "ETC Index"
 date: 2023-04-19
 lastUpdated: 2025-09-12
+tags: [MySQL]
+description: ""
 ---
 
 - 전문 검색 인덱스(Full-Text Index): 일반적인 B-Tree 인덱스로는 검색이 어려운 장문 텍스트(기사 본문 등) 내의 단어나 구문을 효율적으로 검색하기 위한 인덱스

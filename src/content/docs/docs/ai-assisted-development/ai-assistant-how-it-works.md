@@ -2,6 +2,8 @@
 title: "How AI Assistants Work"
 date: 2025-10-24
 lastUpdated: 2025-12-20
+tags: [AI-Assisted Development]
+description: ""
 ---
 
 과거의 도구는 정해진 규칙(linting 등)으로 코드를 검사했으나, 반면 현대의 AI 어시스턴트는 대형 언어 모델(LLM)을 기반으로 한다.

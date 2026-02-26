@@ -2,6 +2,8 @@
 title: "Method"
 date: 2023-08-09
 lastUpdated: 2025-12-15
+tags: [Network]
+description: ""
 ---
 
 HTTP 메서드는 클라이언트가 서버에게 요청의 목적과 종류를 알리기 위해 사용하는 규약이다.

@@ -2,6 +2,8 @@
 title: "Literal Notation"
 date: 2023-05-16
 lastUpdated: 2025-09-17
+tags: [MySQL]
+description: ""
 ---
 
 리터럴은 SQL 쿼리 내에 직접 작성되는 고정된 값(예: 문자열, 숫자, 날짜)을 의미하며, 데이터의 타입에 맞는 정확한 리터럴 표기법을 사용하는 것은 쿼리의 성능과 정확성에 직접적인 영향을 미친다.

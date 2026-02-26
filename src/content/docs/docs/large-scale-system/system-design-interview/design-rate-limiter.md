@@ -2,6 +2,8 @@
 title: "Design Rate Limiter"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 처리율 제한 장치(rate limiter)는 특정 시간 당 처리할 수 있는 요청의 수를 제한하는 장치로, 아래와 같은 이유로 사용된다.

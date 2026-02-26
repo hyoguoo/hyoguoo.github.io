@@ -2,6 +2,8 @@
 title: "Failure Information"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 예외의 상세 메시지에 실패 관련 정보를 담으라

@@ -2,6 +2,8 @@
 title: "Variable"
 date: 2022-10-08
 lastUpdated: 2025-10-29
+tags: [Java]
+description: ""
 ---
 
 변수는 프로그램 실행 중에 값을 저장하고 참조하기 위해 사용되는, 이름이 붙은 메모리 영역이다.

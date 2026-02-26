@@ -2,6 +2,8 @@
 title: "Topic & Partition Internals"
 date: 2025-10-01
 lastUpdated: 2025-10-01
+tags: [Kafka]
+description: ""
 ---
 
 파티션은 하나의 거대한 파일이 아닌, 로그 세그먼트(Log Segment) 라는 여러 파일들의 집합으로 구성된 디렉터리이며, 이 설계가 카프카의 빠른 입출력과 효율적인 데이터 관리를 가능하게 한다.

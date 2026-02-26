@@ -2,6 +2,8 @@
 title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 자원을 직접 명시하지 말고 의존 객체 주입을 사용하라

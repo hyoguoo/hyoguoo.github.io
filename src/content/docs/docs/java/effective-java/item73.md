@@ -2,6 +2,8 @@
 title: "Abstraction Level Exceptions"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 추상화 수준에 맞는 예외를 던지라

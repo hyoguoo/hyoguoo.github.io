@@ -2,6 +2,8 @@
 title: "Inheritance"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 상속을 고려해 설계하고 문서화하라. 그러지 않았다면 상속을 금지하라

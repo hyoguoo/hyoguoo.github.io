@@ -2,6 +2,8 @@
 title: "HTTP Message"
 date: 2024-03-07
 lastUpdated: 2025-12-13
+tags: [Network]
+description: ""
 ---
 
 HTTP 메시지는 클라이언트와 서버 간에 데이터 교환을 위해 사용하는 규격화된 데이터 블록이다.

@@ -2,6 +2,8 @@
 title: "Abstract Class & Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 추상 클래스보다는 인터페이스를 우선하라

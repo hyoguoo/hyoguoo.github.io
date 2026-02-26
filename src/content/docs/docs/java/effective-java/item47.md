@@ -2,6 +2,8 @@
 title: "Return Collection or Stream"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 반환 타입으로는 스트림보다 컬렉션이 낫다

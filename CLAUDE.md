@@ -66,6 +66,8 @@ tags: [Java]              # ⚠️ 필수: BlogTree 카테고리 그룹핑 기�
 title: 문서 제목
 date: YYYY-MM-DD          # 최초 작성일
 lastUpdated: YYYY-MM-DD   # 수정 시 반드시 갱신, 정렬 기준
+tags: [카테고리]          # 최상위 디렉토리명 기준 (예: java → Java)
+description: ""           # SEO용. 작성 시 한 문장 요약 권장
 ---
 ```
 

@@ -2,6 +2,8 @@
 title: "Constant Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 인터페이스는 타입을 정의하는 용도로만 사용하라.

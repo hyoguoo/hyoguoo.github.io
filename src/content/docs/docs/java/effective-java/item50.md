@@ -2,6 +2,8 @@
 title: "Defensive Copy"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 적시에 방어적 복사본을 만들라

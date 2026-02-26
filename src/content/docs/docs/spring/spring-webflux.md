@@ -2,6 +2,8 @@
 title: "Spring WebFlux"
 date: 2025-10-01
 lastUpdated: 2025-10-01
+tags: [Spring]
+description: ""
 ---
 
 Spring WebFlux는 Spring Framework 5부터 도입된 반응형(Reactive) 웹 프레임워크이다.

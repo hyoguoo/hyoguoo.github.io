@@ -2,6 +2,8 @@
 title: "Secure Coding"
 date: 2024-03-07
 lastUpdated: 2026-01-20
+tags: [Secure]
+description: ""
 ---
 
 소프트웨어 개발 과정에서 개발자의 실수나 논리적 오류로 인해 발생할 수 있는 보안 취약점을 사전에 제거하여 안전한 소프트웨어를 개발하는 기법이다.

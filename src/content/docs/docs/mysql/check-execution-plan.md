@@ -2,6 +2,8 @@
 title: "Check Execution Plan"
 date: 2023-05-07
 lastUpdated: 2025-09-16
+tags: [MySQL]
+description: ""
 ---
 
 MySQL에서 쿼리 성능을 분석하고 최적화하기 위해 실행 계획(Execution Plan)을 확인할 수 있다.

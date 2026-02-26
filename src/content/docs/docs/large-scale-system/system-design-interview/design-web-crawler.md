@@ -2,6 +2,8 @@
 title: "Design Web Crawler"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 ## Web Crawler

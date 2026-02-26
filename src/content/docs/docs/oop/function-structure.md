@@ -2,6 +2,8 @@
 title: "Function & Structure"
 date: 2024-03-07
 lastUpdated: 2026-01-25
+tags: [OOP]
+description: ""
 ---
 
 모든 소프트웨어 제품의 설계에는 아래 두 가지 측면의 설계가 존재한다.

@@ -2,6 +2,8 @@
 title: "Servlet"
 date: 2023-11-16
 lastUpdated: 2025-08-23
+tags: [Spring]
+description: ""
 ---
 
 > 자바를 이용한 웹 프로그래밍을 위한 기술

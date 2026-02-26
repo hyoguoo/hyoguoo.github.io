@@ -2,6 +2,8 @@
 title: "Dockerfile"
 date: 2026-02-05
 lastUpdated: 2026-02-06
+tags: [Docker]
+description: ""
 ---
 
 Dockerfile은 도커 이미지를 빌드하기 위한 일련의 명령어를 기록한 텍스트 기반의 설계도다.

@@ -2,6 +2,8 @@
 title: "Raw Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > Raw Type은 사용하지 말라

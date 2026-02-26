@@ -2,6 +2,8 @@
 title: "Data Processing"
 date: 2023-04-26
 lastUpdated: 2025-09-13
+tags: [MySQL]
+description: ""
 ---
 
 ## 쿼리 실행 절차

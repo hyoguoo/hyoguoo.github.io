@@ -2,6 +2,8 @@
 title: "try-with-resources"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > try-finally보다는 `try-with-resources`를 사용하라

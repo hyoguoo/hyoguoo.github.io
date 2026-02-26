@@ -2,6 +2,8 @@
 title: "IntelliJ"
 date: 2022-09-29
 lastUpdated: 2026-01-26
+tags: [Setting]
+description: ""
 ---
 
 ## 라이브 템플릿 생성

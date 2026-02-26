@@ -2,6 +2,8 @@
 title: "Storage and Volume"
 date: 2026-02-13
 lastUpdated: 2026-02-13
+tags: [Docker]
+description: ""
 ---
 
 도커 컨테이너는 기본적으로 휘발성 환경에서 동작하므로, 컨테이너가 삭제되어도 데이터를 보존하기 위해서는 별도의 스토리지 관리 전략이 필요하다.

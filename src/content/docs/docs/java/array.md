@@ -2,6 +2,8 @@
 title: "Array"
 date: 2022-11-20
 lastUpdated: 2024-08-30
+tags: [Java]
+description: ""
 ---
 
 > 어떤 메모리 블록에 연속적으로 나열된 같은 유형의 변수 모음

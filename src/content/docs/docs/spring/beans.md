@@ -2,6 +2,8 @@
 title: "Beans"
 date: 2022-10-10
 lastUpdated: 2025-08-22
+tags: [Spring]
+description: ""
 ---
 
 > 스프링 빈(Bean) : 스프링 컨테이너가 생성하고 생명주기를 관리하는 자바 객체

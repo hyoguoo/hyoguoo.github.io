@@ -2,6 +2,8 @@
 title: "Internal Language System"
 date: 2024-03-07
 lastUpdated: 2026-01-15
+tags: [Computer Architecture]
+description: ""
 ---
 
 ## 컴퓨터 언어의 기본 단위

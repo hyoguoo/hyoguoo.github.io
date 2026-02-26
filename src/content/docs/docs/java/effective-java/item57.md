@@ -2,6 +2,8 @@
 title: "Local Variable Scope"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 지역변수 범위를 최소화하라

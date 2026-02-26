@@ -2,6 +2,8 @@
 title: "Singleton"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > private 생성자나 열거 타입으로 싱글턴임을 보증하라

@@ -2,6 +2,8 @@
 title: "JVM (Java Virtual Machine) Version Control"
 date: 2024-03-07
 lastUpdated: 2026-01-26
+tags: [Setting]
+description: ""
 ---
 
 MacOS 환경에서 간단한 셸 함수를 등록하여 여러 버전의 JVM(Java Virtual Machine)을 쉽게 전환하며 사용하는 방법을 다룬다.

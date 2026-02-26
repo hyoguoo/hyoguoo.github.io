@@ -2,6 +2,8 @@
 title: "Docker Compose"
 date: 2026-02-13
 lastUpdated: 2026-02-13
+tags: [Docker]
+description: ""
 ---
 
 도커 컴포즈는 개별 컨테이너를 일일이 제어하는 대신 하나의 설정 파일을 통해 전체 시스템의 생명주기를 통합 관리할 수 있게 한다.

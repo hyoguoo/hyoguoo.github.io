@@ -2,6 +2,8 @@
 title: "Core Components"
 date: 2025-09-29
 lastUpdated: 2025-10-02
+tags: [Kafka]
+description: ""
 ---
 
 ## 이벤트(Event)

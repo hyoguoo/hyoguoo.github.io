@@ -2,6 +2,8 @@
 title: "Design Key-Value Store"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 키-값 저장소는 키-값 데이터베이스라고도 불리는 비 관계형 데이터베이스다.

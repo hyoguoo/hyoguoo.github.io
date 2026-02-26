@@ -2,6 +2,8 @@
 title: "Spring Boot Properties"
 date: 2025-08-28
 lastUpdated: 2025-08-28
+tags: [Spring]
+description: ""
 ---
 
 ## 프로퍼티 값 주입 방법

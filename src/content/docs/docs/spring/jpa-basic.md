@@ -2,6 +2,8 @@
 title: "JPA (Java Persistence API)"
 date: 2024-03-07
 lastUpdated: 2025-09-06
+tags: [Spring]
+description: ""
 ---
 
 Java Persistence API의 약자로, 자바 진영의 ORM 기술 표준이다.

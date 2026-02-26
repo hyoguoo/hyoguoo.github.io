@@ -2,6 +2,8 @@
 title: "File System"
 date: 2024-03-07
 lastUpdated: 2026-01-12
+tags: [Operating System]
+description: ""
 ---
 
 파일 시스템은 운영체제가 저장 매체(HDD, SSD 등)에 데이터를 효율적으로 기록하고 읽어오기 위한 관리 체계다.

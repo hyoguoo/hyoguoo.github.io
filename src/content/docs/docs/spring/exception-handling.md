@@ -2,6 +2,8 @@
 title: "Exception Handling"
 date: 2024-03-07
 lastUpdated: 2025-08-23
+tags: [Spring]
+description: ""
 ---
 
 ## 스프링의 기본적인 예외 처리 방법

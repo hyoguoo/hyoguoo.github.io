@@ -2,6 +2,8 @@
 title: "Process"
 date: 2024-03-07
 lastUpdated: 2026-01-03
+tags: [Operating System]
+description: ""
 ---
 
 보조기억장치에 저장된 파일인 프로그램을 메모리에 적재되어 CPU 자원을 할당받고 실행되는 상태가 되면 이를 프로세스라 부른다.

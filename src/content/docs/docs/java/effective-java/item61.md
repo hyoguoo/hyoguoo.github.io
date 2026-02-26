@@ -2,6 +2,8 @@
 title: "Primitive Type & Boxed Primitive Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 박싱된 기본 타입보다는 기본 타입을 사용하라

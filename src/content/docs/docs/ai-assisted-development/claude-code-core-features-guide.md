@@ -2,6 +2,8 @@
 title: "Claude Code - Core Features Guide"
 date: 2025-10-26
 lastUpdated: 2025-10-26
+tags: [AI-Assisted Development]
+description: ""
 ---
 
 Claude Code는 Anthropic이 개발한 터미널 기반 AI 어시스트턴트다.

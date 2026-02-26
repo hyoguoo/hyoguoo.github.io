@@ -2,6 +2,8 @@
 title: "Interface Reference"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 객체는 인터페이스를 사용해 참조하라

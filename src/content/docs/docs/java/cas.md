@@ -2,6 +2,8 @@
 title: "CAS (Compare-And-Swap)"
 date: 2025-01-24
 lastUpdated: 2025-11-15
+tags: [Java]
+description: ""
 ---
 
 CAS는 '비교 후 교체'를 의미하며, 특정 메모리 위치의 값을 예상되는 값과 비교하여, 일치할 경우에만 새로운 값으로 교체하는 원자적(atomic) 연산이다.

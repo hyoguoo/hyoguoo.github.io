@@ -2,6 +2,8 @@
 title: "Persistence Context"
 date: 2024-03-07
 lastUpdated: 2025-09-06
+tags: [Spring]
+description: ""
 ---
 
 엔티티를 저장하는 환경으로, EntityManager를 통해 접근하고 관리되는 엔티티의 집합이다.

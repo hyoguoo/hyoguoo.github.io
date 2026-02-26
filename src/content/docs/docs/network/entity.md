@@ -2,6 +2,8 @@
 title: "Entity"
 date: 2023-08-09
 lastUpdated: 2025-12-14
+tags: [Network]
+description: ""
 ---
 
 ## 메시지와 엔티티

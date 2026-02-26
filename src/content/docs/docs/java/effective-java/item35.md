@@ -2,6 +2,8 @@
 title: "Ordinal"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > ordinal 메서드 대신 인스턴스 필드를 사용하라

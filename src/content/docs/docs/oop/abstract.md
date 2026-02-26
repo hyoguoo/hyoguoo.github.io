@@ -2,6 +2,8 @@
 title: "Abstract"
 date: 2022-10-30
 lastUpdated: 2026-01-22
+tags: [OOP]
+description: ""
 ---
 
 객체지향 프로그래밍에서 추상화는 복잡한 현실 세계를 소프트웨어로 모델링하기 위한 첫 번째 단계이자 핵심 도구다.

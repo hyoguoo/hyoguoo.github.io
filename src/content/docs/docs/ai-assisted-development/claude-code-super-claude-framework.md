@@ -2,6 +2,8 @@
 title: "Claude Code - SuperClaude Framework"
 date: 2025-10-27
 lastUpdated: 2025-10-27
+tags: [AI-Assisted Development]
+description: ""
 ---
 
 [SuperClaude](https://github.com/SuperClaude-Org/SuperClaude_Framework)는 meta-programming configuration framework이다.

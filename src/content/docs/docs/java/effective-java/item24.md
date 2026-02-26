@@ -2,6 +2,8 @@
 title: "Nested Class"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 멤버 클래스는 되도록 static으로 만들라.

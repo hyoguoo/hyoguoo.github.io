@@ -2,6 +2,8 @@
 title: "Unnecessary Objects"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 불필요한 객체 생성을 피하라

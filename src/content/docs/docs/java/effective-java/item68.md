@@ -2,6 +2,8 @@
 title: "Naming Convention"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 일반적으로 통용되는 명명 규칙을 따르라

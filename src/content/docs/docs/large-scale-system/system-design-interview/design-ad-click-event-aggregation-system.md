@@ -2,6 +2,8 @@
 title: "Design Ad Click Event Aggregation System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 ## 요구사항

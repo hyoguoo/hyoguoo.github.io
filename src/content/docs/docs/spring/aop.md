@@ -2,6 +2,8 @@
 title: "AOP (Aspect-Oriented Programming)"
 date: 2023-06-16
 lastUpdated: 2025-09-03
+tags: [Spring]
+description: ""
 ---
 
 > 관점 지향 프로그래밍

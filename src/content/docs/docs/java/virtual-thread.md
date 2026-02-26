@@ -2,6 +2,8 @@
 title: "Virtual Thread"
 date: 2026-02-19
 lastUpdated: 2026-02-20
+tags: [Java]
+description: ""
 ---
 
 가상 스레드는 Java 21에서 정식 도입된 경량 스레드 모델로, 기존의 플랫폼 스레드가 가진 리소스 종속성 문제를 해결하고, 단순한 동기식 코드로 높은 처리량을 달성하기 위해 설계되었다.

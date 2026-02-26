@@ -2,6 +2,8 @@
 title: "Static Factory Method"
 date: 2023-09-21
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 > 생성자 대신 정적 팩터리 메서드를 고려하라
 

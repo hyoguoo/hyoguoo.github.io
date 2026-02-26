@@ -2,6 +2,8 @@
 title: "Monitor"
 date: 2025-08-20
 lastUpdated: 2025-11-20
+tags: [Java]
+description: ""
 ---
 
 모니터는 다중 스레드 환경에서 공유 자원에 대한 안전한 접근을 보장하고 스레드 간의 실행 순서를 제어하기 위한 고수준 동기화 구조다.

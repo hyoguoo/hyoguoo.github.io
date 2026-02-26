@@ -2,6 +2,8 @@
 title: "Garbage Collection"
 date: 2024-06-17
 lastUpdated: 2025-10-29
+tags: [Java]
+description: ""
 ---
 
 Java 프로그래밍 언어는 메모리 관리를 자동화하기 위해 가비지 컬렉션(Garbage Collection, GC)이라는 메커니즘을 사용한다.

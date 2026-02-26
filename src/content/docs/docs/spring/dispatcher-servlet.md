@@ -2,6 +2,8 @@
 title: "DispatcherServlet"
 date: 2024-03-07
 lastUpdated: 2025-08-24
+tags: [Spring]
+description: ""
 ---
 
 `org.springframework.web.servlet.DispatcherServlet` 클래스는 스프링 MVC의 핵심 컴포넌트로, 요청을 처리하는 프론트 컨트롤러 역할을 한다.

@@ -2,6 +2,8 @@
 title: "Standard Exceptions"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 표준 예외를 사용하라

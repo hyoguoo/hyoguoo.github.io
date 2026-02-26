@@ -2,6 +2,8 @@
 title: "Parallel Stream"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 스트림 병렬화는 주의해서 적용하라

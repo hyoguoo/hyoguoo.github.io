@@ -2,6 +2,8 @@
 title: "Limit File Top-level Class"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 톱레벨 클래스는 한 파일에 하나만 담으라

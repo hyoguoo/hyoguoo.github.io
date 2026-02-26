@@ -102,8 +102,32 @@ description: "한 문장 요약"       # SEO og:description (없으면 사이트
 title: 문서 제목                  # 제목 컨벤션 참고
 date: YYYY-MM-DD                  # 오늘 날짜
 lastUpdated: YYYY-MM-DD           # 오늘 날짜 (수정 시 갱신)
+tags: [카테고리]                  # 최상위 디렉토리명 기준 — 아래 매핑 참고
+description: ""                   # SEO용. 한 문장 요약 권장 (비워도 무방)
 ---
 ```
+
+#### Docs 카테고리 태그 매핑
+
+| 디렉토리 | tags 값 |
+|---------|---------|
+| `java` | `[Java]` |
+| `mysql` | `[MySQL]` |
+| `spring` | `[Spring]` |
+| `network` | `[Network]` |
+| `operating-system` | `[Operating System]` |
+| `computer-architecture` | `[Computer Architecture]` |
+| `docker` | `[Docker]` |
+| `kafka` | `[Kafka]` |
+| `large-scale-system` | `[Large-Scale System]` |
+| `redis` | `[Redis]` |
+| `secure` | `[Secure]` |
+| `setting` | `[Setting]` |
+| `test` | `[Test]` |
+| `oop` | `[OOP]` |
+| `ai-assisted-development` | `[AI-Assisted Development]` |
+
+중첩 디렉토리(`java/effective-java/item1.md`)도 **최상위 카테고리**(`[Java]`) 기준.
 
 ---
 

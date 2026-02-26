@@ -2,6 +2,8 @@
 title: "Exception Documentation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 메서드가 던지는 모든 예외를 문서화하라

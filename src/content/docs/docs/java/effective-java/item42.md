@@ -2,6 +2,8 @@
 title: "Lambda"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 익명 클래스보다는 람다를 사용하라

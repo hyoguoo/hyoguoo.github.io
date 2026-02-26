@@ -2,6 +2,8 @@
 title: "Necessary Checked Exception"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 필요 없는 검사 예외 사용을 피하라

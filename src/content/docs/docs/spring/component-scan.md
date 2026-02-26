@@ -2,6 +2,8 @@
 title: "Component Scan"
 date: 2024-03-07
 lastUpdated: 2025-08-22
+tags: [Spring]
+description: ""
 ---
 
 스프링은 클래스패스를 탐색해 컴포넌트 후보를 찾아 빈으로 등록하는 컴포넌트 스캔 기능을 제공하며, 애노테이션 기반 구성에서 빈 등록 작업을 자동화한다.

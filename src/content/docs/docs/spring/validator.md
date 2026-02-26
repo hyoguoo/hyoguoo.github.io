@@ -2,6 +2,8 @@
 title: "Validation"
 date: 2023-06-15
 lastUpdated: 2025-08-27
+tags: [Spring]
+description: ""
 ---
 
 > Bean Validation은 특정한 구현체가 아니라 Bean Validation 2.0(JSR-380) 기술 표준

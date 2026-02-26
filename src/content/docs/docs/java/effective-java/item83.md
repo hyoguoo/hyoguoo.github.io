@@ -2,6 +2,8 @@
 title: "Lazy Initialization"
 date: 2024-03-14
 lastUpdated: 2024-03-14
+tags: [Java]
+description: ""
 ---
 
 > 지연 초기화는 신중히 사용하라

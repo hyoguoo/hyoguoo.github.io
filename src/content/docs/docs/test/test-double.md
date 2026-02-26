@@ -2,6 +2,8 @@
 title: "Test Double"
 date: 2024-08-27
 lastUpdated: 2026-01-25
+tags: [Test]
+description: ""
 ---
 
 테스트 더블은 테스트를 위해 실제 객체를 대체하는 객체를 말한다.

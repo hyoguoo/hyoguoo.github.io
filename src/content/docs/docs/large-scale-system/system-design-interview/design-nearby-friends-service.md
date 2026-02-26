@@ -2,6 +2,8 @@
 title: "Design Nearby Friends Service"
 date: 2025-10-13
 lastUpdated: 2025-10-13
+tags: [Large-Scale System]
+description: ""
 ---
 
 > 서비스 이용자 가운데 본인 위치 정보 접근 권한을 허락한 사용자에 한해 서로 근접한 위치에 있는 친구를 찾아주는 서비스

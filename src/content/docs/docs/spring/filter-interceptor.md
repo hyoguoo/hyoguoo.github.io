@@ -2,6 +2,8 @@
 title: "Filter & Interceptor"
 date: 2024-03-07
 lastUpdated: 2025-08-27
+tags: [Spring]
+description: ""
 ---
 
 ![Spring Filter Interceptor](image/spring-filter-interceptor.png)

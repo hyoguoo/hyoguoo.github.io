@@ -2,6 +2,8 @@
 title: "Concurrent Utilities"
 date: 2024-03-12
 lastUpdated: 2025-02-20
+tags: [Java]
+description: ""
 ---
 
 > wait와 notify보다는 동시성 유틸리티를 애용하라

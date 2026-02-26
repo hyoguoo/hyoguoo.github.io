@@ -2,6 +2,8 @@
 title: "Operator"
 date: 2022-11-20
 lastUpdated: 2024-08-30
+tags: [Java]
+description: ""
 ---
 
 > 연산을 수행하는 기호

@@ -2,6 +2,8 @@
 title: "Replication"
 date: 2023-07-27
 lastUpdated: 2025-09-27
+tags: [MySQL]
+description: ""
 ---
 
 레플리케이션은 하나의 MySQL 서버(Source)의 데이터를 다른 서버(Replica)로 실시간에 가깝게 복사하여 동기화하는 기술로, 가용성과 확장성을 높이는 데 중요한 역할을 한다.

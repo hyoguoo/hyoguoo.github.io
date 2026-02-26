@@ -2,6 +2,8 @@
 title: "B-Tree Index"
 date: 2023-04-15
 lastUpdated: 2025-09-11
+tags: [MySQL]
+description: ""
 ---
 > B-Tree 인덱스는 데이터베이스의 인덱스를 구성하는 가장 기본적인 방법, Binary의 B가 아니라 Balanced의 B
 

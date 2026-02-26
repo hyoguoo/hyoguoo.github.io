@@ -2,6 +2,8 @@
 title: "Netty & EventLoop"
 date: 2025-10-02
 lastUpdated: 2025-10-02
+tags: [Spring]
+description: ""
 ---
 
 Spring WebFlux는 기본적으로 내장 서버로 Netty를 사용한다.

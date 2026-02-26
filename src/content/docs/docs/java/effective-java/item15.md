@@ -2,6 +2,8 @@
 title: "Access Modifier"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 클래스와 멤버의 접근 권한을 최소화하라

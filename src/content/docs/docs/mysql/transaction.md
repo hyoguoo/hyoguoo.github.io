@@ -2,6 +2,8 @@
 title: "Transaction"
 date: 2023-03-21
 lastUpdated: 2025-09-08
+tags: [MySQL]
+description: ""
 ---
 > 작업의 완전성을 보장해주는 기능
 

@@ -2,6 +2,8 @@
 title: "Method Reference"
 date: 2024-03-07
 lastUpdated: 2024-03-07
+tags: [Java]
+description: ""
 ---
 
 > 람다보다는 메서드 참조를 사용하라

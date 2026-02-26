@@ -2,6 +2,8 @@
 title: "Clustering Index"
 date: 2023-04-19
 lastUpdated: 2025-09-12
+tags: [MySQL]
+description: ""
 ---
 
 클러스터형 인덱스는 프라이머리 키(PK) 값의 순서에 따라 테이블의 데이터가 물리적으로 정렬되어 저장되는 방식을 의미한다.
