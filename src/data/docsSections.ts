@@ -70,10 +70,15 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   'ai-assisted-development': [
     {
-      label: 'AI Assisted Development',
+      label: 'AI & Prompt Engineering',
       slugs: [
         'ai-assistant-how-it-works',
         'prompt-engineering-for-devs',
+      ],
+    },
+    {
+      label: 'Claude Code',
+      slugs: [
         'claude-code-core-features-guide',
         'claude-context-management',
         'claude-code-command-operation-logic',
@@ -83,30 +88,26 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   'computer-architecture': [
     {
-      label: 'Computer Architecture',
-      slugs: [
-        'basic',
-        'cpu-work',
-        'interal-lagnuage-system',
-        'memory',
-        'interrupt',
-        'instruction-level-parallelism',
-      ],
+      label: 'Fundamentals',
+      slugs: ['basic', 'interal-lagnuage-system', 'memory'],
+    },
+    {
+      label: 'CPU & Execution',
+      slugs: ['cpu-work', 'interrupt', 'instruction-level-parallelism'],
     },
   ],
   docker: [
     {
-      label: 'Docker',
-      slugs: [
-        'introduction',
-        'architecture',
-        'image-and-container',
-        'dockerfile',
-        'networking',
-        'storage-and-volume',
-        'docker-compose',
-        'security',
-      ],
+      label: 'Core Concepts',
+      slugs: ['introduction', 'architecture', 'image-and-container'],
+    },
+    {
+      label: 'Build',
+      slugs: ['dockerfile', 'docker-compose'],
+    },
+    {
+      label: 'Runtime',
+      slugs: ['networking', 'storage-and-volume', 'security'],
     },
   ],
   kafka: [
@@ -175,31 +176,26 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   oop: [
     {
-      label: 'Object-Oriented Programming',
-      slugs: [
-        'introduce',
-        'abstract',
-        'type',
-        'role-responsibility-cooperation',
-        'function-structure',
-        'solid',
-      ],
+      label: 'Concepts',
+      slugs: ['introduce', 'abstract', 'type'],
+    },
+    {
+      label: 'Design',
+      slugs: ['role-responsibility-cooperation', 'function-structure', 'solid'],
     },
   ],
   'operating-system': [
     {
-      label: 'Operating System',
-      slugs: [
-        'kernel',
-        'process',
-        'thread',
-        'cpu-scheduling',
-        'synchronization',
-        'deadlock',
-        'continuous-memory-allocation',
-        'virtual-memory',
-        'file-system',
-      ],
+      label: 'Process & CPU',
+      slugs: ['kernel', 'process', 'thread', 'cpu-scheduling'],
+    },
+    {
+      label: 'Synchronization',
+      slugs: ['synchronization', 'deadlock'],
+    },
+    {
+      label: 'Memory & Storage',
+      slugs: ['continuous-memory-allocation', 'virtual-memory', 'file-system'],
     },
   ],
   redis: [
@@ -218,21 +214,26 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   secure: [
     {
-      label: 'Secure',
-      slugs: ['digital-cryptography-basic', 'secure-coding', 'jwt', 'oauth'],
+      label: 'Fundamentals',
+      slugs: ['digital-cryptography-basic', 'secure-coding'],
+    },
+    {
+      label: 'Authentication',
+      slugs: ['jwt', 'oauth'],
     },
   ],
   setting: [
     {
-      label: '개발 환경 설정',
-      slugs: [
-        'brew',
-        'github-multiple-accounts',
-        'github-verified-commit',
-        'intellij',
-        'jvm-version-control',
-        'karabiner-elements',
-      ],
+      label: 'Mac Tools',
+      slugs: ['brew', 'karabiner-elements'],
+    },
+    {
+      label: 'Git & GitHub',
+      slugs: ['github-multiple-accounts', 'github-verified-commit'],
+    },
+    {
+      label: 'Dev Tools',
+      slugs: ['intellij', 'jvm-version-control'],
     },
   ],
   spring: [

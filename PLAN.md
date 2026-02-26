@@ -66,8 +66,7 @@
     - 영문 단독, 약어인 경우 풀네이밍 괄호 추가, 예: `AOP (Aspect-Oriented Programming)`
     - SQL 키워드(SELECT, INSERT 등), API/메서드명, 고유명사는 원문 유지
   - 섹션 관리
-    - [ ] AI-Assisted Development의 Claude 부분은 별도 섹션
-    - [ ] 추가적인 섹션 구분 진행, Docker와 같이 구분이 안 되어 있는 문서들을 대상(하나 하나 질의 하면서 진행할 것)
+    - [x] AI-Assisted Development의 Claude 부분은 별도 섹션을 포함한, 추가적인 섹션 구분 진행, Docker와 같이 구분이 안 되어 있는 문서들을 대상(하나 하나 질의 하면서 진행할 것)
 - [ ] 콘텐츠 링크, 이미지 등 작동 검증(현재 다른 문서로 이동하는 링크가 상대경로로 되어 있는데, 클릭시 404 에러 발생하는 문제 존재)
 - [ ] SEO 검증 (sitemap, robots.txt, meta tag)
 - [ ] 모바일 반응형 확인
