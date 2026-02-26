@@ -14,9 +14,9 @@ const latestBlogPosts = allBlogPosts
   })
   .slice(0, 3);
 
-// Get latest docs (by lastUpdated)
+// Get latest docs (by lastUpdated) — index pages and about pages excluded
 const allDocs = await getCollection('docs', ({ id, data }) => {
-  return !id.startsWith('blog/') && id !== 'index' && !data.draft;
+  return id.startsWith('docs/') && id.split('/').length >= 3 && !data.draft;
 });
 const latestDocs = allDocs
   .filter(doc => doc.data.lastUpdated)
@@ -36,9 +36,32 @@ function formatDate(date: Date | string | undefined) {
   });
 }
 
-function getDocCategory(id: string) {
-  const parts = id.split('/');
-  return parts[0] ?? '';
+const TAG_HUES: Record<string, number> = {
+  'Java': 25,
+  'Spring': 120,
+  'Spring & JPA': 120,
+  'MySQL': 200,
+  'AI': 270,
+  'AI-Assisted Development': 270,
+  'Network': 210,
+  'Docker': 195,
+  'Kafka': 280,
+  'Redis': 0,
+  'OOP': 45,
+  'Secure': 330,
+  'Test': 160,
+  'Operating System': 230,
+  'Computer Architecture': 60,
+  'Large-Scale System': 190,
+  'Setting': 150,
+  'Payment Platform Project': 300,
+};
+
+function tagHue(tag: string): number {
+  if (tag in TAG_HUES) return TAG_HUES[tag];
+  let hash = 0;
+  for (const c of tag) hash = (hash * 31 + c.charCodeAt(0)) & 0xffff;
+  return hash % 360;
 }
 ---
 
@@ -268,9 +291,16 @@ function getDocCategory(id: string) {
       .tag {
         font-size: 0.75rem;
         padding: 0.2rem 0.5rem;
-        background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-        color: var(--color-accent-light);
+        background: hsl(var(--tag-hue, 220), 55%, 18%);
+        color: hsl(var(--tag-hue, 220), 80%, 72%);
         border-radius: 4px;
+      }
+
+      @media (prefers-color-scheme: light) {
+        .tag {
+          background: hsl(var(--tag-hue, 220), 60%, 92%);
+          color: hsl(var(--tag-hue, 220), 55%, 32%);
+        }
       }
 
       .card-category {
@@ -399,7 +429,7 @@ function getDocCategory(id: string) {
                   {post.data.tags && post.data.tags.length > 0 && (
                     <div class="card-tags">
                       {(post.data.tags as string[]).slice(0, 3).map((tag: string) => (
-                        <span class="tag">{tag}</span>
+                        <span class="tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
                       ))}
                     </div>
                   )}
@@ -424,10 +454,16 @@ function getDocCategory(id: string) {
               {latestDocs.map(doc => (
                 <a href={`/${doc.id}/`} class="card">
                   <div class="card-title">{doc.data.title}</div>
-                  <span class="card-category">{getDocCategory(doc.id)}</span>
                   <div class="card-meta">
                     {formatDate(doc.data.lastUpdated)}
                   </div>
+                  {doc.data.tags && (doc.data.tags as string[]).length > 0 && (
+                    <div class="card-tags">
+                      {(doc.data.tags as string[]).slice(0, 1).map((tag: string) => (
+                        <span class="tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                      ))}
+                    </div>
+                  )}
                 </a>
               ))}
             </div>

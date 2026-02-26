@@ -4,13 +4,44 @@ import Default from '@astrojs/starlight/components/Footer.astro';
 import Giscus from './Giscus.astro';
 
 const { entry } = Astro.props;
+const routeEntry = Astro.locals.starlightRoute?.entry;
 
 // Show Giscus on docs and blog pages, not on splash/landing/index pages
 const isSplash = entry?.data?.template === 'splash';
 const isAbout = Astro.url.pathname.startsWith('/about');
 const isIndexPage = /^\/(blog|docs)\/?$/.test(Astro.url.pathname);
 const showGiscus = !isSplash && !isAbout && !isIndexPage;
+
+// Show tags on docs content pages (blog tags are handled by starlight-blog)
+const entryId = routeEntry?.id ?? entry?.id;
+const isDocsPage = entryId?.startsWith('docs/');
+const docsTags = isDocsPage ? ((routeEntry?.data as Record<string, unknown>)?.tags as string[] | undefined) : undefined;
+const showDocsTags = isDocsPage && docsTags && docsTags.length > 0 && !isIndexPage;
 ---
 
 <Default {...Astro.props} />
+{showDocsTags && (
+  <div class="docs-tags">
+    {docsTags!.map((tag: string) => (
+      <span class="docs-tag">{tag}</span>
+    ))}
+  </div>
+)}
 {showGiscus && <Giscus />}
+
+<style>
+  .docs-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1.5rem 0 1rem;
+  }
+
+  .docs-tag {
+    font-size: var(--sl-text-xs);
+    padding: 0.2rem 0.6rem;
+    background: var(--sl-color-bg-inline-code);
+    color: var(--sl-color-text-accent);
+    border-radius: 4px;
+  }
+</style>
