@@ -34,7 +34,7 @@ for (const posts of categories.values()) {
   posts.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-const categoryOrder = ['Java', 'Spring & JPA'];
+const categoryOrder = ['Payment Platform Project', 'Java', 'Spring & JPA', 'MySQL'];
 const sortedCategories = [...categories.entries()].sort(([a], [b]) => {
   const ai = categoryOrder.indexOf(a);
   const bi = categoryOrder.indexOf(b);
@@ -45,7 +45,7 @@ const sortedCategories = [...categories.entries()].sort(([a], [b]) => {
 });
 
 function formatDate(date: Date) {
-  return date.toLocaleDateString('ko-KR', { year: 'numeric', month: 'short', day: 'numeric' });
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 }
 ---
 
