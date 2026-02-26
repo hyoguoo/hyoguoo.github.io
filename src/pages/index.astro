@@ -1,35 +1,35 @@
 ---
 import { getCollection } from 'astro:content';
 
-// Get latest blog posts (by lastUpdated)
 const allBlogPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
 });
-const latestBlogPosts = allBlogPosts
-  .filter(post => post.data.date)
-  .sort((a, b) => {
-    const aDate = new Date(a.data.lastUpdated ?? a.data.date ?? 0);
-    const bDate = new Date(b.data.lastUpdated ?? b.data.date ?? 0);
-    return bDate.getTime() - aDate.getTime();
-  })
-  .slice(0, 3);
 
-// Get latest docs (by lastUpdated) — index pages and about pages excluded
 const allDocs = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('docs/') && id.split('/').length >= 3 && !data.draft;
 });
+
+const latestBlogPosts = allBlogPosts
+.filter(p => p.data.date)
+.sort((a, b) => {
+  const aDate = new Date(a.data.lastUpdated ?? a.data.date ?? 0);
+  const bDate = new Date(b.data.lastUpdated ?? b.data.date ?? 0);
+  return bDate.getTime() - aDate.getTime();
+})
+.slice(0, 6);
+
 const latestDocs = allDocs
-  .filter(doc => doc.data.lastUpdated)
-  .sort((a, b) => {
-    const aDate = new Date(a.data.lastUpdated ?? 0);
-    const bDate = new Date(b.data.lastUpdated ?? 0);
-    return bDate.getTime() - aDate.getTime();
-  })
-  .slice(0, 3);
+.filter(d => d.data.lastUpdated)
+.sort((a, b) => {
+  const aDate = new Date(a.data.lastUpdated ?? 0);
+  const bDate = new Date(b.data.lastUpdated ?? 0);
+  return bDate.getTime() - aDate.getTime();
+})
+.slice(0, 6);
 
 function formatDate(date: Date | string | undefined) {
   if (!date) return '';
-  return new Date(date).toLocaleDateString('ko-KR', {
+  return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -67,429 +67,450 @@ function tagHue(tag: string): number {
 
 <!doctype html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="hyoguoo - Backend Developer, Java & Spring" />
-    <title>hyoguoo</title>
-    <link rel="canonical" href="https://hyoguoo.github.io/" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta property="og:title" content="hyoguoo" />
-    <meta property="og:description" content="Backend Developer, Java & Spring" />
-    <meta property="og:url" content="https://hyoguoo.github.io/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="hyoguoo's notes" />
-    <meta property="og:locale" content="ko_KR" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="hyoguoo" />
-    <meta name="twitter:description" content="Backend Developer, Java & Spring" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
-    <link rel="stylesheet" href="/src/styles/custom.css" />
-    <style>
-      *, *::before, *::after { box-sizing: border-box; }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="hyoguoo - Backend Developer, Java & Spring" />
+  <title>hyoguoo</title>
+  <link rel="canonical" href="https://hyoguoo.github.io/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <meta property="og:title" content="hyoguoo" />
+  <meta property="og:description" content="Backend Developer, Java & Spring" />
+  <meta property="og:url" content="https://hyoguoo.github.io/" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="hyoguoo's notes" />
+  <meta property="og:locale" content="ko_KR" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="hyoguoo" />
+  <meta name="twitter:description" content="Backend Developer, Java & Spring" />
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
 
+    :root {
+      --color-bg: #0f172a;
+      --color-surface: #1e293b;
+      --color-border: #334155;
+      --color-text: #e2e8f0;
+      --color-text-muted: #94a3b8;
+      --color-accent: #3b82f6;
+      --color-accent-light: #60a5fa;
+      --max-width: 800px;
+    }
+
+    @media (prefers-color-scheme: light) {
       :root {
-        --color-bg: #0f172a;
-        --color-surface: #1e293b;
-        --color-border: #334155;
-        --color-text: #e2e8f0;
-        --color-text-muted: #94a3b8;
-        --color-accent: #3b82f6;
-        --color-accent-light: #60a5fa;
-        --max-width: 900px;
+        --color-bg: #f8fafc;
+        --color-surface: #ffffff;
+        --color-border: #e2e8f0;
+        --color-text: #0f172a;
+        --color-text-muted: #64748b;
+        --color-accent: #2563eb;
+        --color-accent-light: #3b82f6;
       }
+    }
 
-      @media (prefers-color-scheme: light) {
-        :root {
-          --color-bg: #f8fafc;
-          --color-surface: #ffffff;
-          --color-border: #e2e8f0;
-          --color-text: #0f172a;
-          --color-text-muted: #64748b;
-          --color-accent: #2563eb;
-          --color-accent-light: #3b82f6;
-        }
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--color-text);
+      text-decoration: none;
+    }
+
+    .nav-icon { flex-shrink: 0; border-radius: 4px; }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .nav-links a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--color-accent-light); }
+
+    /* Hero */
+    .hero {
+      padding: 4rem 0 3rem;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 0.4rem;
+      line-height: 1.2;
+    }
+
+    .hero .role {
+      font-size: 1rem;
+      color: var(--color-text-muted);
+      margin: 0 0 0.3rem;
+    }
+
+    .hero .tagline {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      opacity: 0.7;
+      margin: 0 0 1.75rem;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+      color: var(--color-text);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--color-accent);
+      color: #fff;
+      border-color: var(--color-accent);
+    }
+
+    .btn:hover { border-color: var(--color-accent); color: var(--color-accent-light); }
+    .btn-primary:hover { opacity: 0.9; color: #fff; }
+
+    /* Section */
+    .section {
+      padding: 2.25rem 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.25rem;
+    }
+
+    .section-header h2 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin: 0;
+    }
+
+    .section-header a {
+      font-size: 0.8rem;
+      color: var(--color-accent-light);
+      text-decoration: none;
+    }
+
+    .section-header a:hover { text-decoration: underline; }
+
+    /* Explore */
+    .explore-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 480px) {
+      .explore-grid { grid-template-columns: 1fr; }
+    }
+
+    .explore-card {
+      padding: 1rem 1.25rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      text-decoration: none;
+      color: var(--color-text);
+      transition: border-color 0.2s;
+    }
+
+    .explore-card:hover { border-color: var(--color-accent); }
+
+    .explore-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .explore-desc {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      line-height: 1.4;
+    }
+
+    /* Post / Doc rows */
+    .post-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .post-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--color-border);
+      text-decoration: none;
+      color: var(--color-text);
+      transition: color 0.15s;
+    }
+
+    .post-list li:last-child .post-row { border-bottom: none; }
+
+    .post-row:hover { color: var(--color-accent-light); }
+    .post-row:hover .post-date { color: var(--color-accent-light); }
+
+    .post-tag {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      background: hsl(var(--tag-hue, 220), 55%, 18%);
+      color: hsl(var(--tag-hue, 220), 80%, 72%);
+    }
+
+    @media (prefers-color-scheme: light) {
+      .post-tag {
+        background: hsl(var(--tag-hue, 220), 60%, 92%);
+        color: hsl(var(--tag-hue, 220), 55%, 32%);
       }
+    }
 
-      body {
-        background: var(--color-bg);
-        color: var(--color-text);
-        font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', -apple-system, BlinkMacSystemFont, sans-serif;
-        margin: 0;
-        padding: 0;
-        line-height: 1.6;
-      }
+    .post-title {
+      font-size: 0.9rem;
+      font-weight: 500;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
 
-      .container {
-        max-width: var(--max-width);
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
+    .post-date {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+      color: var(--color-text-muted);
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
 
-      /* Header */
-      header {
-        border-bottom: 1px solid var(--color-border);
-        padding: 1rem 0;
-      }
+    .post-date-icon {
+      font-size: 0.7rem;
+      opacity: 0.6;
+    }
 
-      nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
+    .post-arrow {
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+    }
 
-      .nav-brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--color-text);
-        text-decoration: none;
-      }
+    @media (max-width: 540px) {
+      .post-row { grid-template-columns: auto 1fr auto; }
+      .post-date { display: none; }
+    }
 
-      .nav-icon {
-        flex-shrink: 0;
-        border-radius: 4px;
-      }
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+<header>
+  <nav class="container">
+    <a href="/" class="nav-brand">
+      <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
+      hyoguoo
+    </a>
+    <ul class="nav-links">
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/docs/">Docs</a></li>
+      <li><a href="/about/">About</a></li>
+      <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
 
-      .nav-links {
-        display: flex;
-        gap: 1.5rem;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-      }
-
-      .nav-links a {
-        color: var(--color-text-muted);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color 0.2s;
-      }
-
-      .nav-links a:hover {
-        color: var(--color-accent-light);
-      }
-
-      /* Hero */
-      .hero {
-        padding: 5rem 0 4rem;
-      }
-
-      .hero h1 {
-        font-size: clamp(2rem, 5vw, 3rem);
-        font-weight: 700;
-        margin: 0 0 0.75rem;
-        line-height: 1.2;
-      }
-
-      .hero .tagline {
-        font-size: 1.15rem;
-        color: var(--color-text-muted);
-        margin: 0 0 2rem;
-      }
-
-      .hero-links {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.55rem 1.2rem;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        transition: opacity 0.2s;
-      }
-
-      .btn:hover { opacity: 0.85; }
-
-      .btn-primary {
-        background: var(--color-accent);
-        color: #fff;
-      }
-
-      .btn-secondary {
-        background: var(--color-surface);
-        color: var(--color-text);
-        border: 1px solid var(--color-border);
-      }
-
-      /* Sections */
-      .section {
-        padding: 3rem 0;
-        border-top: 1px solid var(--color-border);
-      }
-
-      .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: baseline;
-        margin-bottom: 1.5rem;
-      }
-
-      .section-header h2 {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin: 0;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        color: var(--color-text-muted);
-      }
-
-      .section-header a {
-        font-size: 0.85rem;
-        color: var(--color-accent-light);
-        text-decoration: none;
-      }
-
-      .section-header a:hover { text-decoration: underline; }
-
-      /* Cards */
-      .card-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        gap: 1rem;
-      }
-
-      .card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        padding: 1.25rem;
-        text-decoration: none;
-        color: inherit;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
-        transition: border-color 0.2s, transform 0.15s;
-      }
-
-      .card:hover {
-        border-color: var(--color-accent);
-        transform: translateY(-2px);
-      }
-
-      .card-title {
-        font-size: 0.95rem;
-        font-weight: 600;
-        line-height: 1.4;
-        color: var(--color-text);
-      }
-
-      .card-meta {
-        font-size: 0.8rem;
-        color: var(--color-text-muted);
-      }
-
-      .card-tags {
-        display: flex;
-        gap: 0.4rem;
-        flex-wrap: wrap;
-        margin-top: 0.25rem;
-      }
-
-      .tag {
-        font-size: 0.75rem;
-        padding: 0.2rem 0.5rem;
-        background: hsl(var(--tag-hue, 220), 55%, 18%);
-        color: hsl(var(--tag-hue, 220), 80%, 72%);
-        border-radius: 4px;
-      }
-
-      @media (prefers-color-scheme: light) {
-        .tag {
-          background: hsl(var(--tag-hue, 220), 60%, 92%);
-          color: hsl(var(--tag-hue, 220), 55%, 32%);
-        }
-      }
-
-      .card-category {
-        font-size: 0.75rem;
-        padding: 0.15rem 0.5rem;
-        background: var(--color-border);
-        color: var(--color-text-muted);
-        border-radius: 4px;
-        text-transform: capitalize;
-        width: fit-content;
-      }
-
-      /* Nav section */
-      .sections-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1rem;
-      }
-
-      .section-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        padding: 1.5rem;
-        text-decoration: none;
-        color: inherit;
-        transition: border-color 0.2s;
-      }
-
-      .section-card:hover { border-color: var(--color-accent); }
-
-      .section-card h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        margin: 0 0 0.4rem;
-      }
-
-      .section-card p {
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
-        margin: 0;
-      }
-
-      /* Footer */
-      footer {
-        border-top: 1px solid var(--color-border);
-        padding: 2rem 0;
-        text-align: center;
-        color: var(--color-text-muted);
-        font-size: 0.85rem;
-      }
-
-      .empty-state {
-        color: var(--color-text-muted);
-        font-size: 0.9rem;
-        padding: 1.5rem 0;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <nav class="container">
-        <a href="/" class="nav-brand">
-          <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
-          hyoguoo
+<main>
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>hyoguoo</h1>
+      <p class="role">Backend Developer · Java &amp; Spring</p>
+      <p class="tagline">placeholder</p>
+      <div class="hero-links">
+        <a href="/about/" class="btn btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.337 0-10 1.676-10 5v2h20v-2c0-3.324-6.663-5-10-5z"/>
+          </svg>
+          About Me
         </a>
-        <ul class="nav-links">
-          <li><a href="/blog/">Blog</a></li>
-          <li><a href="/docs/">Docs</a></li>
-          <li><a href="/about/">About</a></li>
-          <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <main>
-      <!-- Hero -->
-      <section class="hero">
-        <div class="container">
-          <h1>hyoguoo</h1>
-          <p class="tagline">Backend Developer · Java &amp; Spring</p>
-          <div class="hero-links">
-            <a href="/about/" class="btn btn-primary">About Me</a>
-            <a href="https://github.com/hyoguoo" class="btn btn-secondary" target="_blank" rel="noopener">
-              GitHub
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section Navigation -->
-      <section class="section">
-        <div class="container">
-          <div class="section-header">
-            <h2>Explore</h2>
-          </div>
-          <div class="sections-grid">
-            <a href="/blog/" class="section-card">
-              <h3>Blog</h3>
-              <p>실무 경험과 기술적 시행착오를 기록합니다.</p>
-            </a>
-            <a href="/docs/" class="section-card">
-              <h3>Docs</h3>
-              <p>CS 기초부터 실무 기술 스택까지 정리한 학습 레퍼런스.</p>
-            </a>
-            <a href="/about/" class="section-card">
-              <h3>About</h3>
-              <p>Backend Developer로서의 여정과 자기소개.</p>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <!-- Latest Blog Posts -->
-      <section class="section">
-        <div class="container">
-          <div class="section-header">
-            <h2>Latest Posts</h2>
-            <a href="/blog/">All posts →</a>
-          </div>
-          {latestBlogPosts.length > 0 ? (
-            <div class="card-grid">
-              {latestBlogPosts.map(post => (
-                <a href={`/${post.id}/`} class="card">
-                  <div class="card-title">{post.data.title}</div>
-                  <div class="card-meta">
-                    {formatDate(post.data.lastUpdated ?? post.data.date)}
-                  </div>
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <div class="card-tags">
-                      {(post.data.tags as string[]).slice(0, 3).map((tag: string) => (
-                        <span class="tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </a>
-              ))}
-            </div>
-          ) : (
-            <p class="empty-state">포스팅 준비 중입니다.</p>
-          )}
-        </div>
-      </section>
-
-      <!-- Latest Docs -->
-      <section class="section">
-        <div class="container">
-          <div class="section-header">
-            <h2>Recent Docs</h2>
-            <a href="/docs/">All docs →</a>
-          </div>
-          {latestDocs.length > 0 ? (
-            <div class="card-grid">
-              {latestDocs.map(doc => (
-                <a href={`/${doc.id}/`} class="card">
-                  <div class="card-title">{doc.data.title}</div>
-                  <div class="card-meta">
-                    {formatDate(doc.data.lastUpdated)}
-                  </div>
-                  {doc.data.tags && (doc.data.tags as string[]).length > 0 && (
-                    <div class="card-tags">
-                      {(doc.data.tags as string[]).slice(0, 1).map((tag: string) => (
-                        <span class="tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
-                      ))}
-                    </div>
-                  )}
-                </a>
-              ))}
-            </div>
-          ) : (
-            <p class="empty-state">문서 마이그레이션 준비 중입니다.</p>
-          )}
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="container">
-        <p>© {new Date().getFullYear()} hyoguoo · Built with Astro &amp; Starlight</p>
+        <a href="https://github.com/hyoguoo" class="btn" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+          </svg>
+          GitHub
+        </a>
       </div>
-    </footer>
-  </body>
+    </div>
+  </section>
+
+  <!-- Explore (최상단) -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Explore</h2>
+      </div>
+      <div class="explore-grid">
+        <a href="/blog/" class="explore-card">
+          <div class="explore-name">✏️ Blog</div>
+          <div class="explore-desc">기술적 경험과 시행착오, 개선 과정 기록</div>
+        </a>
+        <a href="/docs/" class="explore-card">
+          <div class="explore-name">📖 Docs</div>
+          <div class="explore-desc">단순 지식이나 개념 기록</div>
+        </a>
+        <a href="/about/" class="explore-card">
+          <div class="explore-name">👤 About</div>
+          <div class="explore-desc">placeholder</div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Latest Posts -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Recently Updated · ✏️ Blog</h2>
+        <a href="/blog/">All posts →</a>
+      </div>
+      {latestBlogPosts.length > 0 ? (
+          <ul class="post-list">
+            {latestBlogPosts.map(post => {
+              const tag = (post.data.tags as string[] | undefined)?.[0];
+              return (
+                  <li>
+                    <a href={`/${post.id}/`} class="post-row">
+                      {tag
+                          ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                          : <span />
+                      }
+                      <span class="post-title">{post.data.title}</span>
+                      <span class="post-date">
+                        <span class="post-date-icon">↑</span>
+                        {formatDate((post.data.lastUpdated as Date | undefined) ?? post.data.date)}
+                      </span>
+                      <span class="post-arrow">→</span>
+                    </a>
+                  </li>
+              );
+            })}
+          </ul>
+      ) : (
+          <p style="color: var(--color-text-muted); font-size: 0.9rem;">포스팅 준비 중입니다.</p>
+      )}
+    </div>
+  </section>
+
+  <!-- Recent Docs -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2>Recently Updated · 📖 Docs</h2>
+        <a href="/docs/">All docs →</a>
+      </div>
+      {latestDocs.length > 0 ? (
+          <ul class="post-list">
+            {latestDocs.map(doc => {
+              const tag = (doc.data.tags as string[] | undefined)?.[0];
+              return (
+                  <li>
+                    <a href={`/${doc.id}/`} class="post-row">
+                      {tag
+                          ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                          : <span />
+                      }
+                      <span class="post-title">{doc.data.title}</span>
+                      <span class="post-date">
+                        <span class="post-date-icon">↑</span>
+                        {formatDate(doc.data.lastUpdated as Date | undefined)}
+                      </span>
+                      <span class="post-arrow">→</span>
+                    </a>
+                  </li>
+              );
+            })}
+          </ul>
+      ) : (
+          <p style="color: var(--color-text-muted); font-size: 0.9rem;">문서 마이그레이션 준비 중입니다.</p>
+      )}
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>© {new Date().getFullYear()} hyoguoo · Built with Astro &amp; Starlight</p>
+  </div>
+</footer>
+</body>
 </html>
