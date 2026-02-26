@@ -67,10 +67,18 @@ import path from 'node:path';
       }
 
       .nav-brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
         font-weight: 700;
         font-size: 1.1rem;
         color: var(--color-text);
         text-decoration: none;
+      }
+
+      .nav-icon {
+        flex-shrink: 0;
+        border-radius: 4px;
       }
 
       .nav-links {
@@ -285,7 +293,10 @@ import path from 'node:path';
   <body>
     <header>
       <nav class="container">
-        <a href="/" class="nav-brand">hyoguoo</a>
+        <a href="/" class="nav-brand">
+          <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
+          hyoguoo
+        </a>
         <ul class="nav-links">
           <li><a href="/blog/">Blog</a></li>
           <li><a href="/docs/">Docs</a></li>

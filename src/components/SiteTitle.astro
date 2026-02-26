@@ -1,0 +1,31 @@
+---
+---
+
+<a href="/" class="site-title sl-flex">
+  <img src="/nav-icon.svg" width="20" height="20" alt="" class="site-icon" />
+  <span translate="no">hyoguoo</span>
+</a>
+
+<style>
+  @layer starlight.core {
+    .site-title {
+      align-items: center;
+      gap: 0.5rem;
+      font-size: var(--sl-text-h4);
+      font-weight: 600;
+      color: var(--sl-color-text-accent);
+      text-decoration: none;
+      white-space: nowrap;
+      min-width: 0;
+    }
+
+    .site-icon {
+      flex-shrink: 0;
+      border-radius: 4px;
+    }
+
+    span {
+      overflow: hidden;
+    }
+  }
+</style>
