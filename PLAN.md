@@ -46,9 +46,18 @@
 
 `/migrate` skill 사용 권장
 
-- [ ] docs 콘텐츠 이전 (`_import/docs/` → `src/content/docs/`)
-- [ ] blog 콘텐츠 이전 (`_import/tech-log/` → `src/content/blog/`)
-- [ ] about 콘텐츠 이전 (`_import/about/` → `src/pages/about/`)
+> ⚠️ About은 `src/pages/about/`가 아닌 `src/content/docs/about/`에 배치 (Astro v4 local image 지원 문제)
+
+- [ ] docs 콘텐츠 이전 (`_import/docs/` → `src/content/docs/docs/`)
+  - [x] java: jvm, lambda, optional, thread, collections (테스트 이전 완료)
+  - [x] java/effective-java: item1~item2, index.mdx 생성 (테스트 이전 완료)
+  - [x] mysql: btree-index, transaction, isolation-level, index.mdx 생성 (테스트 이전 완료)
+  - [ ] 나머지 모든 subcategory 이전
+- [ ] blog 콘텐츠 이전 (`_import/tech-log/posts/` → `src/content/docs/blog/`)
+  - [x] java-print-performance, cursor-based-paging-in-spring-data-jpa (테스트 이전 완료)
+  - [ ] 나머지 모든 blog 포스트 이전
+- [x] about 콘텐츠 이전 (`_import/about/posts/` → `src/content/docs/about/`)
+  - why-developer, study-log, 1-day-1-commit 이전 완료
 
 ## Phase 6: 마무리
 
