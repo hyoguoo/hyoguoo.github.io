@@ -99,7 +99,7 @@ public class PostService {
 실제로 위와 같이 `externalCreatePost` 메서드에도 `@Transactional`을 추가하면 트랜잭션이 적용되었고,
 `internalCreatePost` 메서드에서 예외가 발생하면 롤백이 되는 것을 확인할 수 있었다.
 
-## [다른 트랜잭션 전파 방식(링크 참고)](https://hyoguoo.gitbook.io/docs/spring/transactional#5.-propagation)
+## [다른 트랜잭션 전파 방식(링크 참고)](/docs/spring/transactional/#5-propagation)
 
 `propagation` 속성을 통해 트랜잭션 전파 방식을 설정할 수 있는데, 그 중 `REQUIRES_NEW` 방식을 사용하면 항상 새로운 트랜잭션을 생성하여 실행하게 된다.
 위의 `internalCreatePost` 메서드에 `propagation = REQUIRES_NEW`을 추가했을 때 새로운 트랜잭션을 생셩하여 실행되는지 확인해보자.
@@ -315,4 +315,4 @@ Self Invocation 문제는 `@Transactional` 선언 방식을 사용할 때 발생
 
 ###### 참고
 
-- [Transactional](https://hyoguoo.gitbook.io/docs/spring/transactional)
+- [Transactional](/docs/spring/transactional/)

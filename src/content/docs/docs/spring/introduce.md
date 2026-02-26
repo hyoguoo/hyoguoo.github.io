@@ -76,9 +76,9 @@ lastUpdated: 2025-08-21
 
 ## 스프링에서 사용되는 용어와 핵심
 
-- [DI(Dependency Injection)](dependency-injection): 객체 간 의존성을 자신이 아닌 외부에서 두 객체 간의 관계를 설정하는 것
+- [DI(Dependency Injection)](/docs/spring/dependency-injection): 객체 간 의존성을 자신이 아닌 외부에서 두 객체 간의 관계를 설정하는 것
 - IoC(Inversion of Control): 제어의 역전, 프로그램의 제어 흐름을 개발자가 아닌 프레임워크가 담당하는 것
-- [AOP(Aspect Oriented Programming)](aop.md): 공통의 관심 사항을 추출하여 원하는 곳에 적용하는 기술
+- [AOP(Aspect Oriented Programming)](/docs/spring/aop/): 공통의 관심 사항을 추출하여 원하는 곳에 적용하는 기술
 
 ## 스프링이 주는 이점
 

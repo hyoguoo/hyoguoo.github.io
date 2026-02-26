@@ -7,7 +7,7 @@ tags: [Payment Platform Project]
 
 ---
 
-로그를 단순히 [`println()`으로 찍는 건 성능 이슈](java-print-performance.md)와 레벨을 구분할 수 없기 때문에, 개발 초기 테스트 외엔 적절하지 않다.  
+로그를 단순히 [`println()`으로 찍는 건 성능 이슈](/blog/java-print-performance/)와 레벨을 구분할 수 없기 때문에, 개발 초기 테스트 외엔 적절하지 않다.  
 로그는 문제를 추적하고 흐름을 분석하기 위해 많은 양의 데이터를 남기기 때문에, 구조화된 출력과 불필요한 연산 제어가 반드시 필요하다.
 
 - 로그 레벨 구분이 없음 (debug, info, warn 등 불가능)

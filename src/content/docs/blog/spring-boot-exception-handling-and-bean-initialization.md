@@ -203,5 +203,5 @@ Caused by: springbootbasic.exception.FileException: An error occurred during fil
 
 ###### 참고
 
-- [Bean 생명주기](https://hyoguoo.gitbook.io/docs/spring/beans)
-- [예외 처리](https://hyoguoo.gitbook.io/docs/java/exception-handling)
+- [Bean 생명주기](/docs/spring/beans/)
+- [예외 처리](/docs/java/exception-handling/)

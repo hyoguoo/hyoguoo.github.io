@@ -175,7 +175,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 - offset 특성 상 건너 뛰는 데이터가 적을 땐 성능 저하가 적음
 - 조건 없는 COUNT 쿼리 요청 시 많은 건을 조회하는 WHERE 보다 빠르게 조회됨
-  ([참고](how-count-query-work.md))
+  ([참고](/blog/how-count-query-work/))
 - 조건에 잡힌 데이터가 많을 수록 COUNT 쿼리의 속도 저하가 커짐
 
 ```sql

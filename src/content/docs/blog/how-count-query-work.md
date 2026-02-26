@@ -155,7 +155,7 @@ count rows visible to the current transaction.
 
 ### WHERE 조건 / GROUP BY 조건 없는 COUNT(*) 쿼리
 
-이전에 [커서 기반 페이징 성능 개선](cursor-based-paging-in-spring-data-jpa.md)
+이전에 [커서 기반 페이징 성능 개선](/blog/cursor-based-paging-in-spring-data-jpa/)
 을 진행하면서 `WHERE` 조건이 없는 `COUNT(*)` 쿼리가 빠르게 처리되는 것을 확인할 수 있었는데, 그 때 상황을 재현하면 아래와 같다.
 
 ```sql
@@ -252,5 +252,5 @@ for single-threaded workloads if there are no extra clauses such as WHERE or GRO
 ###### 참고자료
 
 - [MySQL Docs Function Count](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html#function_count)
-- [B-Tree Index](https://hyoguoo.gitbook.io/docs/mysql/btree-index)
-- [실행 계획 확인](https://hyoguoo.gitbook.io/docs/mysql/check-execution-plan)
+- [B-Tree Index](/docs/mysql/btree-index/)
+- [실행 계획 확인](/docs/mysql/check-execution-plan/)

@@ -8,9 +8,9 @@ tags: [Spring & JPA]
 > 실행 환경: Java 17, Spring Boot 3.1.4
 
 빌더 패턴을 사용하면 객체를 생성할 때 많은 이점을 얻을 수 있다.
-([링크 참조](https://hyoguoo.gitbook.io/docs/java/effective-java/item2))  
+([링크 참조](/docs/java/effective-java/item2/))  
 하지만 빌더 패턴을 사용하면 많은 코드를 작성해야 하는 단점이 존재하나
-[Lombok의 `@Builder` 어노테이션](https://hyoguoo.gitbook.io/docs/java/effective-java/item2#lombok-builder)
+[Lombok의 `@Builder` 어노테이션](/docs/java/effective-java/item2/#lombok-builder)
 을 사용하면 이러한 단점을 보완할 수 있다.(성능 저하라는 단점도 있으나 미미한 편)
 
 ## @Builder + @AllArgsConstructor

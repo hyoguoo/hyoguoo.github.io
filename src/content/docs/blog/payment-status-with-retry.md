@@ -9,11 +9,11 @@ tags: [Payment Platform Project]
 
 ## 배경
 
-최초 구상했던 [결제 로직](payment-system-with-toss.md)은 결제 정보 검증을 통해 안전한 결제 연동 시스템을 목표로 하였지만, 예상치 못한 에러에 대한 처리 로직이 미흡했다.  
+최초 구상했던 [결제 로직](/blog/payment-system-with-toss/)은 결제 정보 검증을 통해 안전한 결제 연동 시스템을 목표로 하였지만, 예상치 못한 에러에 대한 처리 로직이 미흡했다.  
 그로 인해 특수한 상황에서 사용자가 신뢰성을 느끼기 어려울 것으로 판단되어 결제 시스템에 대한 설계 및 구현을 다시 진행하게 되었다.
 
 문제를 해결하기 위한 방법을 찾던 중
-[가상 면접 사례로 배우는 대규모 시스템 설계 기초 중 결제 시스템](https://hyoguoo.gitbook.io/docs/large-scale-system/system-design-interview/design-payment-system)
+[가상 면접 사례로 배우는 대규모 시스템 설계 기초 중 결제 시스템](/docs/large-scale-system/system-design-interview/design-payment-system/)
 파트를 통해 결제 시스템에 대한 도메인 지식과 안전한 결제 처리를 위한 해결 방법을 찾을 수 있었고, 이를 바탕으로 더 나은 결제 시스템을 설계하고자 했다.
 
 책에서는 결제 서비스/결제 실행 서비스/원장 서비스/지갑 서비스로 분리된 구조를 제시했는데, 현 프로젝트에서는 결제 서비스와 결제 실행 서비스를 하나로 통합하여 구현하였다.  
@@ -346,7 +346,7 @@ public class PaymentRecoverServiceImpl implements PaymentRecoverService {
 그러나 정확한 상태 변경 이력 추적과 원장 및 지갑 관리 시스템의 부재로 인해 결제 내역의 투명성 및 결제 상태 추적이 어려운 한계점이 존재한다.  
 이를 보완하기 위한 추가적인 개선이 이루어진다면, 결제 시스템의 완성도를 더욱 높일 수 있을 것으로 기대된다.
 
-### 정확한 상태 변경 이력 추적 부족 -> [결제 이력 저장으로 해결](payment-history-and-metrics.md)
+### 정확한 상태 변경 이력 추적 부족 -> [결제 이력 저장으로 해결](/blog/payment-history-and-metrics/)
 
 결제 상태가 변경될 때마다 상태 변경 이력을 추적하고, 상태 변경에 따른 추가적인 로그를 남기지 않아 추후 에러에 대한 추적이 어려울 수 있음
 
@@ -356,4 +356,4 @@ public class PaymentRecoverServiceImpl implements PaymentRecoverService {
 
 ###### 참고
 
-- [Design Payment System](https://hyoguoo.gitbook.io/docs/large-scale-system/system-design-interview/design-payment-system)
+- [Design Payment System](/docs/large-scale-system/system-design-interview/design-payment-system/)

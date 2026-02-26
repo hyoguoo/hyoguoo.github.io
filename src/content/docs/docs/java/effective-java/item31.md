@@ -6,7 +6,7 @@ lastUpdated: 2024-03-07
 
 > 한정적 와일드카드를 사용해 API 유연성을 높이라
 
-[item 28](item28.md)에서 언급했듯 매개변수화 타입은 불공변(invariant)인 부분에 대해 의문점을 가질 수 있다.  
+[item 28](/docs/java/effective-java/item28/)에서 언급했듯 매개변수화 타입은 불공변(invariant)인 부분에 대해 의문점을 가질 수 있다.  
 `List<String>`은 `List<Object>`의 하위 타입이 아닌데, `List<String>`은 `List<Object>`가 하는 일을 제대로 수행할 수 없기 때문에 리스코프 치환 원칙에 따르면 불공변인 것이 타당하다.
 
 하지만 이대로 사용하기엔 불편한 점이 많아 매개변수화 타입을 유연하게 사용할 수 있도록 도와주는 방법이 있는데, 바로 한정적 와일드카드 타입(bounded wildcard type)을 사용하는 것이다.
@@ -109,7 +109,7 @@ E의 상위 타입을 모두 포함하는 Collection 타입을 매개변수로 �
 앞서 언급한 Stack 예제에서도 생산자(`pushAll`)와 소비자(`popAll`) 역할에 따라 `extends`와 `super`를 사용했다.  
 위 두 상황이 아닌, 입력 매개변수가 생산자와 소비자 역할을 동시에 해야 하는 상황에선 와일드카드 타입을 쓰지 않는 것이 좋다.
 
-위 공식은 [item 30](item30.md)에서 살펴보았던 `Collections.max` 메서드에도 이미 적용되어 있음을 알 수 있다.
+위 공식은 [item 30](/docs/java/effective-java/item30/)에서 살펴보았던 `Collections.max` 메서드에도 이미 적용되어 있음을 알 수 있다.
 
 ```java
 // Comparable 인터페이스

@@ -108,7 +108,7 @@ public @interface TransactionalEventListener {
 
 ### 트랜잭션 흐름과 리스너 실행 시점
 
-`@TransactionalEventListener`의 실행 시점은 [스프링의 트랜잭션 처리 흐름](transactional.md)과 밀접하게 연관되어 있다.
+`@TransactionalEventListener`의 실행 시점은 [스프링의 트랜잭션 처리 흐름](/docs/spring/transactional/)과 밀접하게 연관되어 있다.
 
 - `BEFORE_COMMIT`: 트랜잭션 커밋 전 콜백에서 실행(`triggerBeforeCommit`)
 - `AFTER_COMMIT`: 트랜잭션 커밋 후 콜백에서 실행(`triggerAfterCommit`)

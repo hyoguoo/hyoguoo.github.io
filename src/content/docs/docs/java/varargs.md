@@ -68,4 +68,4 @@ private static int sum(int a, int b, int... args) {
 
 ```
 
-### [제네릭과 힙 오염](effective-java/item32.md)
+### [제네릭과 힙 오염](/docs/java/effective-java/item32/)

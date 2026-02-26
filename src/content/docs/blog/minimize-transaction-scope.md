@@ -6,7 +6,7 @@ tags: [Payment Platform Project]
 ---
 
 > 실행 환경: Java 17, Spring Boot 3.1.5, MySQL 8.0.33  
-> !! 해당 내용은 [복구 로직 적용](payment-status-with-retry.md) 전의 내용을 담고 있으며, 현재 적용된 내용은 마지막 부분에 기술되어 있습니다.
+> !! 해당 내용은 [복구 로직 적용](/blog/payment-status-with-retry/) 전의 내용을 담고 있으며, 현재 적용된 내용은 마지막 부분에 기술되어 있습니다.
 
 프로젝트 진행 중 MySQL 관련 공부를 하던 중, 트랜잭션 범위의 중요성에 대해 학습하게 되었다.  
 특히, 트랜잭션 범위가 넓을 경우 발생하는 성능 문제를 인식하게 되었고, 이를 개선하기 위해 트랜잭션 범위 최소화 작업을 진행하였다.
@@ -29,7 +29,7 @@ tags: [Payment Platform Project]
 
 이전에 개발한 결제 연동 시스템에서 하나의 트랜잭션에서 네트워크 요청을 포함한 많은 작업을 수행하고 있었다.  
 때문에 트랜잭션 범위가 넓어지게 되었는데, 대략적인 코드와 로직은 아래와 같다.  
-(자세한 로직 및 전체적인 플로우는 [링크](payment-system-with-toss.md) 참고)
+(자세한 로직 및 전체적인 플로우는 [링크](/blog/payment-system-with-toss/) 참고)
 
 ```java
 public class OrderService {
@@ -341,7 +341,7 @@ public class OrderService {
 
 ## 에러 처리 및 복구 로직 적용에 따른 트랜잭션 범위 변화
 
-[결제 상태의 추가와 결제 복구 로직 추가](payment-status-with-retry.md)로 인해 트랜잭션 범위 정책과 복구 로직도 함께 변경되었다.
+[결제 상태의 추가와 결제 복구 로직 추가](/blog/payment-status-with-retry/)로 인해 트랜잭션 범위 정책과 복구 로직도 함께 변경되었다.
 
 ![에러 종류에 맞는 복구 로직 수행](images/minimize-transaction-scope/transaction-scope-new-logic.png)
 

@@ -120,7 +120,7 @@ class Main {
 }
 ```
 
-클라이언트(Main) 코드의 경고도 발생하지만, 생성자에서 발생하는 [비검사 경고를 제거](item27.md)하기 위해 `@SuppressWarnings("unchecked")` 어노테이션을 추가할 수 있다.
+클라이언트(Main) 코드의 경고도 발생하지만, 생성자에서 발생하는 [비검사 경고를 제거](/docs/java/effective-java/item27/)하기 위해 `@SuppressWarnings("unchecked")` 어노테이션을 추가할 수 있다.
 
 ### `@SuppressWarnings("unchecked")` 어노테이션 추가
 

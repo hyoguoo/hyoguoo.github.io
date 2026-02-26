@@ -246,4 +246,4 @@ class OrderConcurrentTest {
 
 ###### 참고
 
-- [스프링 @Transactional](https://hyoguoo.gitbook.io/docs/spring/transactional)
+- [스프링 @Transactional](/docs/spring/transactional/)

@@ -12,7 +12,7 @@ MySQL 서버에서 쿼리가 실행되는 과정은 크게 세 단계로 나눌 
 2. 최적화 및 실행 계획 수립: SQL 파싱 정보(Parse Tree)를 확인하면서 어떤 테이블로부터 읽고 어떤 인덱스를 이용해 테이블을 읽을지 결정(Execution Plan)
 3. 데이터 읽음: 위에서 결정된 테이블의 읽기 순서나 선택된 인덱스를 이용해 스토리지 엔진으로부터 데이터를 읽어옴
 
-자세한 내용은 [쿼리 처리(Query Processing)](query-processing.md) 문서 참고
+자세한 내용은 [쿼리 처리(Query Processing)](/docs/mysql/query-processing/) 문서 참고
 
 ## 쿼리 처리 방법
 

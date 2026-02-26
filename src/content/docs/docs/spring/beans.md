@@ -96,7 +96,7 @@ public class SpringConfig {
     - 의존 관계 주입 전 객체 생성 과정 수행(Field/Setter 주입의 경우에만)
         - 생성자 주입: 객체의 생성과 의존관계 주입이 동시에 발생
         - Setter/Field 주입: 객체 생성 -> 의존 관계 주입 단계 분리
-3. [의존 관계 주입](dependency-injection.md)
+3. [의존 관계 주입](/docs/spring/dependency-injection/)
 4. 초기화 콜백
     - 빈이 생성되고, 빈의 의존관계 주입이 완료된 후 호출
 5. 런타임 사용

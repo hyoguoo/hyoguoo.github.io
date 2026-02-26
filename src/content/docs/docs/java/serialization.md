@@ -212,4 +212,4 @@ public class Singleton implements Serializable {
 }
 ```
 
-이 외에도 [Enum 타입 사용](effective-java/item3.md)을 통해 싱글톤을 구현하는 방법도 직렬화 문제를 자연스럽게 해결할 수 있는 대안으로 권장된다.
+이 외에도 [Enum 타입 사용](/docs/java/effective-java/item3/)을 통해 싱글톤을 구현하는 방법도 직렬화 문제를 자연스럽게 해결할 수 있는 대안으로 권장된다.

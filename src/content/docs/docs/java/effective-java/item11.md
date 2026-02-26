@@ -6,7 +6,7 @@ lastUpdated: 2024-03-07
 
 > equals를 재정의하려거든 hashCode도 재정의하라
 
-[아이템 10](item10.md)에서 equals를 재정의할 때 hashCode도 재정의해야 한다고 언급했다.  
+[아이템 10](/docs/java/effective-java/item10/)에서 equals를 재정의할 때 hashCode도 재정의해야 한다고 언급했다.  
 Object 명세에는 아래와 같이 정의되어 있다.
 
 - equals 비교에 사용되는 정보가 변경되지 않으면, hashCode 반환 값도 항상 같아야 함(일관성)

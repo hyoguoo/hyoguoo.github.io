@@ -66,7 +66,7 @@ public class SingletonService {
 
 ## 싱글톤 레지스트리(Singleton Registry)
 
-[스프링 컨테이너](spring-container.md)에 객체들이 빈으로 등록되면서 객체를 생성하고 관리하는데, 이 때 싱글톤 레지스트리 패턴을 사용한다.
+[스프링 컨테이너](/docs/spring/spring-container/)에 객체들이 빈으로 등록되면서 객체를 생성하고 관리하는데, 이 때 싱글톤 레지스트리 패턴을 사용한다.
 
 - 싱글톤 패턴을 위한 `getInstance()`와 같은 코드가 필요하지 않음
 - DIP, OCP, 테스트, private 생성자로 부터 자유롭게 싱글톤을 사용할 수 있음

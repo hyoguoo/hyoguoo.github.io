@@ -8,7 +8,7 @@ lastUpdated: 2025-10-30
 
 - `System.out`을 통한 입출력은 내부적으로 동기화(synchronized) 처리가 되어 있음
 - 멀티스레드 환경에서 출력 순서가 꼬이는 것을 방지하여 스레드에 안전(thread-safe)하게 동작하도록 보장
-- [System.out.println()의 동작 원리와 성능 이슈](https://hyoguoo.gitbook.io/tech-log/posts/java-print-performance)
+- [System.out.println()의 동작 원리와 성능 이슈](/blog/java-print-performance/)
 
 ## printf(형식화된 출력)
 
