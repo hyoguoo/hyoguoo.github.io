@@ -72,7 +72,10 @@ if (sections) {
       <ul class="doc-list">
         {docs.map(doc => (
           <li>
-            <a href={doc.url} class="doc-link">{doc.title}</a>
+            <a href={doc.url} class="doc-link">
+              <span>{doc.title}</span>
+              <span class="doc-arrow">→</span>
+            </a>
           </li>
         ))}
       </ul>
@@ -105,21 +108,36 @@ if (sections) {
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
   }
 
   .doc-link {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-size: 0.9rem;
     color: var(--sl-color-text);
     text-decoration: none;
-    padding: 0.25rem 0.75rem;
-    border-left: 2px solid var(--sl-color-hairline);
-    transition: color 0.15s, border-color 0.15s;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    transition: color 0.15s;
+  }
+
+  li:last-child .doc-link {
+    border-bottom: none;
   }
 
   .doc-link:hover {
     color: var(--sl-color-text-accent);
-    border-left-color: var(--sl-color-accent);
+  }
+
+  .doc-arrow {
+    color: var(--sl-color-gray-3);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+
+  .doc-link:hover .doc-arrow {
+    color: var(--sl-color-text-accent);
   }
 </style>

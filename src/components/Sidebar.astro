@@ -1,9 +1,11 @@
 ---
 import Default from '@astrojs/starlight/components/Sidebar.astro';
+import MobileMenuFooter from './MobileMenuFooter.astro';
 
 const isBlog = Astro.url.pathname.startsWith('/blog');
 const isAbout = Astro.url.pathname.startsWith('/about');
 const hideSidebar = isAbout;
+const isDocs = !isBlog && !hideSidebar;
 ---
 
 {hideSidebar && (
@@ -12,4 +14,41 @@ const hideSidebar = isAbout;
     .main-frame { padding-inline-start: 0 !important; }
   </style>
 )}
-{!isBlog && !hideSidebar && <Default {...Astro.props} />}
+
+{isBlog && (
+  <div class="md:sl-hidden">
+    <MobileMenuFooter />
+  </div>
+)}
+
+{isDocs && <Default {...Astro.props} />}
+
+{isDocs && (
+  <script>
+    /*
+      Starlight's SidebarPersister restores each <details> open/closed state
+      from sessionStorage via <sl-sidebar-restore> custom elements. This runs
+      during HTML parsing and can collapse a group whose page is currently
+      active (overriding the SSR-rendered `open` attribute set by Starlight's
+      isCurrent logic).
+
+      This script runs after DOMContentLoaded — after all custom elements
+      have connected — and forcibly re-opens any <details> element inside
+      the sidebar that contains the current page link ([aria-current="page"]).
+    */
+    document.addEventListener('DOMContentLoaded', () => {
+      const sidebar = document.getElementById('starlight__sidebar');
+      if (!sidebar) return;
+      const currentLink = sidebar.querySelector<HTMLAnchorElement>('a[aria-current="page"]');
+      if (!currentLink) return;
+      // Walk up from the current link, opening every ancestor <details>
+      let el: HTMLElement | null = currentLink.parentElement;
+      while (el && el !== sidebar) {
+        if (el.tagName === 'DETAILS') {
+          (el as HTMLDetailsElement).open = true;
+        }
+        el = el.parentElement;
+      }
+    });
+  </script>
+)}

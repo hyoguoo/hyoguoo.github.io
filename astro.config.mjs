@@ -15,6 +15,13 @@ export default defineConfig({
 			],
 			head: [
 				{
+					tag: 'link',
+					attrs: {
+						rel: 'stylesheet',
+						href: 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css',
+					},
+				},
+				{
 					tag: 'script',
 					attrs: {
 						src: 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8',
@@ -81,67 +88,84 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Computer Architecture',
-					autogenerate: { directory: 'docs/computer-architecture' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/computer-architecture', collapsed: true },
 				},
 				{
 					label: 'Operating System',
-					autogenerate: { directory: 'docs/operating-system' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/operating-system', collapsed: true },
 				},
 				{
 					label: 'Network',
-					autogenerate: { directory: 'docs/network' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/network', collapsed: true },
 				},
 				{
 					label: 'Secure',
-					autogenerate: { directory: 'docs/secure' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/secure', collapsed: true },
 				},
 				{
 					label: 'Java',
-					autogenerate: { directory: 'docs/java' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/java', collapsed: true },
 				},
 				{
 					label: 'Spring',
-					autogenerate: { directory: 'docs/spring' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/spring', collapsed: true },
 				},
 				{
 					label: 'OOP',
-					autogenerate: { directory: 'docs/oop' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/oop', collapsed: true },
 				},
 				{
 					label: 'MySQL',
-					autogenerate: { directory: 'docs/mysql' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/mysql', collapsed: true },
 				},
 				{
 					label: 'Redis',
-					autogenerate: { directory: 'docs/redis' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/redis', collapsed: true },
 				},
 				{
 					label: 'Kafka',
-					autogenerate: { directory: 'docs/kafka' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/kafka', collapsed: true },
 				},
 				{
 					label: 'Docker',
-					autogenerate: { directory: 'docs/docker' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/docker', collapsed: true },
 				},
 				{
 					label: 'Large-Scale System',
-					autogenerate: { directory: 'docs/large-scale-system' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/large-scale-system', collapsed: true },
 				},
 				{
 					label: 'Test',
-					autogenerate: { directory: 'docs/test' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/test', collapsed: true },
 				},
 				{
 					label: 'AI-Assisted Development',
-					autogenerate: { directory: 'docs/ai-assisted-development' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/ai-assisted-development', collapsed: true },
 				},
 				{
 					label: 'Setting',
-					autogenerate: { directory: 'docs/setting' },
+					collapsed: true,
+					autogenerate: { directory: 'docs/setting', collapsed: true },
 				},
 			],
 			components: {
 				Footer: './src/components/Footer.astro',
+				Header: './src/components/Header.astro',
+				MobileMenuFooter: './src/components/MobileMenuFooter.astro',
 				Sidebar: './src/components/Sidebar.astro',
 				PageTitle: './src/components/PageTitle.astro',
 				Pagination: './src/components/Pagination.astro',

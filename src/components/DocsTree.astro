@@ -75,8 +75,11 @@ const visibleGroups = groups.map(group => ({
         {group.items.map(item => (
           <li>
             {subcategoriesWithIndex.has(item.key)
-              ? <a href={`/docs/${item.key}/`} class="item-link">{item.label}</a>
-              : <span class="item-link">{item.label}</span>
+              ? <a href={`/docs/${item.key}/`} class="item-link">
+                  <span>{item.label}</span>
+                  <span class="item-arrow">→</span>
+                </a>
+              : <span class="item-link item-link--disabled">{item.label}</span>
             }
           </li>
         ))}
@@ -117,21 +120,41 @@ const visibleGroups = groups.map(group => ({
     padding: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
   }
 
   .item-link {
     font-size: 0.9rem;
-    display: block;
-    padding: 0.2rem 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0;
     text-decoration: none;
     color: var(--sl-color-text);
+    border-bottom: 1px solid var(--sl-color-hairline);
     transition: color 0.15s;
+  }
+
+  li:last-child .item-link {
+    border-bottom: none;
   }
 
   a.item-link:hover {
     color: var(--sl-color-text-accent);
-    text-decoration: underline;
+  }
+
+  .item-arrow {
+    color: var(--sl-color-gray-3);
+    font-size: 0.85rem;
+    transition: color 0.15s;
+  }
+
+  a.item-link:hover .item-arrow {
+    color: var(--sl-color-text-accent);
+  }
+
+  .item-link--disabled {
+    color: var(--sl-color-gray-3);
+    cursor: default;
   }
 
   .empty-state {

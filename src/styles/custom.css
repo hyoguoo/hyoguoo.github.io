@@ -5,12 +5,26 @@
   --sl-color-accent-high: #93c5fd;
   --sl-font: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
   --sl-content-width: 67.5rem;
+
+  /* Background unification with landing page (#17181c) */
+  --sl-color-bg: #17181c;
+  --sl-color-bg-nav: #17181c;
+  --sl-color-bg-sidebar: #17181c;
+  --sl-color-hairline-light: #353841;
+  --sl-color-hairline: #353841;
 }
 
 :root[data-theme='light'] {
   --sl-color-accent-low: #dbeafe;
   --sl-color-accent: #2563eb;
   --sl-color-accent-high: #1e40af;
+
+  /* Background unification with landing page (light mode) */
+  --sl-color-bg: #f8fafc;
+  --sl-color-bg-nav: #f8fafc;
+  --sl-color-bg-sidebar: #f8fafc;
+  --sl-color-hairline-light: #e2e8f0;
+  --sl-color-hairline: #e2e8f0;
 }
 
 /* Hide RSS icon and its container from header social links */
@@ -24,12 +38,35 @@ li:has(a[href$="rss.xml"]) {
   display: none !important;
 }
 
-/* Blog pages: hide the sidebar nav entirely and reset content width */
-[data-no-sidebar] nav.sidebar {
-  display: none !important;
-}
+/* Blog pages: keep the nav.sidebar (and hamburger button) visible,
+   but remove the content-offset since there is no persistent sidebar panel.
+   The sidebar pane itself stays in the DOM so the hamburger can toggle it;
+   it will show only the MobileMenuFooter (SocialIcons + ThemeSelect) since
+   Sidebar.astro renders no sublist for blog pages. */
 [data-no-sidebar] .main-frame {
   padding-inline-start: 0 !important;
+}
+
+/* On desktop (≥50rem) blog pages need no sidebar space at all */
+@media (min-width: 50rem) {
+  [data-no-sidebar] nav.sidebar {
+    display: none !important;
+  }
+}
+
+/*
+  Blog list page: the custom Header.astro adds a fixed hamburger button
+  (blog-menu-wrap) at inset-inline-end on mobile. Starlight's PageFrame only
+  adds the header padding-inline-end compensation when data-has-sidebar is
+  present. On blog pages (no sidebar) we must add it ourselves so the search
+  button is not obscured by the hamburger.
+*/
+@media (max-width: 49.999rem) {
+  [data-no-sidebar] .header {
+    padding-inline-end: calc(
+      var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
+    ) !important;
+  }
 }
 
 /* Blog post: hide plugin's own prev/next navigation */

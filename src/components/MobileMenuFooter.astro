@@ -1,0 +1,58 @@
+---
+import Default from '@astrojs/starlight/components/MobileMenuFooter.astro';
+---
+
+<Default />
+
+<!--
+  Move the ThemeSelect / SocialIcons footer to the TOP of the mobile sidebar.
+
+  The Starlight Sidebar.astro renders:
+    .sidebar-content (flex column)
+      SidebarPersister (display:contents, transparent to flex)
+        SidebarSublist   ← flex child
+      div.md:sl-hidden   ← flex child wrapping MobileMenuFooter
+
+  By giving the wrapping div order:-1 we lift it above the nav tree.
+  We target the parent div via the :has() selector, which is supported in all
+  modern browsers. On desktop (≥50rem) the div is already hidden so this has
+  no visual effect there.
+-->
+<style is:global>
+  @media (max-width: 49.999rem) {
+    .sidebar-content > div:has(> .mobile-preferences) {
+      order: -1;
+    }
+  }
+
+  /*
+    Fix mismatched heights in the mobile menu header area.
+
+    The default .social-icons block has padding-block: 1rem which makes it
+    significantly taller than the ThemeSelect (padding-block: 0.625rem).
+    We normalize everything to align-items: center with uniform vertical
+    padding so all items sit at the same visual height.
+  */
+  .mobile-preferences {
+    align-items: center !important;
+    padding: 0.5rem 0 !important;
+    border-top: none !important;
+    border-bottom: 1px solid var(--sl-color-gray-6) !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .mobile-preferences .social-icons {
+    padding-block: 0 !important;
+    align-items: center !important;
+    gap: 0.25rem !important;
+  }
+
+  /* Ensure ThemeSelect select control vertically centers */
+  .mobile-preferences starlight-theme-select label {
+    align-items: center;
+  }
+
+  .mobile-preferences starlight-theme-select select {
+    padding-block: 0.5rem !important;
+  }
+</style>
