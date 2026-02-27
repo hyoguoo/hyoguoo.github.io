@@ -1,6 +1,6 @@
 # Blog 프로젝트 작업 계획
 
-> 최종 업데이트: 2026-02-26 (Phase 5 완료)
+> 최종 업데이트: 2026-02-27 (Phase 8 추가)
 
 ---
 
@@ -89,7 +89,86 @@
 - [x] 메인 랜딩 페이지, about 테마 변경 추가 및 배경 색 톤 내부 페이지(docs, blogs)와 비슷하게 변경
 - [x] docs 사이드바 카테고리가 기본적으로 닫혀있고, 내가 열람한 페이지만 열린 상태로 설정(현재는 전체 카테고리가 열린 상태로 되어 있음)
 - [x] 모바일 뷰 테마 토글 안 보임
-- [ ] 페이지 리팩토링(Blog / Docs 공통 컴포넌트 정리 및 코드 정리, 둘 차이는 사이드바 유무 정도로, 최대한 컴포넌트 통합) 및 코드 클렌징
+
+---
+
+## Phase 8: 리팩토링 심화 & 코드 클린업
+
+> 배경: `RESEARCH.md` 에서 식별된 문제점(P1~P11) 및 CSS 아키텍처 개선 사항.
+> 우선순위 순으로 정렬. 각 항목 옆 `[P번호]`는 `RESEARCH.md` 참조.
+
+### A. Blog/Docs 공통 컴포넌트 추출 ✅
+
+- [x] `TreeSection.astro` 신규 생성 — 카드 컨테이너(border+radius+bg) + 섹션 레이블
+  - Props: `label`, `labelVariant?: 'accent' | 'muted'`
+- [x] `LinkList.astro` 신규 생성 — 링크 리스트 (→ 화살표, hover accent, disabled 지원)
+  - Props: `items: { title, url | null }[]`, `label?`
+- [x] `BlogTree.astro` 수정 — `TreeSection` 사용 (`labelVariant="accent"`)
+- [x] `DocsTree.astro` 수정 — `TreeSection` + `LinkList` 사용, 중복 CSS 제거
+- [x] `SubcategoryPage.astro` 수정 — `LinkList` 사용, 중복 CSS 제거
+- 중복 CSS ~195줄 → ~110줄 (-85줄)
+
+### C. 테마/CSS 단일화
+
+- [ ] `src/styles/tokens.css` 신규 생성 — 색상 원시값 단일 관리
+  - `--t-blue-500: #3b82f6`, `--t-bg-dark: #17181c` 등 raw token 정의
+  - `custom.css`와 `pages.css`가 이 파일을 참조하도록 변경
+- [ ] `src/styles/pages.css` 신규 생성 — Landing/About 공통 CSS 변수 추출 [P1]
+  - `--color-bg`, `--color-surface`, `--color-border`, `--color-text`, `--color-accent` 등
+  - `index.astro`, `about/index.astro` 인라인 변수 정의 블록 제거 후 import
+
+### D. Landing/About 공통 레이아웃 추출 [P1]
+
+> 두 파일이 아래 코드를 완전히 중복 보유 (합산 ~440줄 중복)
+
+- [ ] 공통 레이아웃 컴포넌트(`PageLayout.astro` 또는 유사) 추출
+  - header/nav 마크업 + CSS (~80줄 × 2)
+  - ThemeSelect 마크업 + JS 로직 (~55줄 × 2)
+  - 모바일 nav CSS (~50줄 × 2)
+  - `.btn` 스타일 (~10줄 × 2)
+  - footer 마크업 (~5줄 × 2)
+
+### E. 데이터/설정 관리 개선
+
+- [ ] `src/data/tagColors.ts` 신규 생성 — TAG_HUES와 categoryOrder 통합 [P3]
+  - `pages/index.astro`의 `TAG_HUES` 맵 → 외부 파일로 추출
+  - `BlogTree.astro`의 `categoryOrder` 배열과 함께 관리
+  - 두 파일이 동일 소스를 import → 카테고리명 불일치 리스크 제거
+- [ ] DocsTree `groups` 배열과 `astro.config.mjs` sidebar 이중 관리 단일화 [P2]
+  - 현재 카테고리 등록 포인트 3개: `astro.config.mjs` + `DocsTree.astro` + `docsSections.ts`
+  - 단일 config 파일(`src/data/docsGroups.ts`)으로 통합, 양쪽에서 import
+  - ⚠️ 위험도 높음: sidebar autogenerate 방식과 호환성 확인 필요
+
+### F. 컴포넌트 클린업
+
+- [ ] `ThemeSelect.astro` passthrough 제거 검토 [P4]
+  - 현재 `<Default><slot /></Default>` 만 있는 파일
+  - starlight-blog의 ThemeSelect 오버라이드 동작 확인 후 제거 가능 여부 판단
+- [ ] `Header.astro` 내 `BlogMobileMenu` Web Component 분리 [P9]
+  - `src/components/BlogMobileMenu.astro` (또는 `.ts`)로 추출
+  - `Header.astro` 가독성 개선
+- [ ] `Pagination.astro` 의도 명확화 [P5]
+  - 빈 파일이지만 주석으로 역할(prev/next 제거 의도) 명시
+- [ ] `Giscus.astro` 설정 외부화 [P11]
+  - `repo`, `repoId`, `category`, `categoryId` → `astro.config.mjs` 또는 환경 변수로 이동
+
+### G. 콘텐츠/표기 일관성
+
+- [ ] 직함 표기 통일 [P7]
+  - `pages/index.astro` (meta + hero): "Backend Developer"
+  - `pages/about/index.astro` (meta + profile): "Backend Engineer"
+  - 둘 중 하나로 통일 후 `astro.config.mjs` description도 동일하게 수정
+
+### H. 유지보수 리스크 문서화 (작업 아님, 인지 필요)
+
+> Starlight 버전 업그레이드 시 깨질 가능성 있는 부분
+
+- `MobileMenuFooter.astro` — `.sidebar-content`, `.mobile-preferences` 내부 클래스 의존 [P10]
+- `Sidebar.astro` — `#starlight__sidebar`, `sl-sidebar-restore` 커스텀 엘리먼트 의존 [P8]
+- `custom.css` — `.posts article.preview .sl-markdown-content`, `.post-footer .pagination` 내부 클래스 참조
+- `PageTitle.astro`, `Footer.astro` — `Astro.locals.starlightRoute` 내부 API 사용
+
+---
 
 ## 추가 작업
 
