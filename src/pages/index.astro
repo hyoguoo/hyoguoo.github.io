@@ -1,6 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
-import '../styles/pages.css';
+import PageLayout from '../components/PageLayout.astro';
 
 const allBlogPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
@@ -66,628 +66,367 @@ function tagHue(tag: string): number {
 }
 ---
 
-<!doctype html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="hyoguoo - Backend Developer, Java & Spring" />
-  <title>hyoguoo</title>
-  <link rel="canonical" href="https://hyoguoo.github.io/" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" />
-  <link rel="sitemap" href="/sitemap-index.xml" />
-  <script>
-    (function() {
-      var stored = localStorage.getItem('starlight-theme');
-      var theme = stored === 'dark' || stored === 'light' ? stored
-        : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
-  <meta property="og:title" content="hyoguoo" />
-  <meta property="og:description" content="Backend Developer, Java & Spring" />
-  <meta property="og:url" content="https://hyoguoo.github.io/" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="hyoguoo's notes" />
-  <meta property="og:locale" content="ko_KR" />
-  <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="hyoguoo" />
-  <meta name="twitter:description" content="Backend Developer, Java & Spring" />
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; }
+<PageLayout
+  title="hyoguoo"
+  description="hyoguoo - Backend Developer, Java & Spring"
+  canonical="https://hyoguoo.github.io/"
+  sitemap={true}
+  ogTitle="hyoguoo"
+  ogDescription="Backend Developer, Java & Spring"
+  ogUrl="https://hyoguoo.github.io/"
+>
+  <Fragment slot="head">
+  </Fragment>
 
-    body {
-      background: var(--color-bg);
-      color: var(--color-text);
-      font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
-
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    /* Header */
-    header {
-      border-bottom: 1px solid var(--color-border);
-      padding: 1rem 0;
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .nav-brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--color-text);
-      text-decoration: none;
-    }
-
-    .nav-icon { flex-shrink: 0; border-radius: 4px; }
-
-    .nav-links {
-      display: flex;
-      gap: 1.5rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      transform: translateY(3px);
-    }
-
-    .nav-links a {
-      color: var(--color-text-muted);
-      text-decoration: none;
-      font-size: 0.9rem;
-      transition: color 0.2s;
-    }
-
-    .nav-links a:hover { color: var(--color-accent-light); }
-
-    @media (max-width: 600px) {
-      nav {
-        flex-wrap: nowrap;
-        gap: 0.5rem;
-        padding: 0;
-      }
-      .nav-brand {
-        flex-shrink: 0;
-      }
-      .nav-links {
-        gap: 0;
-        flex-shrink: 1;
-        min-width: 0;
-        justify-content: flex-end;
-      }
-      .nav-links a {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.35rem;
-        white-space: nowrap;
-      }
-      /*
-        Theme select: icon-only on mobile.
-        The label is sized to fit just the monitor icon (1.75rem). The native
-        <select> is overlaid on top with opacity:0 so the icon stays visible
-        while the invisible select remains fully interactive — tapping the icon
-        area opens the OS-native dropdown.
-      */
-      .theme-select-wrap {
-        flex-shrink: 0;
-      }
-      .theme-select-label {
-        width: 1.75rem;
-        height: 1.75rem;
-      }
-      .theme-select-label .theme-select-icon {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      .theme-caret {
-        display: none;
-      }
-      #theme-select {
-        position: absolute;
-        inset: 0;
-        width: 1.75rem;
-        height: 1.75rem;
-        padding: 0;
-        opacity: 0;
-        cursor: pointer;
-      }
-    }
-
-    .sr-only {
-      position: absolute; width: 1px; height: 1px;
-      padding: 0; margin: -1px; overflow: hidden;
-      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
-
-    .theme-select-label {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .theme-select-label:hover { color: var(--color-accent-light); }
-
-    .theme-select-icon {
-      position: absolute;
-      left: 0;
-      pointer-events: none;
-    }
-
-    .theme-caret {
-      position: absolute;
-      right: 0;
-      pointer-events: none;
-    }
-
-    #theme-select {
-      border: 0;
-      background: transparent;
-      appearance: none;
-      color: inherit;
-      cursor: pointer;
-      font-size: 0.9rem;
-      font-family: inherit;
-      padding: 0.25rem;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-      outline: none;
-    }
-
-    #theme-select option {
-      background: var(--color-surface);
-      color: var(--color-text);
-    }
-
-    /* Hero */
-    .hero {
-      padding: 5rem 0 3.5rem;
-    }
-
-    .hero-eyebrow {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--color-accent);
-      margin: 0 0 0.9rem;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.4rem, 5vw, 3.2rem);
-      font-weight: 800;
-      margin: 0 0 0.5rem;
-      line-height: 1.1;
-      letter-spacing: -0.02em;
-      color: var(--color-text);
-    }
-
-    .hero .role {
-      font-size: 1.05rem;
-      color: var(--color-text-muted);
-      margin: 0 0 1.75rem;
-      font-weight: 400;
-    }
-
-    .hero-links {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      padding: 0.45rem 1rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-size: 0.85rem;
-      font-weight: 500;
-      border: 1px solid var(--color-border);
-      background: var(--color-surface);
-      color: var(--color-text);
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .btn-primary {
-      background: var(--color-accent);
-      color: #fff;
-      border-color: var(--color-accent);
-    }
-
-    .btn:hover { border-color: var(--color-accent); color: var(--color-accent-light); }
-    .btn-primary:hover { opacity: 0.9; color: #fff; }
-
-    /* Section */
-    .section {
-      padding: 2.25rem 0;
-      border-top: 1px solid var(--color-border);
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 1.25rem;
-    }
-
-    .section-header h2 {
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--color-text-muted);
-      margin: 0;
-    }
-
-    .section-header a {
-      font-size: 0.8rem;
-      color: var(--color-text-muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .section-header a:hover { color: var(--color-accent-light); }
-
-    /* Explore */
-    .explore-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.75rem;
-    }
-
-    @media (max-width: 480px) {
-      .explore-grid { grid-template-columns: 1fr; }
-    }
-
-    .explore-card {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.875rem;
-      padding: 1.1rem 1.25rem;
-      background: var(--color-surface);
-      border: 1px solid var(--color-border);
-      border-radius: 8px;
-      text-decoration: none;
-      color: var(--color-text);
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .explore-card:hover {
-      border-color: var(--color-accent);
-      background: color-mix(in srgb, var(--color-surface) 100%, var(--color-accent) 3%);
-    }
-
-    .explore-icon {
-      flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-      color: var(--color-accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .explore-body { flex: 1; min-width: 0; }
-
-    .explore-name {
-      font-size: 0.92rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-    }
-
-    .explore-desc {
-      font-size: 0.79rem;
-      color: var(--color-text-muted);
-      line-height: 1.45;
-    }
-
-    /* Post / Doc rows */
-    .post-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-
-    .post-row {
-      display: grid;
-      grid-template-columns: auto 1fr auto auto;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.65rem 0;
-      border-bottom: 1px solid var(--color-border);
-      text-decoration: none;
-      color: var(--color-text);
-      transition: color 0.15s;
-    }
-
-    .post-list li:last-child .post-row { border-bottom: none; }
-
-    .post-row:hover { color: var(--color-accent-light); }
-    .post-row:hover .post-date { color: var(--color-accent-light); }
-
-    .post-tag {
-      font-size: 0.7rem;
-      padding: 0.15rem 0.5rem;
-      border-radius: 4px;
-      white-space: nowrap;
-      background: hsl(var(--tag-hue, 220), 55%, 18%);
-      color: hsl(var(--tag-hue, 220), 80%, 72%);
-    }
-
-    [data-theme='light'] .post-tag {
-      background: hsl(var(--tag-hue, 220), 60%, 92%);
-      color: hsl(var(--tag-hue, 220), 55%, 32%);
-    }
-
-    .post-title {
-      font-size: 0.9rem;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .post-date {
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-      font-size: 0.75rem;
-      font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
-      color: var(--color-text-muted);
-      white-space: nowrap;
-      transition: color 0.15s;
-    }
-
-    .post-date-icon {
-      font-size: 0.7rem;
-      opacity: 0.6;
-    }
-
-    .post-arrow {
-      color: var(--color-text-muted);
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 540px) {
-      .post-row { grid-template-columns: auto 1fr auto; }
-      .post-date { display: none; }
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--color-border);
-      padding: 2rem 0;
-      text-align: center;
-      color: var(--color-text-muted);
-      font-size: 0.85rem;
-      margin-top: 2rem;
-    }
-  </style>
-</head>
-<body>
-<header>
-  <nav class="container">
-    <a href="/" class="nav-brand">
-      <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
-      hyoguoo
-    </a>
-    <ul class="nav-links">
-      <li><a href="/blog/">Blog</a></li>
-      <li><a href="/docs/">Docs</a></li>
-      <li><a href="/about/">About</a></li>
-      <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
-      <li class="theme-select-wrap">
-        <label class="theme-select-label">
-          <span class="sr-only">Theme</span>
-          <svg class="theme-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-          <select id="theme-select" autocomplete="off">
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-            <option value="auto">Auto</option>
-          </select>
-          <svg class="theme-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </label>
-      </li>
-    </ul>
-  </nav>
-</header>
-
-<main>
-  <!-- Hero -->
-  <section class="hero">
-    <div class="container">
-      <p class="hero-eyebrow">Backend Developer</p>
-      <h1>hyoguoo</h1>
-      <p class="role">Java &amp; Spring · Building reliable systems</p>
-      <div class="hero-links">
-        <a href="/about/" class="btn btn-primary">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.337 0-10 1.676-10 5v2h20v-2c0-3.324-6.663-5-10-5z"/>
-          </svg>
-          About Me
-        </a>
-        <a href="https://github.com/hyoguoo" class="btn" target="_blank" rel="noopener">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-          </svg>
-          GitHub
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Explore (최상단) -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Explore</h2>
-      </div>
-      <div class="explore-grid">
-        <a href="/blog/" class="explore-card">
-          <div class="explore-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container">
+        <p class="hero-eyebrow">Backend Developer</p>
+        <h1>hyoguoo</h1>
+        <p class="role">Java &amp; Spring · Building reliable systems</p>
+        <div class="hero-links">
+          <a href="/about/" class="btn btn-primary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5zm0 2c-3.337 0-10 1.676-10 5v2h20v-2c0-3.324-6.663-5-10-5z"/>
             </svg>
-          </div>
-          <div class="explore-body">
-            <div class="explore-name">Blog</div>
-            <div class="explore-desc">기술적 경험과 시행착오, 개선 과정 기록</div>
-          </div>
-        </a>
-        <a href="/docs/" class="explore-card">
-          <div class="explore-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            About Me
+          </a>
+          <a href="https://github.com/hyoguoo" class="btn" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
             </svg>
-          </div>
-          <div class="explore-body">
-            <div class="explore-name">Docs</div>
-            <div class="explore-desc">단순 지식이나 개념 기록</div>
-          </div>
-        </a>
+            GitHub
+          </a>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Latest Posts -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Recently Updated · Blog</h2>
-        <a href="/blog/">All posts →</a>
+    <!-- Explore (최상단) -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Explore</h2>
+        </div>
+        <div class="explore-grid">
+          <a href="/blog/" class="explore-card">
+            <div class="explore-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+              </svg>
+            </div>
+            <div class="explore-body">
+              <div class="explore-name">Blog</div>
+              <div class="explore-desc">기술적 경험과 시행착오, 개선 과정 기록</div>
+            </div>
+          </a>
+          <a href="/docs/" class="explore-card">
+            <div class="explore-icon" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              </svg>
+            </div>
+            <div class="explore-body">
+              <div class="explore-name">Docs</div>
+              <div class="explore-desc">단순 지식이나 개념 기록</div>
+            </div>
+          </a>
+        </div>
       </div>
-      {latestBlogPosts.length > 0 ? (
-          <ul class="post-list">
-            {latestBlogPosts.map(post => {
-              const tag = (post.data.tags as string[] | undefined)?.[0];
-              return (
-                  <li>
-                    <a href={`/${post.id}/`} class="post-row">
-                      {tag
-                          ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
-                          : <span />
-                      }
-                      <span class="post-title">{post.data.title}</span>
-                      <span class="post-date">
-                        <span class="post-date-icon">↑</span>
-                        {formatDate((post.data.lastUpdated as Date | undefined) ?? post.data.date)}
-                      </span>
-                      <span class="post-arrow">→</span>
-                    </a>
-                  </li>
-              );
-            })}
-          </ul>
-      ) : (
-          <p style="color: var(--color-text-muted); font-size: 0.9rem;">포스팅 준비 중입니다.</p>
-      )}
-    </div>
-  </section>
+    </section>
 
-  <!-- Recent Docs -->
-  <section class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Recently Updated · Docs</h2>
-        <a href="/docs/">All docs →</a>
+    <!-- Latest Posts -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Recently Updated · Blog</h2>
+          <a href="/blog/">All posts →</a>
+        </div>
+        {latestBlogPosts.length > 0 ? (
+            <ul class="post-list">
+              {latestBlogPosts.map(post => {
+                const tag = (post.data.tags as string[] | undefined)?.[0];
+                return (
+                    <li>
+                      <a href={`/${post.id}/`} class="post-row">
+                        {tag
+                            ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                            : <span />
+                        }
+                        <span class="post-title">{post.data.title}</span>
+                        <span class="post-date">
+                          <span class="post-date-icon">↑</span>
+                          {formatDate((post.data.lastUpdated as Date | undefined) ?? post.data.date)}
+                        </span>
+                        <span class="post-arrow">→</span>
+                      </a>
+                    </li>
+                );
+              })}
+            </ul>
+        ) : (
+            <p style="color: var(--color-text-muted); font-size: 0.9rem;">포스팅 준비 중입니다.</p>
+        )}
       </div>
-      {latestDocs.length > 0 ? (
-          <ul class="post-list">
-            {latestDocs.map(doc => {
-              const tag = (doc.data.tags as string[] | undefined)?.[0];
-              return (
-                  <li>
-                    <a href={`/${doc.id}/`} class="post-row">
-                      {tag
-                          ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
-                          : <span />
-                      }
-                      <span class="post-title">{doc.data.title}</span>
-                      <span class="post-date">
-                        <span class="post-date-icon">↑</span>
-                        {formatDate(doc.data.lastUpdated as Date | undefined)}
-                      </span>
-                      <span class="post-arrow">→</span>
-                    </a>
-                  </li>
-              );
-            })}
-          </ul>
-      ) : (
-          <p style="color: var(--color-text-muted); font-size: 0.9rem;">문서 마이그레이션 준비 중입니다.</p>
-      )}
-    </div>
-  </section>
-</main>
+    </section>
 
-<footer>
-  <div class="container">
+    <!-- Recent Docs -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header">
+          <h2>Recently Updated · Docs</h2>
+          <a href="/docs/">All docs →</a>
+        </div>
+        {latestDocs.length > 0 ? (
+            <ul class="post-list">
+              {latestDocs.map(doc => {
+                const tag = (doc.data.tags as string[] | undefined)?.[0];
+                return (
+                    <li>
+                      <a href={`/${doc.id}/`} class="post-row">
+                        {tag
+                            ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                            : <span />
+                        }
+                        <span class="post-title">{doc.data.title}</span>
+                        <span class="post-date">
+                          <span class="post-date-icon">↑</span>
+                          {formatDate(doc.data.lastUpdated as Date | undefined)}
+                        </span>
+                        <span class="post-arrow">→</span>
+                      </a>
+                    </li>
+                );
+              })}
+            </ul>
+        ) : (
+            <p style="color: var(--color-text-muted); font-size: 0.9rem;">문서 마이그레이션 준비 중입니다.</p>
+        )}
+      </div>
+    </section>
+  </main>
+
+  <Fragment slot="footer">
     <p>© {new Date().getFullYear()} hyoguoo · Built with Astro &amp; Starlight</p>
-  </div>
-</footer>
+  </Fragment>
+</PageLayout>
 
-<script>
-  (function() {
-    var sel = document.getElementById('theme-select');
-    if (!sel) return;
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color 0.2s, color 0.2s;
+  }
 
-    function parseTheme(v) {
-      return v === 'dark' || v === 'light' ? v : 'auto';
-    }
-    function loadTheme() {
-      return parseTheme(localStorage.getItem('starlight-theme'));
-    }
-    function storeTheme(t) {
-      localStorage.setItem('starlight-theme', t === 'dark' || t === 'light' ? t : '');
-    }
-    function applyTheme(t) {
-      var resolved = t === 'auto'
-        ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-        : t;
-      document.documentElement.setAttribute('data-theme', resolved);
-    }
+  .btn-primary {
+    background: var(--color-accent);
+    color: #fff;
+    border-color: var(--color-accent);
+  }
 
-    sel.value = loadTheme();
+  .btn:hover { border-color: var(--color-accent); color: var(--color-accent-light); }
+  .btn-primary:hover { opacity: 0.9; color: #fff; }
 
-    sel.addEventListener('change', function() {
-      var t = parseTheme(sel.value);
-      storeTheme(t);
-      applyTheme(t);
-    });
+  /* Hero */
+  .hero {
+    padding: 5rem 0 3.5rem;
+  }
 
-    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function() {
-      if (loadTheme() === 'auto') applyTheme('auto');
-    });
-  })();
-</script>
-</body>
-</html>
+  .hero-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 0.9rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 5vw, 3.2rem);
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+  }
+
+  .hero .role {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    margin: 0 0 1.75rem;
+    font-weight: 400;
+  }
+
+  .hero-links {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  /* Section */
+  .section {
+    padding: 2.25rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.25rem;
+  }
+
+  .section-header h2 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .section-header a {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .section-header a:hover { color: var(--color-accent-light); }
+
+  /* Explore */
+  .explore-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 480px) {
+    .explore-grid { grid-template-columns: 1fr; }
+  }
+
+  .explore-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1.1rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  .explore-card:hover {
+    border-color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-surface) 100%, var(--color-accent) 3%);
+  }
+
+  .explore-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .explore-body { flex: 1; min-width: 0; }
+
+  .explore-name {
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .explore-desc {
+    font-size: 0.79rem;
+    color: var(--color-text-muted);
+    line-height: 1.45;
+  }
+
+  /* Post / Doc rows */
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .post-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    color: var(--color-text);
+    transition: color 0.15s;
+  }
+
+  .post-list li:last-child .post-row { border-bottom: none; }
+
+  .post-row:hover { color: var(--color-accent-light); }
+  .post-row:hover .post-date { color: var(--color-accent-light); }
+
+  .post-tag {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    background: hsl(var(--tag-hue, 220), 55%, 18%);
+    color: hsl(var(--tag-hue, 220), 80%, 72%);
+  }
+
+  :global([data-theme='light']) .post-tag {
+    background: hsl(var(--tag-hue, 220), 60%, 92%);
+    color: hsl(var(--tag-hue, 220), 55%, 32%);
+  }
+
+  .post-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .post-date {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+
+  .post-date-icon {
+    font-size: 0.7rem;
+    opacity: 0.6;
+  }
+
+  .post-arrow {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+  }
+
+  @media (max-width: 540px) {
+    .post-row { grid-template-columns: auto 1fr auto; }
+    .post-date { display: none; }
+  }
+</style>

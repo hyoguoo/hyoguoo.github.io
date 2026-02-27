@@ -118,16 +118,16 @@
   - `index.astro`, `about/index.astro` 인라인 변수 정의 블록 제거 후 import 적용
 - [x] `src/styles/custom.css` — 하드코딩 hex 값 → `var(--t-*)` 참조로 교체
 
-### D. Landing/About 공통 레이아웃 추출 [P1]
+### D. Landing/About 공통 레이아웃 추출 [P1] ✅
 
 > 두 파일이 아래 코드를 완전히 중복 보유 (합산 ~440줄 중복)
 
-- [ ] 공통 레이아웃 컴포넌트(`PageLayout.astro` 또는 유사) 추출
-  - header/nav 마크업 + CSS (~80줄 × 2)
-  - ThemeSelect 마크업 + JS 로직 (~55줄 × 2)
-  - 모바일 nav CSS (~50줄 × 2)
-  - `.btn` 스타일 (~10줄 × 2)
-  - footer 마크업 (~5줄 × 2)
+- [x] `src/components/PageLayout.astro` 신규 생성
+  - Props: `title`, `description`, `activePage?`, OG 태그류, `sitemap?`
+  - 공유 추출: header/nav 마크업+CSS, ThemeSelect JS+마크업, 모바일 nav CSS, footer
+  - `pages.css` import도 이 컴포넌트로 이동
+- [x] `src/pages/index.astro` — `<PageLayout>` 래퍼로 교체, 페이지 고유 콘텐츠만 유지
+- [x] `src/pages/about/index.astro` — `<PageLayout activePage="about">` 로 교체
 
 ### E. 데이터/설정 관리 개선
 

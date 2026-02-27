@@ -1,579 +1,313 @@
 ---
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
-import '../../styles/pages.css';
+import PageLayout from '../../components/PageLayout.astro';
 ---
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="hyoguoo - Backend Engineer, Java & Spring" />
-    <title>About · hyoguoo</title>
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" />
-    <script>
-      (function() {
-        var stored = localStorage.getItem('starlight-theme');
-        var theme = stored === 'dark' || stored === 'light' ? stored
-          : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', theme);
-      })();
-    </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
-    <style>
-      *, *::before, *::after { box-sizing: border-box; }
+<PageLayout
+  title="About · hyoguoo"
+  description="hyoguoo - Backend Engineer, Java & Spring"
+  activePage="about"
+>
+  <main>
+    <div class="container">
 
-      body {
-        background: var(--color-bg);
-        color: var(--color-text);
-        font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
-        margin: 0;
-        padding: 0;
-        line-height: 1.7;
-        overflow-x: hidden;
-      }
+      <!-- Profile -->
+      <section class="profile">
+        <div class="profile-content">
+          <div class="profile-text">
+            <p class="profile-eyebrow">Backend Engineer</p>
+            <h1>hyoguoo</h1>
+            <p class="role">Java &amp; Spring · Building reliable systems</p>
+            <p class="tagline">And also a big fan of Platypus Ogu 🦆</p>
+        <div class="profile-links">
+          <a href="https://github.com/hyoguoo" class="btn" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+            </svg>
+            GitHub
+          </a>
+          <a href="https://www.linkedin.com/in/hyoguoo" class="btn" target="_blank" rel="noopener">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+            LinkedIn
+          </a>
+          <a href="mailto:hyoguoo@gmail.com" class="btn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
+            </svg>
+            Email
+          </a>
+        </div>
+          </div>
+          <div class="profile-image">
+            <img src="/images/about-profile.png" alt="Platypus Ogu" />
+          </div>
+        </div>
+      </section>
 
-      .container {
-        max-width: var(--max-width);
-        margin: 0 auto;
-        padding: 0 1.5rem;
-      }
+      <!-- Skills -->
+      <section class="section">
+        <h2>Skills</h2>
+        <div class="stack-grid">
+          <span class="stack-item main">Java</span>
+          <span class="stack-item main">Spring Boot</span>
+          <span class="stack-item main">JPA</span>
+          <span class="stack-item main">Querydsl</span>
+          <span class="stack-item">TypeScript</span>
+          <span class="stack-item">MySQL</span>
+          <span class="stack-item">Redis</span>
+          <span class="stack-item">JUnit</span>
+        </div>
+      </section>
 
-      /* Header */
-      header {
-        border-bottom: 1px solid var(--color-border);
-        padding: 1rem 0;
-      }
+      <!-- Stats -->
+      <section class="section" id="stats-section">
+        <h2>Stats</h2>
+        <div class="stats-grid">
+          <div class="stats-item">
+            <img
+              src="https://streak-stats.demolab.com?user=hyoguoo&theme=dark&hide_border=true&background=1e293b&ring=3b82f6&fire=3b82f6&currStreakLabel=94a3b8&sideLabels=94a3b8&dates=94a3b8&currStreakNum=e2e8f0&sideNums=e2e8f0"
+              alt="GitHub Streak Stats"
+              onerror="onStatImgError(this)"
+            />
+          </div>
+          <div class="stats-item">
+            <a href="https://solved.ac/profile/hyoguoo" target="_blank" rel="noopener">
+              <img src="https://mazassumnida.wtf/api/v2/generate_badge?boj=hyoguoo" alt="Solved.ac Badge" onerror="onStatImgError(this)" />
+            </a>
+          </div>
+        </div>
+      </section>
 
-      nav {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .nav-brand {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-weight: 700;
-        font-size: 1.1rem;
-        color: var(--color-text);
-        text-decoration: none;
-      }
-
-      .nav-icon {
-        flex-shrink: 0;
-        border-radius: 4px;
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 1.5rem;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        transform: translateY(3px);
-      }
-
-      .nav-links a {
-        color: var(--color-text-muted);
-        text-decoration: none;
-        font-size: 0.9rem;
-        transition: color 0.2s;
-      }
-
-      .nav-links a:hover { color: var(--color-accent-light); }
-      .nav-links a[aria-current] { color: var(--color-text); font-weight: 500; }
-
-      @media (max-width: 600px) {
-        nav {
-          flex-wrap: nowrap;
-          gap: 0.5rem;
-          padding: 0;
-        }
-        .nav-brand {
-          flex-shrink: 0;
-        }
-        .nav-links {
-          gap: 0;
-          flex-shrink: 1;
-          min-width: 0;
-          justify-content: flex-end;
-        }
-        .nav-links a {
-          font-size: 0.8rem;
-          padding: 0.25rem 0.35rem;
-          white-space: nowrap;
-        }
-        /*
-          Theme select: icon-only on mobile.
-          The label is sized to fit just the monitor icon (1.75rem). The native
-          <select> is overlaid on top with opacity:0 so the icon stays visible
-          while the invisible select remains fully interactive.
-        */
-        .theme-select-wrap {
-          flex-shrink: 0;
-        }
-        .theme-select-label {
-          width: 1.75rem;
-          height: 1.75rem;
-        }
-        .theme-select-label .theme-select-icon {
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-        .theme-caret {
-          display: none;
-        }
-        #theme-select {
-          position: absolute;
-          inset: 0;
-          width: 1.75rem;
-          height: 1.75rem;
-          padding: 0;
-          opacity: 0;
-          cursor: pointer;
-        }
-      }
-
-      .sr-only {
-        position: absolute; width: 1px; height: 1px;
-        padding: 0; margin: -1px; overflow: hidden;
-        clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-      }
-
-      .theme-select-label {
-        position: relative;
-        display: inline-flex;
-        align-items: center;
-        color: var(--color-text-muted);
-        cursor: pointer;
-        transition: color 0.2s;
-      }
-
-      .theme-select-label:hover { color: var(--color-accent-light); }
-
-      .theme-select-icon {
-        position: absolute;
-        left: 0;
-        pointer-events: none;
-      }
-
-      .theme-caret {
-        position: absolute;
-        right: 0;
-        pointer-events: none;
-      }
-
-      #theme-select {
-        border: 0;
-        background: transparent;
-        appearance: none;
-        color: inherit;
-        cursor: pointer;
-        font-size: 0.9rem;
-        font-family: inherit;
-        padding: 0.25rem;
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-        outline: none;
-      }
-
-      #theme-select option {
-        background: var(--color-surface);
-        color: var(--color-text);
-      }
-
-      /* Profile */
-      .profile {
-        padding: 5rem 0 2.5rem;
-      }
-
-      .profile-content {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 2rem;
-      }
-
-      .profile-text { flex: 1; }
-
-      .profile-image img {
-        width: 150px;
-        height: 150px;
-        object-fit: contain;
-        border-radius: 16px;
-        background: #ffffff;
-        display: block;
-      }
-
-      @media (max-width: 520px) {
-        .profile-content { flex-direction: column-reverse; gap: 1.5rem; }
-        .profile-image img { width: 110px; height: 110px; }
-      }
-
-      .profile-eyebrow {
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        color: var(--color-accent);
-        margin: 0 0 0.9rem;
-      }
-
-      .profile h1 {
-        font-size: clamp(2.4rem, 5vw, 3.2rem);
-        font-weight: 800;
-        margin: 0 0 0.5rem;
-        line-height: 1.1;
-        letter-spacing: -0.02em;
-        color: var(--color-text);
-      }
-
-      .profile .role {
-        font-size: 1.05rem;
-        color: var(--color-text-muted);
-        margin: 0 0 0.3rem;
-        font-weight: 400;
-      }
-
-      .profile .tagline {
-        font-size: 0.85rem;
-        color: var(--color-text-muted);
-        opacity: 0.7;
-        margin: 0 0 1.75rem;
-      }
-
-      .profile-links {
-        display: flex;
-        gap: 0.6rem;
-        flex-wrap: wrap;
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        padding: 0.45rem 1rem;
-        border-radius: 6px;
-        text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 500;
-        border: 1px solid var(--color-border);
-        background: var(--color-surface);
-        color: var(--color-text);
-        transition: border-color 0.2s;
-      }
-
-      .btn:hover { border-color: var(--color-accent); color: var(--color-accent-light); }
-
-      /* Section */
-      .section {
-        padding: 2.25rem 0;
-        border-top: 1px solid var(--color-border);
-      }
-
-      .section h2 {
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--color-text-muted);
-        margin: 0 0 1.25rem;
-      }
-
-      /* Skills */
-      .stack-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-      }
-
-      .stack-item {
-        padding: 0.3rem 0.7rem;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: 6px;
-        font-size: 0.82rem;
-        font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
-      }
-
-      .stack-item.main {
-        border-color: var(--color-accent);
-        color: var(--color-accent-light);
-      }
-
-      /* Stats */
-      .stats-grid {
-        display: flex;
-        gap: 1rem;
-        flex-wrap: wrap;
-        align-items: flex-start;
-      }
-
-      .stats-item img {
-        height: 140px;
-        max-width: 100%;
-        border-radius: 6px;
-        display: block;
-      }
-
-      /* Writing */
-      .post-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-      }
-
-      .post-list li a {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.8rem 1rem;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--color-text);
-        transition: border-color 0.2s;
-      }
-
-      .post-list li a:hover { border-color: var(--color-accent); }
-      .post-list .post-title { font-size: 0.9rem; font-weight: 500; }
-      .post-list .post-arrow { color: var(--color-text-muted); font-size: 0.85rem; }
-
-      /* Study Log */
-      .log-card {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 1.25rem;
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-left: 3px solid var(--color-accent);
-        border-radius: 8px;
-        text-decoration: none;
-        color: var(--color-text);
-        transition: border-color 0.2s;
-      }
-
-      .log-card:hover { border-color: var(--color-accent); opacity: 0.9; }
-
-      .log-card-left { display: flex; flex-direction: column; gap: 0.2rem; }
-      .log-card-title { font-size: 0.9rem; font-weight: 600; }
-      .log-card-desc { font-size: 0.8rem; color: var(--color-text-muted); }
-
-      .badge {
-        font-size: 0.7rem;
-        font-family: ui-monospace, 'SF Mono', monospace;
-        padding: 0.15rem 0.5rem;
-        border-radius: 4px;
-        background: color-mix(in srgb, var(--color-accent) 15%, transparent);
-        color: var(--color-accent-light);
-        border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
-        white-space: nowrap;
-      }
-
-      /* Footer */
-      footer {
-        border-top: 1px solid var(--color-border);
-        padding: 2rem 0;
-        text-align: center;
-        color: var(--color-text-muted);
-        font-size: 0.85rem;
-        margin-top: 2rem;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <nav class="container">
-        <a href="/" class="nav-brand">
-          <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
-          hyoguoo
+      <!-- Study Log -->
+      <section class="section">
+        <h2>Study Log</h2>
+        <a href="/about/study-log/" class="log-card">
+          <div class="log-card-left">
+            <span class="log-card-title">Study Log</span>
+            <span class="log-card-desc">학습 내용 기록</span>
+          </div>
+          <span class="badge">ongoing</span>
         </a>
-        <ul class="nav-links">
-          <li><a href="/blog/">Blog</a></li>
-          <li><a href="/docs/">Docs</a></li>
-          <li><a href="/about/" aria-current="page">About</a></li>
-          <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
-          <li class="theme-select-wrap">
-            <label class="theme-select-label">
-              <span class="sr-only">Theme</span>
-              <svg class="theme-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="2" y="3" width="20" height="14" rx="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
-              <select id="theme-select" autocomplete="off">
-                <option value="dark">Dark</option>
-                <option value="light">Light</option>
-                <option value="auto">Auto</option>
-              </select>
-              <svg class="theme-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </label>
+      </section>
+
+      <!-- Writing -->
+      <section class="section">
+        <h2>Writing</h2>
+        <ul class="post-list">
+          <li>
+            <a href="/about/1-day-1-commit/">
+              <span class="post-title">1일 1커밋</span>
+              <span class="post-arrow">→</span>
+            </a>
           </li>
         </ul>
-      </nav>
-    </header>
+      </section>
 
-    <main>
-      <div class="container">
+    </div>
+  </main>
 
-        <!-- Profile -->
-        <section class="profile">
-          <div class="profile-content">
-            <div class="profile-text">
-              <p class="profile-eyebrow">Backend Engineer</p>
-              <h1>hyoguoo</h1>
-              <p class="role">Java &amp; Spring · Building reliable systems</p>
-              <p class="tagline">And also a big fan of Platypus Ogu 🦆</p>
-          <div class="profile-links">
-            <a href="https://github.com/hyoguoo" class="btn" target="_blank" rel="noopener">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-              </svg>
-              GitHub
-            </a>
-            <a href="https://www.linkedin.com/in/hyoguoo" class="btn" target="_blank" rel="noopener">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-              </svg>
-              LinkedIn
-            </a>
-            <a href="mailto:hyoguoo@gmail.com" class="btn">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/>
-              </svg>
-              Email
-            </a>
-          </div>
-            </div>
-            <div class="profile-image">
-              <img src="/images/about-profile.png" alt="Platypus Ogu" />
-            </div>
-          </div>
-        </section>
+  <script>
+    function onStatImgError(img) {
+      img.closest('.stats-item').style.display = 'none';
+      const allHidden = [...document.querySelectorAll('.stats-item')]
+        .every(el => el.style.display === 'none');
+      if (allHidden) document.getElementById('stats-section').style.display = 'none';
+    }
+  </script>
+</PageLayout>
 
-        <!-- Skills -->
-        <section class="section">
-          <h2>Skills</h2>
-          <div class="stack-grid">
-            <span class="stack-item main">Java</span>
-            <span class="stack-item main">Spring Boot</span>
-            <span class="stack-item main">JPA</span>
-            <span class="stack-item main">Querydsl</span>
-            <span class="stack-item">TypeScript</span>
-            <span class="stack-item">MySQL</span>
-            <span class="stack-item">Redis</span>
-            <span class="stack-item">JUnit</span>
-          </div>
-        </section>
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 1rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color 0.2s;
+  }
 
-        <!-- Stats -->
-        <section class="section" id="stats-section">
-          <h2>Stats</h2>
-          <div class="stats-grid">
-            <div class="stats-item">
-              <img
-                src="https://streak-stats.demolab.com?user=hyoguoo&theme=dark&hide_border=true&background=1e293b&ring=3b82f6&fire=3b82f6&currStreakLabel=94a3b8&sideLabels=94a3b8&dates=94a3b8&currStreakNum=e2e8f0&sideNums=e2e8f0"
-                alt="GitHub Streak Stats"
-                onerror="onStatImgError(this)"
-              />
-            </div>
-            <div class="stats-item">
-              <a href="https://solved.ac/profile/hyoguoo" target="_blank" rel="noopener">
-                <img src="https://mazassumnida.wtf/api/v2/generate_badge?boj=hyoguoo" alt="Solved.ac Badge" onerror="onStatImgError(this)" />
-              </a>
-            </div>
-          </div>
-        </section>
+  .btn:hover { border-color: var(--color-accent); color: var(--color-accent-light); }
 
-        <!-- Study Log -->
-        <section class="section">
-          <h2>Study Log</h2>
-          <a href="/about/study-log/" class="log-card">
-            <div class="log-card-left">
-              <span class="log-card-title">Study Log</span>
-              <span class="log-card-desc">학습 내용 기록</span>
-            </div>
-            <span class="badge">ongoing</span>
-          </a>
-        </section>
+  /* Profile */
+  .profile {
+    padding: 5rem 0 2.5rem;
+  }
 
-        <!-- Writing -->
-        <section class="section">
-          <h2>Writing</h2>
-          <ul class="post-list">
-            <li>
-              <a href="/about/1-day-1-commit/">
-                <span class="post-title">1일 1커밋</span>
-                <span class="post-arrow">→</span>
-              </a>
-            </li>
-          </ul>
-        </section>
+  .profile-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 2rem;
+  }
 
-      </div>
-    </main>
+  .profile-text { flex: 1; }
 
-    <script>
-      function onStatImgError(img) {
-        img.closest('.stats-item').style.display = 'none';
-        const allHidden = [...document.querySelectorAll('.stats-item')]
-          .every(el => el.style.display === 'none');
-        if (allHidden) document.getElementById('stats-section').style.display = 'none';
-      }
-    </script>
+  .profile-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: contain;
+    border-radius: 16px;
+    background: #ffffff;
+    display: block;
+  }
 
-    <script>
-      (function() {
-        var sel = document.getElementById('theme-select');
-        if (!sel) return;
+  @media (max-width: 520px) {
+    .profile-content { flex-direction: column-reverse; gap: 1.5rem; }
+    .profile-image img { width: 110px; height: 110px; }
+  }
 
-        function parseTheme(v) {
-          return v === 'dark' || v === 'light' ? v : 'auto';
-        }
-        function loadTheme() {
-          return parseTheme(localStorage.getItem('starlight-theme'));
-        }
-        function storeTheme(t) {
-          localStorage.setItem('starlight-theme', t === 'dark' || t === 'light' ? t : '');
-        }
-        function applyTheme(t) {
-          var resolved = t === 'auto'
-            ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-            : t;
-          document.documentElement.setAttribute('data-theme', resolved);
-        }
+  .profile-eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin: 0 0 0.9rem;
+  }
 
-        sel.value = loadTheme();
+  .profile h1 {
+    font-size: clamp(2.4rem, 5vw, 3.2rem);
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+  }
 
-        sel.addEventListener('change', function() {
-          var t = parseTheme(sel.value);
-          storeTheme(t);
-          applyTheme(t);
-        });
+  .profile .role {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    margin: 0 0 0.3rem;
+    font-weight: 400;
+  }
 
-        window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function() {
-          if (loadTheme() === 'auto') applyTheme('auto');
-        });
-      })();
-    </script>
+  .profile .tagline {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    opacity: 0.7;
+    margin: 0 0 1.75rem;
+  }
 
-    <footer>
-      <div class="container">
-        <p>© {new Date().getFullYear()} hyoguoo</p>
-      </div>
-    </footer>
-  </body>
-</html>
+  .profile-links {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  /* Section */
+  .section {
+    padding: 2.25rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section h2 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin: 0 0 1.25rem;
+  }
+
+  /* Skills */
+  .stack-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .stack-item {
+    padding: 0.3rem 0.7rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-family: ui-monospace, 'SF Mono', 'Fira Code', monospace;
+  }
+
+  .stack-item.main {
+    border-color: var(--color-accent);
+    color: var(--color-accent-light);
+  }
+
+  /* Stats */
+  .stats-grid {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .stats-item img {
+    height: 140px;
+    max-width: 100%;
+    border-radius: 6px;
+    display: block;
+  }
+
+  /* Writing */
+  .post-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .post-list li a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: border-color 0.2s;
+  }
+
+  .post-list li a:hover { border-color: var(--color-accent); }
+  .post-list .post-title { font-size: 0.9rem; font-weight: 500; }
+  .post-list .post-arrow { color: var(--color-text-muted); font-size: 0.85rem; }
+
+  /* Study Log */
+  .log-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: border-color 0.2s;
+  }
+
+  .log-card:hover { border-color: var(--color-accent); opacity: 0.9; }
+
+  .log-card-left { display: flex; flex-direction: column; gap: 0.2rem; }
+  .log-card-title { font-size: 0.9rem; font-weight: 600; }
+  .log-card-desc { font-size: 0.8rem; color: var(--color-text-muted); }
+
+  .badge {
+    font-size: 0.7rem;
+    font-family: ui-monospace, 'SF Mono', monospace;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+    color: var(--color-accent-light);
+    border: 1px solid color-mix(in srgb, var(--color-accent) 30%, transparent);
+    white-space: nowrap;
+  }
+</style>

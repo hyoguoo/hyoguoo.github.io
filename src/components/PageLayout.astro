@@ -1,0 +1,311 @@
+---
+import '../styles/pages.css';
+
+interface Props {
+  title: string;
+  description: string;
+  activePage?: 'about';
+  canonical?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  ogUrl?: string;
+  sitemap?: boolean;
+}
+
+const {
+  title,
+  description,
+  activePage,
+  canonical,
+  ogTitle,
+  ogDescription,
+  ogUrl,
+  sitemap = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" />
+  {canonical && <link rel="canonical" href={canonical} />}
+  {sitemap && <link rel="sitemap" href="/sitemap-index.xml" />}
+  <script>
+    (function() {
+      var stored = localStorage.getItem('starlight-theme');
+      var theme = stored === 'dark' || stored === 'light' ? stored
+        : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  {ogTitle && <meta property="og:title" content={ogTitle} />}
+  {ogDescription && <meta property="og:description" content={ogDescription} />}
+  {ogUrl && <meta property="og:url" content={ogUrl} />}
+  {ogTitle && <meta property="og:type" content="website" />}
+  {ogTitle && <meta property="og:site_name" content="hyoguoo's notes" />}
+  {ogTitle && <meta property="og:locale" content="ko_KR" />}
+  {ogTitle && <meta name="twitter:card" content="summary" />}
+  {ogTitle && <meta name="twitter:title" content={ogTitle} />}
+  {ogDescription && <meta name="twitter:description" content={ogDescription} />}
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      background: var(--color-bg);
+      color: var(--color-text);
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--color-border);
+      padding: 1rem 0;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--color-text);
+      text-decoration: none;
+    }
+
+    .nav-icon { flex-shrink: 0; border-radius: 4px; }
+
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      transform: translateY(3px);
+    }
+
+    .nav-links a {
+      color: var(--color-text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--color-accent-light); }
+    .nav-links a[aria-current] { color: var(--color-text); font-weight: 500; }
+
+    @media (max-width: 600px) {
+      nav {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        padding: 0;
+      }
+      .nav-brand {
+        flex-shrink: 0;
+      }
+      .nav-links {
+        gap: 0;
+        flex-shrink: 1;
+        min-width: 0;
+        justify-content: flex-end;
+      }
+      .nav-links a {
+        font-size: 0.8rem;
+        padding: 0.25rem 0.35rem;
+        white-space: nowrap;
+      }
+      /*
+        Theme select: icon-only on mobile.
+        The label is sized to fit just the monitor icon (1.75rem). The native
+        <select> is overlaid on top with opacity:0 so the icon stays visible
+        while the invisible select remains fully interactive — tapping the icon
+        area opens the OS-native dropdown.
+      */
+      .theme-select-wrap {
+        flex-shrink: 0;
+      }
+      .theme-select-label {
+        width: 1.75rem;
+        height: 1.75rem;
+      }
+      .theme-select-label .theme-select-icon {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .theme-caret {
+        display: none;
+      }
+      #theme-select {
+        position: absolute;
+        inset: 0;
+        width: 1.75rem;
+        height: 1.75rem;
+        padding: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    .theme-select-label {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .theme-select-label:hover { color: var(--color-accent-light); }
+
+    .theme-select-icon {
+      position: absolute;
+      left: 0;
+      pointer-events: none;
+    }
+
+    .theme-caret {
+      position: absolute;
+      right: 0;
+      pointer-events: none;
+    }
+
+    #theme-select {
+      border: 0;
+      background: transparent;
+      appearance: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: inherit;
+      padding: 0.25rem;
+      padding-left: 1.25rem;
+      padding-right: 1.25rem;
+      outline: none;
+    }
+
+    #theme-select option {
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--color-border);
+      padding: 2rem 0;
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      margin-top: 2rem;
+    }
+  </style>
+  <slot name="head" />
+</head>
+<body>
+<header>
+  <nav class="container">
+    <a href="/" class="nav-brand">
+      <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
+      hyoguoo
+    </a>
+    <ul class="nav-links">
+      <li><a href="/blog/">Blog</a></li>
+      <li><a href="/docs/">Docs</a></li>
+      <li><a href="/about/" aria-current={activePage === 'about' ? 'page' : undefined}>About</a></li>
+      <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
+      <li class="theme-select-wrap">
+        <label class="theme-select-label">
+          <span class="sr-only">Theme</span>
+          <svg class="theme-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+          <select id="theme-select" autocomplete="off">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="auto">Auto</option>
+          </select>
+          <svg class="theme-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </label>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<slot />
+
+<footer>
+  <div class="container">
+    <slot name="footer">
+      <p>© {new Date().getFullYear()} hyoguoo</p>
+    </slot>
+  </div>
+</footer>
+
+<script>
+  (function() {
+    var sel = document.getElementById('theme-select');
+    if (!sel) return;
+
+    function parseTheme(v) {
+      return v === 'dark' || v === 'light' ? v : 'auto';
+    }
+    function loadTheme() {
+      return parseTheme(localStorage.getItem('starlight-theme'));
+    }
+    function storeTheme(t) {
+      localStorage.setItem('starlight-theme', t === 'dark' || t === 'light' ? t : '');
+    }
+    function applyTheme(t) {
+      var resolved = t === 'auto'
+        ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
+        : t;
+      document.documentElement.setAttribute('data-theme', resolved);
+    }
+
+    sel.value = loadTheme();
+
+    sel.addEventListener('change', function() {
+      var t = parseTheme(sel.value);
+      storeTheme(t);
+      applyTheme(t);
+    });
+
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function() {
+      if (loadTheme() === 'auto') applyTheme('auto');
+    });
+  })();
+</script>
+</body>
+</html>
