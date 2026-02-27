@@ -8,7 +8,7 @@ export default defineConfig({
 	site: 'https://hyoguoo.github.io',
 	integrations: [
 		starlight({
-			title: "hyoguoo's notes",
+			title: "hyoguoo.log",
 			description: 'Backend Engineer, Java & Spring',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/hyoguoo' },
