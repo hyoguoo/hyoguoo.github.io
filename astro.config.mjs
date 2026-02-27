@@ -33,6 +33,18 @@ export default defineConfig({
 					content: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');`,
 				},
 				{
+					tag: 'meta',
+					attrs: { property: 'og:image', content: 'https://hyoguoo.github.io/og.png' },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'twitter:card', content: 'summary_large_image' },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'twitter:image', content: 'https://hyoguoo.github.io/og.png' },
+				},
+				{
 					// Synchronous: detect blog pages and remove sidebar data attribute before render
 					tag: 'script',
 					content: `(function(){if(window.location.pathname.startsWith('/blog')){document.documentElement.setAttribute('data-no-sidebar','');document.documentElement.removeAttribute('data-has-sidebar');}})();`,

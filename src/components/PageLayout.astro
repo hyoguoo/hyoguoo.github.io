@@ -49,9 +49,11 @@ const {
   {ogTitle && <meta property="og:type" content="website" />}
   {ogTitle && <meta property="og:site_name" content="hyoguoo's notes" />}
   {ogTitle && <meta property="og:locale" content="ko_KR" />}
-  {ogTitle && <meta name="twitter:card" content="summary" />}
+  {ogTitle && <meta property="og:image" content="https://hyoguoo.github.io/og.png" />}
+  {ogTitle && <meta name="twitter:card" content="summary_large_image" />}
   {ogTitle && <meta name="twitter:title" content={ogTitle} />}
   {ogDescription && <meta name="twitter:description" content={ogDescription} />}
+  {ogTitle && <meta name="twitter:image" content="https://hyoguoo.github.io/og.png" />}
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
   <style is:global>
