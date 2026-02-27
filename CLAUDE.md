@@ -40,12 +40,19 @@ src/
 │   ├── blog/        ← Blog 포스트 마크다운
 │   └── docs/        ← Docs 문서 마크다운 (서브카테고리별 디렉토리)
 ├── pages/
-│   ├── index.astro  ← 랜딩 페이지 (커스텀)
-│   ├── blog/index.astro  ← /blog/ 라우트 오버라이드
-│   └── about/       ← About 페이지 (커스텀)
-├── components/      ← Starlight 오버라이드 컴포넌트 + 커스텀 컴포넌트
+│   ├── index.astro          ← 랜딩 페이지 (PageLayout 사용)
+│   ├── blog/index.astro     ← /blog/ 라우트 오버라이드
+│   └── about/               ← About 페이지 (PageLayout activePage="about")
+├── components/      ← Starlight 오버라이드 컴포넌트(9개) + 커스텀 컴포넌트(9개)
+├── styles/
+│   ├── tokens.css   ← 원시 색상 토큰 (--t-*), 단일 진실 원천
+│   ├── pages.css    ← Landing/About 시맨틱 변수 (--color-*), tokens.css import
+│   └── custom.css   ← Starlight CSS 변수 오버라이드 (--sl-*), tokens.css import
 └── data/
-    └── docsSections.ts  ← Docs 서브카테고리 섹션 config
+    ├── tagColors.ts     ← TAG_HUES (태그→색상 hue), CATEGORY_ORDER (Blog 카테고리 순서)
+    ├── docsGroups.ts    ← DOCS_GROUPS (DocsTree 시각적 그루핑, 10개 그룹)
+    ├── docsSections.ts  ← Docs 서브카테고리별 섹션 config (15개 서브카테고리)
+    └── giscusConfig.ts  ← Giscus 연동 설정 (repo/repoId/category/categoryId)
 ```
 
 ## Frontmatter 규칙

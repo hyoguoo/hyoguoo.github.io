@@ -128,9 +128,9 @@ export const docsSections: Record<string, SectionConfig> = {
 > `slugs`는 파일명에서 확장자 제거한 값. config에 없는 slug는 자동으로 "기타" 섹션에 들어간다.
 
 ### 4. DocsTree groups 확인
-파일: `src/components/DocsTree.astro`의 `groups` 배열에 해당 서브카테고리 key가 있는지 확인.
-없으면 적절한 그룹(예: `{ key: '<name>', label: '표시명' }`)에 추가한다.
-(DocsTree는 실제 콘텐츠가 있는 서브카테고리만 자동으로 표시하므로, groups에 항목이 있어야 함)
+파일: `src/data/docsGroups.ts`의 `DOCS_GROUPS` 배열에 해당 서브카테고리 key가 있는지 확인.
+없으면 적절한 그룹 항목에 `{ key: '<name>', label: '표시명' }` 추가한다.
+(DocsTree는 실제 콘텐츠가 있는 서브카테고리만 자동으로 표시하므로, DOCS_GROUPS에 항목이 있어야 함)
 
 ---
 

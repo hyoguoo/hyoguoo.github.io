@@ -1,6 +1,6 @@
 # Blog 프로젝트 스펙
 
-> 최종 업데이트: 2026-02-25
+> 최종 업데이트: 2026-02-28
 
 ---
 
@@ -61,14 +61,23 @@ hyoguoo.github.io/
 ```
 notes/blog/                       ← Astro 프로젝트 루트
 ├── src/
-│   ├── content/
-│   │   ├── docs/                 ← /notes/docs/ 마이그레이션
-│   │   └── blog/                 ← /notes/tech-log/posts/ 마이그레이션
+│   ├── content/docs/
+│   │   ├── blog/                 ← Blog 포스트 마크다운
+│   │   └── docs/                 ← Docs 문서 마크다운 (서브카테고리별)
 │   ├── pages/
-│   │   ├── index.astro           ← 포트폴리오 메인 랜딩
-│   │   └── about/                ← /notes/about/posts/ 마이그레이션
-│   └── components/
-│       └── Giscus.astro          ← 댓글 컴포넌트
+│   │   ├── index.astro           ← 포트폴리오 메인 랜딩 (PageLayout 사용)
+│   │   ├── blog/index.astro      ← /blog/ 라우트 오버라이드
+│   │   └── about/                ← About 페이지 (PageLayout 사용)
+│   ├── components/               ← Starlight 오버라이드(9개) + 커스텀(9개)
+│   ├── styles/
+│   │   ├── tokens.css            ← 원시 색상 토큰 (--t-*)
+│   │   ├── pages.css             ← Landing/About 변수 (--color-*)
+│   │   └── custom.css            ← Starlight CSS 변수 (--sl-*)
+│   └── data/
+│       ├── tagColors.ts          ← Blog 카테고리 색상·순서
+│       ├── docsGroups.ts         ← DocsTree 그루핑 config
+│       ├── docsSections.ts       ← 서브카테고리 섹션 config
+│       └── giscusConfig.ts       ← Giscus 연동 설정
 ├── public/
 ├── astro.config.mjs
 └── package.json
@@ -94,7 +103,7 @@ notes/blog/                       ← Astro 프로젝트 루트
 
 **구성 (위→아래)**
 
-1. **Hero**: 이름 + 한 줄 소개 (Backend Developer, Java & Spring) + About / GitHub 링크
+1. **Hero**: 이름 + 한 줄 소개 (Backend Engineer, Java & Spring) + About / GitHub 링크
 2. **최신 블로그 포스팅**: tech-log 최신 글 3개 카드 리스팅 (제목, 날짜, 태그) — frontmatter의 `lastUpdated` 기준 정렬 (수동 입력)
 3. **최신 Docs**: docs 최근 수정 문서 3개 카드 리스팅 (제목, 카테고리) — 각 문서 frontmatter의 `lastUpdated` 기준 정렬 (수동 입력)
 4. **섹션 안내**: Blog / Docs / About 각 섹션 한 줄 설명 + 링크

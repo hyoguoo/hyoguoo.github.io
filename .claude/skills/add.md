@@ -189,7 +189,7 @@ description: ""                   # SEO용. 한 문장 요약 권장 (비워도 
      { label: "섹션명", slugs: ["<slug>"] },
    ],
    ```
-4. **DocsTree groups 확인**: `src/components/DocsTree.astro`의 `groups` 배열에 해당 key가 있는지 확인. 없으면 추가.
+4. **DocsTree groups 확인**: `src/data/docsGroups.ts`의 `DOCS_GROUPS` 배열에 해당 key가 있는지 확인. 없으면 적절한 그룹에 `{ key: '<name>', label: '표시명' }` 추가.
 
 > ⚠️ index.mdx 누락 시 DocsTree에서 해당 카테고리 링크가 `<a>` 대신 `<span>`으로 렌더링됨.
 
@@ -259,7 +259,7 @@ Frontmatter 미리보기:
 변경 파일:
 - [생성 파일]
 - [docsSections.ts 변경 내용 (해당 시)]
-- [DocsTree.astro 변경 내용 (새 카테고리 시)]
+- [docsGroups.ts 변경 내용 (새 카테고리 시)]
 
 추가할까요? (Y/N)
 ```

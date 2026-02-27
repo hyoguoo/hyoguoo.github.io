@@ -1,69 +1,101 @@
-# /structure - 사이트 구조 상세 참조
+# /structure - 사이트 구조 & 컴포넌트 역할
 
 ## Triggers
-- "구조가 어떻게 돼", "파일이 어디 있어", "어떤 컴포넌트가 뭘 담당해" 등
-- 새 기능 추가 전 아키텍처 파악이 필요할 때
-- 컴포넌트 역할이 헷갈릴 때
+- 사이트 구조, 컴포넌트 역할, CSS 아키텍처 파악이 필요할 때
+- 새 기능 추가 전 현황 파악
+- 특정 파일의 역할 확인
+- Starlight 업그레이드 영향도 검토 시
 
 ---
 
-## 섹션별 라우트 & 레이아웃
+## 레이아웃 시스템 (2가지)
 
-| 섹션 | URL | 레이아웃 | 진입점 |
-|------|-----|---------|--------|
-| 랜딩 | `/` | 완전 커스텀 (Starlight 없음) | `src/pages/index.astro` |
-| Blog 목록 | `/blog/` | Starlight (StarlightPage) | `src/pages/blog/index.astro` |
-| Blog 포스트 | `/blog/<slug>/` | Starlight (starlight-blog) | `src/content/docs/blog/<slug>.md` |
+| 영역 | URL | 레이아웃 | 파일 |
+|------|-----|---------|------|
+| Landing | `/` | 순수 커스텀 HTML | `src/pages/index.astro` |
+| About | `/about/` | 순수 커스텀 HTML | `src/pages/about/index.astro` |
+| Blog 목록 | `/blog/` | Starlight (hasSidebar=false) | `src/pages/blog/index.astro` |
+| Blog 포스트 | `/blog/<slug>/` | Starlight + starlight-blog | content collection |
 | Docs 목록 | `/docs/` | Starlight | `src/content/docs/docs/index.mdx` |
-| Docs 서브카테고리 | `/docs/<name>/` | Starlight | `src/content/docs/docs/<name>/index.mdx` |
-| Docs 문서 | `/docs/<name>/<slug>/` | Starlight | `src/content/docs/docs/<name>/<slug>.md` |
-| About | `/about/` | 완전 커스텀 (Starlight 없음) | `src/pages/about/index.astro` |
+| Docs 서브카테고리 | `/docs/<cat>/` | Starlight | `src/content/docs/docs/<cat>/index.mdx` |
+| Docs 문서 | `/docs/<cat>/<slug>/` | Starlight (사이드바) | content collection |
 
-> 랜딩(`/`)과 About(`/about/`)은 Starlight 레이아웃을 사용하지 않는 독립 Astro 페이지.
+**Landing/About**: `PageLayout.astro`를 공유 HTML 쉘로 사용 (Starlight 없음)
+**Blog/Docs**: Starlight 레이아웃 + 9개의 컴포넌트 오버라이드
 
 ---
 
-## 파일 구조
+## CSS 아키텍처 (3계층)
 
 ```
-src/
-├── pages/
-│   ├── index.astro          ← 랜딩 페이지 (커스텀, Starlight 없음)
-│   ├── blog/
-│   │   └── index.astro      ← /blog/ 라우트 오버라이드 (starlight-blog 기본 대체)
-│   └── about/
-│       └── index.astro      ← About 페이지 (커스텀, Starlight 없음)
-│
-├── content/
-│   └── docs/                ← Starlight 단일 'docs' 컬렉션 루트
-│       ├── index.mdx        ← Starlight 루트 (현재 미사용, /는 pages/index.astro가 처리)
-│       ├── blog/            ← Blog 포스트 콘텐츠
-│       │   └── <slug>.md
-│       └── docs/            ← Docs 콘텐츠
-│           ├── index.mdx    ← /docs/ 페이지 (DocsTree 렌더)
-│           └── <name>/
-│               ├── index.mdx       ← /docs/<name>/ 페이지 (SubcategoryPage 렌더)
-│               └── <slug>.md       ← 개별 문서
-│
-├── components/
-│   ├── BlogTree.astro        ← Blog 목록: 태그별 그룹핑 카드 뷰
-│   ├── DocsTree.astro        ← Docs 목록: group → subcategory 2단계 계층
-│   ├── SubcategoryPage.astro ← Docs 서브카테고리: section별 문서 목록
-│   ├── Footer.astro          ← [Starlight 오버라이드] Giscus 댓글 제어
-│   ├── Giscus.astro          ← Giscus 댓글 컴포넌트
-│   ├── PageTitle.astro       ← [Starlight 오버라이드] 뒤로가기 버튼 추가
-│   ├── Pagination.astro      ← [Starlight 오버라이드] 비어 있음 (docs prev/next 제거)
-│   ├── Sidebar.astro         ← [Starlight 오버라이드] 커스텀 사이드바
-│   ├── SocialIcons.astro     ← [Starlight 오버라이드] Blog/Docs/About/GitHub 네비게이션
-│   ├── ThemeSelect.astro     ← [Starlight 오버라이드] starlight-blog "Blog" 링크 주입 차단
-│   └── EntryMeta.astro       ← 문서 메타 정보 표시
-│
-├── data/
-│   └── docsSections.ts       ← Docs 서브카테고리별 섹션 config
-│
-└── styles/
-    └── custom.css            ← 전역 커스텀 CSS
+src/styles/tokens.css   (--t-*)     ← 원시값, 단일 진실 원천
+    ↓ @import
+src/styles/custom.css   (--sl-*)    ← Starlight 변수 매핑 (Docs/Blog에 적용)
+src/styles/pages.css    (--color-*) ← Landing/About 변수 매핑
+    ↓ import in
+src/components/PageLayout.astro     ← Landing/About 공유 레이아웃에서 로드
 ```
+
+**테마 변경 방법**: `src/styles/tokens.css` 한 곳만 수정하면 전체 반영.
+
+| 접두사 | 파일 | 사용 위치 |
+|--------|------|---------|
+| `--t-*` | `tokens.css` | 내부 참조 전용 (다른 곳에서 직접 사용 금지) |
+| `--sl-*` | `custom.css` | Starlight 컴포넌트 (Docs/Blog) |
+| `--color-*` | `pages.css` | Landing/About 페이지 |
+
+---
+
+## 컴포넌트 카탈로그
+
+### Starlight 오버라이드 (9개, `astro.config.mjs` → `components:` 등록)
+
+| 파일 | 역할 | 주의사항 |
+|------|------|---------|
+| `Header.astro` | Starlight 헤더 + `/blog/` 모바일 메뉴 조건부 추가 | `isBlogList` 분기로 `BlogMobileMenu` 렌더 |
+| `Sidebar.astro` | `/about/*` 숨김, `/blog*` MobileMenuFooter만, 나머지 기본 | `sl-sidebar-restore` 커스텀 엘리먼트 버그 패치 포함 |
+| `PageTitle.astro` | 뒤로가기 버튼 + 백틱→`<code>` 변환 + EntryMeta | `Astro.locals.starlightRoute` 내부 API 사용 |
+| `Pagination.astro` | **의도적으로 빈 파일** — Docs prev/next 완전 제거 | starlight-blog의 PrevNextLinks가 별도 처리 |
+| `SocialIcons.astro` | 상단 네비 (Blog/Docs/About/GitHub), 현재 섹션 accent 색상 | — |
+| `ThemeSelect.astro` | 기본 Starlight ThemeSelect passthrough | **⚠️ 절대 astro.config.mjs에서 제거 금지**: starlight-blog가 ThemeSelect를 오버라이드해 "Blog" 링크를 주입하는 것을 차단 |
+| `SiteTitle.astro` | 로고 + 사이트명 링크 | — |
+| `Footer.astro` | Docs tags 뱃지 + Giscus 댓글 조건부 | `showGiscus` 조건, `Astro.locals.starlightRoute?.entry` 내부 API |
+| `MobileMenuFooter.astro` | 모바일 사이드바 ThemeSelect 위치 조정 | `is:global`로 Starlight 내부 클래스 직접 참조 → **업그레이드 시 취약** |
+
+### 커스텀 컴포넌트 (9개)
+
+| 파일 | 역할 | Props / 의존 |
+|------|------|------------|
+| `PageLayout.astro` | Landing/About 공통 HTML 쉘 (head meta, header/nav, footer, ThemeSelect JS) | `title`, `description`, `activePage?`, OG tags, `sitemap?` / **`<style is:global>` 필수** |
+| `BlogMobileMenu.astro` | `/blog/` 전용 모바일 메뉴 Web Component | — |
+| `EntryMeta.astro` | 날짜(최초 작성일/수정일) + 작성자 표시 | Blog 포스트·Docs 문서 공통 사용 |
+| `Giscus.astro` | Giscus 댓글 스크립트 | `src/data/giscusConfig.ts`에서 설정 로드 |
+| `BlogTree.astro` | `/blog/` 카테고리별 포스트 그루핑 목록 | `TreeSection.astro`, `src/data/tagColors.ts` (CATEGORY_ORDER) |
+| `DocsTree.astro` | `/docs/` 그룹별 서브카테고리 트리 | `TreeSection.astro`, `LinkList.astro`, `src/data/docsGroups.ts` |
+| `SubcategoryPage.astro` | `/docs/<cat>/` 섹션별 문서 목록 | `subcategory: string` / `LinkList.astro`, `src/data/docsSections.ts` |
+| `TreeSection.astro` | 카드 컨테이너 (border + radius + bg-nav) + 섹션 레이블 | `label: string`, `labelVariant?: 'accent' \| 'muted'` |
+| `LinkList.astro` | 링크 리스트 (→ 화살표, hover accent, disabled 지원) | `items: { title: string; url: string \| null }[]`, `label?: string` |
+
+> **`PageLayout.astro` `is:global` 이유**: Astro 스코프 CSS는 슬롯 콘텐츠에 scope hash가 붙지 않아 `.container` 등의 스타일이 미적용됨. `is:global`로만 해결 가능. Landing/About 전용이므로 전역 오염 위험 없음.
+
+> **`TreeSection` labelVariant**: `accent` = Blog 카테고리 (accent 색상, 일반 크기), `muted` = Docs 그룹 레이블 (gray, uppercase, 소형)
+
+> **`LinkList` disabled**: `url === null` → `<span>`(disabled)으로 렌더. DocsTree에서 미마이그레이션 서브카테고리에 사용.
+
+---
+
+## 데이터 레이어 (`src/data/`)
+
+| 파일 | exports | 사용처 |
+|------|---------|--------|
+| `tagColors.ts` | `TAG_HUES: Record<string, number>` (태그→HSL hue, 18개), `CATEGORY_ORDER: string[]` (카테고리 표시 순서) | `src/pages/index.astro` (랜딩 태그 색상), `BlogTree.astro` (카테고리 정렬) |
+| `docsGroups.ts` | `DOCS_GROUPS: DocsGroup[]` (10개 그룹, 16개 서브카테고리) | `DocsTree.astro` |
+| `docsSections.ts` | `docsSections: Record<string, SectionConfig>` (15개 서브카테고리) | `SubcategoryPage.astro` |
+| `giscusConfig.ts` | `repo`, `repoId`, `category`, `categoryId` | `Giscus.astro` |
+
+> **새 Blog 카테고리 추가**: `tagColors.ts`에 hue 추가
+> **새 Docs 서브카테고리 추가**: `docsGroups.ts` + `docsSections.ts` + `astro.config.mjs` sidebar 모두 업데이트
+> **⚠️ `astro.config.mjs` sidebar는 별도 관리** — `docsGroups.ts`와 동기화 필요
 
 ---
 
@@ -88,30 +120,32 @@ docs/java                       → /docs/java/           (java/index.mdx의 ID)
 docs/java/class                 → /docs/java/class/
 ```
 
-### Blog / Docs 구분
+### docsLoader ID 포맷 — getCollection 쿼리 패턴
 ```ts
-id.startsWith('blog/')  → Blog 포스트
-id.startsWith('docs/')  → Docs 문서 (index 포함)
+// 일반 docs 문서 (index 제외)
+({ id }) => id.split('/').length >= 3 && id.split('/')[0] === 'docs'
+
+// subcategory index 페이지만
+({ id }) => id.split('/').length === 2 && id.split('/')[0] === 'docs'
 ```
 
----
-
-## Starlight 컴포넌트 오버라이드
-
-`astro.config.mjs`의 `components:` 섹션에 정의:
-
-| 컴포넌트 | 파일 | 역할                                        |
-|---------|------|-------------------------------------------|
-| `Footer` | `Footer.astro` | Giscus 표시 조건 제어                           |
-| `Sidebar` | `Sidebar.astro` | 커스텀 사이드바, `/blog/*`, `/about/*`에서 사이드바 숨김 |
-| `PageTitle` | `PageTitle.astro` | 상위 페이지 뒤로가기 버튼                            |
-| `Pagination` | `Pagination.astro` | 비어 있음 → docs 하단 prev/next 제거              |
-| `SocialIcons` | `SocialIcons.astro` | 헤더 우측: Blog/Docs/About/GitHub 링크          |
-| `ThemeSelect` | `ThemeSelect.astro` | starlight-blog의 "Blog" 링크 주입 우회           |
+**이 포맷을 잘못 가정하면 DocsTree에서 링크가 `<a>` 대신 `<span>`으로 렌더링된다.**
 
 ---
 
-## starlight-blog 플러그인 독립 시스템
+## Giscus 표시 조건 (`Footer.astro`)
+
+```ts
+const isIndexPage = /^\/(blog|docs)\/?$/.test(Astro.url.pathname);
+const showGiscus = !isSplash && !isAbout && !isIndexPage;
+```
+
+- ❌ 비활성: splash 페이지, `/about/*`, `/blog/`, `/docs/`
+- ✅ 활성: Blog 포스트, Docs 문서 페이지
+
+---
+
+## starlight-blog 독립 시스템
 
 starlight-blog는 Starlight의 `Pagination` 오버라이드와 **무관하게** 자체 컴포넌트를 주입한다.
 
@@ -123,60 +157,27 @@ starlight-blog는 Starlight의 `Pagination` 오버라이드와 **무관하게** 
 
 ---
 
-## Giscus 댓글 활성화 조건
+## Blog 사이드바 없음 처리 메커니즘
 
-`Footer.astro`에서 결정:
-
-| 페이지 | Giscus |
-|--------|--------|
-| 랜딩 (`/`) | ❌ (Starlight 레이아웃 밖) |
-| `/blog/` | ❌ (isIndexPage) |
-| `/docs/` | ❌ (isIndexPage) |
-| `/about/` | ❌ (isAbout) |
-| Blog 포스트 | ✅ |
-| Docs 문서 | ✅ |
-
-```ts
-const isIndexPage = /^\/(blog|docs)\/?$/.test(Astro.url.pathname);
-const showGiscus = !isSplash && !isAbout && !isIndexPage;
+`astro.config.mjs`의 `<head>` 인라인 스크립트 (동기 실행):
+```js
+if (window.location.pathname.startsWith('/blog')) {
+  document.documentElement.setAttribute('data-no-sidebar', '');
+  document.documentElement.removeAttribute('data-has-sidebar');
+}
 ```
+→ `custom.css`에서 `[data-no-sidebar]`로 레이아웃 픽스 적용.
 
 ---
 
-## DocsTree 카테고리 구조
+## Starlight 업그레이드 취약점
 
-`src/components/DocsTree.astro`의 `groups` 배열이 표시 계층을 정의.
-실제 콘텐츠가 있는 서브카테고리만 자동 필터링해서 표시.
+버전 업 시 반드시 확인:
 
-```
-Computer Science: computer-architecture, operating-system, network, secure
-Database: mysql, redis
-Language: java
-Framework: spring
-Messaging & Streaming: kafka
-Software Engineering: test, ai-assisted-development
-DevOps & Infra: docker
-System Architecture: large-scale-system
-Design Pattern: oop
-ETC: setting
-```
-
----
-
-## docsSections.ts 역할
-
-`src/data/docsSections.ts`는 각 서브카테고리 페이지(`SubcategoryPage.astro`)에서
-문서를 섹션별로 그룹핑할 때 사용한다.
-
-```ts
-export const docsSections: Record<string, SectionConfig> = {
-  java: [
-    { label: 'JVM', slugs: ['jvm', 'jvm-execution-and-optimization', 'garbage-collection'] },
-    // ...
-  ],
-  // 새 서브카테고리 추가 시 여기에 추가
-};
-```
-
-config에 없는 slug는 자동으로 "기타" 섹션에 분류됨.
-config 자체가 없는 서브카테고리는 알파벳 순 flat list로 표시됨.
+| 파일 | 의존 대상 | 위험도 |
+|------|---------|--------|
+| `MobileMenuFooter.astro` | `.sidebar-content`, `.mobile-preferences` 클래스명 | 높음 |
+| `Sidebar.astro` | `#starlight__sidebar`, `sl-sidebar-restore` 커스텀 엘리먼트 | 높음 |
+| `custom.css` | `.posts article.preview .sl-markdown-content`, `.post-footer .pagination` | 중간 |
+| `PageTitle.astro` | `Astro.locals.starlightRoute` 내부 API | 중간 |
+| `Footer.astro` | `Astro.locals.starlightRoute?.entry` 내부 API | 중간 |

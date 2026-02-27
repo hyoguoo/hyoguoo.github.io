@@ -179,6 +179,18 @@
 
 ---
 
+### J. 프로젝트 문서화 ✅
+
+- [x] `ARCHITECTURE.md` 작성 — 프로젝트 전체 아키텍처 레퍼런스
+  - CSS 아키텍처 (tokens → custom.css / pages.css)
+  - 컴포넌트 카탈로그 (18개, Props/역할/의존 포함)
+  - 데이터 레이어 (4개 파일)
+  - Frontmatter 규칙, 제목 컨벤션, 내부 링크 규칙
+  - 새 콘텐츠 추가 방법 (Blog/Docs/서브카테고리)
+  - Starlight 업그레이드 취약점 목록
+
+---
+
 ## 추가 작업
 
 - [ ] og 이미지 추가
