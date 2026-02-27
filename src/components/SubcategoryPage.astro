@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import { docsSections } from '../data/docsSections';
+import LinkList from './LinkList.astro';
 
 interface Props {
   subcategory: string;
@@ -67,19 +68,10 @@ if (sections) {
 
 <div class="subcategory-page">
   {grouped.map(({ label, docs }) => (
-    <div class="section">
-      {label && <h2 class="section-title">{label}</h2>}
-      <ul class="doc-list">
-        {docs.map(doc => (
-          <li>
-            <a href={doc.url} class="doc-link">
-              <span>{doc.title}</span>
-              <span class="doc-arrow">→</span>
-            </a>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <LinkList
+      label={label || undefined}
+      items={docs.map(doc => ({ title: doc.title, url: doc.url }))}
+    />
   ))}
 </div>
 
@@ -89,55 +81,5 @@ if (sections) {
     flex-direction: column;
     gap: 2rem;
     padding: 0.5rem 0;
-  }
-
-  .section-title {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--sl-color-gray-3);
-    margin: 0 0 0.6rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--sl-color-hairline);
-  }
-
-  .doc-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .doc-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 0.9rem;
-    color: var(--sl-color-text);
-    text-decoration: none;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--sl-color-hairline);
-    transition: color 0.15s;
-  }
-
-  li:last-child .doc-link {
-    border-bottom: none;
-  }
-
-  .doc-link:hover {
-    color: var(--sl-color-text-accent);
-  }
-
-  .doc-arrow {
-    color: var(--sl-color-gray-3);
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    transition: color 0.15s;
-  }
-
-  .doc-link:hover .doc-arrow {
-    color: var(--sl-color-text-accent);
   }
 </style>

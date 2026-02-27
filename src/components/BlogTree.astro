@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import TreeSection from './TreeSection.astro';
 
 const allPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
@@ -54,8 +55,7 @@ function formatDate(date: Date) {
     <p class="empty-state">포스팅이 없습니다.</p>
   ) : (
     sortedCategories.map(([category, posts]) => (
-      <div class="category-section">
-        <h2 class="category-title">{category}</h2>
+      <TreeSection label={category} labelVariant="accent">
         <ul class="post-list">
           {posts.map(post => (
             <li>
@@ -66,7 +66,7 @@ function formatDate(date: Date) {
             </li>
           ))}
         </ul>
-      </div>
+      </TreeSection>
     ))
   )}
 </div>
@@ -77,22 +77,6 @@ function formatDate(date: Date) {
     flex-direction: column;
     gap: 2rem;
     padding: 1rem 0;
-  }
-
-  .category-section {
-    border: 1px solid var(--sl-color-hairline);
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    background: var(--sl-color-bg-nav);
-  }
-
-  .category-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--sl-color-text-accent);
-    margin: 0 0 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--sl-color-hairline);
   }
 
   .post-list {

@@ -1,0 +1,41 @@
+---
+interface Props {
+  label: string;
+  labelVariant?: 'accent' | 'muted';
+}
+const { label, labelVariant = 'muted' } = Astro.props;
+---
+
+<div class="tree-section">
+  <h2 class:list={['section-label', { 'section-label--accent': labelVariant === 'accent' }]}>
+    {label}
+  </h2>
+  <slot />
+</div>
+
+<style>
+  .tree-section {
+    border: 1px solid var(--sl-color-hairline);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    background: var(--sl-color-bg-nav);
+  }
+
+  .section-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sl-color-gray-3);
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+
+  .section-label--accent {
+    font-size: 1rem;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--sl-color-text-accent);
+  }
+</style>

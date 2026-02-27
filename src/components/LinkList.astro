@@ -1,0 +1,79 @@
+---
+interface Props {
+  items: { title: string; url: string | null }[];
+  label?: string;
+}
+const { items, label } = Astro.props;
+---
+
+{label && <h2 class="list-label">{label}</h2>}
+<ul class="link-list">
+  {items.map(item => (
+    <li>
+      {item.url
+        ? <a href={item.url} class="link-row">
+            <span>{item.title}</span>
+            <span class="link-arrow" aria-hidden="true">→</span>
+          </a>
+        : <span class="link-row link-row--disabled">{item.title}</span>
+      }
+    </li>
+  ))}
+</ul>
+
+<style>
+  .list-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sl-color-gray-3);
+    margin: 0 0 0.6rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--sl-color-hairline);
+  }
+
+  .link-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .link-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--sl-color-hairline);
+    text-decoration: none;
+    color: var(--sl-color-text);
+    transition: color 0.15s;
+  }
+
+  li:last-child .link-row {
+    border-bottom: none;
+  }
+
+  a.link-row:hover {
+    color: var(--sl-color-text-accent);
+  }
+
+  .link-arrow {
+    color: var(--sl-color-gray-3);
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition: color 0.15s;
+  }
+
+  a.link-row:hover .link-arrow {
+    color: var(--sl-color-text-accent);
+  }
+
+  .link-row--disabled {
+    color: var(--sl-color-gray-3);
+    cursor: default;
+  }
+</style>

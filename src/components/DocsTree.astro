@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+import TreeSection from './TreeSection.astro';
+import LinkList from './LinkList.astro';
 
 // docsLoader id format: 'docs/subcategory/slug' for docs, 'docs/subcategory' for index pages
 
@@ -69,22 +71,12 @@ const visibleGroups = groups.map(group => ({
   {visibleGroups.length === 0 ? (
     <p class="empty-state">문서가 없습니다.</p>
   ) : visibleGroups.map(group => (
-    <div class="group-section">
-      <h2 class="group-title">{group.label}</h2>
-      <ul class="item-list">
-        {group.items.map(item => (
-          <li>
-            {subcategoriesWithIndex.has(item.key)
-              ? <a href={`/docs/${item.key}/`} class="item-link">
-                  <span>{item.label}</span>
-                  <span class="item-arrow">→</span>
-                </a>
-              : <span class="item-link item-link--disabled">{item.label}</span>
-            }
-          </li>
-        ))}
-      </ul>
-    </div>
+    <TreeSection label={group.label}>
+      <LinkList items={group.items.map(item => ({
+        title: item.label,
+        url: subcategoriesWithIndex.has(item.key) ? `/docs/${item.key}/` : null,
+      }))} />
+    </TreeSection>
   ))}
 </div>
 
@@ -94,67 +86,6 @@ const visibleGroups = groups.map(group => ({
     flex-direction: column;
     gap: 2rem;
     padding: 1rem 0;
-  }
-
-  .group-section {
-    border: 1px solid var(--sl-color-hairline);
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
-    background: var(--sl-color-bg-nav);
-  }
-
-  .group-title {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--sl-color-gray-3);
-    margin: 0 0 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--sl-color-hairline);
-  }
-
-  .item-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .item-link {
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.6rem 0;
-    text-decoration: none;
-    color: var(--sl-color-text);
-    border-bottom: 1px solid var(--sl-color-hairline);
-    transition: color 0.15s;
-  }
-
-  li:last-child .item-link {
-    border-bottom: none;
-  }
-
-  a.item-link:hover {
-    color: var(--sl-color-text-accent);
-  }
-
-  .item-arrow {
-    color: var(--sl-color-gray-3);
-    font-size: 0.85rem;
-    transition: color 0.15s;
-  }
-
-  a.item-link:hover .item-arrow {
-    color: var(--sl-color-text-accent);
-  }
-
-  .item-link--disabled {
-    color: var(--sl-color-gray-3);
-    cursor: default;
   }
 
   .empty-state {
