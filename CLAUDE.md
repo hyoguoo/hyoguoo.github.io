@@ -121,6 +121,7 @@ description: ""           # SEO용. 작성 시 한 문장 요약 권장
 | `/verify` | 스펙 준수 확인 요청 시 |
 | `/structure` | 사이트 구조·컴포넌트 역할 파악이 필요할 때 |
 | `/add [위치 또는 문서]` | 새 게시글·문서 추가 시 |
+| `/description` | description 작성·추가·점검 요청 시 |
 
 ## 주요 원칙
 - 테마 커스터마이징은 Starlight CSS 변수 최소 수정 (accent 색상, 폰트만)
