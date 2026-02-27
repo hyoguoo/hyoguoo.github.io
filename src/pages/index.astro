@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import '../styles/pages.css';
 
 const allBlogPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
@@ -97,27 +98,6 @@ function tagHue(tag: string): number {
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
   <style>
     *, *::before, *::after { box-sizing: border-box; }
-
-    :root {
-      --color-bg: #17181c;
-      --color-surface: #23262f;
-      --color-border: #353841;
-      --color-text: #e3e4e8;
-      --color-text-muted: #888b96;
-      --color-accent: #3b82f6;
-      --color-accent-light: #60a5fa;
-      --max-width: 800px;
-    }
-
-    [data-theme='light'] {
-      --color-bg: #f8fafc;
-      --color-surface: #ffffff;
-      --color-border: #e2e8f0;
-      --color-text: #0f172a;
-      --color-text-muted: #64748b;
-      --color-accent: #2563eb;
-      --color-accent-light: #3b82f6;
-    }
 
     body {
       background: var(--color-bg);

@@ -1,0 +1,26 @@
+/* Shared semantic CSS variables for Landing and About pages.
+   Consumes raw tokens from tokens.css.
+   Import this file in src/pages/index.astro and src/pages/about/index.astro
+   instead of defining these variables inline in each page. */
+@import './tokens.css';
+
+:root {
+  --color-bg:           var(--t-bg);
+  --color-surface:      var(--t-surface);
+  --color-border:       var(--t-border);
+  --color-text:         var(--t-text);
+  --color-text-muted:   var(--t-text-muted);
+  --color-accent:       var(--t-accent);
+  --color-accent-light: var(--t-accent-light);
+  --max-width: 800px;
+}
+
+[data-theme='light'] {
+  --color-bg:           var(--t-bg);
+  --color-surface:      var(--t-surface);
+  --color-border:       var(--t-border);
+  --color-text:         var(--t-text);
+  --color-text-muted:   var(--t-text-muted);
+  --color-accent:       var(--t-accent);
+  --color-accent-light: var(--t-accent-light);
+}

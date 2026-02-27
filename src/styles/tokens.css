@@ -1,0 +1,28 @@
+/* Raw design tokens — single source of truth for color values.
+   Both custom.css (Starlight overrides) and pages.css (Landing/About)
+   reference these tokens so all pages stay in sync. */
+
+:root {
+  /* Dark mode (default) */
+  --t-bg:           #17181c;
+  --t-surface:      #23262f;
+  --t-border:       #353841;
+  --t-text:         #e3e4e8;
+  --t-text-muted:   #888b96;
+  --t-accent:       #3b82f6;
+  --t-accent-light: #60a5fa;
+  --t-accent-low:   #1e3a5f;
+  --t-accent-high:  #93c5fd;
+}
+
+[data-theme='light'] {
+  --t-bg:           #f8fafc;
+  --t-surface:      #ffffff;
+  --t-border:       #e2e8f0;
+  --t-text:         #0f172a;
+  --t-text-muted:   #64748b;
+  --t-accent:       #2563eb;
+  --t-accent-light: #3b82f6;
+  --t-accent-low:   #dbeafe;
+  --t-accent-high:  #1e40af;
+}

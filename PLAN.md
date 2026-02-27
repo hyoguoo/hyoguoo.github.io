@@ -108,14 +108,15 @@
 - [x] `SubcategoryPage.astro` 수정 — `LinkList` 사용, 중복 CSS 제거
 - 중복 CSS ~195줄 → ~110줄 (-85줄)
 
-### C. 테마/CSS 단일화
+### C. 테마/CSS 단일화 ✅
 
-- [ ] `src/styles/tokens.css` 신규 생성 — 색상 원시값 단일 관리
-  - `--t-blue-500: #3b82f6`, `--t-bg-dark: #17181c` 등 raw token 정의
-  - `custom.css`와 `pages.css`가 이 파일을 참조하도록 변경
-- [ ] `src/styles/pages.css` 신규 생성 — Landing/About 공통 CSS 변수 추출 [P1]
+- [x] `src/styles/tokens.css` 신규 생성 — 색상 원시값 단일 관리
+  - `--t-*` prefixed raw token (dark/light 양 모드)
+  - `custom.css`와 `pages.css`가 이 파일을 `@import`로 참조
+- [x] `src/styles/pages.css` 신규 생성 — Landing/About 공통 CSS 변수 추출 [P1]
   - `--color-bg`, `--color-surface`, `--color-border`, `--color-text`, `--color-accent` 등
-  - `index.astro`, `about/index.astro` 인라인 변수 정의 블록 제거 후 import
+  - `index.astro`, `about/index.astro` 인라인 변수 정의 블록 제거 후 import 적용
+- [x] `src/styles/custom.css` — 하드코딩 hex 값 → `var(--t-*)` 참조로 교체
 
 ### D. Landing/About 공통 레이아웃 추출 [P1]
 

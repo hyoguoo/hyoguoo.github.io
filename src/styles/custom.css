@@ -1,30 +1,32 @@
 /* Custom CSS - minimal overrides only */
+@import './tokens.css';
+
 :root {
-  --sl-color-accent-low: #1e3a5f;
-  --sl-color-accent: #3b82f6;
-  --sl-color-accent-high: #93c5fd;
+  --sl-color-accent-low: var(--t-accent-low);
+  --sl-color-accent: var(--t-accent);
+  --sl-color-accent-high: var(--t-accent-high);
   --sl-font: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
   --sl-content-width: 67.5rem;
 
-  /* Background unification with landing page (#17181c) */
-  --sl-color-bg: #17181c;
-  --sl-color-bg-nav: #17181c;
-  --sl-color-bg-sidebar: #17181c;
-  --sl-color-hairline-light: #353841;
-  --sl-color-hairline: #353841;
+  /* Background unification with landing page */
+  --sl-color-bg: var(--t-bg);
+  --sl-color-bg-nav: var(--t-bg);
+  --sl-color-bg-sidebar: var(--t-bg);
+  --sl-color-hairline-light: var(--t-border);
+  --sl-color-hairline: var(--t-border);
 }
 
 :root[data-theme='light'] {
-  --sl-color-accent-low: #dbeafe;
-  --sl-color-accent: #2563eb;
-  --sl-color-accent-high: #1e40af;
+  --sl-color-accent-low: var(--t-accent-low);
+  --sl-color-accent: var(--t-accent);
+  --sl-color-accent-high: var(--t-accent-high);
 
   /* Background unification with landing page (light mode) */
-  --sl-color-bg: #f8fafc;
-  --sl-color-bg-nav: #f8fafc;
-  --sl-color-bg-sidebar: #f8fafc;
-  --sl-color-hairline-light: #e2e8f0;
-  --sl-color-hairline: #e2e8f0;
+  --sl-color-bg: var(--t-bg);
+  --sl-color-bg-nav: var(--t-bg);
+  --sl-color-bg-sidebar: var(--t-bg);
+  --sl-color-hairline-light: var(--t-border);
+  --sl-color-hairline: var(--t-border);
 }
 
 /* Hide RSS icon and its container from header social links */
