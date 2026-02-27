@@ -162,7 +162,13 @@
   - `astro.config.mjs` — Starlight description, starlight-blog author title 수정
   - `pages/about/index.astro` — 이미 "Backend Engineer", 변경 없음
 
-### H. 유지보수 리스크 문서화 (작업 아님, 인지 필요)
+### H. 데드 코드 클렌징 ✅
+
+- [x] `src/pages/index.astro` — 빈 `<Fragment slot="head">` 블록 제거 (리팩토링 잔재)
+- [x] `src/assets/houston.webp` — 미사용 Astro 기본 마스코트 이미지 삭제
+- 전체 컴포넌트 18개, 데이터 파일 4개 참조 검증 완료 — 추가 데드코드 없음
+
+### I. 유지보수 리스크 문서화 (작업 아님, 인지 필요)
 
 > Starlight 버전 업그레이드 시 깨질 가능성 있는 부분
 
