@@ -104,7 +104,7 @@ FROM employees;
 
 `COUNT(*)` 쿼리는 가장 작은 크기의 세컨더리 인덱스를 사용하여 처리하는 것이 더 빠른 이유는 InnoDB 엔진의 세컨더리 인덱스 구조 때문이다.
 
-![InnoDB Non-Clustered Index](/posts/images/how-count-query-work/innodb-btree.png)
+![InnoDB Non-Clustered Index](images/how-count-query-work/innodb-btree.png)
 
 InnoDB의 세컨더리 인덱스는 Non-Clustered Index로, 해당 인덱스에는 해당 컬럼 값과 PK 값만 저장되어 있는데,  
 때문에 `COUNT(*)` 쿼리에선 아래의 이유로 더 빠르게 처리할 수 있게 된다.
