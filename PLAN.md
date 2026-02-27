@@ -129,16 +129,16 @@
 - [x] `src/pages/index.astro` — `<PageLayout>` 래퍼로 교체, 페이지 고유 콘텐츠만 유지
 - [x] `src/pages/about/index.astro` — `<PageLayout activePage="about">` 로 교체
 
-### E. 데이터/설정 관리 개선
+### E. 데이터/설정 관리 개선 ✅
 
-- [ ] `src/data/tagColors.ts` 신규 생성 — TAG_HUES와 categoryOrder 통합 [P3]
+- [x] `src/data/tagColors.ts` 신규 생성 — TAG_HUES와 CATEGORY_ORDER 통합 [P3]
   - `pages/index.astro`의 `TAG_HUES` 맵 → 외부 파일로 추출
-  - `BlogTree.astro`의 `categoryOrder` 배열과 함께 관리
+  - `BlogTree.astro`의 `categoryOrder` 배열 → `CATEGORY_ORDER`로 추출
   - 두 파일이 동일 소스를 import → 카테고리명 불일치 리스크 제거
-- [ ] DocsTree `groups` 배열과 `astro.config.mjs` sidebar 이중 관리 단일화 [P2]
-  - 현재 카테고리 등록 포인트 3개: `astro.config.mjs` + `DocsTree.astro` + `docsSections.ts`
-  - 단일 config 파일(`src/data/docsGroups.ts`)으로 통합, 양쪽에서 import
-  - ⚠️ 위험도 높음: sidebar autogenerate 방식과 호환성 확인 필요
+- [x] `src/data/docsGroups.ts` 신규 생성 — DocsTree groups 추출 [P2]
+  - `DocsTree.astro`의 37줄 inline `groups` 배열 → 외부 파일로 추출
+  - `DocsGroupItem`, `DocsGroup` 인터페이스 정의 포함
+  - `astro.config.mjs` sidebar는 변경 없음 (autogenerate 방식 유지)
 
 ### F. 컴포넌트 클린업
 

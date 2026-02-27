@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import TreeSection from './TreeSection.astro';
 import LinkList from './LinkList.astro';
+import { DOCS_GROUPS } from '../data/docsGroups';
 
 // docsLoader id format: 'docs/subcategory/slug' for docs, 'docs/subcategory' for index pages
 
@@ -23,45 +24,7 @@ const indexPages = await getCollection('docs', ({ id }) => {
 
 const subcategoriesWithIndex = new Set(indexPages.map(p => p.id.split('/')[1]));
 
-const groups = [
-  { label: 'Computer Science', items: [
-    { key: 'computer-architecture', label: 'Computer Architecture' },
-    { key: 'operating-system', label: 'Operating System' },
-    { key: 'network', label: 'Network' },
-    { key: 'secure', label: 'Secure' },
-  ]},
-  { label: 'Database', items: [
-    { key: 'mysql', label: 'MySQL' },
-    { key: 'redis', label: 'Redis' },
-  ]},
-  { label: 'Language', items: [
-    { key: 'java', label: 'Java' },
-  ]},
-  { label: 'Framework', items: [
-    { key: 'spring', label: 'Spring' },
-  ]},
-  { label: 'Messaging & Streaming', items: [
-    { key: 'kafka', label: 'Kafka' },
-  ]},
-  { label: 'Software Engineering', items: [
-    { key: 'test', label: 'Test' },
-    { key: 'ai-assisted-development', label: 'AI-Assisted Development' },
-  ]},
-  { label: 'DevOps & Infra', items: [
-    { key: 'docker', label: 'Docker' },
-  ]},
-  { label: 'System Architecture', items: [
-    { key: 'large-scale-system', label: 'Large-Scale System' },
-  ]},
-  { label: 'Design Pattern', items: [
-    { key: 'oop', label: 'OOP' },
-  ]},
-  { label: 'ETC', items: [
-    { key: 'setting', label: 'Setting' },
-  ]},
-];
-
-const visibleGroups = groups.map(group => ({
+const visibleGroups = DOCS_GROUPS.map(group => ({
   ...group,
   items: group.items.filter(item => migratedSubcategories.has(item.key)),
 })).filter(group => group.items.length > 0);

@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import TreeSection from './TreeSection.astro';
+import { CATEGORY_ORDER } from '../data/tagColors';
 
 const allPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
@@ -35,10 +36,9 @@ for (const posts of categories.values()) {
   posts.sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
-const categoryOrder = ['Payment Platform Project', 'Java', 'Spring & JPA', 'MySQL'];
 const sortedCategories = [...categories.entries()].sort(([a], [b]) => {
-  const ai = categoryOrder.indexOf(a);
-  const bi = categoryOrder.indexOf(b);
+  const ai = CATEGORY_ORDER.indexOf(a);
+  const bi = CATEGORY_ORDER.indexOf(b);
   if (ai !== -1 && bi !== -1) return ai - bi;
   if (ai !== -1) return -1;
   if (bi !== -1) return 1;
