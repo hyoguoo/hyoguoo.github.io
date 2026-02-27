@@ -155,12 +155,12 @@
   - `src/data/giscusConfig.ts` 신규 생성 — `repo`, `repoId`, `category`, `categoryId` 내보내기
   - `Giscus.astro`에서 import로 대체
 
-### G. 콘텐츠/표기 일관성
+### G. 콘텐츠/표기 일관성 ✅
 
-- [ ] 직함 표기 통일 [P7]
-  - `pages/index.astro` (meta + hero): "Backend Developer"
-  - `pages/about/index.astro` (meta + profile): "Backend Engineer"
-  - 둘 중 하나로 통일 후 `astro.config.mjs` description도 동일하게 수정
+- [x] 직함 표기 "Backend Engineer"로 통일 [P7]
+  - `pages/index.astro` — description, ogDescription, hero eyebrow 수정
+  - `astro.config.mjs` — Starlight description, starlight-blog author title 수정
+  - `pages/about/index.astro` — 이미 "Backend Engineer", 변경 없음
 
 ### H. 유지보수 리스크 문서화 (작업 아님, 인지 필요)
 

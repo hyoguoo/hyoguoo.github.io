@@ -9,7 +9,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: "hyoguoo's notes",
-			description: 'Backend Developer, Java & Spring',
+			description: 'Backend Engineer, Java & Spring',
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/hyoguoo' },
 			],
@@ -79,7 +79,7 @@ export default defineConfig({
 					authors: {
 						hyoguoo: {
 							name: 'hyoguoo',
-							title: 'Backend Developer',
+							title: 'Backend Engineer',
 							url: 'https://github.com/hyoguoo',
 						},
 					},
