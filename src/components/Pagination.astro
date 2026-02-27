@@ -1,3 +1,21 @@
 ---
-// Hide previous/next navigation links at the bottom of content
+/**
+ * Pagination — Starlight component override (intentionally empty)
+ *
+ * WHY THIS FILE IS BLANK:
+ * Starlight renders previous/next article navigation links at the bottom of
+ * every docs page via its built-in Pagination component.  We do not want that
+ * UI on this site (docs pages have no meaningful prev/next ordering).
+ *
+ * By registering this empty override in astro.config.mjs (`components:
+ * { Pagination: '...' }`) we suppress the default output entirely without
+ * touching Starlight internals.
+ *
+ * Note: blog post prev/next navigation is provided separately by the
+ * starlight-blog plugin's own PrevNextLinks component, which is hidden via
+ * `.post-footer .pagination { display: none; }` in custom.css because that
+ * plugin uses the Starlight Pagination slot in a different way.
+ *
+ * DO NOT add content here — the blank render is the intended behaviour.
+ */
 ---

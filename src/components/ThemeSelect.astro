@@ -1,4 +1,19 @@
 ---
+/**
+ * ThemeSelect — Starlight component override (intentional passthrough)
+ *
+ * WHY THIS FILE EXISTS:
+ * starlight-blog registers its own ThemeSelect override that appends a "Blog"
+ * link inside the theme-select area of the nav bar.  Starlight resolves
+ * component overrides in registration order, so the last plugin to register
+ * wins.  By declaring our own ThemeSelect override in astro.config.mjs
+ * (under `components:`), we take precedence over starlight-blog's version and
+ * prevent the unwanted "Blog" link from being injected.
+ *
+ * This component deliberately does nothing extra — it just delegates to the
+ * default Starlight ThemeSelect.  DO NOT remove it from astro.config.mjs or
+ * the starlight-blog override will take over again.
+ */
 import Default from '@astrojs/starlight/components/ThemeSelect.astro';
 ---
 

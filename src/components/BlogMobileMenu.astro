@@ -1,0 +1,182 @@
+---
+/**
+ * BlogMobileMenu — Custom Web Component for the blog list page mobile nav
+ *
+ * WHY THIS EXISTS:
+ * The blog list page (/blog/) has no Starlight sidebar, so PageFrame never
+ * renders the standard MobileMenuToggle (hamburger button).  On small screens
+ * visitors would have no way to access the navigation links.
+ *
+ * This component injects a replacement hamburger + slide-down nav pane that
+ * exposes SocialIcons and the ThemeSelect, matching the visual slot that the
+ * standard MobileMenuToggle occupies on sidebar pages.
+ *
+ * It is rendered conditionally — only when isBlogList is true in Header.astro.
+ *
+ * The Web Component class (BlogMobileMenu) handles:
+ * - Toggle open/close on button click
+ * - Close on Escape key
+ * - Close on outside click
+ * - aria-expanded / hidden attribute management for accessibility
+ */
+import SocialIcons from './SocialIcons.astro';
+import ThemeSelect from './ThemeSelect.astro';
+---
+
+<blog-mobile-menu class="md:sl-hidden print:hidden blog-menu-wrap">
+  <button
+    aria-expanded="false"
+    aria-label="Open navigation menu"
+    aria-controls="blog-mobile-nav"
+    class="blog-menu-btn sl-flex"
+  >
+    <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+    <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+
+  <div id="blog-mobile-nav" class="blog-nav-pane" role="dialog" aria-modal="true" aria-label="Navigation menu" hidden>
+    <div class="blog-nav-inner">
+      <div class="blog-nav-links">
+        <SocialIcons />
+      </div>
+      <div class="blog-nav-theme">
+        <ThemeSelect />
+      </div>
+    </div>
+  </div>
+</blog-mobile-menu>
+
+<script>
+  class BlogMobileMenu extends HTMLElement {
+    private btn: HTMLButtonElement;
+    private pane: HTMLElement;
+
+    constructor() {
+      super();
+      this.btn = this.querySelector('button')!;
+      this.pane = this.querySelector('.blog-nav-pane')!;
+
+      this.btn.addEventListener('click', () => this.toggle());
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.isExpanded()) this.close();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (this.isExpanded() && !this.contains(e.target as Node)) this.close();
+      });
+    }
+
+    isExpanded() {
+      return this.btn.getAttribute('aria-expanded') === 'true';
+    }
+
+    toggle() {
+      this.isExpanded() ? this.close() : this.open();
+    }
+
+    open() {
+      this.btn.setAttribute('aria-expanded', 'true');
+      this.pane.removeAttribute('hidden');
+      document.body.setAttribute('data-mobile-menu-expanded', '');
+    }
+
+    close() {
+      this.btn.setAttribute('aria-expanded', 'false');
+      this.pane.setAttribute('hidden', '');
+      document.body.removeAttribute('data-mobile-menu-expanded');
+    }
+  }
+
+  customElements.define('blog-mobile-menu', BlogMobileMenu);
+</script>
+
+<style>
+  /*
+    Position the blog-menu-wrap so the button sits in the top-right corner
+    of the fixed header — matching where the Starlight hamburger lives on
+    pages that do have a sidebar (MobileMenuToggle).
+  */
+  .blog-menu-wrap {
+    position: fixed;
+    top: calc((var(--sl-nav-height) - var(--sl-menu-button-size)) / 2);
+    inset-inline-end: var(--sl-nav-pad-x);
+    z-index: var(--sl-z-index-navbar);
+  }
+
+  .blog-menu-btn {
+    width: var(--sl-menu-button-size);
+    height: var(--sl-menu-button-size);
+    padding: 0.375rem;
+    border: 0;
+    border-radius: 50%;
+    background-color: var(--sl-color-white);
+    color: var(--sl-color-black);
+    box-shadow: var(--sl-shadow-md);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global([data-theme='light']) .blog-menu-btn {
+    background-color: var(--sl-color-black);
+    color: var(--sl-color-white);
+  }
+
+  .blog-menu-btn[aria-expanded='true'] {
+    background-color: var(--sl-color-gray-2);
+    box-shadow: none;
+  }
+
+  :global([data-theme='light']) .blog-menu-btn[aria-expanded='true'] {
+    background-color: var(--sl-color-gray-5);
+  }
+
+  .blog-menu-btn[aria-expanded='true'] .icon-open,
+  .blog-menu-btn:not([aria-expanded='true']) .icon-close {
+    display: none;
+  }
+
+  /* Dropdown pane — positioned below the fixed nav bar */
+  .blog-nav-pane {
+    position: fixed;
+    inset-block-start: var(--sl-nav-height);
+    inset-inline-end: 0;
+    inset-inline-start: 0;
+    z-index: var(--sl-z-index-menu);
+    background-color: var(--sl-color-bg-nav);
+    border-bottom: 1px solid var(--sl-color-hairline-shade);
+    box-shadow: var(--sl-shadow-lg);
+  }
+
+  .blog-nav-pane[hidden] {
+    display: none;
+  }
+
+  .blog-nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem var(--sl-nav-pad-x);
+    gap: 1rem;
+  }
+
+  .blog-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    flex: 1;
+  }
+
+  .blog-nav-theme {
+    display: flex;
+    align-items: center;
+  }
+</style>

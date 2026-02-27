@@ -140,18 +140,20 @@
   - `DocsGroupItem`, `DocsGroup` 인터페이스 정의 포함
   - `astro.config.mjs` sidebar는 변경 없음 (autogenerate 방식 유지)
 
-### F. 컴포넌트 클린업
+### F. 컴포넌트 클린업 ✅
 
-- [ ] `ThemeSelect.astro` passthrough 제거 검토 [P4]
-  - 현재 `<Default><slot /></Default>` 만 있는 파일
-  - starlight-blog의 ThemeSelect 오버라이드 동작 확인 후 제거 가능 여부 판단
-- [ ] `Header.astro` 내 `BlogMobileMenu` Web Component 분리 [P9]
-  - `src/components/BlogMobileMenu.astro` (또는 `.ts`)로 추출
-  - `Header.astro` 가독성 개선
-- [ ] `Pagination.astro` 의도 명확화 [P5]
-  - 빈 파일이지만 주석으로 역할(prev/next 제거 의도) 명시
-- [ ] `Giscus.astro` 설정 외부화 [P11]
-  - `repo`, `repoId`, `category`, `categoryId` → `astro.config.mjs` 또는 환경 변수로 이동
+- [x] `ThemeSelect.astro` 의도 명확화 [P4]
+  - starlight-blog의 ThemeSelect 주입 차단 목적임을 주석으로 명시
+  - "DO NOT remove" 경고 포함, astro.config.mjs 오버라이드 유지
+- [x] `Header.astro` 내 `BlogMobileMenu` Web Component 분리 [P9]
+  - `src/components/BlogMobileMenu.astro` 신규 생성 (script + 마크업 + style)
+  - `Header.astro`에서 import 후 `{isBlogList && <BlogMobileMenu />}` 조건부 렌더
+- [x] `Pagination.astro` 의도 명확화 [P5]
+  - Starlight prev/next 숨김 목적 + starlight-blog PrevNextLinks와의 관계 주석 명시
+  - "DO NOT add content" 경고 포함
+- [x] `Giscus.astro` 설정 외부화 [P11]
+  - `src/data/giscusConfig.ts` 신규 생성 — `repo`, `repoId`, `category`, `categoryId` 내보내기
+  - `Giscus.astro`에서 import로 대체
 
 ### G. 콘텐츠/표기 일관성
 
