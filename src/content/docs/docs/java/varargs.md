@@ -3,7 +3,7 @@ title: "Varargs"
 date: 2023-10-28
 lastUpdated: 2025-11-22
 tags: [Java]
-description: ""
+description: "Java 가변인자(Varargs)의 내부 배열 변환 방식과 오버로딩·제네릭과의 상호작용, 성능 주의사항을 설명한다."
 ---
 
 JDK 5부터 도입된 기능으로 메서드 호출 시 넘기는 인자의 개수를 클라이언트가 유동적으로 조절할 수 있게 해주는 문법이다.

@@ -3,7 +3,7 @@ title: "Local Variable Scope"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "지역변수 유효 범위를 최소화하는 방법과 while문 대신 for문을 사용해야 하는 이유를 정리한다."
 ---
 
 > 지역변수 범위를 최소화하라

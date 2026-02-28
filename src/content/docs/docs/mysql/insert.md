@@ -3,7 +3,7 @@ title: "INSERT"
 date: 2023-07-18
 lastUpdated: 2025-09-22
 tags: [MySQL]
-description: ""
+description: "MySQL INSERT의 IGNORE·ON DUPLICATE KEY UPDATE 옵션과 LOAD DATA를 활용한 대량 데이터 적재 방법을 설명한다."
 ---
 
 일반적인 애플리케이션 서비스에서는 INSERT 할 때 대부분 한 건 혹은 소량의 레코드만 추가하는 형태인데, 이 경우엔 성능에 대해 고려할 부분이 없다.

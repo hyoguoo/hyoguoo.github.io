@@ -3,7 +3,7 @@ title: "Cache"
 date: 2023-08-09
 lastUpdated: 2025-12-23
 tags: [Network]
-description: ""
+description: "HTTP 캐시의 적중·비적중·재검사 메커니즘, Cache-Control 지시어, ETag 기반 신선도 관리 방식을 정리한다."
 ---
 
 웹 요청이 캐시에 도착했을 때, 로컬에 저장된 사본이 존재한다면 원 서버가 아닌 캐시로부터 문서를 제공하는 것을 캐싱이라고 한다.

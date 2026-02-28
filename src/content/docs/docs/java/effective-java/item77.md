@@ -3,7 +3,7 @@ title: "Exception Ignore"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "예외를 무시해야 할 때 catch 블록에 주석과 ignored 변수명을 사용하여 의도를 명확히 해야 하는 이유를 정리한다."
 ---
 
 > 예외를 무시하지 말라

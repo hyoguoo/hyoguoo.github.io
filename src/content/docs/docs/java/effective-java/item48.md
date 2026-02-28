@@ -3,7 +3,7 @@ title: "Parallel Stream"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "스트림 병렬화의 동작 원리와 잘못된 병렬화가 유발하는 문제, 효과적인 병렬 처리 조건을 분석한다."
 ---
 
 > 스트림 병렬화는 주의해서 적용하라

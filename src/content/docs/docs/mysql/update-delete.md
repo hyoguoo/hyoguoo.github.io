@@ -3,7 +3,7 @@ title: "UPDATE / DELETE"
 date: 2023-07-18
 lastUpdated: 2025-09-22
 tags: [MySQL]
-description: ""
+description: "JOIN 기반 다중 테이블 UPDATE·DELETE와 ORDER BY·LIMIT을 활용한 부분 처리 방법을 설명한다."
 ---
 
 `UPDATE` / `DELETE` 쿼리를 단일 테이블에 대해 한 건(또는 소량) 뿐만 아니라, 조인을 통해 여러 테이블을 동시에 대상으로 하여 `UPDATE` / `DELETE` 쿼리를 실행할 수 있다.

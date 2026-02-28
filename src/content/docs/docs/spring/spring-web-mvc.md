@@ -3,7 +3,7 @@ title: "Spring Web MVC"
 date: 2025-06-27
 lastUpdated: 2025-08-23
 tags: [Spring]
-description: ""
+description: "Spring MVC의 전체 아키텍처와 서블릿 컨테이너·스프링 컨테이너 구성, 요청-응답 처리 파이프라인 및 반환 타입별 처리 방식을 정리한다."
 ---
 
 > Spring Web MVC는 Spring Framework에서 제공하는 웹 애플리케이션 프레임워크

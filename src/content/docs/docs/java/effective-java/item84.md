@@ -3,7 +3,7 @@ title: "Thread Scheduler"
 date: 2024-03-14
 lastUpdated: 2024-03-14
 tags: [Java]
-description: ""
+description: "스레드 스케줄러 정책에 의존하지 않도록 실행 가능한 스레드 수를 줄이고 바쁜 대기 상태를 피해야 하는 이유를 정리한다."
 ---
 
 > 프로그램 동작을 스레드 스케줄러에 기대지 말라

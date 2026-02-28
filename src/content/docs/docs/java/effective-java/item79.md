@@ -3,7 +3,7 @@ title: "Excessive Synchronization"
 date: 2024-03-10
 lastUpdated: 2025-02-20
 tags: [Java]
-description: ""
+description: "동기화 블록 내에서 외부 메서드 호출이 유발하는 예외와 데드락 문제를 CopyOnWriteArraySet 등으로 해결하는 방법을 정리한다."
 ---
 
 > 과도한 동기화는 피하라

@@ -3,7 +3,7 @@ title: "How AI Assistants Work"
 date: 2025-10-24
 lastUpdated: 2025-12-20
 tags: [AI-Assisted Development]
-description: ""
+description: "LLM 기반 AI 어시스턴트의 컨텍스트 구성 방식, Context Window 한계, RAG 검색 원리, Function Calling과 MCP 도구 연동 구조를 설명한다."
 ---
 
 과거의 도구는 정해진 규칙(linting 등)으로 코드를 검사했으나, 반면 현대의 AI 어시스턴트는 대형 언어 모델(LLM)을 기반으로 한다.

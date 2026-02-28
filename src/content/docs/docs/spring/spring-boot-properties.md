@@ -3,7 +3,7 @@ title: "Spring Boot Properties"
 date: 2025-08-28
 lastUpdated: 2025-08-28
 tags: [Spring]
-description: ""
+description: "Spring Boot의 외부 설정 관리 방법인 @Value·@ConfigurationProperties·Environment 활용법과 프로파일별 설정 분리 전략을 정리한다."
 ---
 
 ## 프로퍼티 값 주입 방법

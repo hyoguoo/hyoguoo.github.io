@@ -3,7 +3,7 @@ title: "clone"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Cloneable 인터페이스의 설계 문제와 가변 객체를 포함한 클래스에서 clone을 올바르게 재정의하는 방법을 분석한다."
 ---
 
 > clone 재정의는 주의해서 진행하라

@@ -3,7 +3,7 @@ title: "ZooKeeper & KRaft"
 date: 2025-09-30
 lastUpdated: 2025-09-30
 tags: [Kafka]
-description: ""
+description: "Kafka의 메타데이터 관리를 담당하던 ZooKeeper의 역할과 한계를 설명하고 이를 대체하는 KRaft의 Raft 합의 기반 동작 방식과 성능 향상을 비교한다."
 ---
 
 주키퍼(ZooKeeper)는 카프카 클러스터의 상태 정보를 관리하고 동기화하는 분산 코디네이션 서비스로, 카프카는 자체적으로 클러스터의 상태를 관리하는 기능이 없어 이 역할을 외부 시스템인 주키퍼에 의존했다.

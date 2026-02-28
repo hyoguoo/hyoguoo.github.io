@@ -3,7 +3,7 @@ title: "Message Broker"
 date: 2025-08-07
 lastUpdated: 2025-10-07
 tags: [Redis]
-description: ""
+description: "Redis의 Pub/Sub, List 기반 메시징 큐, Stream 자료구조를 활용한 메시지 브로커 구현 방식과 클러스터 환경에서의 제약 및 Sharded Pub/Sub을 설명한다."
 ---
 
 메시지 브로커는 크게 메시징 큐와 이벤트 스트림 두 가지 형태로 나뉘는데, 레디스는 일반적으로 List 자료구조를 활용한 메시징 큐(Message Queue)로 활용된다.

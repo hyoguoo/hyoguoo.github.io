@@ -3,7 +3,7 @@ title: "Introduce"
 date: 2022-10-10
 lastUpdated: 2025-08-21
 tags: [Spring]
-description: ""
+description: "스프링 생태계의 주요 기술 종류와 프레임워크·부트의 역할 차이를 설명하고 DI·IoC·AOP 핵심 개념 및 스프링이 제공하는 이점을 정리한다."
 ---
 
 스프링이라는 단어는 문맥에 따라 다르게 사용되어 다음의 목록들을 지칭하게 된다.

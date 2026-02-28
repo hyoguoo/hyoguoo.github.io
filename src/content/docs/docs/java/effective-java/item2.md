@@ -3,7 +3,7 @@ title: "Builder"
 date: 2023-09-21
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "선택적 매개변수가 많은 클래스에서 점층적 생성자·JavaBeans 패턴의 한계와 Builder 패턴의 구조 및 장단점을 분석한다."
 ---
 > 생성자에 매개변수가 많다면 빌더를 고려하라
 

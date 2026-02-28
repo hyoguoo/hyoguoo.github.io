@@ -3,7 +3,7 @@ title: "Access Modifier"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "클래스와 멤버의 접근 제한자를 최소화하는 원칙과 public 필드 노출 시 발생하는 불변성·스레드 안전성 문제를 정리한다."
 ---
 
 > 클래스와 멤버의 접근 권한을 최소화하라

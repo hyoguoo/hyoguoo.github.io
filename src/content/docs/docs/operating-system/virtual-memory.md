@@ -3,7 +3,7 @@ title: "Virtual Memory"
 date: 2024-03-07
 lastUpdated: 2026-01-11
 tags: [Operating System]
-description: ""
+description: "가상 메모리의 페이징 기법과 페이지 테이블을 통한 논리-물리 주소 변환, 요구 페이징과 페이지 폴트 처리 과정을 분석한다."
 ---
 
 물리 메모리의 크기 한계를 극복하기 위해 나온 기술로, 프로세스 전체가 메모리에 적재되지 않아도 실행이 가능하다는 점에 착안하여 설계되었다.

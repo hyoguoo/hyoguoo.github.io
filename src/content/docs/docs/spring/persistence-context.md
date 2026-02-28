@@ -3,7 +3,7 @@ title: "Persistence Context"
 date: 2024-03-07
 lastUpdated: 2025-09-06
 tags: [Spring]
-description: ""
+description: "JPA 영속성 컨텍스트의 엔티티 생명주기와 1차 캐시, 변경 감지(Dirty Checking), 쓰기 지연 저장소의 동작 원리를 분석한다."
 ---
 
 엔티티를 저장하는 환경으로, EntityManager를 통해 접근하고 관리되는 엔티티의 집합이다.

@@ -3,7 +3,7 @@ title: "Kernel"
 date: 2024-03-07
 lastUpdated: 2025-12-31
 tags: [Operating System]
-description: ""
+description: "운영체제의 핵심인 커널의 역할과 이중 모드(사용자/커널 모드) 동작 원리를 설명하고 시스템 호출의 처리 흐름을 분석한다."
 ---
 
 운영체제는 컴퓨터 자원을 관리하는 거대하고 복잡한 소프트웨어로, 그중 커널(Kernel)은 운영체제의 핵심 구성 요소다.

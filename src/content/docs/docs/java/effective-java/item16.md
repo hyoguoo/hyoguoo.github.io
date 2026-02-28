@@ -3,7 +3,7 @@ title: "Accessor Method"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "public 클래스에서 필드를 직접 노출하는 것의 문제점과 접근자 메서드를 통한 캡슐화 유지 방법을 정리한다."
 ---
 
 > public 클래스에서는 public 필드가 아닌 접근자 메서드를 사용하라

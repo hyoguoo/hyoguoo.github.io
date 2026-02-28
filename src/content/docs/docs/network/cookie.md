@@ -3,7 +3,7 @@ title: "Cookie"
 date: 2023-08-09
 lastUpdated: 2025-12-27
 tags: [Network]
-description: ""
+description: "HTTP 쿠키의 동작 원리, 세션·지속 쿠키의 생명주기, Domain/Path 스코프, Secure/HttpOnly/SameSite 보안 속성을 정리한다."
 ---
 
 HTTP는 기본적으로 상태를 유지하지 않는 무상태(Stateless) 특성을 가지기 때문에, 클라이언트를 식별하고 상태 유지를 위해 브라우저(클라이언트)에 저장하는 작은 데이터 파일인 쿠키(Cookie)를 사용한다.

@@ -3,7 +3,7 @@ title: "CAS (Compare-And-Swap)"
 date: 2025-01-24
 lastUpdated: 2025-11-15
 tags: [Java]
-description: ""
+description: "CAS(Compare-And-Swap) 원자적 연산의 비교-교체 동작 원리와 낙관적 락 기반 락프리 동기화 방식을 분석한다."
 ---
 
 CAS는 '비교 후 교체'를 의미하며, 특정 메모리 위치의 값을 예상되는 값과 비교하여, 일치할 경우에만 새로운 값으로 교체하는 원자적(atomic) 연산이다.

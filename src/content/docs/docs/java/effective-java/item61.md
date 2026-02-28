@@ -3,7 +3,7 @@ title: "Primitive Type & Boxed Primitive Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "기본 타입과 박싱된 기본 타입의 세 가지 차이점과 혼용 시 발생하는 NullPointerException, 동일성 비교 오류를 분석한다."
 ---
 
 > 박싱된 기본 타입보다는 기본 타입을 사용하라

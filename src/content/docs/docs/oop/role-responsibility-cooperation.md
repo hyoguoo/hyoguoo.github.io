@@ -3,7 +3,7 @@ title: "Role & Responsibility & Cooperation"
 date: 2024-03-07
 lastUpdated: 2026-01-24
 tags: [OOP]
-description: ""
+description: "객체지향 설계의 핵심인 협력·책임·역할의 개념과 상호 관계를 분석하고, 책임-주도 설계와 TDD를 통한 설계 기법을 설명한다."
 ---
 
 객체지향 설계의 핵심은 동적인 객체 간의 협력으로, 협력을 통해 객체의 행동(책임)이 드러나고, 역할이 정의된다.

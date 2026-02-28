@@ -3,7 +3,7 @@ title: "Comparable"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Comparable 인터페이스의 compareTo 일반 규약과 핵심 필드 우선 비교 전략, Comparator 연쇄 방식을 정리한다."
 ---
 
 > Comparable을 구현할지 고려하라

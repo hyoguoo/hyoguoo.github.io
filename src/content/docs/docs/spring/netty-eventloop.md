@@ -3,7 +3,7 @@ title: "Netty & EventLoop"
 date: 2025-10-02
 lastUpdated: 2025-10-02
 tags: [Spring]
-description: ""
+description: "WebFlux의 기반 서버인 Netty의 이벤트 루프 동작 원리와 Boss·Worker 그룹 스레드 구조, 배압을 통한 과부하 관리 메커니즘을 분석한다."
 ---
 
 Spring WebFlux는 기본적으로 내장 서버로 Netty를 사용한다.

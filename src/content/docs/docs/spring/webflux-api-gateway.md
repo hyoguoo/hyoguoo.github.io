@@ -3,7 +3,7 @@ title: "WebFlux in API Gateway"
 date: 2025-10-02
 lastUpdated: 2025-10-11
 tags: [Spring]
-description: ""
+description: "API Gateway에서 논블로킹 방식이 중요한 이유와 Spring Cloud Gateway의 리액티브 필터 체인 동작 구조, 요청 처리 파이프라인을 분석한다."
 ---
 
 API Gateway의 주된 역할은 요청을 받아서 내부 서비스로 '전달'하고, 그 응답을 다시 클라이언트에게 '전달'하는 것이다.

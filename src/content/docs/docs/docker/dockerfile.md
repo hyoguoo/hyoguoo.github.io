@@ -3,7 +3,7 @@ title: "Dockerfile"
 date: 2026-02-05
 lastUpdated: 2026-02-06
 tags: [Docker]
-description: ""
+description: "FROM, COPY, RUN, ENTRYPOINT 등 Dockerfile 핵심 명령어와 멀티 스테이지 빌드를 통한 이미지 최적화 방법을 설명한다."
 ---
 
 Dockerfile은 도커 이미지를 빌드하기 위한 일련의 명령어를 기록한 텍스트 기반의 설계도다.

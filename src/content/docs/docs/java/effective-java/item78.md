@@ -3,7 +3,7 @@ title: "Mutable Data Sharing"
 date: 2024-03-07
 lastUpdated: 2025-02-20
 tags: [Java]
-description: ""
+description: "멀티스레드 환경에서 가변 데이터를 안전하게 공유하기 위한 synchronized, volatile, Atomic 클래스 활용법을 정리한다."
 ---
 
 > 공유 중인 가변 데이터는 동기화해 사용하라

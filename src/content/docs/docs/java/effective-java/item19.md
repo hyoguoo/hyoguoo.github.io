@@ -3,7 +3,7 @@ title: "Inheritance"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "상속을 고려한 설계 원칙과 @implSpec 문서화, 생성자에서 재정의 가능 메서드 호출 금지 등 상속 허용 클래스의 구현 규칙을 정리한다."
 ---
 
 > 상속을 고려해 설계하고 문서화하라. 그러지 않았다면 상속을 금지하라

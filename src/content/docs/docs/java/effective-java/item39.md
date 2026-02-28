@@ -3,7 +3,7 @@ title: "Annotation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "명명 패턴의 단점을 극복하는 애너테이션의 개념과 마커 애너테이션, 매개변수 애너테이션, @Repeatable 활용법을 정리한다."
 ---
 
 > 명명 패턴보다 애너테이션을 사용하라.

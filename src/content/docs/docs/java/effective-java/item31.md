@@ -3,7 +3,7 @@ title: "Wildcard type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "매개변수화 타입의 불공변 한계를 극복하는 한정적 와일드카드 타입과 생산자·소비자 역할에 따른 PECS 원칙을 정리한다."
 ---
 
 > 한정적 와일드카드를 사용해 API 유연성을 높이라

@@ -3,7 +3,7 @@ title: "Design Consistent Hashing"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "서버 추가·제거 시 최소한의 키만 재배치하도록 분산 시스템의 요청을 균등하게 배분하는 안정 해시(Consistent Hashing) 기법을 설명한다."
 ---
 
 수평적 규모 확장을 위해서는 요청 또는 데이터가 각 서버에 균등하게 분배되는 것이 중요하다.  

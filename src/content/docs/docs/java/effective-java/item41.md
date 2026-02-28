@@ -3,7 +3,7 @@ title: "Marker Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "마커 인터페이스와 마커 애너테이션의 차이점을 비교하고, 각각을 선택해야 하는 기준과 장단점을 정리한다."
 ---
 
 > 정의하려는 것이 타입이라면 마커 인터페이스를 사용하라

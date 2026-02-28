@@ -3,7 +3,7 @@ title: "Nested Class"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "정적 멤버 클래스, 비정적 멤버 클래스, 익명 클래스, 지역 클래스 네 가지 중첩 클래스의 특징과 적절한 사용 시점을 비교한다."
 ---
 
 > 멤버 클래스는 되도록 static으로 만들라.

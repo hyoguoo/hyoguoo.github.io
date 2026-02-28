@@ -3,7 +3,7 @@ title: "Defensive Copy"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "가변 객체를 통한 불변식 파괴 공격을 방지하기 위해 생성자와 접근자 메서드에서 방어적 복사를 적용하는 방법을 정리한다."
 ---
 
 > 적시에 방어적 복사본을 만들라

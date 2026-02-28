@@ -3,7 +3,7 @@ title: "Design Ad Click Event Aggregation System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "광고 클릭 이벤트를 실시간에 가깝게 집계하는 시스템의 스트림 처리 파이프라인과 중복 이벤트 처리 전략을 설계한다."
 ---
 
 ## 요구사항

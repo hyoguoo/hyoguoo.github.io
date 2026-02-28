@@ -3,7 +3,7 @@ title: "Lambda"
 date: 2023-02-01
 lastUpdated: 2025-11-29
 tags: [Java]
-description: ""
+description: "Java 람다식의 함수형 인터페이스 기반 구현 방식과 메서드 참조, java.util.function 패키지 주요 함수형 인터페이스를 정리한다."
 ---
 메서드를 하나의 식(Expression)으로 표현한 것으로, 자바는 객체지향 언어이지만 람다식을 통해 함수형 프로그래밍의 특징을 부분적으로 지원한다.
 

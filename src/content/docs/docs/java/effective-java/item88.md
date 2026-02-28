@@ -3,7 +3,7 @@ title: "readObject Method"
 date: 2024-08-22
 lastUpdated: 2024-08-22
 tags: [Java]
-description: ""
+description: "readObject 메서드에서 유효성 검사와 방어적 복사를 수행하여 역직렬화 공격으로부터 불변식을 보호하는 방법을 정리한다."
 ---
 
 > readObject 메서드는 방어적으로 작성하라

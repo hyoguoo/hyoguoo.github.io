@@ -3,7 +3,7 @@ title: "Beans"
 date: 2022-10-10
 lastUpdated: 2025-08-22
 tags: [Spring]
-description: ""
+description: "스프링 빈의 등록 방식과 초기화·소멸 생명주기 콜백, 싱글톤·프로토타입·웹 스코프의 동작 특성과 차이점을 정리한다."
 ---
 
 > 스프링 빈(Bean) : 스프링 컨테이너가 생성하고 생명주기를 관리하는 자바 객체

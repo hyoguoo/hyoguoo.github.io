@@ -3,7 +3,7 @@ title: "Continuous Memory Allocation"
 date: 2024-03-07
 lastUpdated: 2026-01-09
 tags: [Operating System]
-description: ""
+description: "연속 메모리 할당 방식의 스와핑 동작과 최초·최적·최악 적합 할당 전략, 외부 단편화 발생 원인 및 메모리 압축 해결 방안을 설명한다."
 ---
 
 초기 운영체제에서 사용하던 메모리 관리 기법으로, 프로세스를 메모리에 적재할 때 그 크기만큼의 연속적인 메모리 공간을 할당하는 방식이다.

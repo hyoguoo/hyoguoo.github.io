@@ -3,7 +3,7 @@ title: "CORS (Cross-Origin Resource Sharing)"
 date: 2022-10-13
 lastUpdated: 2025-12-30
 tags: [Network]
-description: ""
+description: "동일 출처 정책(SOP)과 CORS의 단순 요청·Preflight·인증 정보 요청 시나리오별 동작 원리를 정리한다."
 ---
 
 웹 애플리케이션은 보안을 위해 기본적으로 동일 출처 정책(SOP)을 따르지만, 다른 출처의 리소스를 사용해야 하는 정당한 상황(API 호출 등)을 위해 고안된 예외 조항이자 보안 메커니즘이다.

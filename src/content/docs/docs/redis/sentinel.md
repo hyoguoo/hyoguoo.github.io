@@ -3,7 +3,7 @@ title: "Redis Sentinel"
 date: 2025-08-11
 lastUpdated: 2025-10-09
 tags: [Redis]
-description: ""
+description: "Redis Sentinel의 쿼럼 기반 장애 감지와 자동 페일오버 동작 과정을 분석하고 스플릿 브레인 발생 시나리오와 방지 대책을 설명한다."
 ---
 
 레디스는 따로 백업 설정을 하지 않으면 모든 데이터가 사라지게 되고 서비스 전체 장애로 이어지게 되는데, 이를 방지하기 위해 레디스는 센티넬이라는 고가용성 솔루션을 제공한다.

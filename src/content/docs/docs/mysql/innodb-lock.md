@@ -3,7 +3,7 @@ title: "InnoDB Storage Engine Lock"
 date: 2023-03-23
 lastUpdated: 2025-09-10
 tags: [MySQL]
-description: ""
+description: "InnoDB 스토리지 엔진의 레코드 기반 잠금 종류인 레코드 락·갭 락·넥스트 키 락의 동작 방식을 분석한다."
 ---
 
 InnoDB 스토리지 엔진의 다른 MySQL 스토리지 엔진과는 다음과 같은 차이점이 있다.

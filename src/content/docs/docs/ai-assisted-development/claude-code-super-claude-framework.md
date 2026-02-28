@@ -3,7 +3,7 @@ title: "Claude Code - SuperClaude Framework"
 date: 2025-10-27
 lastUpdated: 2025-10-27
 tags: [AI-Assisted Development]
-description: ""
+description: "Claude Code를 구조화된 개발 플랫폼으로 확장하는 SuperClaude 프레임워크의 명령어 체계, 페르소나 에이전트, 행동 모드, MCP 서버 연동을 설명한다."
 ---
 
 [SuperClaude](https://github.com/SuperClaude-Org/SuperClaude_Framework)는 meta-programming configuration framework이다.

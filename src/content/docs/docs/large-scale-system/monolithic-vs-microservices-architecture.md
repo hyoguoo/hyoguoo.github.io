@@ -3,7 +3,7 @@ title: "Monolithic & Microservices Architecture"
 date: 2025-10-21
 lastUpdated: 2025-10-21
 tags: [Large-Scale System]
-description: ""
+description: "모놀리식과 마이크로서비스(MSA) 아키텍처의 구조적 차이와 각각의 장단점을 비교하고, 전환 시 고려사항을 다룬다."
 ---
 
 시스템을 구축하는 방식은 크게 모놀리식 아키텍처와 마이크로서비스 아키텍처(Microservice Architecture, MSA)로 나눌 수 있다.

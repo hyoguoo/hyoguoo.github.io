@@ -3,7 +3,7 @@ title: "Core Components"
 date: 2025-09-29
 lastUpdated: 2025-10-02
 tags: [Kafka]
-description: ""
+description: "Kafka의 핵심 구성 요소인 이벤트·토픽·파티션·오프셋·브로커·컨슈머 그룹의 개념과 역할을 정리한다."
 ---
 
 ## 이벤트(Event)

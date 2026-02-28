@@ -3,7 +3,7 @@ title: "Method"
 date: 2023-08-09
 lastUpdated: 2025-12-15
 tags: [Network]
-description: ""
+description: "HTTP 메서드(GET, POST, PUT, PATCH, DELETE 등)의 안전성과 멱등성 속성 및 각 메서드의 동작 원리를 정리한다."
 ---
 
 HTTP 메서드는 클라이언트가 서버에게 요청의 목적과 종류를 알리기 위해 사용하는 규약이다.

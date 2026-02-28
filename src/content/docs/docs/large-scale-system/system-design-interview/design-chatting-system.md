@@ -3,7 +3,7 @@ title: "Design Chatting System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "1:1 및 그룹 채팅을 지원하는 대규모 채팅 시스템의 메시지 동기화, WebSocket 연결 관리, 푸시 알림 설계를 다룬다."
 ---
 
 ## 요구 사항

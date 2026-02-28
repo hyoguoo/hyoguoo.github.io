@@ -3,7 +3,7 @@ title: "Key Management"
 date: 2024-09-28
 lastUpdated: 2025-10-05
 tags: [Redis]
-description: ""
+description: "Redis 키의 이름 규칙, 자동 생성 및 소멸 동작, 주요 키 관리 명령어를 정리하고 KEYS와 SCAN의 성능 차이를 비교한다."
 ---
 
 Redis에서 키(Key)는 모든 데이터에 접근하기 위한 유일한 문자열 식별자로, 데이터를 저장, 조회, 삭제하는 모든 명령어의 기본 단위로 사용된다.

@@ -3,7 +3,7 @@ title: "Enum for Instance Control"
 date: 2024-08-25
 lastUpdated: 2024-08-25
 tags: [Java]
-description: ""
+description: "직렬화된 싱글턴의 인스턴스 통제를 위해 readResolve 방식보다 열거 타입을 사용해야 하는 이유와 두 방법의 구현을 비교한다."
 ---
 
 > 인스턴스 수를 통제해야 한다면 readResolve보다는 열거 타입을 사용하라

@@ -3,7 +3,7 @@ title: "Design Hotel Reservation System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "유동 가격과 초과 예약을 지원하는 호텔 예약 시스템의 동시 예약 충돌 방지 및 데이터 일관성 확보 설계를 다룬다."
 ---
 
 ## 요구사항

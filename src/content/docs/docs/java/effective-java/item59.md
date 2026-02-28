@@ -3,7 +3,7 @@ title: "Library"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Java 표준 라이브러리를 사용해야 하는 이유와 java.lang, java.util, java.io 패키지의 중요성을 정리한다."
 ---
 
 > 라이브러리를 익히고 사용하라

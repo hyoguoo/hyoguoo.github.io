@@ -3,7 +3,7 @@ title: "Deadlock"
 date: 2024-03-07
 lastUpdated: 2026-01-08
 tags: [Operating System]
-description: ""
+description: "교착 상태 발생의 4가지 필요 조건과 예방·회피·탐지 및 회복·무시의 네 가지 해결 전략을 분석한다."
 ---
 
 두 개 이상의 프로세스가 서로 상대방이 점유하고 있는 자원을 요구하며 무한정 대기하는 상태다.

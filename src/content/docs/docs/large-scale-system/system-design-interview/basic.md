@@ -3,7 +3,7 @@ title: "Basic"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "대규모 시스템 설계의 핵심 개념인 수평적 확장, 로드 밸런싱, 캐싱, CDN, 데이터베이스 샤딩 등 기초 아키텍처 구성 요소를 다룬다."
 ---
 
 ## 수평적 규모 확장(Scale Out)

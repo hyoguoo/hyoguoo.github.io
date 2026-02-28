@@ -3,7 +3,7 @@ title: "Data Processing"
 date: 2023-04-26
 lastUpdated: 2025-09-13
 tags: [MySQL]
-description: ""
+description: "MySQL 쿼리 실행 절차인 SQL 파싱·최적화·데이터 읽기 3단계와 조인·정렬 처리 방식을 정리한다."
 ---
 
 ## 쿼리 실행 절차

@@ -3,7 +3,7 @@ title: "Spring Boot Auto Configuration"
 date: 2025-08-28
 lastUpdated: 2026-02-25
 tags: [Spring]
-description: ""
+description: "@EnableAutoConfiguration의 동작 원리와 @Conditional 조건부 빈 등록 메커니즘, DataSource 자동 구성 흐름을 분석한다."
 ---
 
 스프링 부트는 다양한 라이브러리와 기술 스택을 지원하며, 개발자가 별도의 코드 작성 없이도 쉽게 사용할 수 있도록 자동 설정(Auto Configuration) 기능을 제공한다.

@@ -3,7 +3,7 @@ title: "Inheritance"
 date: 2022-11-21
 lastUpdated: 2025-11-04
 tags: [Java]
-description: ""
+description: "Java 상속의 조상-자손 클래스 관계와 메서드 오버라이딩·super 키워드, abstract 클래스 활용 방법을 정리한다."
 ---
 
 기존 클래스를 재사용하여 새로운 클래스를 작성하는 것으로, 상속을 사용하면 코드의 중복을 줄이고 공통 관리가 가능해져 유지보수성이 향상된다.

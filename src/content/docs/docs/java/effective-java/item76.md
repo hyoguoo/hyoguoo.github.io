@@ -3,7 +3,7 @@ title: "Failure Atomic"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "메서드 호출이 실패하더라도 객체의 이전 상태를 유지하는 실패 원자성(failure-atomic)의 개념과 보장 방법을 정리한다."
 ---
 
 > 가능한 한 실패 원자적으로 만들라

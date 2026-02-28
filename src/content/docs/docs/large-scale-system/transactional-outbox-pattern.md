@@ -3,7 +3,7 @@ title: "Transactional Outbox Pattern"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "마이크로서비스 환경에서 DB 상태 변경과 메시지 발행의 원자성을 보장하기 위한 Transactional Outbox 패턴을 설명한다."
 ---
 
 마이크로서비스 환경에서 데이터베이스의 상태 변경과 메시지 발행 일관성 문제를 해결하기 위해 트랜잭셔널 아웃박스(Transactional Outbox) 패턴을 사용할 수 있다.

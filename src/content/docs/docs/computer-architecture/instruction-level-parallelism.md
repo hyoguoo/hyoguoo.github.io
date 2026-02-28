@@ -3,7 +3,7 @@ title: "Instruction Level Parallelism"
 date: 2024-03-07
 lastUpdated: 2026-01-17
 tags: [Computer Architecture]
-description: ""
+description: "파이프라이닝, 슈퍼스칼라, 비순차 실행 기법을 통해 CPU의 명령어 수준 병렬 처리 방식을 비교·분석한다."
 ---
 
 현대 CPU는 물리적 한계로 클럭 속도를 높이는 대신, 한 번의 클럭 사이클 동안 여러 개의 명령어를 동시에 처리하여 효율을 높이는 명령어 병렬 처리(ILP) 기법을 사용하기 시작했다.

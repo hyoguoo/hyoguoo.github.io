@@ -3,7 +3,7 @@ title: "Entity"
 date: 2023-08-09
 lastUpdated: 2025-12-14
 tags: [Network]
-description: ""
+description: "HTTP 엔티티 헤더 필드(Content-Type, Content-Length 등)와 엔티티 본문의 구조 및 무결성 검사 방식을 정리한다."
 ---
 
 ## 메시지와 엔티티

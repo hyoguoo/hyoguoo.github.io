@@ -3,7 +3,7 @@ title: "Interface Reference"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "인터페이스 타입으로 객체를 참조해야 하는 이유와 구현체를 직접 사용해야 하는 예외적인 상황을 정리한다."
 ---
 
 > 객체는 인터페이스를 사용해 참조하라

@@ -3,7 +3,7 @@ title: "Spring WebFlux"
 date: 2025-10-01
 lastUpdated: 2025-10-01
 tags: [Spring]
-description: ""
+description: "Spring WebFlux의 반응형 논블로킹 방식을 Spring MVC와 비교하고 어노테이션 기반과 함수형 라우팅 두 가지 프로그래밍 모델의 특징을 정리한다."
 ---
 
 Spring WebFlux는 Spring Framework 5부터 도입된 반응형(Reactive) 웹 프레임워크이다.

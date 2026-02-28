@@ -3,7 +3,7 @@ title: "Alternatives Serialization"
 date: 2024-08-19
 lastUpdated: 2024-08-19
 tags: [Java]
-description: ""
+description: "자바 직렬화의 역직렬화 폭탄 등 보안 취약점을 설명하고, JSON 같은 크로스 플랫폼 직렬화 대안 사용을 권장하는 이유를 정리한다."
 ---
 
 > 자바 직렬화의 대안을 찾으라

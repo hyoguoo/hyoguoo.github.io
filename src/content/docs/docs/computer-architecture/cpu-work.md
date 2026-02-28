@@ -3,7 +3,7 @@ title: "CPU Work"
 date: 2024-03-07
 lastUpdated: 2026-01-14
 tags: [Computer Architecture]
-description: ""
+description: "Fetch, Decode, Execute, Store로 이어지는 명령어 처리 주기와 PC, MAR, MDR 등 주요 레지스터의 역할을 분석한다."
 ---
 
 CPU는 메모리에 저장된 명령어를 순차적으로 읽어들이고(Fetch), 해석하고(Decode), 실행(Execute)하는 과정을 반복하며 프로그램을 수행한다.

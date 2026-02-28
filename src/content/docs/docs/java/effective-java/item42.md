@@ -3,7 +3,7 @@ title: "Lambda"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "익명 클래스 대신 람다를 사용해야 하는 이유와 람다의 한계, 적절한 활용 범위를 분석한다."
 ---
 
 > 익명 클래스보다는 람다를 사용하라

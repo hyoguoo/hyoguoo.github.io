@@ -3,7 +3,7 @@ title: "Interrupt"
 date: 2024-03-07
 lastUpdated: 2026-01-17
 tags: [Computer Architecture]
-description: ""
+description: "동기·비동기 인터럽트의 종류와 IRQ, 인터럽트 벡터, ISR로 이어지는 CPU의 인터럽트 처리 과정을 설명한다."
 ---
 
 CPU가 프로그램을 실행하는 도중 예기치 않은 상황이나 급한 처리를 요하는 작업이 발생했을 때, 현재 실행 중인 작업을 잠시 중단하고 해당 작업을 먼저 처리한 후 다시 복귀하는 메커니즘이다.

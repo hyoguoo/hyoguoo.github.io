@@ -3,7 +3,7 @@ title: "Servlet"
 date: 2023-11-16
 lastUpdated: 2025-08-23
 tags: [Spring]
-description: ""
+description: "서블릿의 클래스 계층 구조와 초기화·서비스·소멸 생명주기, 서블릿 컨테이너의 스레드 풀 기반 요청 처리 방식을 정리한다."
 ---
 
 > 자바를 이용한 웹 프로그래밍을 위한 기술

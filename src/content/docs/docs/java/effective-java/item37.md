@@ -3,7 +3,7 @@ title: "EnumMap"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "ordinal 인덱싱 방식의 문제점과 EnumMap을 활용해 열거 타입 키를 안전하게 매핑하는 방법을 정리한다."
 ---
 
 > ordinal 인덱싱 대신 EnumMap을 사용하라.

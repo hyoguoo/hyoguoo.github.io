@@ -3,7 +3,7 @@ title: "Mocking Framework - Mockito"
 date: 2025-10-23
 lastUpdated: 2025-10-23
 tags: [Spring]
-description: ""
+description: "Mockito의 Mock·Spy·MockBean 차이와 when/given 스터빙 방법, verify 검증 및 ArgumentCaptor를 활용한 단위 테스트 전략을 정리한다."
 ---
 
 Mockito는 Java 단위 테스트(Unit Test) 작성을 돕는 모킹(Mocking) 프레임워크로, 실제 의존 객체 대신 가짜 객체(Mock Object)를 생성하고 제어하는 기능을 제공한다.

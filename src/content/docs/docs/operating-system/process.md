@@ -3,7 +3,7 @@ title: "Process"
 date: 2024-03-07
 lastUpdated: 2026-01-03
 tags: [Operating System]
-description: ""
+description: "프로세스의 메모리 영역 구조와 문맥 교환 원리, PCB의 역할, 프로세스 상태 변화 및 fork/exec를 통한 계층적 생성 방식을 정리한다."
 ---
 
 보조기억장치에 저장된 파일인 프로그램을 메모리에 적재되어 CPU 자원을 할당받고 실행되는 상태가 되면 이를 프로세스라 부른다.

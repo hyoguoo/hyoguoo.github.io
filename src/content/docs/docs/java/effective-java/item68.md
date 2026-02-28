@@ -3,7 +3,7 @@ title: "Naming Convention"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Java 플랫폼의 철자 규칙과 문법 규칙을 패키지, 클래스, 메서드, 필드, 타입 매개변수별로 정리한다."
 ---
 
 > 일반적으로 통용되는 명명 규칙을 따르라

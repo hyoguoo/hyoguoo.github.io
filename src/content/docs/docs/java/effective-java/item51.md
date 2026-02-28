@@ -3,7 +3,7 @@ title: "Method Signature"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "메서드 시그니처 설계 원칙으로서 매개변수 목록을 줄이는 세 가지 기법과 타입 선택 시 주의사항을 정리한다."
 ---
 
 > 메서드 시그니처를 신중히 설계하라

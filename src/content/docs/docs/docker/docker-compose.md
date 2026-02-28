@@ -3,7 +3,7 @@ title: "Docker Compose"
 date: 2026-02-13
 lastUpdated: 2026-02-13
 tags: [Docker]
-description: ""
+description: "docker-compose.yml을 활용한 다중 컨테이너 서비스 정의, 네트워크 격리 설계, 데이터 영속화 전략을 정리한다."
 ---
 
 도커 컴포즈는 개별 컨테이너를 일일이 제어하는 대신 하나의 설정 파일을 통해 전체 시스템의 생명주기를 통합 관리할 수 있게 한다.

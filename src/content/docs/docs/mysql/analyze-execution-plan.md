@@ -3,7 +3,7 @@ title: "Analyze Execution Plan"
 date: 2023-05-08
 lastUpdated: 2025-09-17
 tags: [MySQL]
-description: ""
+description: "MySQL EXPLAIN의 실행 계획 출력 구조와 type·key·rows·Extra 컬럼의 의미를 해석하는 방법을 정리한다."
 ---
 
 MySQL의 `EXPLAIN`은 실행 계획(Execution Plan)을 확인하는 명령으로, 옵티마이저가 수립한 쿼리 처리 경로를 분석하여 성능 문제를 진단하고 쿼리를 튜닝하는 데 핵심적인 역할을 한다.

@@ -3,7 +3,7 @@ title: "GitHub Verified Commit"
 date: 2024-03-07
 lastUpdated: 2026-01-26
 tags: [Setting]
-description: ""
+description: "GPG 키를 생성하고 Git과 GitHub에 등록하여 커밋에 Verified 서명을 적용하는 전체 과정을 설명한다."
 ---
 
 로컬 환경에서 생성한 GPG(GNU Privacy Guard) 키를 이용해 커밋에 서명하고, GitHub에서 `Verified` 딱지를 받기 위한 설정 방법을 안내한다.

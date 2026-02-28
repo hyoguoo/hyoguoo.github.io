@@ -3,7 +3,7 @@ title: "Design Unique ID Generation For Distributed System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "분산 환경에서 고유한 64비트 ID를 생성하기 위한 UUID·티켓 서버·Snowflake ID 등 다양한 방식을 비교하고 설계한다."
 ---
 
 유일 ID를 위해 관계형 데이터베이스의 `auto_increment` 베이스를 기본 키를 사용하는 방법도 존재한다.  

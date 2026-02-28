@@ -3,7 +3,7 @@ title: "Operator"
 date: 2023-05-20
 lastUpdated: 2025-09-18
 tags: [MySQL]
-description: ""
+description: "MySQL 비교·논리·문자열·숫자 연산자의 표준 SQL 대응 표기와 NULL 처리 방식을 정리한다."
 ---
 
 MySQL의 연산자는 대부분 표준을 따르지만, 일부는 MySQL에만 존재하는 비표준 형태를 가지고 있어 다른 DBMS와의 호환성 및 코드의 일관성을 위해 가급적 SQL 표준 연산자를 사용하는 것이 권장된다.

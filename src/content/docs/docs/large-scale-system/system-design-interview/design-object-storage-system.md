@@ -3,7 +3,7 @@ title: "Design Object Storage System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "Amazon S3와 같은 객체 저장소 시스템의 아키텍처와 버킷·객체 관리, 데이터 내구성 설계 방법을 다룬다."
 ---
 
 ## 저장소 시스템의 부류

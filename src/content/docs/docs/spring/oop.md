@@ -3,7 +3,7 @@ title: "Spring & OOP"
 date: 2022-10-10
 lastUpdated: 2025-08-22
 tags: [Spring]
-description: ""
+description: "스프링이 OOP 원칙을 실현하는 방식으로 IoC/DI를 통한 결합도 감소, AOP를 통한 횡단 관심사 분리, PSA와 이벤트 기반 설계를 정리한다."
 ---
 
 스프링은 객체지향 설계를 가능하게 만드는 인프라를 제공한다.

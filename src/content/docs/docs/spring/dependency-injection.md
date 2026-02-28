@@ -3,7 +3,7 @@ title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2025-08-22
 tags: [Spring]
-description: ""
+description: "스프링의 세 가지 의존성 주입 방식인 생성자·필드·세터 주입의 동작 원리를 비교하고 생성자 주입이 권장되는 이유를 분석한다."
 ---
 
 > 객체 간 의존성을 자신이 아닌 외부에서 두 객체 간의 관계를 결정해주는 디자인 패턴

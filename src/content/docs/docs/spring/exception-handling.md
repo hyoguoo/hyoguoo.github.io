@@ -3,7 +3,7 @@ title: "Exception Handling"
 date: 2024-03-07
 lastUpdated: 2025-08-23
 tags: [Spring]
-description: ""
+description: "Spring MVC의 예외 처리 흐름과 HandlerExceptionResolver 체인 구조, @ExceptionHandler와 @ControllerAdvice를 통한 전역 예외 처리 방법을 분석한다."
 ---
 
 ## 스프링의 기본적인 예외 처리 방법

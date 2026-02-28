@@ -3,7 +3,7 @@ title: "Generics"
 date: 2023-01-08
 lastUpdated: 2025-11-28
 tags: [Java]
-description: ""
+description: "Java 제네릭의 타입 파라미터 선언 방식과 와일드카드·경계 타입, 타입 소거(Type Erasure) 동작 원리를 분석한다."
 ---
 
 제네릭은 데이터의 타입을 클래스 내부에서 지정하는 것이 아니라 외부에서 지정하는 기법으로, 컴파일 시점에 강력한 타입 체크를 지원하는 기능이다.

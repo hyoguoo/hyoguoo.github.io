@@ -3,7 +3,7 @@ title: "Empty Collection"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "컬렉션이나 배열이 비어 있을 때 null 대신 빈 컬렉션을 반환해야 하는 이유와 올바른 반환 패턴을 정리한다."
 ---
 
 > null이 아닌, 빈 컬렉션이나 배열을 반환하라

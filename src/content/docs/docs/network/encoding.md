@@ -3,7 +3,7 @@ title: "Encoding"
 date: 2023-08-09
 lastUpdated: 2025-12-28
 tags: [Network]
-description: ""
+description: "HTTP 컨텐츠 인코딩(gzip, Brotli)과 청크 인코딩을 포함한 전송 인코딩의 동작 원리와 차이를 정리한다."
 ---
 
 HTTP 상에서 데이터를 전송할 때, 전송 효율(압축)이나 보안을 목적으로 데이터를 변환하는 기술로, 주로 두 가지 방식이 있다.

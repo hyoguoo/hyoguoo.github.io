@@ -3,7 +3,7 @@ title: "Necessary Checked Exception"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "검사 예외를 사용해야 하는 조건과 Optional 반환 또는 상태 검사 메서드로 검사 예외를 회피하는 방법을 정리한다."
 ---
 
 > 필요 없는 검사 예외 사용을 피하라

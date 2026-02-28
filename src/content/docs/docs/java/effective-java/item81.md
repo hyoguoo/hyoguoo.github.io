@@ -3,7 +3,7 @@ title: "Concurrent Utilities"
 date: 2024-03-12
 lastUpdated: 2025-02-20
 tags: [Java]
-description: ""
+description: "wait/notify 대신 java.util.concurrent 패키지의 동시성 컬렉션과 CountDownLatch 등의 동기화 유틸리티를 사용해야 하는 이유를 정리한다."
 ---
 
 > wait와 notify보다는 동시성 유틸리티를 애용하라

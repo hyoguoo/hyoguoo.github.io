@@ -3,7 +3,7 @@ title: "Wrapper class"
 date: 2024-03-07
 lastUpdated: 2025-11-09
 tags: [Java]
-description: ""
+description: "Java 8개 기본형의 Wrapper 클래스와 오토박싱·언박싱 동작 원리, Integer·Long 등 주요 유틸리티 메서드를 정리한다."
 ---
 
 자바에서는 8개의 기본형을 객체로 다루지 않고 있는데, 이를 객체로 다루기 위해 Wrapper 클래스를 제공한다.

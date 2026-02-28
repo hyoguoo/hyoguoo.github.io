@@ -3,7 +3,7 @@ title: "Lazy Initialization"
 date: 2024-03-14
 lastUpdated: 2024-03-14
 tags: [Java]
-description: ""
+description: "지연 초기화의 적절한 사용 시점과 정적 필드의 홀더 클래스 관용구 및 인스턴스 필드의 이중검사 관용구를 비교 정리한다."
 ---
 
 > 지연 초기화는 신중히 사용하라

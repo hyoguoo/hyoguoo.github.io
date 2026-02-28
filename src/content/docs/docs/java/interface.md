@@ -3,7 +3,7 @@ title: "Interface"
 date: 2022-12-05
 lastUpdated: 2025-11-06
 tags: [Java]
-description: ""
+description: "Java 인터페이스의 구현과 명세 분리 목적과 default·static 메서드, 함수형 인터페이스와 람다 활용법을 설명한다."
 ---
 
 일종의 추상클래스로 추상클래스보다 추상화 정도가 더 높으며, 다음과 같은 특징이 있다.

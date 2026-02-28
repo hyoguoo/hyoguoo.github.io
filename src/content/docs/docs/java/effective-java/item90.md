@@ -3,7 +3,7 @@ title: "Serialization Proxy Pattern"
 date: 2024-08-25
 lastUpdated: 2024-08-25
 tags: [Java]
-description: ""
+description: "직렬화 프록시 패턴의 구현 방법과 writeReplace/readResolve를 활용해 역직렬화 보안 취약점을 차단하는 원리를 정리한다."
 ---
 
 > 직렬화된 인스턴스 대신 직렬화 프록시 사용을 검토하라

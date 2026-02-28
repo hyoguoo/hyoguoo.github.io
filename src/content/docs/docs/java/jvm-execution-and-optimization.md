@@ -3,7 +3,7 @@ title: "JVM (Java Virtual Machine) Execution and Optimization"
 date: 2026-01-31
 lastUpdated: 2026-02-05
 tags: [Java]
-description: ""
+description: "JVM의 바이트코드 실행 방식과 JIT 컴파일러의 인터프리터 협업 최적화, 메서드 인라이닝·탈출 분석 기법을 분석한다."
 ---
 
 자바 소스 코드는 자바 컴파일러(`javac`)에 의해 바이트코드(`.class`)로 변환된 후, JVM 위에서 실행된다.

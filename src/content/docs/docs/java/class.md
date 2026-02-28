@@ -3,7 +3,7 @@ title: "Class"
 date: 2022-11-20
 lastUpdated: 2025-11-03
 tags: [Java]
-description: ""
+description: "Java 클래스의 구성 요소인 필드·생성자·메서드와 this·static 키워드, 내부 클래스 종류를 정리한다."
 ---
 
 ## 클래스의 구성 요소

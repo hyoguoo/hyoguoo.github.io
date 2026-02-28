@@ -3,7 +3,7 @@ title: "Custom Serialization Form"
 date: 2024-08-21
 lastUpdated: 2024-08-21
 tags: [Java]
-description: ""
+description: "기본 직렬화 형태가 적합한 경우와 writeObject/readObject를 활용한 커스텀 직렬화 형태 설계 원칙을 정리한다."
 ---
 
 > 커스텀 직렬화 형태를 고려해보라

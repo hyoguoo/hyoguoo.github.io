@@ -3,7 +3,7 @@ title: "Spring Boot Test Context"
 date: 2025-10-23
 lastUpdated: 2025-10-23
 tags: [Spring]
-description: ""
+description: "Spring Boot 테스트 어노테이션(@SpringBootTest·@DataJpaTest·@WebMvcTest)의 컨텍스트 범위와 캐싱 전략을 비교·분석한다."
 ---
 
 스프링 부트는 다양한 계층의 테스트를 지원하기 위해 여러 테스트 애노테이션을 제공한다.

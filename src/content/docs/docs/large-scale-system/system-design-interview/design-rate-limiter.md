@@ -3,7 +3,7 @@ title: "Design Rate Limiter"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "API 요청 속도를 제어하는 처리율 제한 장치의 설계 방법과 토큰 버킷·슬라이딩 윈도우 등 알고리즘을 비교한다."
 ---
 
 처리율 제한 장치(rate limiter)는 특정 시간 당 처리할 수 있는 요청의 수를 제한하는 장치로, 아래와 같은 이유로 사용된다.

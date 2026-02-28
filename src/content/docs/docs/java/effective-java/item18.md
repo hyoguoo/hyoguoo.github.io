@@ -3,7 +3,7 @@ title: "Composition"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "상속의 캡슐화 위반 위험성과 컴포지션·전달 클래스 패턴으로 안전하게 기능을 재사용하는 방법을 비교한다."
 ---
 
 > 상속보다 컴포지션을 사용하라

@@ -3,7 +3,7 @@ title: "Basic"
 date: 2024-03-07
 lastUpdated: 2026-01-13
 tags: [Computer Architecture]
-description: ""
+description: "CPU, 메모리, 보조기억장치, 입출력장치의 역할과 시스템 버스 구조를 통해 컴퓨터의 핵심 구성 요소를 설명한다."
 ---
 
 ## 컴퓨터가 이해하는 정보

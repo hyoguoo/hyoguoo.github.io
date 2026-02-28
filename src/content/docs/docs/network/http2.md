@@ -3,7 +3,7 @@ title: "HTTP/2.0 (HyperText Transfer Protocol 2.0)"
 date: 2023-08-09
 lastUpdated: 2025-12-24
 tags: [Network]
-description: ""
+description: "HTTP/2의 바이너리 프레이밍, 멀티플렉싱, 서버 푸시, HPACK 헤더 압축이 HTTP/1.1 한계를 해결하는 원리를 분석한다."
 ---
 
 HTTP/1.1의 메시지 포맷은 구현이 쉽고 디버깅이 용이하다는 장점이 있었으나, 웹 환경이 복잡해짐에 따라 성능상의 한계가 드러났다.

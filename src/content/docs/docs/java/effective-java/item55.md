@@ -3,7 +3,7 @@ title: "Optional"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Optional 반환의 장단점과 컨테이너 타입에 Optional을 사용하면 안 되는 이유를 정리한다."
 ---
 
 > 옵셔널 반환은 신중히 하라

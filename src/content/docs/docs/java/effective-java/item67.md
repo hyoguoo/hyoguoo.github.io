@@ -3,7 +3,7 @@ title: "Optimization"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "성능 최적화보다 명확한 구조 설계를 우선해야 하는 이유와 API 설계가 성능에 미치는 영향을 정리한다."
 ---
 
 > 최적화는 신중히 하라

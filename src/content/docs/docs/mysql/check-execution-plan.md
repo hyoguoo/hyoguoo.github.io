@@ -3,7 +3,7 @@ title: "Check Execution Plan"
 date: 2023-05-07
 lastUpdated: 2025-09-16
 tags: [MySQL]
-description: ""
+description: "EXPLAIN ANALYZE와 SHOW PROFILE을 활용하여 MySQL 쿼리의 실제 실행 시간과 단계별 비용을 측정하는 방법을 설명한다."
 ---
 
 MySQL에서 쿼리 성능을 분석하고 최적화하기 위해 실행 계획(Execution Plan)을 확인할 수 있다.

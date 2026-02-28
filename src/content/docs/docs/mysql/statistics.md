@@ -3,7 +3,7 @@ title: "Statistics"
 date: 2023-05-03
 lastUpdated: 2025-09-16
 tags: [MySQL]
-description: ""
+description: "MySQL 비용 기반 옵티마이저의 테이블·인덱스 통계 정보와 히스토그램의 역할, 통계 수집 방식을 분석한다."
 ---
 
 MySQL의 비용 기반 옵티마이저(Cost-Based Optimizer)는 실행 계획을 수립할 때 통계 정보를 핵심적인 판단 기준으로 사용한다.

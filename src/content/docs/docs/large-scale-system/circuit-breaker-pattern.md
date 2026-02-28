@@ -3,7 +3,7 @@ title: "Circuit Breaker Pattern"
 date: 2025-10-14
 lastUpdated: 2025-10-14
 tags: [Large-Scale System]
-description: ""
+description: "마이크로서비스 환경에서 장애의 연쇄 전파를 막기 위한 서킷 브레이커 패턴의 Closed/Open/Half-Open 상태 머신 동작 원리를 설명한다."
 ---
 
 마이크로서비스 아키텍처에서 하나의 서비스 장애가 연쇄적으로 다른 서비스에 전파되어 전체 시스템의 장애로 이어지는 연쇄적 실패를 방지하기 위해 서킷 브레이커(Circuit Breaker) 패턴을 사용한다.

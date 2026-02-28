@@ -3,7 +3,7 @@ title: "Design Video Streaming Service"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "대규모 비디오 업로드·스트리밍 서비스의 인코딩 파이프라인, CDN 배포, 스트리밍 프로토콜 선택을 중심으로 설계한다."
 ---
 
 ## 요구사항

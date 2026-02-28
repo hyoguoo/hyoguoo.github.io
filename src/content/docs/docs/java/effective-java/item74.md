@@ -3,7 +3,7 @@ title: "Exception Documentation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "검사 예외와 비검사 예외를 각각 @throws 태그로 문서화해야 하는 이유와 올바른 예외 문서화 원칙을 정리한다."
 ---
 
 > 메서드가 던지는 모든 예외를 문서화하라

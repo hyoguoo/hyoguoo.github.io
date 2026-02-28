@@ -3,7 +3,7 @@ title: "Iterator"
 date: 2024-03-07
 lastUpdated: 2025-11-12
 tags: [Java]
-description: ""
+description: "Java Iterator의 컬렉션 순회 방식과 Stream API의 지연 평가·중간 연산·최종 연산 처리 구조를 비교·분석한다."
 ---
 
 `Iterator`는 컬렉션의 데이터를 순회하고 접근하기 위한 인터페이스로, 컬렉션 구현체의 내부 구조를 알지 못해도, 일관된 방식으로 요소에 접근할 수 있게 해준다.

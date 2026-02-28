@@ -3,7 +3,7 @@ title: "Reactive Programming"
 date: 2025-10-01
 lastUpdated: 2025-10-01
 tags: [Spring]
-description: ""
+description: "반응형 프로그래밍의 데이터 스트림·비동기·배압 개념을 설명하고 Publisher·Subscriber·Subscription·Processor로 구성된 Reactive Streams 명세를 정리한다."
 ---
 
 반응형 프로그래밍(Reactive Programming)은 데이터 흐름(Data Stream)과 변경 사항 전파(Propagation of Change)에 중점을 둔 프로그래밍 패러다임이다.

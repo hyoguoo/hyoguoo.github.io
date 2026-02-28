@@ -3,7 +3,7 @@ title: "Message Converter"
 date: 2024-03-07
 lastUpdated: 2025-08-26
 tags: [Spring]
-description: ""
+description: "HttpMessageConverter 인터페이스의 역할과 주요 구현체, 요청 본문 역직렬화와 응답 직렬화 처리 흐름을 분석한다."
 ---
 
 뷰 템플릿이나 정적 컨텐츠를 응답하는 것이 아니라, JSON, XML 또는 사용자 지정 형식과 같은 다양한 형식의 데이터를 교환하는 작업이 필요할 때 메시지 컨버터를 사용할 수 있다.

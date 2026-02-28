@@ -3,7 +3,7 @@ title: "JDBC (Java Database Connectivity)"
 date: 2023-08-09
 lastUpdated: 2025-09-03
 tags: [Spring]
-description: ""
+description: "JDBC의 데이터베이스 연동 처리 흐름과 Statement·PreparedStatement 차이, SQL Mapper와 ORM 방식의 특징을 비교한다."
 ---
 
 자바에서 데이터베이스에 접속할 수 있도록 하는 자바 API로, Java로 데이터베이스에 연결 및 쿼리를 실행하기 위한 표준 인터페이스를 제공한다.

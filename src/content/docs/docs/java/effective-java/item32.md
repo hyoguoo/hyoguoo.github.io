@@ -3,7 +3,7 @@ title: "Varargs"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "제네릭과 가변인수(varargs)를 함께 사용할 때 발생하는 힙 오염 문제와 @SafeVarargs 애너테이션의 안전한 사용 조건을 분석한다."
 ---
 
 > 제네릭과 가변인수를 함께 쓸 때는 신중하라

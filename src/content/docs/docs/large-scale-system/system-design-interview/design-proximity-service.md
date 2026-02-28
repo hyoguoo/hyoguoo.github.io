@@ -3,7 +3,7 @@ title: "Design Proximity Service"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "주어진 반경 내 사업장을 검색하는 근접성 서비스를 Geohash·Quadtree 등 지리 인덱싱 방식을 중심으로 설계한다."
 ---
 
 ## 요구사항

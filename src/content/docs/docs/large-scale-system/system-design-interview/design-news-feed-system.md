@@ -3,7 +3,7 @@ title: "Design News Feed System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "SNS 뉴스 피드 시스템에서 게시물 생성(fanout-on-write vs fanout-on-read)과 피드 조회를 대규모로 처리하는 설계를 다룬다."
 ---
 
 ## 요구사항

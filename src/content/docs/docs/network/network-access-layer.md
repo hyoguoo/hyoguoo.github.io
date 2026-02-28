@@ -3,7 +3,7 @@ title: "Network Access Layer - TCP/IP Layer 1"
 date: 2024-03-07
 lastUpdated: 2025-12-05
 tags: [Network]
-description: ""
+description: "TCP/IP 1계층에서 이더넷 프레임 구조, 허브와 스위치의 동작 방식, MAC 주소 학습, VLAN을 비교 분석한다."
 ---
 
 TCP/IP 모델의 최하위 계층으로, OSI 7계층의 물리 계층(Physical Layer)과 데이터 링크 계층(Data Link Layer)을 포함한다.

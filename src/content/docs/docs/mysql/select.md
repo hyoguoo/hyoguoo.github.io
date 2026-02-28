@@ -3,7 +3,7 @@ title: "SELECT"
 date: 2023-06-03
 lastUpdated: 2025-09-22
 tags: [MySQL]
-description: ""
+description: "SELECT 쿼리의 인덱스 활용 규칙과 WHERE·ORDER BY·GROUP BY 절에서 인덱스가 사용되는 조건을 정리한다."
 ---
 
 ## SELECT 절의 인덱스 사용

@@ -3,7 +3,7 @@ title: "Digital Cryptography Basic"
 date: 2024-03-07
 lastUpdated: 2026-01-19
 tags: [Secure]
-description: ""
+description: "대칭키·공개키 암호법, RSA 알고리즘, 디지털 서명과 X.509 인증서의 신뢰 체인까지 디지털 암호학 기본 개념을 설명한다."
 ---
 
 디지털 암호학은 데이터의 기밀성, 무결성, 인증, 부인 방지를 보장하기 위한 기술적 토대로, 현대 웹 보안(HTTPS) 등 다양한 시스템의 핵심 원리로 작동한다.

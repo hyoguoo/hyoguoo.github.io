@@ -3,7 +3,7 @@ title: "Design Metrics Monitoring System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "대규모 서버 인프라의 CPU·메모리·디스크 등 운영 지표를 수집·저장·시각화하고 경보를 발송하는 모니터링 시스템 설계를 다룬다."
 ---
 
 ## 요구 사항

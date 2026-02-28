@@ -3,7 +3,7 @@ title: "CPU Scheduling"
 date: 2024-03-07
 lastUpdated: 2026-01-05
 tags: [Operating System]
-description: ""
+description: "CPU 스케줄링의 개념과 입출력 집중·CPU 집중 프로세스 분류, 선점형·비선점형 방식, 주요 스케줄링 알고리즘을 정리한다."
 ---
 
 운영체제는 시스템의 성능을 극대화하기 위해 한정된 자원인 CPU를 프로세스들에게 효율적으로 배분하기 위해, 준비 큐에 있는 프로세스 할당을 결정하는 작업인 CPU 스케줄링을 하게 된다.

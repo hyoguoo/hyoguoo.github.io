@@ -3,7 +3,7 @@ title: "Image and Container"
 date: 2026-02-04
 lastUpdated: 2026-02-04
 tags: [Docker]
-description: ""
+description: "읽기 전용 레이어로 구성된 Docker 이미지 구조와 Namespaces, cgroups 기반 컨테이너 격리 원리를 분석한다."
 ---
 
 실행 환경을 담은 이미지는 정적인 설계도이며, 컨테이너는 이 설계도를 기반으로 격리된 환경에서 돌아가는 동적인 프로세스다.

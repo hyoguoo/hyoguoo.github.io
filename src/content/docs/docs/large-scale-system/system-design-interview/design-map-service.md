@@ -3,7 +3,7 @@ title: "Design Map"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "위치 갱신, 경로 안내, ETA 계산을 제공하는 대규모 지도 서비스의 도로 데이터 처리와 내비게이션 파이프라인을 설계한다."
 ---
 
 ## 요구사항

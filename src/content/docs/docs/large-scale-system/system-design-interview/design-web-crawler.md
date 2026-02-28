@@ -3,7 +3,7 @@ title: "Design Web Crawler"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "웹 페이지를 수집하는 크롤러의 URL 우선순위 관리, 중복 방지, 예의 바른 크롤링(politeness) 등 대규모 시스템 설계를 다룬다."
 ---
 
 ## Web Crawler

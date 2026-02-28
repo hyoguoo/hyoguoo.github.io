@@ -3,7 +3,7 @@ title: "HTTP (HyperText Transfer Protocol)"
 date: 2023-08-09
 lastUpdated: 2025-12-11
 tags: [Network]
-description: ""
+description: "HTTP 프로토콜의 역사와 버전별 특징, 무상태·비연결성 구조, 전송 방식, 상태 코드, MIME 타입을 정리한다."
 ---
 
 웹 브라우저와 웹 서버가 HTML, 이미지, JSON 등 다양한 데이터를 주고받기 위해 사용하는 애플리케이션 계층 프로토콜이다.

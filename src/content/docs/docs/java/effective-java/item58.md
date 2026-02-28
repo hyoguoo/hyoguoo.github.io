@@ -3,7 +3,7 @@ title: "For-each Loop"
 date: 2024-03-07
 lastUpdated: 2024-06-04
 tags: [Java]
-description: ""
+description: "for-each 문이 전통적인 for 문보다 간결하고 안전한 이유와 for-each를 사용할 수 없는 세 가지 상황을 분석한다."
 ---
 
 > 전통적인 for 문 보다는 for-each 문을 사용하라

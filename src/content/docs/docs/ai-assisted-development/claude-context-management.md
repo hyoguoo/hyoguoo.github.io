@@ -3,7 +3,7 @@ title: "Claude Context Management"
 date: 2025-12-21
 lastUpdated: 2025-12-21
 tags: [AI-Assisted Development]
-description: ""
+description: "Claude의 4계층 컨텍스트 처리 구조를 분석하고 Skills, CLAUDE.MD, /compact 명령어를 활용한 컨텍스트 윈도우 효율적 관리 전략을 설명한다."
 ---
 
 Claude의 성능은 컨텍스트 윈도우를 얼마나 효율적으로 관리하느냐에 따라 결정된다. 제한된 토큰 공간에 필요한 정보만 정확히 담아야 높은 품질의 응답을 얻을 수 있다.

@@ -3,7 +3,7 @@ title: "AOP (Aspect-Oriented Programming)"
 date: 2023-06-16
 lastUpdated: 2025-09-03
 tags: [Spring]
-description: ""
+description: "AOP의 핵심 용어와 JDK 동적 프록시·CGLIB의 차이점, @Aspect 어드바이스 종류, 자기 호출 문제의 원인과 해결 방법을 분석한다."
 ---
 
 > 관점 지향 프로그래밍

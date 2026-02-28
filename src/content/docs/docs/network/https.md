@@ -3,7 +3,7 @@ title: "HTTPS (HyperText Transfer Protocol Secure)"
 date: 2023-08-09
 lastUpdated: 2025-12-20
 tags: [Network]
-description: ""
+description: "HTTPS의 TLS 핸드셰이크 동작 원리, 대칭키·비대칭키 혼용 방식, CA 인증서 검증 절차를 분석한다."
 ---
 
 HTTP의 보안 취약점을 보완하기 위해 설계된 프로토콜이다.

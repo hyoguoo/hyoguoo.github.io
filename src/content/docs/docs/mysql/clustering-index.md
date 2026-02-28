@@ -3,7 +3,7 @@ title: "Clustering Index"
 date: 2023-04-19
 lastUpdated: 2025-09-12
 tags: [MySQL]
-description: ""
+description: "InnoDB 클러스터형 인덱스의 PK 기반 물리적 정렬 방식과 비클러스터형 보조 인덱스와의 조회 경로 차이를 분석한다."
 ---
 
 클러스터형 인덱스는 프라이머리 키(PK) 값의 순서에 따라 테이블의 데이터가 물리적으로 정렬되어 저장되는 방식을 의미한다.

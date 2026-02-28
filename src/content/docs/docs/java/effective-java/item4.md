@@ -3,7 +3,7 @@ title: "Noninstantiability"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "정적 멤버만을 담은 유틸리티 클래스의 인스턴스화를 막기 위해 private 생성자를 사용하는 원리와 이유를 정리한다."
 ---
 
 > 인스턴스화를 막으려거든 private 생성자를 사용하라

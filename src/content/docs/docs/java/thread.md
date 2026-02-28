@@ -3,7 +3,7 @@ title: "Thread"
 date: 2023-01-16
 lastUpdated: 2025-11-17
 tags: [Java]
-description: ""
+description: "Java 스레드의 생성 방법과 상태 전이 생명주기, sleep·join·interrupt를 활용한 스레드 제어 방법을 정리한다."
 ---
 프로세스 내에서 실제로 작업을 수행하는 실행 단위로, 모든 프로세스는 최소 하나 이상의 스레드를 가지고 있다.
 

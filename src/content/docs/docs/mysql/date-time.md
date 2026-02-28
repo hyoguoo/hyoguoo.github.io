@@ -3,7 +3,7 @@ title: "Date Time"
 date: 2023-07-25
 lastUpdated: 2025-09-26
 tags: [MySQL]
-description: ""
+description: "MySQL의 날짜·시간 데이터 타입별 저장 공간과 표현 범위, TIMESTAMP와 DATETIME의 차이점을 비교한다."
 ---
 
 MySQL은 날짜, 시간 또는 두 정보를 함께 저장할 수 있는 여러 데이터 타입을 제공한다.

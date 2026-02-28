@@ -3,7 +3,7 @@ title: "Abstract Class & Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "추상 클래스와 인터페이스의 차이를 비교하고, 두 방식의 장점을 결합한 추상 골격 구현(Skeletal Implementation) 패턴을 설명한다."
 ---
 
 > 추상 클래스보다는 인터페이스를 우선하라

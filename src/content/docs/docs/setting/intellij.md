@@ -3,7 +3,7 @@ title: "IntelliJ"
 date: 2022-09-29
 lastUpdated: 2026-01-26
 tags: [Setting]
-description: ""
+description: "IntelliJ IDEA의 라이브 템플릿 생성, 힙 사이즈 조정, 코드 자동 포맷팅 등 생산성·품질 향상 설정을 정리한다."
 ---
 
 ## 라이브 템플릿 생성

@@ -3,7 +3,7 @@ title: "Thread"
 date: 2024-03-07
 lastUpdated: 2026-01-03
 tags: [Operating System]
-description: ""
+description: "스레드의 공유·독립 메모리 구조를 분석하고 프로세스와의 차이점 및 멀티 프로세스·멀티 스레드 방식의 장단점을 비교한다."
 ---
 
 스레드는 프로세스 내에서 실행되는 흐름의 단위이자, CPU 스케줄링의 기본 단위다.

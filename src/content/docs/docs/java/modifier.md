@@ -3,7 +3,7 @@ title: "Modifier"
 date: 2022-11-28
 lastUpdated: 2025-10-31
 tags: [Java]
-description: ""
+description: "Java 접근 제어자(public·protected·private)와 static·final·abstract 기타 제어자의 역할과 적용 범위를 정리한다."
 ---
 
 > 클래스, 변수 또는 메서드의 선언부에 함께 사용되어 부가적인 의미를 부여하는 키워드

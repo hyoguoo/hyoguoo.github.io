@@ -3,7 +3,7 @@ title: "Consumer Internals"
 date: 2025-10-02
 lastUpdated: 2025-10-03
 tags: [Kafka]
-description: ""
+description: "Kafka 컨슈머의 그룹 코디네이터 기반 관리, 리밸런싱 과정, 파티션 할당 전략, 자동·수동 오프셋 커밋 방식을 분석한다."
 ---
 
 컨슈머는 토픽의 메시지를 읽어 처리하는 클라이언트이며, 내부적으로는 컨슈머 그룹이라는 개념을 통해 확장성과 안정성을 보장받는다.

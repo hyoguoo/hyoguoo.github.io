@@ -3,7 +3,7 @@ title: "Obsolete Objects"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "가비지 컬렉터가 있어도 발생하는 메모리 누수 원인과 null 처리·스코프 축소·WeakHashMap을 활용한 참조 해제 방법을 정리한다."
 ---
 
 > 다 쓴 객체 참조를 해제하라

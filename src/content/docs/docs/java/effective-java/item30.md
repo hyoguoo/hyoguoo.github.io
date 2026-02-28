@@ -3,7 +3,7 @@ title: "Generic Method"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "제네릭 메서드의 작성 방법, 제네릭 싱글턴 팩터리 패턴, 재귀적 타입 한정을 이용한 타입 안전 메서드 설계 방식을 정리한다."
 ---
 
 > 이왕이면 제네릭 메서드로 만들라

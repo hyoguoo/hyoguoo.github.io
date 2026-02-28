@@ -3,7 +3,7 @@ title: "String Concat"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "문자열 연결 연산자 +가 n^2 시간 복잡도를 유발하는 원인과 StringBuilder를 활용한 성능 개선 방법을 정리한다."
 ---
 
 > 문자열 연결은 느리니 주의해서 사용하라

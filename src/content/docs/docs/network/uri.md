@@ -3,7 +3,7 @@ title: "URI (Uniform Resource Identifier)"
 date: 2023-06-15
 lastUpdated: 2025-12-10
 tags: [Network]
-description: ""
+description: "URI의 구성 요소(scheme, host, path, query, fragment 등)와 URI·URL·URN의 개념 차이 및 인코딩 규칙을 정리한다."
 ---
 
 URI(Uniform Resource Identifier)는 웹 애플리케이션과 네트워크에서 리소스를 식별하는 데 사용되는 문자열로, API 엔드포인트, 이미지, 문서 등 다양한 자원을 가리킨다.

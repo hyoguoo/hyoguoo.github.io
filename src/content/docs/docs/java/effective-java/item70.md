@@ -3,7 +3,7 @@ title: "Checked Exception & RuntimeException"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "검사 예외, 런타임 예외, 에러의 차이와 복구 가능 여부에 따라 적절한 예외 타입을 선택하는 기준을 정리한다."
 ---
 
 > 복구할 수 있는 상황에는 검사 예외를, 프로그래밍 오류에는 런타임 예외를 사용하라.

@@ -3,7 +3,7 @@ title: "Print"
 date: 2022-11-20
 lastUpdated: 2025-10-30
 tags: [Java]
-description: ""
+description: "Java의 System.out.print·println·printf 출력 메서드의 동작 방식과 스레드 안전성, 포맷 문자열 사용법을 정리한다."
 ---
 
 자바에서 콘솔(표준 출력)에 데이터를 출력하는 기본적인 방법으로 `System.out.print()`, `System.out.println()`, `System.out.printf()`가 있다.

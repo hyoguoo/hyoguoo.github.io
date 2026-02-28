@@ -3,7 +3,7 @@ title: "Spring Boot"
 date: 2025-08-28
 lastUpdated: 2025-08-28
 tags: [Spring]
-description: ""
+description: "@SpringBootApplication 어노테이션 구성과 SpringApplication.run()의 부트 스타트업 전체 실행 흐름을 단계별로 분석한다."
 ---
 
 과거 스프링 프레임워크는 직접 설정을 해야하고 구성하는 등의 번거로움이 상당히 많았지만 스프링 부트가 등장하면서 손쉽게 웹 애플리케이션을 만들 수 있게 되었다.

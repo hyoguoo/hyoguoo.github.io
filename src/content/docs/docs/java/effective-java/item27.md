@@ -3,7 +3,7 @@ title: "Unchecked Warning"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "제네릭 사용 시 발생하는 비검사 경고를 제거하는 방법과 @SuppressWarnings 애너테이션의 올바른 적용 범위를 정리한다."
 ---
 
 > 비검사 경고를 제거하라.

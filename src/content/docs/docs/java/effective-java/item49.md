@@ -3,7 +3,7 @@ title: "Parameter Validation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "메서드와 생성자의 매개변수 유효성 검사가 중요한 이유와 문서화 방법, 검사를 생략할 수 있는 예외 조건을 정리한다."
 ---
 
 > 매개변수가 유효한지 검사하라

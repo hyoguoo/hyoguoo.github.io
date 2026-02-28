@@ -3,7 +3,7 @@ title: "Exceptional Conditions"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "예외를 제어 흐름에 사용했을 때 발생하는 성능 저하와 버그 은폐 문제를 분석하고 상태 검사 방식과 비교한다."
 ---
 
 > 예외는 진짜 예외 상황에만 사용하라

@@ -3,7 +3,7 @@ title: "Exception Handling"
 date: 2024-03-07
 lastUpdated: 2025-11-02
 tags: [Java]
-description: ""
+description: "Java의 Checked/Unchecked 예외 계층 구조와 try-catch-finally 처리 방법, 사용자 정의 예외 작성 방법을 정리한다."
 ---
 
 프로그램이 실행되는 동안 발생하는 예외적인 상황(오류)을 관리하고 처리하는 메커니즘이다.

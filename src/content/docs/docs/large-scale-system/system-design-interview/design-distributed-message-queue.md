@@ -3,7 +3,7 @@ title: "Design Distributed Message Queue"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "서비스 간 결합도를 낮추고 가용성을 높이기 위한 분산 메시지 큐 시스템의 내구성, 복제, 소비자 그룹 설계를 다룬다."
 ---
 
 현대 소프트웨어 아키텍처는 작고 독립적인 서비스로 구성되며, 메시지 큐는 서비스 사이의 통신과 조율을 담당하게 되면서 다음과 같은 이점을 제공한다.

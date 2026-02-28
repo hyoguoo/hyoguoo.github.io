@@ -3,7 +3,7 @@ title: "List vs Array"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "배열과 제네릭 타입의 공변·실체화 차이를 분석하고, 제네릭 배열 생성이 허용되지 않는 이유와 List로 대체하는 방법을 설명한다."
 ---
 
 > 배열보다는 리스트를 사용하라

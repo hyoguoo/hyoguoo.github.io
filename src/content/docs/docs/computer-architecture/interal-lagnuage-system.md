@@ -3,7 +3,7 @@ title: "Internal Language System"
 date: 2024-03-07
 lastUpdated: 2026-01-15
 tags: [Computer Architecture]
-description: ""
+description: "비트와 바이트 단위부터 2의 보수, IEEE 754 부동소수점, UTF-8/UTF-16 인코딩까지 컴퓨터 내부 데이터 표현 체계를 정리한다."
 ---
 
 ## 컴퓨터 언어의 기본 단위

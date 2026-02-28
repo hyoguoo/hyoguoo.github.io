@@ -3,7 +3,7 @@ title: "Subtyping"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "태그 달린 클래스의 단점을 분석하고, 이를 클래스 계층구조(서브타이핑)로 대체하여 가독성과 확장성을 높이는 방법을 설명한다."
 ---
 
 > 태그 달린 클래스보다는 클래스 계층구조를 활용하라

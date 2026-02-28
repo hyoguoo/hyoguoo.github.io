@@ -3,7 +3,7 @@ title: "Monitor"
 date: 2025-08-20
 lastUpdated: 2025-11-20
 tags: [Java]
-description: ""
+description: "Java 모니터의 Mutual Exclusion·Condition Variable 구조와 synchronized·wait·notify를 통한 스레드 동기화 메커니즘을 분석한다."
 ---
 
 모니터는 다중 스레드 환경에서 공유 자원에 대한 안전한 접근을 보장하고 스레드 간의 실행 순서를 제어하기 위한 고수준 동기화 구조다.

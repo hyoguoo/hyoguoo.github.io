@@ -3,7 +3,7 @@ title: "equals"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "equals 재정의 시 반드시 지켜야 하는 반사성·대칭성·추이성·일관성·null-아님 규약과 상속 관계에서 발생하는 위반 사례를 분석한다."
 ---
 
 > equals는 일반 규약을 지켜 재정의하라

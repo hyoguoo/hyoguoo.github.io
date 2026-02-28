@@ -3,7 +3,7 @@ title: "Spring Container"
 date: 2025-07-08
 lastUpdated: 2025-08-22
 tags: [Spring]
-description: ""
+description: "스프링 IoC 컨테이너의 BeanFactory와 ApplicationContext 역할을 비교하고 빈 등록부터 소멸까지 8단계 컨테이너 생명주기를 분석한다."
 ---
 
 스프링 컨테이너는 애플리케이션을 구성하는 객체(빈)의 생성 -> 구성 -> 생명주기 관리를 담당하는 핵심 런타임으로, 개발자는 객체 생성·연결 책임을 컨테이너에 위임하고, 비즈니스 로직에 집중할 수 있다.

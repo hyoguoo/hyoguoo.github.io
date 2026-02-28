@@ -3,7 +3,7 @@ title: "Design E-Wallet"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "초당 100만 건의 이체 트랜잭션을 처리하면서 멱등성(idempotency)과 99.99% 가용성을 보장하는 전자 지갑 시스템 설계를 다룬다."
 ---
 
 ## 요구사항

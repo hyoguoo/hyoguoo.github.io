@@ -3,7 +3,7 @@ title: "Sub Query"
 date: 2023-07-13
 lastUpdated: 2025-09-20
 tags: [MySQL]
-description: ""
+description: "MySQL 8.0 옵티마이저의 서브쿼리 최적화 방식과 스칼라·IN·EXISTS 서브쿼리의 JOIN 변환 전략을 분석한다."
 ---
 
 과거 MySQL 버전에서는 서브쿼리가 성능 저하의 주된 원인으로 지목되었지만, MySQL 8.0에서 옵티마이저가 대부분의 서브쿼리를 JOIN과 유사한 방식으로 최적화하도록 개선되어 성능이 크게 향상되었다.

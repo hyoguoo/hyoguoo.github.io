@@ -3,7 +3,7 @@ title: "Network Layer - TCP/IP Layer 2"
 date: 2024-03-07
 lastUpdated: 2025-12-06
 tags: [Network]
-description: ""
+description: "TCP/IP 2계층에서 IP 주소 체계, ARP 동작, 서브넷팅, NAT, DHCP, 라우팅 테이블 구조를 분석한다."
 ---
 
 TCP/IP 모델의 2계층으로 OSI 7계층의 네트워크 계층(Network Layer)으로, 물리적 연결을 넘어 최종 목적지까지 데이터를 안전하고 빠르게 전달하는 것이 주 목적이다.

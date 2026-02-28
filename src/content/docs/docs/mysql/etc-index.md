@@ -3,7 +3,7 @@ title: "ETC Index"
 date: 2023-04-19
 lastUpdated: 2025-09-12
 tags: [MySQL]
-description: ""
+description: "전문 검색·공간·다중값·함수 기반 인덱스 등 B-Tree 이외의 MySQL 특수 인덱스 종류와 활용 목적을 정리한다."
 ---
 
 - 전문 검색 인덱스(Full-Text Index): 일반적인 B-Tree 인덱스로는 검색이 어려운 장문 텍스트(기사 본문 등) 내의 단어나 구문을 효율적으로 검색하기 위한 인덱스

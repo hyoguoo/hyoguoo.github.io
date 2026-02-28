@@ -3,7 +3,7 @@ title: "Array"
 date: 2022-11-20
 lastUpdated: 2024-08-30
 tags: [Java]
-description: ""
+description: "배열의 고정 크기 특성과 인덱스 기반 접근 방식, 2차원 배열 및 배열 복사 방법을 정리한다."
 ---
 
 > 어떤 메모리 블록에 연속적으로 나열된 같은 유형의 변수 모음

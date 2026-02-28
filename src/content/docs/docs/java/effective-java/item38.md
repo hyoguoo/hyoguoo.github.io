@@ -3,7 +3,7 @@ title: "Extended Enum"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "열거 타입의 확장이 불가능한 한계를 인터페이스 구현으로 극복하여 확장 가능한 열거 타입을 설계하는 방법을 정리한다."
 ---
 
 > 확장할 수 있는 열거 타입이 필요하면 인터페이스를 사용하라.

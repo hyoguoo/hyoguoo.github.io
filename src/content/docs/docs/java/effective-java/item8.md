@@ -3,7 +3,7 @@ title: "Finalizer & Cleaner"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "finalizer와 cleaner가 위험한 이유와 AutoCloseable을 통한 자원 회수의 올바른 대안을 정리한다."
 ---
 
 > Finalizer와 Cleaner 사용을 피하라

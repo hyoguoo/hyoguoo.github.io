@@ -3,7 +3,7 @@ title: "Raw Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Raw Type의 위험성과 List, List&lt;Object&gt;, 와일드카드 타입의 차이를 비교하고, Raw Type을 피해야 하는 이유를 설명한다."
 ---
 
 > Raw Type은 사용하지 말라

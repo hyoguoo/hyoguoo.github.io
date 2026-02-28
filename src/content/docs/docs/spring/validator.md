@@ -3,7 +3,7 @@ title: "Validation"
 date: 2023-06-15
 lastUpdated: 2025-08-27
 tags: [Spring]
-description: ""
+description: "Bean Validation의 제약 어노테이션 동작 원리와 @Valid·@Validated의 차이, 그룹 검증을 활용한 상황별 유효성 검사 전략을 설명한다."
 ---
 
 > Bean Validation은 특정한 구현체가 아니라 Bean Validation 2.0(JSR-380) 기술 표준

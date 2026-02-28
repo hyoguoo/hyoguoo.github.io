@@ -3,7 +3,7 @@ title: "try-with-resources"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "try-finally의 예외 은폐 문제를 try-with-resources가 AutoCloseable 메커니즘을 통해 해결하는 원리를 분석한다."
 ---
 
 > try-finally보다는 `try-with-resources`를 사용하라

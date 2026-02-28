@@ -3,7 +3,7 @@ title: "volatile"
 date: 2025-01-07
 lastUpdated: 2025-11-14
 tags: [Java]
-description: ""
+description: "Java volatile 키워드의 CPU 캐시 가시성 문제 해결 방식과 happens-before 관계, 원자성 미보장 한계를 분석한다."
 ---
 
 CPU의 각 코어는 성능 향상을 위해 캐시(Cache)를 가지고 있다.

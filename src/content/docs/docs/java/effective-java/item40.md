@@ -3,7 +3,7 @@ title: "@Override"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "@Override 애너테이션이 재정의와 다중정의를 구분하는 원리와 일관된 사용이 중요한 이유를 분석한다."
 ---
 
 > @Override 애너테이션을 일관되게 사용하라.

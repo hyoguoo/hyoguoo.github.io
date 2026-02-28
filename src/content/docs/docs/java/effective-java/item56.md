@@ -3,7 +3,7 @@ title: "Doc Comment"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Javadoc 문서화 주석의 작성 규칙과 @param, @return, @throws 태그의 올바른 활용법을 정리한다."
 ---
 
 > 공개된 API 요소에는 항상 문서화 주석을 작성하라

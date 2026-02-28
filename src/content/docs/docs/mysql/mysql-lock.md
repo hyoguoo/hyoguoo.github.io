@@ -3,7 +3,7 @@ title: "MySQL Engine Lock"
 date: 2023-03-22
 lastUpdated: 2025-10-07
 tags: [MySQL]
-description: ""
+description: "MySQL 엔진 레벨의 글로벌 락·테이블 락·메타데이터 락·네임드 락의 종류와 사용 목적을 설명한다."
 ---
 
 MySQL 엔진 레벨의 잠금은 MySQL 서버의 상위 레벨에서 동작한다.

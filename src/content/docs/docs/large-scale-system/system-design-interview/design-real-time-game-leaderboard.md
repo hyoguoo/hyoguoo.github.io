@@ -3,7 +3,7 @@ title: "Design Real-time Game Leaderboard"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "DAU 500만 명의 게임 플레이어 점수를 실시간으로 집계하고 상위 순위를 빠르게 제공하는 리더보드 시스템 설계를 다룬다."
 ---
 
 ## 요구사항

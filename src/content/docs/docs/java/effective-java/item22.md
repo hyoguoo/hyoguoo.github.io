@@ -3,7 +3,7 @@ title: "Constant Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "상수만 담은 상수 인터페이스가 안티 패턴인 이유와, 인스턴스화 불가 유틸리티 클래스를 활용한 올바른 상수 정의 방법을 정리한다."
 ---
 
 > 인터페이스는 타입을 정의하는 용도로만 사용하라.

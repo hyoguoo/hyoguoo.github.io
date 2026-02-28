@@ -3,7 +3,7 @@ title: "ENUM"
 date: 2023-07-25
 lastUpdated: 2025-09-26
 tags: [MySQL]
-description: ""
+description: "MySQL ENUM 타입의 내부 정수 매핑 방식과 성능 특성, 컬럼 값 변경 시 테이블 재구축 발생 조건을 설명한다."
 ---
 
 `ENUM`은 테이블 생성 시 미리 정의한 문자열 목록 중에서 하나의 값만 저장할 수 있는 데이터 타입이다.

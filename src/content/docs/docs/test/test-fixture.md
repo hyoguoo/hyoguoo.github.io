@@ -3,7 +3,7 @@ title: "Test Fixture"
 date: 2024-08-27
 lastUpdated: 2024-08-27
 tags: [Test]
-description: ""
+description: "@BeforeEach, @AfterEach 기반 Setup/Teardown 패턴과 Test Data Factory, Parameterized Test 활용 방법을 설명한다."
 ---
 
 테스트 환경을 위해서 원하는 상태 값으로 고정되어 있는 객체를 말한다. 테스트 환경을 설정하는데 사용되며, 테스트 코드의 가독성과 유지보수성을 높이기 위해 사용된다.

@@ -3,7 +3,7 @@ title: "Serializable Interface"
 date: 2024-08-20
 lastUpdated: 2024-08-20
 tags: [Java]
-description: ""
+description: "Serializable 인터페이스 구현이 유발하는 API 고착화, 버그, 테스트 부담 등의 문제와 신중하게 결정해야 하는 이유를 정리한다."
 ---
 
 > Serializable 인터페이스는 신중히 구현하라

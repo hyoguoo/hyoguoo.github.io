@@ -3,7 +3,7 @@ title: "Decimal Calculation"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "float와 double의 부동소수점 오차 문제와 정확한 소수 계산을 위해 BigDecimal 또는 정수형을 사용해야 하는 이유를 정리한다."
 ---
 
 > 정확한 답이 필요하다면 float와 double은 피하라.

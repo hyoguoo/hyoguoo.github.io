@@ -3,7 +3,7 @@ title: "Unnecessary Objects"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Pattern 인스턴스의 정적 초기화를 통한 재사용과 오토 박싱으로 인한 불필요한 객체 생성 문제를 정리한다."
 ---
 
 > 불필요한 객체 생성을 피하라

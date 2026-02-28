@@ -3,7 +3,7 @@ title: "Test Guide"
 date: 2024-08-27
 lastUpdated: 2024-10-02
 tags: [Test]
-description: ""
+description: "@DisplayName, BDD의 Given-When-Then 패턴, 테스트 독립성 유지 원칙을 통해 좋은 테스트 코드 작성 가이드를 정리한다."
 ---
 
 테스트를 작성하는 정해진 규칙은 없으나, 테스트 코드의 품질과 가독성 및 생산성을 높이기 위해 몇 가지 규칙을 지키는 것이 좋다.

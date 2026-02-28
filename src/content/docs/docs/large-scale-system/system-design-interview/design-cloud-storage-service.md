@@ -3,7 +3,7 @@ title: "Design Cloud Storage Service"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "5,000만 명이 사용하는 클라우드 파일 스토리지 서비스의 파일 업로드·동기화·암호화 설계와 네트워크 대역폭 최적화를 다룬다."
 ---
 
 ## 요구사항

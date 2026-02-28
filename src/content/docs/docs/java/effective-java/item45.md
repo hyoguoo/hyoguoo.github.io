@@ -3,7 +3,7 @@ title: "Stream"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "스트림 API의 핵심 개념과 중간·종단 연산의 구조를 이해하고, 과도한 스트림 사용을 피해야 하는 이유를 분석한다."
 ---
 
 > 스트림은 주의해서 사용하라

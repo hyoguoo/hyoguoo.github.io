@@ -3,7 +3,7 @@ title: "Reflection & Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "리플렉션의 단점과 인스턴스 생성에만 한정하여 인터페이스로 참조하는 제한적 사용 방식을 분석한다."
 ---
 
 > 리플렉션보다는 인터페이스를 사용하라

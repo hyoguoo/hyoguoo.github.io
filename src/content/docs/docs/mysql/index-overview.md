@@ -3,7 +3,7 @@ title: "Index"
 date: 2023-04-14
 lastUpdated: 2025-09-11
 tags: [MySQL]
-description: ""
+description: "데이터베이스 인덱스의 장단점과 활용 목적, 쿼리 튜닝 시 인덱스 설계 원칙을 정리한다."
 ---
 
 인덱스는 데이터베이스 테이블의 검색 성능을 향상시키기 위해 사용하는 자료구조이다.

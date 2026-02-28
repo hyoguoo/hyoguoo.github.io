@@ -3,7 +3,7 @@ title: "Claude Code Command and Operation Logic"
 date: 2026-02-06
 lastUpdated: 2026-02-10
 tags: [AI-Assisted Development]
-description: ""
+description: "Claude Code의 CLAUDE.md와 Skills의 역할 차이를 비교하고, Skills의 계층적 정보 로딩 메커니즘과 Subagents를 활용한 작업 위임 구조를 설명한다."
 ---
 
 ## 1. CLAUDE.md

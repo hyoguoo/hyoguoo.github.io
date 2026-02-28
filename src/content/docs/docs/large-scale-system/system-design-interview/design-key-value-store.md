@@ -3,7 +3,7 @@ title: "Design Key-Value Store"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "분산 키-값 저장소의 설계 요구사항과 CAP 정리, 데이터 파티셔닝, 복제, 일관성 모델 등 핵심 설계 결정을 다룬다."
 ---
 
 키-값 저장소는 키-값 데이터베이스라고도 불리는 비 관계형 데이터베이스다.

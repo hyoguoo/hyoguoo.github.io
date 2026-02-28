@@ -3,7 +3,7 @@ title: "hashCode"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "equals를 재정의할 때 hashCode도 함께 재정의해야 하는 이유와 올바른 hashCode 구현 방법 및 캐싱 전략을 정리한다."
 ---
 
 > equals를 재정의하려거든 hashCode도 재정의하라

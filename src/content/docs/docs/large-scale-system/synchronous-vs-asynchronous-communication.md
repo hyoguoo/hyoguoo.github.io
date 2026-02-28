@@ -3,7 +3,7 @@ title: "Synchronous vs Asynchronous Communication"
 date: 2025-10-22
 lastUpdated: 2025-10-22
 tags: [Large-Scale System]
-description: ""
+description: "서비스 간 동기식·비동기식 통신 방식의 원리와 트레이드오프를 비교하고, 각 방식의 적절한 사용 시점을 정리한다."
 ---
 
 통신 방식은 크게 동기식(Synchronous)과 비동기식(Asynchronous)으로 나뉘며, 이 둘의 선택은 시스템 전체의 성능, 결합도, 그리고 장애 대응 방식에 결정적인 영향을 미친다.

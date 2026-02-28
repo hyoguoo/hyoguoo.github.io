@@ -3,7 +3,7 @@ title: "Polymorphism"
 date: 2022-11-28
 lastUpdated: 2025-11-05
 tags: [Java]
-description: ""
+description: "Java 다형성의 조상 타입 참조 변수 원리와 업캐스팅·다운캐스팅, 메서드 오버로딩·오버라이딩 차이를 정리한다."
 ---
 
 자바는 조상 클래스 타입의 참조 변수로 그 자손 클래스의 인스턴스를 참조할 수 있도록 하여 다형성을 구현한다.

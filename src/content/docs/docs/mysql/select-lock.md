@@ -3,7 +3,7 @@ title: "SELECT Lock"
 date: 2023-07-17
 lastUpdated: 2025-10-12
 tags: [MySQL]
-description: ""
+description: "SELECT FOR SHARE와 SELECT FOR UPDATE의 공유·배타적 잠금 동작 방식과 잠금 범위, 적합한 사용 상황을 비교한다."
 ---
 
 일반적인 `SELECT` 쿼리 실행 시에는 잠금을 사용하지 않고 데이터를 읽지만(Non-locking Consistent Read), 데이터 정합성 보장을 위해 명시적으로 잠금을 설정해야 하는 경우가 있다.

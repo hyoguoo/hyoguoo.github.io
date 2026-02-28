@@ -3,7 +3,7 @@ title: "Singleton"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "싱글턴을 구현하는 세 가지 방법(public 필드·정적 팩터리·열거 타입)과 리플렉션 및 직렬화로 인한 싱글턴 보장 파괴 문제를 정리한다."
 ---
 
 > private 생성자나 열거 타입으로 싱글턴임을 보증하라

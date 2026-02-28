@@ -3,7 +3,7 @@ title: "HandlerMapping & HandlerAdapter"
 date: 2024-03-07
 lastUpdated: 2025-08-25
 tags: [Spring]
-description: ""
+description: "Spring MVC에서 HandlerMapping의 요청-핸들러 매핑 전략과 HandlerAdapter의 구현체별 우선순위 및 동작 방식을 비교·분석한다."
 ---
 
 HandlerMapping 및 HandlerAdapter는 들어오는 HTTP 요청을 처리하고 적절한 Controller 메서드에 매핑하는 MVC 프레임워크의 중요한 역할을 한다.  

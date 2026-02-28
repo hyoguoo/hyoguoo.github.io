@@ -3,7 +3,7 @@ title: "Minimize Mutability"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "불변 클래스를 만드는 5가지 규칙과 스레드 안전성·인스턴스 캐싱·실패 원자성 등 불변 객체의 장단점을 분석한다."
 ---
 
 > 변경 가능성을 최소화하라

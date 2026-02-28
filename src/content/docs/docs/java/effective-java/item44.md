@@ -3,7 +3,7 @@ title: "Functional Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "java.util.function 패키지의 표준 함수형 인터페이스 6종과 전용 함수형 인터페이스를 직접 구현해야 하는 조건을 정리한다."
 ---
 
 > 표준 함수형 인터페이스를 사용하라

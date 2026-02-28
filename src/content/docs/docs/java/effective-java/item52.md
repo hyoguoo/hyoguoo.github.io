@@ -3,7 +3,7 @@ title: "Overloading"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "메서드 다중정의가 컴파일타임 타입에 의해 결정되는 원리와 혼동을 피하기 위한 설계 전략을 분석한다."
 ---
 
 > 다중정의는 신중히 사용하라

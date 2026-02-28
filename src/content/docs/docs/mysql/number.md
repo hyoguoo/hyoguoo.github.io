@@ -3,7 +3,7 @@ title: "Number"
 date: 2023-07-24
 lastUpdated: 2025-09-25
 tags: [MySQL]
-description: ""
+description: "MySQL 숫자 데이터 타입의 참값·근삿값 분류와 INTEGER·DECIMAL·FLOAT의 저장 방식 및 오차 특성을 비교한다."
 ---
 
 숫자 데이터 타입은 값의 정확한 저장 여부와 값을 저장하는 내부 형식에 따라 나눌 수 있다.

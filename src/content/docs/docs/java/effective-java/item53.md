@@ -3,7 +3,7 @@ title: "Varargs"
 date: 2024-03-07
 lastUpdated: 2024-06-04
 tags: [Java]
-description: ""
+description: "가변인수 메서드가 배열을 생성하는 원리와 1개 이상 인수 강제 패턴, 성능 최적화를 위한 다중정의 전략을 정리한다."
 ---
 
 > 가변인수는 신중히 사용하라

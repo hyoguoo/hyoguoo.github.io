@@ -3,7 +3,7 @@ title: "Avoid String Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "문자열을 값 타입, 열거 타입, 혼합 타입 대신 사용할 때 발생하는 문제와 전용 클래스로 대체해야 하는 이유를 정리한다."
 ---
 
 > 다른 타입이 적절하다면 문자열 사용을 피하라

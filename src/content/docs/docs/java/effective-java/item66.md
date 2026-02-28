@@ -3,7 +3,7 @@ title: "Native Methods"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "네이티브 메서드의 세 가지 주요 쓰임새와 안전성, 이식성, 메모리 관리 측면에서의 단점을 정리한다."
 ---
 
 > 네이티브 메서드는 신중히 사용하라

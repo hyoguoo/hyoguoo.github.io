@@ -3,7 +3,7 @@ title: "Design Notification System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "푸시 알림·SMS·이메일을 다양한 플랫폼에 하루 수천만 건 전송하는 알림 시스템의 신뢰성 있는 메시지 배달 구조를 설계한다."
 ---
 
 알림 시스템은 클라이언트에게 정보를 전달하는 시스템으로, 현대 서비스에서는 중요한 부분으로 자리 잡았다.  

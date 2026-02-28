@@ -3,7 +3,7 @@ title: "Architecture"
 date: 2026-02-03
 lastUpdated: 2026-02-03
 tags: [Docker]
-description: ""
+description: "Docker Client, Docker Daemon, Docker Registry로 구성된 클라이언트-서버 아키텍처와 docker run 실행 흐름을 설명한다."
 ---
 
 도커는 클라이언트-서버(C/S) 아키텍처를 기반으로 설계되었으며, 각 구성 요소가 REST API를 통해 상호작용하며 컨테이너의 생명주기를 관리한다.

@@ -3,7 +3,7 @@ title: "Claude Code - Core Features Guide"
 date: 2025-10-26
 lastUpdated: 2025-10-26
 tags: [AI-Assisted Development]
-description: ""
+description: "Claude Code의 CLAUDE.MD 영구 컨텍스트 관리, 세션 초기화·압축 명령어, 커스텀 명령어 생성, IDE 연동 방법 등 핵심 기능을 정리한다."
 ---
 
 Claude Code는 Anthropic이 개발한 터미널 기반 AI 어시스트턴트다.

@@ -3,7 +3,7 @@ title: "CHAR / VARCHAR"
 date: 2023-07-24
 lastUpdated: 2025-09-24
 tags: [MySQL]
-description: ""
+description: "CHAR와 VARCHAR의 저장 공간 차이와 컬럼 길이 변경 시 동작 방식, 적합한 사용 상황을 비교·분석한다."
 ---
 
 문자열을 사용할 때 `VARCHAR`만 사용하는 경우도 있지만, 모든 DBMS에서 두 타입으로 구분해서 제공하는 만큼 각각의 특징을 잘 이해하고 사용하는 것이 중요하다.

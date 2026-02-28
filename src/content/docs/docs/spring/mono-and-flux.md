@@ -3,7 +3,7 @@ title: "Mono & Flux"
 date: 2025-10-02
 lastUpdated: 2025-10-02
 tags: [Spring]
-description: ""
+description: "Project Reactor의 핵심 Publisher 타입인 Mono와 Flux의 신호 방식과 map·flatMap·filter 등 주요 연산자, 구독 시 실행되는 지연 평가 방식을 정리한다."
 ---
 
 Mono와 Flux는 Spring WebFlux가 기반으로 하는 Project Reactor 라이브러리에서 사용하는 핵심 Publisher 타입입니다.

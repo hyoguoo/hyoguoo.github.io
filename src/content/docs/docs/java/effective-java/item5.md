@@ -3,7 +3,7 @@ title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "클래스가 하나 이상의 자원에 의존할 때 정적 유틸리티·싱글턴 방식의 문제점과 의존 객체 주입의 장점을 비교한다."
 ---
 
 > 자원을 직접 명시하지 말고 의존 객체 주입을 사용하라

@@ -3,7 +3,7 @@ title: "Type Safe Heterogeneous Container"
 date: 2024-03-07
 lastUpdated: 2024-06-05
 tags: [Java]
-description: ""
+description: "Class 객체를 키로 활용해 임의 타입의 값을 타입 안전하게 저장하는 타입 안전 이종 컨테이너 패턴의 구조와 제약을 설명한다."
 ---
 
 > 타입 안전 이종 컨테이너를 고려하라

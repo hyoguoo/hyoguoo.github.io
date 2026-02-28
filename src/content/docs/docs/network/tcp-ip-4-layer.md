@@ -3,7 +3,7 @@ title: "TCP/IP 4 Layer"
 date: 2024-03-07
 lastUpdated: 2025-12-03
 tags: [Network]
-description: ""
+description: "TCP/IP 4계층 모델의 각 계층별 역할과 데이터 캡슐화·역캡슐화 과정 및 MTU/MSS 개념을 정리한다."
 ---
 
 현대 네트워크 통신의 기반이 되는 프로토콜로, 이론적 모델인 OSI 7계층과 달리 실무적 구현과 효율성을 중시하여 설계되었다.

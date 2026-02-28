@@ -3,7 +3,7 @@ title: "Networking"
 date: 2026-02-06
 lastUpdated: 2026-02-06
 tags: [Docker]
-description: ""
+description: "bridge, host, none, overlay 등 Docker 네트워크 드라이버 종류와 사용자 정의 네트워크의 DNS 해석 방식을 설명한다."
 ---
 
 도커 네트워킹은 격리된 컨테이너들이 서로 통신하거나 외부 세계와 연결될 수 있도록 지원하는 메커니즘으로, 도커는 드라이버 기반의 네트워크 모델을 사용하여 다양한 환경에 맞는 통신 방식을 제공한다.

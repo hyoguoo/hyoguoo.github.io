@@ -3,7 +3,7 @@ title: "Design Payment System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "서드파티 결제 대행사를 연동하여 결제 신뢰성과 멱등성(idempotency)을 보장하는 대규모 결제 시스템 설계를 다룬다."
 ---
 
 ## 요구사항

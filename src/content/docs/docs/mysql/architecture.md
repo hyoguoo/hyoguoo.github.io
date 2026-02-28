@@ -3,7 +3,7 @@ title: "Architecture"
 date: 2023-03-20
 lastUpdated: 2026-02-21
 tags: [MySQL]
-description: ""
+description: "MySQL 서버의 MySQL 엔진과 스토리지 엔진 구조를 설명하고 InnoDB의 버퍼 풀·언두 로그·체인지 버퍼 역할을 분석한다."
 ---
 
 MySQL 서버는 논리적으로 MySQL 엔진과 스토리지 엔진으로 구성된다.

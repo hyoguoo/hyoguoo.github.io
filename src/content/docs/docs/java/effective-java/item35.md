@@ -3,7 +3,7 @@ title: "Ordinal"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "열거 타입의 ordinal 메서드에 의존할 때 발생하는 문제를 설명하고, 인스턴스 필드를 사용해 상수와 값을 명시적으로 연결하는 방법을 정리한다."
 ---
 
 > ordinal 메서드 대신 인스턴스 필드를 사용하라

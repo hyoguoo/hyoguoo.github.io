@@ -3,7 +3,7 @@ title: "Serialization"
 date: 2024-08-29
 lastUpdated: 2025-12-01
 tags: [Java]
-description: ""
+description: "Java 직렬화의 객체-바이트 변환 원리와 Serializable 인터페이스, serialVersionUID 관리 방법을 설명한다."
 ---
 
 자바 시스템 내부에서 사용되는 객체 또는 데이터를 외부의 자바 시스템에서도 사용할 수 있도록 바이트(Byte) 형태로 변환하는 기술이다.

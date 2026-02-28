@@ -3,7 +3,7 @@ title: "Static Factory Method"
 date: 2023-09-21
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "생성자 대신 정적 팩터리 메서드를 사용할 때의 5가지 장점과 2가지 단점, 그리고 네이밍 컨벤션을 정리한다."
 ---
 > 생성자 대신 정적 팩터리 메서드를 고려하라
 

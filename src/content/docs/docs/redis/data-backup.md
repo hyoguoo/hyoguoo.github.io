@@ -3,7 +3,7 @@ title: "Data Backup"
 date: 2025-02-14
 lastUpdated: 2025-10-08
 tags: [Redis]
-description: ""
+description: "Redis의 RDB 스냅샷 방식과 AOF 로그 기록 방식의 동작 원리와 장단점을 비교하고 데이터 복원 과정과 권장 구성을 설명한다."
 ---
 
 레디스는 모든 데이터를 메모리에 저장하므로, 예기치 않은 서버 장애나 재시작 시 데이터가 유실될 수 있어, 영속성을 확보하기 위한 데이터 백업 메커니즘이 필요하다.

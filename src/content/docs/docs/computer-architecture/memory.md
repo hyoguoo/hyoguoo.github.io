@@ -3,7 +3,7 @@ title: "Memory"
 date: 2024-03-07
 lastUpdated: 2026-01-16
 tags: [Computer Architecture]
-description: ""
+description: "메모리 계층 구조와 논리/물리 주소 변환, MMU의 역할, 캐시 지역성 원리를 분석한다."
 ---
 
 메모리란 프로그램과 프로그램 수행에 필요한 데이터 및 코드를 저장하는 장치로 크게 내부 기억 장치인 주기억장치와 외부 기억장치인 보조 기억장치로 분류된다.

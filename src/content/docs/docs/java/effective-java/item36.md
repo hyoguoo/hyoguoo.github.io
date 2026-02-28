@@ -3,7 +3,7 @@ title: "EnumSet"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "비트 필드의 단점을 분석하고, 열거 타입 상수의 집합 표현에 EnumSet을 활용해 타입 안전하고 효율적인 코드를 작성하는 방법을 설명한다."
 ---
 
 > 비트 필드 대신 EnumSet을 사용하라

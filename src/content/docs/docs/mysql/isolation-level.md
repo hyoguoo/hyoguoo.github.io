@@ -3,7 +3,7 @@ title: "Isolation Level"
 date: 2023-03-25
 lastUpdated: 2025-09-10
 tags: [MySQL]
-description: ""
+description: "트랜잭션 격리 수준 4단계의 더티 리드·반복 불가능한 읽기·팬텀 리드 발생 조건과 MySQL MVCC 기반 동작 방식을 분석한다."
 ---
 격리 수준(Isolation Level)은 여러 트랜잭션이 동시에 실행될 때, 특정 트랜잭션이 다른 트랜잭션에서 변경하거나 조회하는 데이터에 접근하는 것을 어느 수준까지 허용할 것인지를 결정하는 설정이다.
 

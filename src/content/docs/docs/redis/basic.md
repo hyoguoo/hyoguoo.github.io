@@ -3,7 +3,7 @@ title: "Basic"
 date: 2024-09-28
 lastUpdated: 2025-10-04
 tags: [Redis]
-description: ""
+description: "In-Memory 데이터 저장소인 Redis의 싱글 스레드 아키텍처, 다양한 자료구조 지원, Replication과 Sentinel·Cluster를 통한 고가용성 기능 등 핵심 특징을 정리한다."
 ---
 
 Redis(Remote Dictionary Server)는 'Key-Value' 기반의 In-Memory 데이터 저장소로, 디스크 기반 데이터베이스보다 빠른 읽기/쓰기 속도를 제공하는 것이 가장 큰 특징이다.

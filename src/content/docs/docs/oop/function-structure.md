@@ -3,7 +3,7 @@ title: "Function & Structure"
 date: 2024-03-07
 lastUpdated: 2026-01-25
 tags: [OOP]
-description: ""
+description: "소프트웨어 설계의 두 측면인 기능(유스케이스)과 구조(도메인 모델)를 책임-주도 설계로 통합하는 방법과 설계 프로세스를 설명한다."
 ---
 
 모든 소프트웨어 제품의 설계에는 아래 두 가지 측면의 설계가 존재한다.

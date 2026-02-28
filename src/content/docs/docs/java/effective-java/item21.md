@@ -3,7 +3,7 @@ title: "Interface"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "인터페이스 default 메서드가 기존 구현체에 미치는 영향과 Collection의 removeIf 사례를 통해 설계 시 주의해야 할 점을 분석한다."
 ---
 
 > 인터페이스는 구현하는 쪽을 생각해 설계하라.

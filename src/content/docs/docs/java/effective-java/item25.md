@@ -3,7 +3,7 @@ title: "Limit File Top-level Class"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "소스 파일 하나에 톱레벨 클래스를 여러 개 선언할 때 발생하는 컴파일 순서 의존 문제와 이를 해결하는 방법을 정리한다."
 ---
 
 > 톱레벨 클래스는 한 파일에 하나만 담으라

@@ -3,7 +3,7 @@ title: "Object class"
 date: 2024-03-07
 lastUpdated: 2025-11-07
 tags: [Java]
-description: ""
+description: "Object 클래스가 제공하는 equals·hashCode·toString·clone 메서드의 역할과 올바른 재정의 방법을 설명한다."
 ---
 
 `java.lang` 패키지는 자바 프로그래밍의 가장 기본이 되는 클래스들을 포함한다.

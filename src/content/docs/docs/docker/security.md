@@ -3,7 +3,7 @@ title: "Security"
 date: 2026-02-13
 lastUpdated: 2026-02-14
 tags: [Docker]
-description: ""
+description: "Docker 이미지 취약점 스캔, non-root 사용자 실행, Secret 관리를 통해 컨테이너 보안을 강화하는 방법을 설명한다."
 ---
 
 도커는 이미지 빌드부터 컨테이너 실행, 데이터 관리 전 과정에 걸쳐 시스템의 공격 표면을 최소화하는 것이 중요하다.

@@ -3,7 +3,7 @@ title: "Failure Information"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "예외의 toString 메서드에 실패 관련 매개변수와 필드 값을 담아 디버깅에 유용한 상세 메시지를 작성하는 방법을 정리한다."
 ---
 
 > 예외의 상세 메시지에 실패 관련 정보를 담으라

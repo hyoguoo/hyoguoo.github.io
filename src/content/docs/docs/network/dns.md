@@ -3,7 +3,7 @@ title: "DNS (Domain Name System)"
 date: 2023-11-01
 lastUpdated: 2025-12-09
 tags: [Network]
-description: ""
+description: "DNS의 계층적 도메인 구조, Local/Root/TLD/Authoritative 서버의 역할, 도메인 이름 해석 과정을 정리한다."
 ---
 
 TCP/IP 네트워크 상에서 사람이 기억하기 어려운 IP 주소(예: 142.250.207.46) 대신, 기억하기 쉬운 도메인 이름을 사용하여 호스트를 식별할 수 있게 해주는 시스템이다.

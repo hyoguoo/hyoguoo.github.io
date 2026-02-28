@@ -3,7 +3,7 @@ title: "Operator"
 date: 2022-11-20
 lastUpdated: 2024-08-30
 tags: [Java]
-description: ""
+description: "Java의 산술·비교·논리·비트·삼항 연산자의 종류와 우선순위, 자동 형변환 규칙을 정리한다."
 ---
 
 > 연산을 수행하는 기호

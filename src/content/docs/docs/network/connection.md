@@ -3,7 +3,7 @@ title: "Connection"
 date: 2023-08-09
 lastUpdated: 2025-12-16
 tags: [Network]
-description: ""
+description: "HTTP 커넥션 관리 모델인 단기·지속·파이프라인 커넥션의 동작 방식과 성능 지연 원인을 비교 분석한다."
 ---
 
 HTTP는 신뢰성 있는 전송을 보장하기 위해 TCP/IP 프로토콜을 기반으로 동작하기 때문에, HTTP 트랜잭션은 TCP 커넥션 위에서 이루어진다

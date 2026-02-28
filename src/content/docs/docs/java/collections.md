@@ -3,7 +3,7 @@ title: "Collections"
 date: 2022-11-28
 lastUpdated: 2025-11-10
 tags: [Java]
-description: ""
+description: "Java 컬렉션 프레임워크의 List·Set·Queue 계층 구조와 ArrayList·LinkedList·HashSet 등 주요 구현체의 특징을 비교한다."
 ---
 컬렉션은 객체 그룹을 저장하고 조작하기 위한 표준화된 프레임워크를 제공한다.
 

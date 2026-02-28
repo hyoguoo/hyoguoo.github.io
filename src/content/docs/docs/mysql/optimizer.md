@@ -3,7 +3,7 @@ title: "Optimizer"
 date: 2023-04-23
 lastUpdated: 2025-09-13
 tags: [MySQL]
-description: ""
+description: "MySQL 비용 기반 옵티마이저의 실행 계획 수립 방식과 조인 순서·인덱스 선택 최적화 전략을 분석한다."
 ---
 
 옵티마이저는 사용자가 작성한 SQL 쿼리를 가장 효율적인 방법으로 실행하기 위한 최적의 실행 계획(Execution Plan)을 수립하는 데이터베이스 서버의 핵심 엔진이다.

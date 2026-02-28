@@ -3,7 +3,7 @@ title: "toString"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "toString을 재정의해야 하는 이유와 포맷 문서화의 장단점, 그리고 반환 정보를 API로 제공해야 하는 원칙을 정리한다."
 ---
 
 > toString을 항상 재정의하라

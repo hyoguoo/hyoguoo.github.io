@@ -3,7 +3,7 @@ title: "Synchronization"
 date: 2025-01-07
 lastUpdated: 2025-11-26
 tags: [Java]
-description: ""
+description: "Java의 synchronized·ReentrantLock·Condition을 활용한 멀티스레드 동기화 방법과 경쟁 상태 방지 전략을 정리한다."
 ---
 
 멀티 스레드 환경에서는 여러 스레드가 하나의 공유 자원에 동시에 접근할 때 데이터의 무결성이 깨지는 경쟁 상태(Race Condition)가 발생할 수 있다.

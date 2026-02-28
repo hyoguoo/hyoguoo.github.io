@@ -3,7 +3,7 @@ title: "Transaction"
 date: 2023-03-21
 lastUpdated: 2025-09-08
 tags: [MySQL]
-description: ""
+description: "트랜잭션의 ACID 특성과 MySQL의 트랜잭션 범위 설정, 주의해야 할 잠금과 활성 트랜잭션 관리 방법을 정리한다."
 ---
 > 작업의 완전성을 보장해주는 기능
 

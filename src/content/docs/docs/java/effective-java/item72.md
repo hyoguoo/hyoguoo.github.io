@@ -3,7 +3,7 @@ title: "Standard Exceptions"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "IllegalArgumentException, IllegalStateException 등 자주 재사용되는 Java 표준 예외의 종류와 적절한 선택 기준을 정리한다."
 ---
 
 > 표준 예외를 사용하라

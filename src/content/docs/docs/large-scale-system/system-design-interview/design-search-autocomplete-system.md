@@ -3,7 +3,7 @@ title: "Design Search Autocomplete System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "사용자 입력에 따라 100ms 이내에 인기 검색어를 제공하는 검색 자동완성 시스템을 Trie 자료구조와 캐싱 전략으로 설계한다."
 ---
 
 ## 요구사항 및 개략적 추정

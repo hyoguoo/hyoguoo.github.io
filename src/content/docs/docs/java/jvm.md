@@ -3,7 +3,7 @@ title: "Java Virtual Machine"
 date: 2022-09-28
 lastUpdated: 2025-10-28
 tags: [Java]
-description: ""
+description: "JVM의 클래스 로딩 과정과 Method Area·Heap·Stack 메모리 구조, JIT 컴파일러의 실행 원리를 정리한다."
 ---
 자바 가상 머신(JVM)은 자바 애플리케이션을 실행하기 위한 런타임 엔진이다.
 

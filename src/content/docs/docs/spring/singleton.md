@@ -3,7 +3,7 @@ title: "Singleton"
 date: 2022-11-01
 lastUpdated: 2025-08-23
 tags: [Spring]
-description: ""
+description: "싱글톤 패턴의 구조와 스프링 싱글톤 레지스트리 방식, @Configuration과 CGLIB을 통한 빈 단일 인스턴스 보장 메커니즘을 설명한다."
 ---
 
 웹 애플리케이션은 보통 여러 고객이 동시에 요청을 하게 되는데, 아래와 같이 코드를 짠다면 고객이 요청을 할 때마다 새 객체가 생성된다.

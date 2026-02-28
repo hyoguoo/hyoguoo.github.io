@@ -3,7 +3,7 @@ title: "Karabiner-Elements"
 date: 2024-03-07
 lastUpdated: 2026-01-26
 tags: [Setting]
-description: ""
+description: "Karabiner-Elements의 JSON 기반 사용자 정의 규칙 작성으로 키 매핑과 입력 소스 조건을 설정하는 방법을 정리한다."
 ---
 
 ## 사용자 정의 규칙 추가

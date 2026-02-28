@@ -3,7 +3,7 @@ title: "Spring Cloud Basic"
 date: 2025-10-10
 lastUpdated: 2025-10-11
 tags: [Spring]
-description: ""
+description: "Spring Cloud의 핵심 모듈인 Gateway·Eureka·Config·Resilience4j의 역할을 설명하고 MSA 환경에서의 서비스 디스커버리와 API 게이트웨이 동작 방식을 정리한다."
 ---
 
 Spring Cloud는 분산 시스템, 특히 마이크로서비스 아키텍처(MSA)를 구축할 때 공통적으로 발생하는 문제들을 해결하기 위한 기능들 제공하는 프레임워크다.

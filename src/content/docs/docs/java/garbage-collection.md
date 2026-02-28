@@ -3,7 +3,7 @@ title: "Garbage Collection"
 date: 2024-06-17
 lastUpdated: 2025-10-29
 tags: [Java]
-description: ""
+description: "JVM 가비지 컬렉션의 도달 가능성 기반 메모리 회수 방식과 Minor GC·Major GC 동작, G1·ZGC 등 주요 GC 알고리즘을 분석한다."
 ---
 
 Java 프로그래밍 언어는 메모리 관리를 자동화하기 위해 가비지 컬렉션(Garbage Collection, GC)이라는 메커니즘을 사용한다.

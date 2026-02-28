@@ -3,7 +3,7 @@ title: "URL Shortening Service"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "하루 1억 개 이상의 단축 URL을 생성·리다이렉트하는 서비스의 해시 생성 전략과 데이터 모델을 설계한다."
 ---
 
 ## 요구사항 및 개략적 추정

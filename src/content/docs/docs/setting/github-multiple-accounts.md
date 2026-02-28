@@ -3,7 +3,7 @@ title: "GitHub Multiple Accounts"
 date: 2024-03-07
 lastUpdated: 2026-01-26
 tags: [Setting]
-description: ""
+description: "SSH 키 분리와 gitconfig includeIf를 활용하여 하나의 macOS 환경에서 여러 GitHub 계정을 관리하는 방법을 설명한다."
 ---
 
 하나의 컴퓨터에서 여러 개의 GitHub 계정을 사용하기 위해 SSH 키와 `gitconfig`를 설정하는 방법을 다룬다.(MacOS 기준)

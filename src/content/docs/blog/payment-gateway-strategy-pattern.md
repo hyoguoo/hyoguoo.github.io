@@ -3,7 +3,7 @@ title: "전략 패턴을 통한 PG 독립성 확보 및 확장 가능한 결제 
 date: 2025-11-22
 lastUpdated: 2025-11-22
 tags: [Payment Platform Project]
-description: "전략 패턴을 통해 PG 독립성을 확보하고, 새로운 PG 추가 시 기존 코드를 변경하지 않는 확장 가능한 결제 구조를 설계한다."
+description: "특정 PG에 강결합된 구조를 전략 패턴과 포트-어댑터 패턴으로 분리하여 OCP를 준수하는 PG 독립 아키텍처를 설계한다."
 ---
 
 > 실행 환경: Java 21, Spring Boot 3.3.3

@@ -3,7 +3,7 @@ title: "Generic Type"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "Object 배열 기반 클래스를 제네릭 타입으로 전환하는 방법과 @SuppressWarnings 적용 시 두 가지 접근 방식의 차이를 비교한다."
 ---
 
 > 이왕이면 제네릭 타입으로 만들라

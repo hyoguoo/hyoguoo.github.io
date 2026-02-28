@@ -3,7 +3,7 @@ title: "EventListener"
 date: 2025-09-14
 lastUpdated: 2025-09-14
 tags: [Spring]
-description: ""
+description: "@EventListener와 @TransactionalEventListener의 동작 방식을 비교하고 AFTER_COMMIT 등 트랜잭션 단계별 이벤트 처리 전략을 설명한다."
 ---
 
 ## 스프링 이벤트

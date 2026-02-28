@@ -3,7 +3,7 @@ title: "Enum"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "int 상수 대신 enum을 사용해야 하는 이유와 메서드·필드 추가 방법, 전략 열거 타입 패턴(Strategy Enum Pattern)을 정리한다."
 ---
 
 > int 상수 대신 열거 타입을 사용하라.

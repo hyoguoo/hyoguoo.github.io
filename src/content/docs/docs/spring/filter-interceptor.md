@@ -3,7 +3,7 @@ title: "Filter & Interceptor"
 date: 2024-03-07
 lastUpdated: 2025-08-27
 tags: [Spring]
-description: ""
+description: "서블릿 Filter와 Spring Interceptor의 동작 범위·실행 시점을 비교하고 preHandle·postHandle·afterCompletion의 활용 패턴을 정리한다."
 ---
 
 ![Spring Filter Interceptor](image/spring-filter-interceptor.png)

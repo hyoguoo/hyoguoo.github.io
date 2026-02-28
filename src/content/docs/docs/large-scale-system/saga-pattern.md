@@ -3,7 +3,7 @@ title: "SAGA Pattern"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "마이크로서비스 환경에서 여러 서비스에 걸친 분산 트랜잭션의 원자성을 보상 트랜잭션(Compensating Transaction) 방식으로 보장하는 SAGA 패턴을 설명한다."
 ---
 
 마이크로서비스 아키텍처에서 여러 서비스에 걸쳐있는 비즈니스 트랜잭션의 원자성 문제를 해결하기 위한 대안으로 SAGA 패턴이 널리 사용된다.

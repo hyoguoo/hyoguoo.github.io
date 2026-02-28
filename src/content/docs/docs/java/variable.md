@@ -3,7 +3,7 @@ title: "Variable"
 date: 2022-10-08
 lastUpdated: 2025-10-29
 tags: [Java]
-description: ""
+description: "Java 변수의 명명 규칙과 인스턴스·클래스·지역 변수 종류별 초기화 규칙, 기본형과 참조형의 메모리 저장 방식을 정리한다."
 ---
 
 변수는 프로그램 실행 중에 값을 저장하고 참조하기 위해 사용되는, 이름이 붙은 메모리 영역이다.

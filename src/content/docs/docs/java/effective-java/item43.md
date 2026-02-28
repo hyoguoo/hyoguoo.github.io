@@ -3,7 +3,7 @@ title: "Method Reference"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "람다보다 간결한 메서드 참조의 개념과 정적·한정적·비한정적·생성자 참조 등 다섯 가지 유형을 정리한다."
 ---
 
 > 람다보다는 메서드 참조를 사용하라

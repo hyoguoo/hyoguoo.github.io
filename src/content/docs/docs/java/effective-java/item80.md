@@ -3,7 +3,7 @@ title: "ExecutorService"
 date: 2024-03-11
 lastUpdated: 2024-03-11
 tags: [Java]
-description: ""
+description: "스레드를 직접 생성하는 대신 ExecutorService와 스레드 풀을 활용하여 안전하고 효율적으로 작업을 처리하는 방법을 정리한다."
 ---
 
 > 스레드보다는 실행자, 테스크, 스트림을 애용하라

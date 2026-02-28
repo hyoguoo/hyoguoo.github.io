@@ -3,7 +3,7 @@ title: "Scheduler & Thread Model"
 date: 2025-10-02
 lastUpdated: 2025-10-02
 tags: [Spring]
-description: ""
+description: "리액터의 subscribeOn과 publishOn 연산자의 스레드 적용 범위를 비교하고 boundedElastic·parallel 스케줄러를 활용한 블로킹 코드 격리 방법을 설명한다."
 ---
 
 리액티브 스트림즈 명세 자체는 스레딩 모델을 강제하지 않아 특정 스레드에서 코드가 실행되도록 보장하지 않으며, 이는 개발자가 직접 관리해야 하는 영역이다.

@@ -3,7 +3,7 @@ title: "Test Double"
 date: 2024-08-27
 lastUpdated: 2026-01-25
 tags: [Test]
-description: ""
+description: "Dummy, Fake, Stub, Spy, Mock의 역할 차이와 각 테스트 더블의 적절한 사용 시점을 예시 코드와 함께 비교한다."
 ---
 
 테스트 더블은 테스트를 위해 실제 객체를 대체하는 객체를 말한다.

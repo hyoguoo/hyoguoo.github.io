@@ -3,7 +3,7 @@ title: "Producer Internals"
 date: 2025-10-02
 lastUpdated: 2025-10-02
 tags: [Kafka]
-description: ""
+description: "Kafka 프로듀서의 비동기 전송 구조, Sticky Partitioner 파티셔닝 전략, 배치 처리·압축 설정, acks 모드와 멱등성 보장 메커니즘을 분석한다."
 ---
 
 ## 프로듀서의 메시지 전송 과정

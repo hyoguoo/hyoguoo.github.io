@@ -3,7 +3,7 @@ title: "SpEL (Spring Expression Language)"
 date: 2025-09-01
 lastUpdated: 2025-09-01
 tags: [Spring]
-description: ""
+description: "스프링 표현 언어(SpEL)의 ${...}와 #{...} 문법 차이를 설명하고 리터럴·연산자·Bean 참조 등 주요 표현식 활용 방법을 정리한다."
 ---
 
 SpEL은 Spring Framework 3.0부터 지원하는 강력한 표현 언어다. 객체 그래프를 런타임에 조회하고 조작하는 기능을 제공한다.

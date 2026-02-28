@@ -3,7 +3,7 @@ title: "Abstraction Level Exceptions"
 date: 2024-03-07
 lastUpdated: 2024-03-07
 tags: [Java]
-description: ""
+description: "예외 번역(exception translation)과 예외 연쇄(exception chaining) 기법을 통해 추상화 수준에 맞는 예외를 던지는 방법을 정리한다."
 ---
 
 > 추상화 수준에 맞는 예외를 던지라

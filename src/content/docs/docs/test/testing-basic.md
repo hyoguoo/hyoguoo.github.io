@@ -3,7 +3,7 @@ title: "Testing Basic"
 date: 2024-08-27
 lastUpdated: 2024-08-27
 tags: [Test]
-description: ""
+description: "테스트 자동화의 이점과 Unit, Integration, E2E 테스트의 차이, JUnit 5 모듈 구조를 설명한다."
 ---
 
 ## 테스트 자동화

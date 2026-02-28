@@ -3,7 +3,7 @@ title: "Thread Safety Level"
 date: 2024-03-13
 lastUpdated: 2024-03-13
 tags: [Java]
-description: ""
+description: "불변·무조건적 스레드 안전·조건부 스레드 안전 등 스레드 안전성 수준의 분류와 비공개 락 객체를 활용한 서비스 거부 공격 방어를 정리한다."
 ---
 
 > 스레드 안전성 수준을 문서화하라

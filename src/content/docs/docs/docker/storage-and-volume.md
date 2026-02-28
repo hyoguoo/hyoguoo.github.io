@@ -3,7 +3,7 @@ title: "Storage and Volume"
 date: 2026-02-13
 lastUpdated: 2026-02-13
 tags: [Docker]
-description: ""
+description: "컨테이너의 비영속성 문제를 해결하기 위한 Volume, Bind Mount, tmpfs 마운트의 특징과 선택 기준을 비교한다."
 ---
 
 도커 컨테이너는 기본적으로 휘발성 환경에서 동작하므로, 컨테이너가 삭제되어도 데이터를 보존하기 위해서는 별도의 스토리지 관리 전략이 필요하다.

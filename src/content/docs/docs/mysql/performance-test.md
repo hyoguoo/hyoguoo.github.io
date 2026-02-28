@@ -3,7 +3,7 @@ title: "Performance Test"
 date: 2023-07-21
 lastUpdated: 2025-09-24
 tags: [MySQL]
-description: ""
+description: "MySQL 쿼리 성능을 정확하게 측정하기 위한 운영체제 캐시 제거·쿼리 캐시 비활성화 등 테스트 환경 설정 방법을 정리한다."
 ---
 
 작성된 쿼리가 얼머나 효율적이고 확인하기 위해선 먼저 실행 계획을 검토 뿐만 아니라, 실제 쿼리를 실행하여 성능을 직접 측정하는 과정이 필수적이다.

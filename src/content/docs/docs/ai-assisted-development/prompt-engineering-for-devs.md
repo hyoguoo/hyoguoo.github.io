@@ -3,7 +3,7 @@ title: "Prompt Engineering for Developers"
 date: 2025-10-25
 lastUpdated: 2025-10-25
 tags: [AI-Assisted Development]
-description: ""
+description: "AI 어시스턴트를 효과적으로 활용하기 위한 페르소나 설정, Few-Shot 기법, Chain of Thought, 수동 컨텍스트 주입 등 실전 프롬프트 엔지니어링 기법을 설명한다."
 ---
 
 ## 핵심 원칙 4가지

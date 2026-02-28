@@ -3,7 +3,7 @@ title: "Distributed Mail Service Design"
 date: 2025-10-13
 lastUpdated: 2025-10-13
 tags: [Large-Scale System]
-description: ""
+description: "10억 명 사용자의 이메일 발송·수신·검색을 SMTP/IMAP 프로토콜과 분산 스토리지를 기반으로 처리하는 메일 서비스를 설계한다."
 ---
 
 ## 요구사항
