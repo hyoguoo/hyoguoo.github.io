@@ -103,7 +103,7 @@ title: 문서 제목                  # 제목 컨벤션 참고
 date: YYYY-MM-DD                  # 오늘 날짜
 lastUpdated: YYYY-MM-DD           # 오늘 날짜 (수정 시 갱신)
 tags: [카테고리]                  # 최상위 디렉토리명 기준 — 아래 매핑 참고
-description: ""                   # SEO용. 한 문장 요약 권장 (비워도 무방)
+description: "한 문장 요약"       # SEO og:description — /description 가이드라인 준수, 반드시 작성
 ---
 ```
 
@@ -227,7 +227,11 @@ description: ""                   # SEO용. 한 문장 요약 권장 (비워도 
    - 애매한 경우 사용자 확인 요청
 3. frontmatter 구성 (오늘 날짜로 `date`, `lastUpdated` 설정)
 4. 제목 컨벤션 적용 (약어 확장, 한글 제거)
-5. 본문 H1 제거 확인
+5. **description 자동 생성**: 문서 본문을 분석하여 `/description` 가이드라인에 따라 1문장(40~100자) 작성
+   - Blog: `[핵심 문제/주제] + [해결 방법/분석] + 종결어` 공식 적용
+   - Docs: `[다루는 개념/기술] + [핵심 설명 포인트] + 종결어` 공식 적용
+   - 생성한 description을 미리보기에 포함하여 사용자 확인
+6. 본문 H1 제거 확인
 6. **미리보기 출력**:
    ```
    ## 추가 예정
