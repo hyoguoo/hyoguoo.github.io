@@ -15,6 +15,10 @@ export default defineConfig({
 			],
 			head: [
 				{
+					tag: 'meta',
+					attrs: { name: 'google-site-verification', content: 'zQ7fN1J9KvTYUQHViHtn7XF6uQ1y6Q8WqrDdul-exu0' },
+				},
+				{
 					tag: 'link',
 					attrs: {
 						rel: 'stylesheet',
