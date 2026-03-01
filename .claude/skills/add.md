@@ -204,6 +204,10 @@ description: "한 문장 요약"       # SEO og:description — /description 가
   - Docs: `/docs/<category>/<slug>/`
   - 상대 경로나 `.md` 확장자 링크 금지
 
+### 본문 내용 직접 작성 시
+
+사용자가 문서 내용(본문)을 포함하여 작성을 요청한 경우, `/writing` skill의 컨벤션을 준수하여 작성한다.
+
 ---
 
 ## 이미지 처리
