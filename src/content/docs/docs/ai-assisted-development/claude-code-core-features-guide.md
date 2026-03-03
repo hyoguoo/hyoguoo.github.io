@@ -1,9 +1,9 @@
 ---
 title: "Claude Code - Core Features Guide"
 date: 2025-10-26
-lastUpdated: 2026-03-01
+lastUpdated: 2026-03-03
 tags: [ AI-Assisted Development ]
-description: "Claude Code의 CLAUDE.MD 영구 컨텍스트 관리, 세션 초기화·압축 명령어, 커스텀 명령어 생성, IDE 연동 방법 등 핵심 기능을 정리한다."
+description: "Claude Code의 CLAUDE.MD 영구 컨텍스트 관리, 세션 초기화·압축 명령어, IDE 연동 방법 등 핵심 기능을 정리한다."
 ---
 
 Claude Code는 Anthropic이 개발한 터미널 기반 AI 어시스트턴트다.
@@ -47,30 +47,6 @@ AI 성능의 핵심인 컨텍스트를 Claude Code는 다음과 같은 고유한
 
 - Git 연동: `commit my changes with a descriptive message` -> AI가 `git diff`를 분석하여 커밋 메시지 생성 및 실행
 - 테스트/디버깅: `run and fix failed tests` -> AI가 테스트 실패 로그를 분석하고 코드 수정을 시도
-
-## 고급 워크플로우: 자동화
-
-### 커스텀 명령어 (Custom Command)
-
-반복적인 프롬프트(예: 코드 리뷰, Git 커밋)를 나만의 명령어로 저장하여 자동화하는 기능이다.
-
-- 생성: `.claude/commands` (프로젝트별) 또는 `~/.claude/commands` (전역) 폴더에 `.md` 파일로 프롬프트 작성
-- 파일 내용:
-    - 순수 텍스트 프롬프트 작성
-    - `$ARGUMENTS` 변수 사용 가능 (명령어 인자 전달용)
-- 사용법: 터미널에서 `/명령어이름 [인자]` 형태로 호출
-
-```markdown
-# 코드 리뷰어 역할을 하는 커스텀 명령어 예시
-
-Review the code in the file `$ARGUMENTS`.
-Please check for readability and potential null pointer exceptions (NPEs).
-```
-
-```bash
-# 터미널에 명령어와 '인자(파일명)'를 함께 입력
-/review src/main/java/UserService.java
-```
 
 ## IDE 연동 (IntelliJ 기준)
 
