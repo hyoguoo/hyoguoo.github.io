@@ -21,6 +21,7 @@ export const TAG_HUES: Record<string, number> = {
 
 export const CATEGORY_ORDER: string[] = [
   'Payment Platform Project',
+  'AI-Assisted Development',
   'Java',
   'Spring & JPA',
   'MySQL',
