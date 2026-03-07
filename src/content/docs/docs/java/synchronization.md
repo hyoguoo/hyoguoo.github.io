@@ -126,7 +126,7 @@ JDK 1.5부터 제공되는 `java.util.concurrent.locks.ReentrantLock`은 `synchr
 
 ### `ReentrantLock` 동작 방식
 
-`syncronized` 키워드와 유사하게 두 가지 대기 상태를 관리한다.
+`synchronized` 키워드와 유사하게 두 가지 대기 상태를 관리한다.
 
 - `ReentrantLock` 객체 대기 큐: 락을 획득하려는 스레드 대기 공간
 - `Condition` 객체 스레드 대기 공간: `await()` 메서드에 의해 대기 중인 스레드 대기 공간
