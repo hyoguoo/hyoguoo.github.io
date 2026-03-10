@@ -1,9 +1,9 @@
 ---
 title: "volatile"
 date: 2025-01-07
-lastUpdated: 2025-11-14
-tags: [Java]
-description: "Java volatile 키워드의 CPU 캐시 가시성 문제 해결 방식과 happens-before 관계, 원자성 미보장 한계를 분석한다."
+lastUpdated: 2026-03-10
+tags: [ Java ]
+description: "Java volatile 키워드의 CPU 캐시 가시성 문제 해결 방식과 원자성 미보장 한계를 분석한다."
 ---
 
 CPU의 각 코어는 성능 향상을 위해 캐시(Cache)를 가지고 있다.
@@ -18,10 +18,15 @@ CPU의 각 코어는 성능 향상을 위해 캐시(Cache)를 가지고 있다.
 volatile boolean v = false;
 ```
 
-변수에 `volatile`을 선언하면, 해당 변수를 읽고 쓸 때 CPU 캐시를 사용하지 않고 항상 메인 메모리에 직접 접근하도록 강제한다.
+하지만 변수에 `volatile`을 선언하면, 해당 변수를 읽고 쓸 때 CPU 캐시를 사용하지 않고 항상 메인 메모리에 직접 접근하도록 강제할 수 있다.
 
 - 쓰기(write): 메인 메모리에 반영
 - 읽기(read): 자신의 캐시를 무효화하고 메인 메모리에서 최신 값 조회
+
+항상 메인 메모리에 접근하기 때문에 다음과 같은 이유로 성능이 저하될 수 있다.
+
+- CPU 캐시를 활용하는 일반 변수보다 읽기·쓰기 속도 느림
+- 메모리 배리어로 인해 CPU 수준의 명령어 재배열 최적화도 제한
 
 ## 원자성
 
@@ -37,7 +42,9 @@ volatile boolean v = false;
 `volatile`는 변수의 읽기/쓰기 연산만 원자화 시킬 뿐, 동기화 시키는 개념은 아니다.
 
 ```java
-balance -=amount; // 읽기-수정-쓰기 연산
+void example() {
+    balance -= amount; // 읽기-수정-쓰기 연산
+}
 ```
 
 위 한 줄의 코드는 내부적으로 세 단계로 나뉜다.
