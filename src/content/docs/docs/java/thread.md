@@ -1,9 +1,9 @@
 ---
 title: "Thread"
 date: 2023-01-16
-lastUpdated: 2025-11-17
-tags: [Java]
-description: "Java 스레드의 생성 방법과 상태 전이 생명주기, sleep·join·interrupt를 활용한 스레드 제어 방법을 정리한다."
+lastUpdated: 2026-03-11
+tags: [ Java ]
+description: "Java 스레드의 생명주기와 상태 전이, ExecutorService 기반 스레드 풀 관리, Callable·Future를 통한 비동기 결과 수집을 정리한다."
 ---
 
 프로세스 내에서 실제로 작업을 수행하는 실행 단위로, 모든 프로세스는 최소 하나 이상의 스레드를 가지고 있다.
@@ -112,26 +112,18 @@ void example() {
 ```mermaid
 stateDiagram-v2
     direction LR
-
     state "생성 (NEW)" as NEW
     state "실행 대기 (RUNNABLE)" as RUNNABLE
     state "실행 (RUNNING)" as RUNNING
     state "일시 정지 (WAITING, BLOCKED)" as WAITING
     state "소멸 (TERMINATED)" as TERMINATED
-
     [*] --> NEW
-    
-    NEW --> RUNNABLE : ① start()
-    
-    RUNNABLE --> RUNNING : ② 스케줄링(실행)
-    
-    RUNNING --> RUNNABLE : ③ yield()
-    
-    RUNNING --> WAITING : ④ suspend(), sleep(),\nwait(), join(), I/O block
-    
-    WAITING --> RUNNABLE : ⑤ time-out, resume(),\nnotify(), interrupt()
-    
-    RUNNING --> TERMINATED : ⑥ stop()
+    NEW --> RUNNABLE: ① start()
+    RUNNABLE --> RUNNING: ② 스케줄링(실행)
+    RUNNING --> RUNNABLE: ③ yield()
+    RUNNING --> WAITING: ④ suspend(), sleep(),\nwait(), join(), I/O block
+    WAITING --> RUNNABLE: ⑤ time-out, resume(),\nnotify(), interrupt()
+    RUNNING --> TERMINATED: ⑥ stop()
     TERMINATED --> [*]
 ```
 
@@ -142,6 +134,66 @@ stateDiagram-v2
 4. 실행 중 `suspend()`, `sleep()`, `join()`, `wait()`, `I/O block` 의해 일시정지 상태가 될 수 있음
 5. 지정된 일시정지시간이 다 되거나 `time-out()`, `notify()`, `resume()`, `interrupt()` 등의 메서드를 호출하면 다시 실행대기상태가 됨
 6. 실행을 모두 마치거나 `stop()`을 호출하면 종료상태가 됨
+
+## 동시성 관련 유틸리티
+
+### ExecutorService와 스레드 풀
+
+`ExecutorService`는 스레드 풀(Thread Pool)을 통해 스레드를 재사용하고 개수를 제한하는 인터페이스다.
+
+- 스레드를 미리 생성해두고 재사용하여 생성·소멸 비용 절감
+- 최대 스레드 수를 제한하여 시스템 자원 고갈 방지
+- 작업 제출(`submit`)과 실행 방식을 분리하여 코드 구조 단순화
+
+`Executors` 팩토리 클래스로 목적에 맞는 풀을 생성한다.
+
+|             메서드             |  스레드 수   |           특징            |            주의점            |
+|:---------------------------:|:--------:|:-----------------------:|:-------------------------:|
+|   `newFixedThreadPool(n)`   | 고정 (n개)  | 처리량 예측 가능, 초과 작업은 큐에 대기 |    과부하 시 내부 큐 무한 증가 가능    |
+|   `newCachedThreadPool()`   | 무제한 (유동) |  유휴 스레드 재사용, 짧은 작업에 유리  |    순간 부하 시 스레드 수 폭발 위험    |
+| `newSingleThreadExecutor()` |  1개 고정   |        작업 순서 보장         | 처리 속도가 제출 속도를 못 따라가면 큐 누적 |
+
+`shutdown()`을 호출하지 않으면 풀 스레드가 종료되지 않아 애플리케이션이 정상 종료되지 않으니 주의해야한다.
+
+```java
+void example() {
+    try (ExecutorService executor = Executors.newFixedThreadPool(4)) {
+        for (int i = 0; i < 10; i++) {
+            int taskId = i;
+            executor.submit(() -> System.out.println("Task " + taskId));
+        }
+    } // try-with-resources로 shutdown() 자동 호출
+}
+```
+
+### Callable과 Future
+
+`ExecutorService.submit(Callable)`은 `Future<V>`를 반환하며, `Future`를 통해 비동기 작업의 결과를 나중에 수집할 수 있다.
+
+```java
+void example() {
+    ExecutorService executor = Executors.newFixedThreadPool(2);
+
+    Future<Integer> future = executor.submit(() -> {
+        // 시간이 걸리는 연산
+        return 42;
+    });
+
+    // 다른 작업 수행 가능 ...
+
+    Integer result = future.get(); // 작업 완료 시까지 블로킹
+    executor.shutdown();
+}
+```
+
+`Future`의 주요 메서드는 다음과 같다.
+
+- `get()`: 작업 완료 시까지 현재 스레드를 블로킹하고 결과 반환
+- `get(timeout, unit)`: 지정 시간까지만 대기, 초과 시 `TimeoutException` 발생
+- `isDone()`: 작업 완료 여부 확인 (블로킹 없음)
+- `cancel(mayInterruptIfRunning)`: 작업 취소 요청
+
+`get()` 호출 시점까지 결과가 준비되지 않으면 블로킹되므로, 여러 Future를 순서대로 `get()`하면 직렬 대기와 다르지 않다는 점에 주의해야 한다.
 
 ###### 참고자료
 
