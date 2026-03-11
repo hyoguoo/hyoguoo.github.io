@@ -5,6 +5,7 @@ lastUpdated: 2025-11-17
 tags: [Java]
 description: "Java 스레드의 생성 방법과 상태 전이 생명주기, sleep·join·interrupt를 활용한 스레드 제어 방법을 정리한다."
 ---
+
 프로세스 내에서 실제로 작업을 수행하는 실행 단위로, 모든 프로세스는 최소 하나 이상의 스레드를 가지고 있다.
 
 - 프로세스: 운영체제로부터 자원을 할당받는 작업의 단위(Code, Data, Heap, Stack 영역 독립)
@@ -12,7 +13,7 @@ description: "Java 스레드의 생성 방법과 상태 전이 생명주기, sle
 
 ## 스레드 구현
 
-구현 방법으로는 아래 두 개의 방법이 있으며 큰 차이는 없으나 Thread 클래스를 상속 받으면 다른 클래스를 상속 받을 수 없기 떄문에 Runnable 방법을 권장한다.
+구현 방법으로는 아래 두 개의 방법이 있으며 큰 차이는 없으나 Thread 클래스를 상속 받으면 다른 클래스를 상속 받을 수 없기 때문에 Runnable 방법을 권장한다.
 
 ### Thread 클래스를 상속받아 구현
 
@@ -51,7 +52,7 @@ public class MyThread implements Runnable {
 스레드를 실행할 때는 `run()`이 아닌 `start()` 메서드를 호출해야 한다.
 
 ```java
-public static void main(String[] args) {
+void example() {
     // Runnable 인터페이스 구현체 실행
     Runnable r = new MyRunnable();
     Thread t1 = new Thread(r); // 생성자: Thread(Runnable target)
@@ -64,10 +65,8 @@ public static void main(String[] args) {
 }
 ```
 
-`start()` 메서드가 호출되어도 해당 스레드에서 바로 실행 되는 것이 아니기 때문에, 스레드 스케줄러에 의해 대기 상태가 되고 대기 상태에 있는 스레드는 스레드 스케줄러에 의해 실행된다.
-
-- 한 번 실행된 스레드는 다시 실행 불가능
-- 두 번 이상 실행하게 되면 `IllegalThreadStateException` 예외 발생
+- `start()` 메서드 호출 시, 대기 상태 진입 후 스레드 스케줄러에 의해 실행(바로 실행 X)
+- 한 번 실행된 스레드는 다시 실행 불가능(두 번 이상 실행 시 `IllegalThreadStateException` 예외 발생)
 
 ### `start()` vs `run()`
 
@@ -110,7 +109,31 @@ public static void main(String[] args) {
 
 ### 스레드 라이프사이클
 
-![Tread Lifecycle](image/thread-lifecycle.png)
+```mermaid
+stateDiagram-v2
+    direction LR
+
+    state "생성 (NEW)" as NEW
+    state "실행 대기 (RUNNABLE)" as RUNNABLE
+    state "실행 (RUNNING)" as RUNNING
+    state "일시 정지 (WAITING, BLOCKED)" as WAITING
+    state "소멸 (TERMINATED)" as TERMINATED
+
+    [*] --> NEW
+    
+    NEW --> RUNNABLE : ① start()
+    
+    RUNNABLE --> RUNNING : ② 스케줄링(실행)
+    
+    RUNNING --> RUNNABLE : ③ yield()
+    
+    RUNNING --> WAITING : ④ suspend(), sleep(),\nwait(), join(), I/O block
+    
+    WAITING --> RUNNABLE : ⑤ time-out, resume(),\nnotify(), interrupt()
+    
+    RUNNING --> TERMINATED : ⑥ stop()
+    TERMINATED --> [*]
+```
 
 1. 스레드 생성하고 `start()` 호출하여 실행 대기열에 저장되어 실행 대기 상태로 만듬
     - 실행대기열은 큐(queue)와 같은 구조로 먼저 실행대기열에 들어온 스레드가 먼저 실행됨
