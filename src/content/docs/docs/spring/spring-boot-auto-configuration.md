@@ -61,9 +61,9 @@ graph TD
         J --> K[스프링 애플리케이션 컨텍스트]
     end
 
-    style C fill: #f9f, stroke: #333, stroke-width: 2px
-    style E fill: #bbf, stroke: #333, stroke-width: 2px
-    style J fill: #dfd, stroke: #333, stroke-width: 2px
+    style C fill: #f9f, stroke: #333, stroke-width: 2px, color: #000
+    style E fill: #bbf, stroke: #333, stroke-width: 2px, color: #000
+    style J fill: #dfd, stroke: #333, stroke-width: 2px, color: #000
 ```
 
 1. 외부 설정(External Configuration): 설정 소스로부터 원천 데이터 수집

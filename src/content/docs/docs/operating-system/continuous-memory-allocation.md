@@ -36,8 +36,8 @@ flowchart LR
     Mem_A -- 스왑 아웃 (Swap Out ) --> Disk_A_Image
 Disk_B -- 스왑 인 ( Swap In ) --> Mem_Space
 
-style Mem_A fill: #ffcccc, stroke: #333
-style Disk_B fill: #ccffcc, stroke: #333
+style Mem_A fill: #ffcccc, stroke: #333, color: #000
+style Disk_B fill: #ccffcc, stroke: #333, color: #000
 ```
 
 이를 통해 실제 물리 메모리 크기보다 더 많은 프로세스를 동시에 실행하는 듯한 효과를 낼 수 있다.

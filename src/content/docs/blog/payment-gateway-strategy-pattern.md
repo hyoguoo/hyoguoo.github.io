@@ -64,12 +64,12 @@ graph TB
     Strategy -.->|구현| Toss
     Strategy -.->|확장 가능| Future
     Toss -->|호출| TossAPI
-    style Port fill: #e1f5ff
-    style Strategy fill: #e1f5ff
-    style Adapter fill: #fff4e1
-    style Factory fill: #fff4e1
-    style Toss fill: #e8f5e9
-    style Future fill: #f5f5f5, stroke-dasharray: 5 5
+    style Port fill: #e1f5ff, color: #000
+    style Strategy fill: #e1f5ff, color: #000
+    style Adapter fill: #fff4e1, color: #000
+    style Factory fill: #fff4e1, color: #000
+    style Toss fill: #e8f5e9, color: #000
+    style Future fill: #f5f5f5, stroke-dasharray: 5 5, color: #000
 ```
 
 ### 핵심 컴포넌트

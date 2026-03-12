@@ -23,10 +23,10 @@ graph TB
     F --> G
     G --> H[통합 추론]
     H --> I[응답 생성]
-    style C fill: #ffe0e0
-    style D fill: #e1f5ff
-    style E fill: #e8f5e9
-    style F fill: #fff9e6
+    style C fill: #ffe0e0, color: #000
+    style D fill: #e1f5ff, color: #000
+    style E fill: #e8f5e9, color: #000
+    style F fill: #fff9e6, color: #000
 ```
 
 Claude의 컨텍스트는 다음 4가지 주요 레이어로 구성되고, 우선순위에 따라 처리된다.
@@ -52,9 +52,9 @@ graph LR
     F --> I[최적 성능]
     G --> I
     H --> I
-    style C fill: #d4edda
-    style D fill: #fff3cd
-    style E fill: #f8d7da
+    style C fill: #d4edda, color: #000
+    style D fill: #fff3cd, color: #000
+    style E fill: #f8d7da, color: #000
 ```
 
 이를 적용하기 위한 구체적인 방법은 다음과 같다.

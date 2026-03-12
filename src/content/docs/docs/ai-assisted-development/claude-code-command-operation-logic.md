@@ -98,9 +98,9 @@ graph TB
     F --> I[상세 정보와 함께 작업 수행]
     G --> I
     H --> I
-    style B fill: #e1f5ff
-    style D fill: #d4edda
-    style I fill: #d4edda
+    style B fill: #e1f5ff, color: #000
+    style D fill: #d4edda, color: #000
+    style I fill: #d4edda, color: #000
 ```
 
 ### Skills 동작 흐름
@@ -138,9 +138,9 @@ graph TD
     A --> F{명시적 호출?}
     F -->|skill name 사용| G[해당 Skill 강제 활성화]
     F -->|없음| C
-    style D fill: #d4edda
-    style G fill: #d4edda
-    style E fill: #f8f9fa
+    style D fill: #d4edda, color: #000
+    style G fill: #d4edda, color: #000
+    style E fill: #f8f9fa, color: #000
 ```
 
 ### Custom Skills 작성법
@@ -240,8 +240,8 @@ graph TD
     A -- " Delegates Task " --> C;
     B -- " Returns Summary " --> A;
     C -- " Returns Summary " --> A;
-    style B fill: #cde4ff
-    style C fill: #cde4ff
+    style B fill: #cde4ff, color: #000
+    style C fill: #cde4ff, color: #000
 ```
 
 ### 구조 및 정의

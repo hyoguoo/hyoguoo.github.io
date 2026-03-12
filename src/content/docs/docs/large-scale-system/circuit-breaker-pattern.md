@@ -104,12 +104,12 @@ graph LR
         end
     end
 
-    style B1 fill:#ff9999
-    style C1 fill:#99ff99
-    style D1 fill:#99ff99
-    style B2 fill:#ff9999
-    style C2 fill:#99ff99
-    style D2 fill:#99ff99
+    style B1 fill:#ff9999, color:#000
+    style C1 fill:#99ff99, color:#000
+    style D1 fill:#99ff99, color:#000
+    style B2 fill:#ff9999, color:#000
+    style C2 fill:#99ff99, color:#000
+    style D2 fill:#99ff99, color:#000
 ```
 
 ## Spring Framework 기반 구현(Resilience4j)

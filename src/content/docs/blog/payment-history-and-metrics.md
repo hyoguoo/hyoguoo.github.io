@@ -82,13 +82,9 @@ sequenceDiagram
     deactivate S
     Note over A: [After] 결과 분석 및 이벤트 발행 결정
     A ->> E: PaymentHistoryEvent 발행
-
-    rect
-        Note over E, DB: Transaction: BEFORE_COMMIT Phase
-        E ->> L: 이벤트 전달
-        L ->> DB: PaymentHistory 저장 (INSERT)
-    end
-
+    Note over E, DB: Transaction: BEFORE_COMMIT Phase
+    E ->> L: 이벤트 전달
+    L ->> DB: PaymentHistory 저장 (INSERT)
     A -->> C: 최종 결과 응답
     deactivate A
     Note over DB: Transaction Commit (Final)

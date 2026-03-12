@@ -46,8 +46,8 @@ flowchart TD
     Escape1 -->|Potential UID 0 Match| Root
     App -- " 2. Running as Non-Root " --> Escape2[Container Breakout]
     Escape2 -->|UID 1000+| User
-    style Root fill: #f66, stroke: #333
-    style User fill: #6f6, stroke: #333
+    style Root fill: #f66, stroke: #333, color: #000
+    style User fill: #6f6, stroke: #333, color: #000
     style Escape1 color: #fff, fill: #000
     style Escape2 color: #fff, fill: #000
 ```

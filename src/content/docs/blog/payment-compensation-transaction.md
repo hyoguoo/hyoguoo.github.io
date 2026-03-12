@@ -39,7 +39,7 @@ graph TD
     C -.-> D{{"데이터 불일치 발생"}}
     D --- E["결제 상태: <b>실패</b> (고객 미결제)"]
     D --- F["재고 상태: <b>차감됨</b> (복구 누락)"]
-    style D fill: #ffcccc, stroke: #ff0000, stroke-width: 2px
+    style D fill: #ffcccc, stroke: #ff0000, stroke-width: 2px, color: #000
     style C fill: #000, color: #fff
 ```
 
@@ -122,12 +122,6 @@ graph TD
         X -- " 결제 성공 상태 " --> H_Success;
         X -- " 결제 실패 상태 " --> H_Fail;
     end
-
-%% Style definitions using IDs
-    style sg1 fill: #f9f9f9, stroke: #333, stroke-width: 2px
-    style F fill: #fff, stroke: #333, stroke-width: 2px, stroke-dasharray: 5 5
-    style sg3 fill: #f9f9f9, stroke: #333, stroke-width: 2px
-    style sg_recovery fill: #e6f7ff, stroke: #0056b3, stroke-width: 2px, stroke-dasharray: 2 2
 ```
 
 ## 보상 트랜잭션 실패 흐름 시나리오
