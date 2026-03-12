@@ -34,7 +34,7 @@ const visibleGroups = DOCS_GROUPS.map(group => ({
   {visibleGroups.length === 0 ? (
     <p class="empty-state">문서가 없습니다.</p>
   ) : visibleGroups.map(group => (
-    <TreeSection label={group.label}>
+    <TreeSection label={group.label} labelVariant="accent">
       <LinkList items={group.items.map(item => ({
         title: item.label,
         url: subcategoriesWithIndex.has(item.key) ? `/docs/${item.key}/` : null,

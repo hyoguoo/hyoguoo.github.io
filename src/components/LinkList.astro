@@ -2,12 +2,13 @@
 interface Props {
   items: { title: string; url: string | null }[];
   label?: string;
+  compact?: boolean;
 }
-const { items, label } = Astro.props;
+const { items, label, compact = false } = Astro.props;
 ---
 
-{label && <h2 class="list-label">{label}</h2>}
-<ul class="link-list">
+{label && <h2 class:list={['list-label', { compact }]}>{label}</h2>}
+<ul class:list={['link-list', { compact }]}>
   {items.map(item => (
     <li>
       {item.url
@@ -23,14 +24,20 @@ const { items, label } = Astro.props;
 
 <style>
   .list-label {
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--sl-color-gray-3);
-    margin: 0 0 0.6rem;
-    padding-bottom: 0.4rem;
-    border-bottom: 1px solid var(--sl-color-hairline);
+    font-size: 1.15rem;
+    font-weight: 700;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    color: var(--sl-color-text-accent);
+    margin: 0 0 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--sl-color-text-accent);
+    opacity: 0.9;
+  }
+
+  .list-label.compact {
+    margin-bottom: 0;
+    padding-bottom: 0.1rem;
   }
 
   .link-list {
@@ -45,12 +52,21 @@ const { items, label } = Astro.props;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-weight: 500;
     padding: 0.6rem 0;
     border-bottom: 1px solid var(--sl-color-hairline);
     text-decoration: none;
     color: var(--sl-color-text);
-    transition: color 0.15s;
+    transition: all 0.2s ease;
+  }
+
+  .link-list.compact li:first-child .link-row {
+    padding-top: 0;
+  }
+
+  .link-list.compact .link-row {
+    padding: 0.2rem 0;
   }
 
   li:last-child .link-row {
@@ -59,6 +75,7 @@ const { items, label } = Astro.props;
 
   a.link-row:hover {
     color: var(--sl-color-text-accent);
+    padding-left: 0.25rem;
   }
 
   .link-arrow {

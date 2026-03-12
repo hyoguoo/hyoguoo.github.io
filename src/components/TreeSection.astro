@@ -22,20 +22,29 @@ const { label, labelVariant = 'muted' } = Astro.props;
   }
 
   .section-label {
-    font-size: 0.75rem;
+    font-size: 0.875rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.05em;
     color: var(--sl-color-gray-3);
-    margin: 0 0 0.75rem;
-    padding-bottom: 0.5rem;
+    margin: 0 0 0.25rem;
+    padding-bottom: 0.25rem;
     border-bottom: 1px solid var(--sl-color-hairline);
   }
 
   .section-label--accent {
-    font-size: 1rem;
+    font-size: 1.25rem;
+    font-weight: 700;
     text-transform: none;
-    letter-spacing: 0;
+    letter-spacing: -0.01em;
     color: var(--sl-color-text-accent);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--sl-color-text-accent);
+    opacity: 0.9;
+  }
+
+  .tree-section :global(.link-list) {
+    margin-top: 0;
   }
 </style>
