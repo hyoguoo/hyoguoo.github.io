@@ -1,5 +1,6 @@
 ---
 import EntryMeta from './EntryMeta.astro';
+import BlogSeries from './BlogSeries.astro';
 import config from 'virtual:starlight-blog-config';
 import type { StarlightBlogAuthor } from 'starlight-blog/schema';
 
@@ -65,6 +66,7 @@ const parentName = parentPath
 )}
 <h1 id="_top" set:html={titleHtml} />
 {showMeta && <EntryMeta {date} {lastUpdated} {authors} />}
+{isBlogPost && <BlogSeries currentId={entry?.id ?? ''} />}
 
 <style>
   @layer starlight.core {

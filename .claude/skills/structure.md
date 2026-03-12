@@ -73,6 +73,7 @@ src/components/PageLayout.astro     ← Landing/About 공유 레이아웃에서 
 | `BlogTree.astro` | `/blog/` 카테고리별 포스트 그루핑 목록 | `TreeSection.astro`, `src/data/tagColors.ts` (CATEGORY_ORDER) |
 | `DocsTree.astro` | `/docs/` 그룹별 서브카테고리 트리 | `TreeSection.astro`, `LinkList.astro`, `src/data/docsGroups.ts` |
 | `SubcategoryPage.astro` | `/docs/<cat>/` 섹션별 문서 목록 | `subcategory: string` / `LinkList.astro`, `src/data/docsSections.ts` |
+| `BlogSeries.astro` | 블로그 시리즈 네비게이션 (순번 + 읽는 중 표시) | `currentId: string` / `src/data/blogSeries.ts` |
 | `TreeSection.astro` | 카드 컨테이너 (border + radius + bg-nav) + 섹션 레이블 | `label: string`, `labelVariant?: 'accent' \| 'muted'` |
 | `LinkList.astro` | 링크 리스트 (→ 화살표, hover accent, disabled 지원) | `items: { title: string; url: string \| null }[]`, `label?: string` |
 
@@ -90,12 +91,24 @@ src/components/PageLayout.astro     ← Landing/About 공유 레이아웃에서 
 |------|---------|--------|
 | `tagColors.ts` | `TAG_HUES: Record<string, number>` (태그→HSL hue, 18개), `CATEGORY_ORDER: string[]` (카테고리 표시 순서) | `src/pages/index.astro` (랜딩 태그 색상), `BlogTree.astro` (카테고리 정렬) |
 | `docsGroups.ts` | `DOCS_GROUPS: DocsGroup[]` (10개 그룹, 16개 서브카테고리) | `DocsTree.astro` |
+| `blogSeries.ts` | `BLOG_SERIES: Record<string, Series>` (ID 기반 시리즈 매핑) | `BlogSeries.astro` |
 | `docsSections.ts` | `docsSections: Record<string, SectionConfig>` (15개 서브카테고리) | `SubcategoryPage.astro` |
 | `giscusConfig.ts` | `repo`, `repoId`, `category`, `categoryId` | `Giscus.astro` |
 
 > **새 Blog 카테고리 추가**: `tagColors.ts`에 hue 추가
 > **새 Docs 서브카테고리 추가**: `docsGroups.ts` + `docsSections.ts` + `astro.config.mjs` sidebar 모두 업데이트
 > **⚠️ `astro.config.mjs` sidebar는 별도 관리** — `docsGroups.ts`와 동기화 필요
+
+---
+
+## 블로그 시리즈 시스템 (Series Navigation)
+
+시리즈 게시글 상단에 순번과 목록을 표시하는 시스템.
+
+1.  **데이터 정의**: `src/data/blogSeries.ts`에 시리즈 제목과 포함될 포스트 ID(`blog/slug`) 목록을 순서대로 정의.
+2.  **트리거**: `PageTitle.astro`에서 현재 페이지가 블로그 포스트(`isBlogPost`)인 경우 `BlogSeries.astro`에 `currentId`를 전달.
+3.  **매칭**: `BlogSeries.astro`는 `blogSeries.ts` 데이터를 순회하며 `currentId`가 포함된 시리즈가 있는지 확인.
+4.  **렌더링**: 매칭된 시리즈가 있으면 순번(`index + 1`)과 함께 목록을 출력하며, 현재 포스트는 '읽는 중' 상태로 표시.
 
 ---
 

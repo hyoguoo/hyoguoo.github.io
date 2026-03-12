@@ -1,5 +1,5 @@
 ---
-title: "결제 정보 검증을 통한 안전한 결제 연동 시스템 구현 - 토스 페이먼츠"
+title: "결제 정보 검증을 통한 안전한 결제 연동 시스템 구현"
 date: 2023-11-09
 lastUpdated: 2026-03-11
 tags: [ Payment Platform Project ]
