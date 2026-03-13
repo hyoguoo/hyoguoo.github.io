@@ -38,8 +38,9 @@ export const DOCS_GROUPS: DocsGroup[] = [
   { label: 'System Architecture', items: [
     { key: 'large-scale-system', label: 'Large-Scale System' },
   ]},
-  { label: 'Design Pattern', items: [
+  { label: 'Software Design', items: [
     { key: 'oop', label: 'OOP' },
+    { key: 'ddd', label: 'DDD' },
   ]},
   { label: 'ETC', items: [
     { key: 'setting', label: 'Setting' },

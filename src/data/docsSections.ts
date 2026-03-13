@@ -301,4 +301,10 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: ['testing-basic', 'test-guide', 'test-double', 'test-fixture'],
     },
   ],
+  ddd: [
+    {
+      label: 'Strategic Design',
+      slugs: ['intro-to-ddd'],
+    },
+  ],
 };
