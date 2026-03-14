@@ -80,6 +80,7 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Claude Code',
       slugs: [
         'claude-code-core-features-guide',
+        'claude-code-skills-guide',
         'claude-context-management',
         'claude-code-command-operation-logic',
         'claude-code-super-claude-framework',
