@@ -306,7 +306,7 @@ export const docsSections: Record<string, SectionConfig> = {
   ddd: [
     {
       label: 'Strategic Design',
-      slugs: ['intro-to-ddd', 'ubiquitous-language', 'bounded-context'],
+      slugs: ['intro-to-ddd', 'ubiquitous-language', 'bounded-context', 'context-mapping'],
     },
   ],
 };
