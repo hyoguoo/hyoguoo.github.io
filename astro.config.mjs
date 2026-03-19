@@ -27,14 +27,19 @@ export default defineConfig({
 				},
 				{
 					tag: 'script',
-					attrs: {
-						src: 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8',
-						async: true,
-					},
-				},
-				{
-					tag: 'script',
-					content: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');`,
+					content: `
+						if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+							const script = document.createElement('script');
+							script.async = true;
+							script.src = 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8';
+							document.head.appendChild(script);
+
+							window.dataLayer = window.dataLayer || [];
+							function gtag(){dataLayer.push(arguments);}
+							gtag('js', new Date());
+							gtag('config', 'G-KBCBB0D7H8');
+						}
+					`,
 				},
 				{
 					tag: 'meta',

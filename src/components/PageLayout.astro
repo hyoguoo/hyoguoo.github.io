@@ -55,8 +55,19 @@ const {
   {ogTitle && <meta name="twitter:title" content={ogTitle} />}
   {ogDescription && <meta name="twitter:description" content={ogDescription} />}
   {ogTitle && <meta name="twitter:image" content="https://hyoguoo.github.io/og.png" />}
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8"></script>
-  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-KBCBB0D7H8');</script>
+  <script is:inline>
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8';
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-KBCBB0D7H8');
+    }
+  </script>
   <style is:global>
     *, *::before, *::after { box-sizing: border-box; }
 
