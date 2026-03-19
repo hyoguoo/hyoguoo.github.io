@@ -113,6 +113,7 @@ export default defineConfig({
 					title: 'Blog',
 					postCount: 5,
 					recentPostCount: 10,
+					navigation: 'none',
 					authors: {
 						hyoguoo: {
 							name: 'hyoguoo',
@@ -207,7 +208,6 @@ export default defineConfig({
 				PageTitle: './src/components/PageTitle.astro',
 				Pagination: './src/components/Pagination.astro',
 				SocialIcons: './src/components/SocialIcons.astro',
-				ThemeSelect: './src/components/ThemeSelect.astro',
 				SiteTitle: './src/components/SiteTitle.astro',
 			},
 			customCss: ['./src/styles/custom.css'],
