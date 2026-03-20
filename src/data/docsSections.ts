@@ -310,7 +310,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Tactical Design',
-      slugs: ['value-object'],
+      slugs: ['value-object', 'entity'],
     },
   ],
 };
