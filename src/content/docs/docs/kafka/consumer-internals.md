@@ -1,12 +1,30 @@
 ---
 title: "Consumer Internals"
 date: 2025-10-02
-lastUpdated: 2025-10-03
-tags: [Kafka]
+lastUpdated: 2026-03-22
+tags: [ Kafka ]
 description: "Kafka 컨슈머의 그룹 코디네이터 기반 관리, 리밸런싱 과정, 파티션 할당 전략, 자동·수동 오프셋 커밋 방식을 분석한다."
 ---
 
 컨슈머는 토픽의 메시지를 읽어 처리하는 클라이언트이며, 내부적으로는 컨슈머 그룹이라는 개념을 통해 확장성과 안정성을 보장받는다.
+
+```mermaid
+graph TD
+    T[Topic: 4 Partitions] --> P0[P0]
+    T --> P1[P1]
+    T --> P2[P2]
+    T --> P3[P3]
+
+    subgraph CG [Consumer Group]
+        C1[Consumer 1]
+        C2[Consumer 2]
+    end
+
+    P0 --> C1
+    P1 --> C1
+    P2 --> C2
+    P3 --> C2
+```
 
 ## 그룹과 코디네이터
 
