@@ -88,5 +88,5 @@ src/
 
 - **Surgical Updates**: `replace` 툴을 활용하여 필요한 부분만 정밀하게 수정한다.
 - **설정 동기화**: 새 문서 추가 시 `docsSections.ts` 및 `docsGroups.ts`를 반드시 업데이트한다.
-- **Mermaid 레이아웃**: 수평 배치가 필요한 경우 HTML `flex` div로 감싸 시각적 가독성을 높인다.
+- **Mermaid 레이아웃**: 순수 마크다운 코드 블록만 사용하며, HTML `div` 등 레이아웃 태그는 절대 사용하지 않는다.
 - **커밋 메시지**: 영문 기반의 `type: description` 형식을 사용하며 "Why"에 집중한다.
