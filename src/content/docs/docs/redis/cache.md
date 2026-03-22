@@ -1,8 +1,8 @@
 ---
 title: "Cache"
 date: 2025-02-13
-lastUpdated: 2025-10-06
-tags: [Redis]
+lastUpdated: 2026-03-22
+tags: [ Redis ]
 description: "Redis 캐시의 Look Aside 읽기 전략과 Write-Through·Write-Around·Write-Back 쓰기 전략을 비교하고 TTL 관리 및 캐시 스탬피드 방지 방법을 설명한다."
 ---
 
@@ -32,6 +32,15 @@ description: "Redis 캐시의 Look Aside 읽기 전략과 Write-Through·Write-A
 4. DB에서 가져온 데이터를 캐시에 저장한 후, 애플리케이션에 반환
 5. 이후 동일한 데이터 요청은 캐시에서 처리
 
+```mermaid
+graph TD
+    Start([요청 발생]) --> CheckCache{캐시 확인}
+    CheckCache -- Hit --> ReturnData[데이터 반환]
+    CheckCache -- Miss --> FetchDB[DB 데이터 조회]
+    FetchDB --> UpdateCache[캐시 저장]
+    UpdateCache --> ReturnData
+```
+
 - 장점
     - 실제로 사용되는 데이터만 캐시에 저장되므로 메모리를 효율적으로 사용 가능
     - 레디스에 장애가 발생해도 DB에서 데이터를 직접 조회하여 서비스 장애 방지
@@ -49,12 +58,34 @@ description: "Redis 캐시의 Look Aside 읽기 전략과 Write-Through·Write-A
     - 캐시에 항상 최신 데이터를 가져 불일치를 최소화
     - 매번 쓰기 연산이 발생하므로 저장 시 속도가 느릴 수 있음
     - 다시 사용될 만한 데이터가 아닌 경우 리소스 낭비
+
+```mermaid
+graph LR
+    App[애플리케이션] --> Save[데이터 저장 요청]
+    Save --> DB[(DB 저장)]
+    Save --> Cache[캐시 저장]
+```
+
 2. Write-Around + Cache Invalidation: 데이터를 쓸 때는 DB에만 직접 업데이트하고, 해당 데이터의 캐시는 삭제(Invalidation)하는 방식
     - 새로운 데이터 저장보다 특정 데이터 삭제가 더 빠르기 때문에 쓰기 성능이 향상
     - 데이터 변경 후 첫 읽기 요청은 반드시 Cache Miss가 발생
+
+```mermaid
+graph LR
+    App[애플리케이션] --> Save[데이터 저장 요청]
+    Save --> DB[(DB 저장)]
+    App --> Invalidate[캐시 삭제]
+```
+
 3. Write-Back(Write-Behind): 데이터를 쓸 때 캐시에만 먼저 저장하고, 특정 주기나 조건에 따라 캐시의 데이터를 DB에 비동기적으로 일괄 저장하는 방식
     - 쓰기 요청을 메모리에서 빠르게 처리하므로 쓰기 성능이 매우 뛰어남
     - 캐시에만 데이터가 저장된 상태에서 장애가 발생하면 데이터가 유실 위험
+
+```mermaid
+graph LR
+    App[애플리케이션] --> Save[캐시 저장]
+    Save -.-> DB[(DB 비동기 저장)]
+```
 
 ## 캐시에서의 데이터 흐름
 
@@ -116,6 +147,21 @@ TTL key
 3. 데이터베이스에서 데이터를 조회하여 캐시에 저장하는 동안 다른 요청이 발생
 4. 아직 캐시에 데이터가 저장되지 않은 상태에서 다른 요청에 의해 데이터베이스에서 다시 조회
 5. 한꺼번에 많은 요청이 왔다면 데이터베이스에 많은 쿼리가 발생하여 부하가 걸릴 수 있음
+
+```mermaid
+sequenceDiagram
+    participant App as 애플리케이션
+    participant Redis as Redis
+    participant DB as DB
+    Note over Redis: 키 만료 (TTL 0)
+    App ->> Redis: 데이터 조회 1 (Miss)
+    App ->> DB: DB 조회 시작 (무거운 연산)
+    Note right of App: 캐시가 갱신되기 전 다수의 요청 발생
+    App ->> Redis: 데이터 조회 2 (Miss)
+    App ->> DB: DB 중복 조회 (Stampede 발생)
+    DB -->> App: 결과 반환
+    App ->> Redis: 캐시 갱신
+```
 
 ### 캐시 스탬피드 방지 방법
 
