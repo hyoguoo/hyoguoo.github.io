@@ -108,7 +108,7 @@ RENAME TABLE rank_new TO rank;
 RENAME TABLE rank TO rank_backup, rank_new TO rank;
 ```
 
-위와 같이 `RENAME TABLE` 명령을 두 번에 걸쳐 실행하면, 첫 번째 명령에서 `rank` 테이블에 대한 메타데이터 락을 획득한 상태로 유지되어 두 번째 명령에서 잠금 획득에 실패한다.
+Case1 같이 `RENAME TABLE` 명령을 두 번에 걸쳐 실행하면, 아주 짧은 시간이지만, rank가 존재하지 않는 순간이 생기게 된다.
 
 ### 응용 - 테이블 구조 변경
 
