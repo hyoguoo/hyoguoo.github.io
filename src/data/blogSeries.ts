@@ -10,6 +10,7 @@ export const BLOG_SERIES = {
       { id: "blog/payment-history-and-metrics", title: "결제 이력 추적 및 핵심 지표 모니터링 시스템 구현" },
       { id: "blog/payment-compensation-transaction", title: "보상 트랜잭션 실패 상황 극복 가능한 결제 플로우 설계" },
       { id: "blog/payment-gateway-strategy-pattern", title: "전략 패턴을 통한 PG 독립성 확보 및 확장 가능한 결제 시스템 설계" },
+      { id: "blog/checkout-idempotency", title: "Checkout API 멱등성 보장 — Caffeine 캐시와 TOCTOU 경쟁 조건 해결" },
     ]
   }
 } as const;
