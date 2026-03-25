@@ -312,5 +312,9 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Tactical Design',
       slugs: ['value-object', 'entity', 'aggregate-and-root', 'domain-service-and-factory', 'repository'],
     },
+    {
+      label: 'Architecture & Integration',
+      slugs: ['ddd-architectures'],
+    },
   ],
 };
