@@ -75,7 +75,7 @@ sequenceDiagram
 - `getIfPresent`와 `put` 사이에 원자성이 보장되지 않음
 - 두 스레드가 동시에 miss를 확인하면 둘 다 `PaymentEvent`를 생성하는 TOCTOU(Time-Of-Check-Time-Of-Use) 경쟁 조건이 발생
 
-단위 테스트는 단일 스레드로 실행되므로 `HashMap` 기반 Fake는 문제없이 통과한다. 테스트가 구현 결함을 검증하고 못하고 있었다.
+단일 스레드로 실행되는 단위 테스트는 `HashMap` 기반 Fake로 문제없이 통과하면서, 테스트가 구현 결함을 검증하고 못하고 있었다.
 
 ## 2차 개선 — getOrCreate 원자적 패턴으로 재설계
 
@@ -117,14 +117,14 @@ sequenceDiagram
 IdempotencyResult<CheckoutResult> getOrCreate(String key, Supplier<CheckoutResult> creator);
 ```
 
-- 기존: `getIfPresent + put` 구조에서 포트는 두 메서드를 노출하고, 원자성을 어떻게 보장할지 호출자의 몫
+- 기존: `getIfPresent + put` 구조에서 포트는 두 메서드를 노출하고, 원자성을 어떻게 보장할지 호출자에게 책임 발생
 - 개선: `getOrCreate`로 변경하면 포트 계약 자체가 원자적 수행 표현하여, 호출자는 원자성 구현 방식을 알 필요 없이 구현체만 교체 가능
 
 ## 테스트
 
 ### 동시성 E2E 통합 테스트 — PaymentCheckoutConcurrencyIntegrationTest
 
-단위 테스트만으로는 실제 경쟁 조건을 재현하기 어렵다고 판단하여, MySQL + MockMvc 환경의 멀티 스레드 테스트를 지냏ㅇ했다.
+단위 테스트만으로는 실제 경쟁 조건을 재현하기 어렵다고 판단하여, MySQL + MockMvc 환경의 멀티 스레드 테스트를 진행했다.
 
 |        시나리오        |                    검증 내용                     |
 |:------------------:|:--------------------------------------------:|
@@ -134,9 +134,7 @@ IdempotencyResult<CheckoutResult> getOrCreate(String key, Supplier<CheckoutResul
 
 ## 결론
 
-`getIfPresent + put` 구조는 TOCTOU 경쟁 조건을 내포했다.
-`getOrCreate` 단일 원자적 메서드로 포트 계약을 재설계해 문제를 해결했다.
-포트 인터페이스가 원자성 계약을 직접 표현하고, 각 구현체가 자신의 방식으로 이를 보장하는 구조다.
+`getIfPresent + put` 구조는 TOCTOU 경쟁 조건을 내포하는 것에서, `getOrCreate` 단일 원자적 메서드로 포트 계약을 재설계해 문제를 해결했다.
 
 |            구현체             |                   원자성 방법                   |  적합 환경  |
 |:--------------------------:|:------------------------------------------:|:-------:|
@@ -148,5 +146,5 @@ IdempotencyResult<CheckoutResult> getOrCreate(String key, Supplier<CheckoutResul
 
 - 서버 재시작 시 Caffeine 캐시 휘발 문제 존재
 - 프로덕션 전환 시 다음 중 하나 고려
-    - DB Unique Constraint: `idempotency_key` 유니크 제약으로 최후 방어선 추가
+    - DB Unique Constraint: `idempotency_key` 유니크 제약으로 최후 제약 조건 추가
     - Redis 구현체: `SETNX` 기반 분산 원자적 처리로 포트 교체
