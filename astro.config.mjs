@@ -6,6 +6,13 @@ import starlightBlog from 'starlight-blog';
 // https://astro.build/config
 export default defineConfig({
 	site: 'https://hyoguoo.github.io',
+	server: {
+		port: 4322,
+		host: true,
+	},
+	preview: {
+		port: 4322,
+	},
 	integrations: [
 		starlight({
 			title: "hyoguoo.log",
