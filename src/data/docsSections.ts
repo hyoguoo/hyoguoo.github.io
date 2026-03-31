@@ -314,7 +314,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Architecture & Integration',
-      slugs: ['ddd-architectures'],
+      slugs: ['ddd-architectures', 'application-service'],
     },
   ],
 };
