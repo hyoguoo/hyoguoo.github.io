@@ -1,8 +1,8 @@
 ---
 title: "Transactional Outbox Pattern"
 date: 2025-10-13
-lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+lastUpdated: 2026-03-31
+tags: [ Large-Scale System ]
 description: "마이크로서비스 환경에서 DB 상태 변경과 메시지 발행의 원자성을 보장하기 위한 Transactional Outbox 패턴을 설명한다."
 ---
 
@@ -41,6 +41,29 @@ public void completeOrder(Long orderId) {
     - 데이터베이스의 ACID 특성 덕분에, 두 작업은 반드시 함께 성공하거나 함께 실패
 2. 안전한 발행
     - `outbox` 테이블에 저장된 이벤트를 별도의 프로세스가 읽어 외부 메시지 브로커로 전달
+
+### 동작 흐름도
+
+```mermaid
+flowchart TD
+    subgraph LocalTx ["Local Transaction (Atomicity)"]
+        A[1. 비즈니스 로직 수행] --> B[2. 로컬 DB 트랜잭션 시작]
+        B --> C[3. 비즈니스 데이터 저장]
+        C --> D[4. Outbox 테이블에 이벤트 저장]
+        D --> E[5. 트랜잭션 커밋]
+    end
+
+    subgraph Relay ["Message Relay (Polling/CDC)"]
+        E --> F{6. Outbox 감지}
+        F -->|New Event| G[7. 메시지 브로커 발행]
+        G --> H[8. 발행 완료 표시/삭제]
+    end
+
+    subgraph External ["External Infrastructure"]
+        G --> I((Message Broker))
+        I --> J[9. 타 서비스 구독/처리]
+    end
+```
 
 ## 이벤트 발행 방식
 
