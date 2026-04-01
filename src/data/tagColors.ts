@@ -15,6 +15,7 @@ export const TAG_HUES: Record<string, number> = {
   'Operating System': 230,
   'Computer Architecture': 60,
   'Large-Scale System': 190,
+  'Performance Engineering': 260,
   'Setting': 150,
   'Payment Platform Project': 300,
 };

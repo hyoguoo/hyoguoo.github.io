@@ -303,6 +303,12 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: ['testing-basic', 'test-guide', 'test-double', 'test-fixture'],
     },
   ],
+  'performance-engineering': [
+    {
+      label: 'Foundations',
+      slugs: ['performance-physics'],
+    },
+  ],
   ddd: [
     {
       label: 'Strategic Design',

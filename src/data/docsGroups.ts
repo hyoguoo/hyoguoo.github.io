@@ -37,6 +37,7 @@ export const DOCS_GROUPS: DocsGroup[] = [
   ]},
   { label: 'System Architecture', items: [
     { key: 'large-scale-system', label: 'Large-Scale System' },
+    { key: 'performance-engineering', label: 'Performance Engineering' },
   ]},
   { label: 'Software Design', items: [
     { key: 'oop', label: 'OOP' },
