@@ -306,7 +306,7 @@ export const docsSections: Record<string, SectionConfig> = {
   'performance-engineering': [
     {
       label: 'Foundations',
-      slugs: ['performance-physics'],
+      slugs: ['performance-physics', 'testing-types-and-strategy'],
     },
   ],
   ddd: [
