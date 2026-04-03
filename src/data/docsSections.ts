@@ -314,6 +314,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Foundations',
       slugs: ['performance-physics', 'testing-types-and-strategy', 'metrics-and-statistics'],
     },
+    {
+      label: 'Modeling',
+      slugs: ['workload-modeling'],
+    },
   ],
   ddd: [
     {
