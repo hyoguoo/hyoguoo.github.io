@@ -316,7 +316,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Modeling',
-      slugs: ['workload-modeling', 'user-journey-design'],
+      slugs: ['workload-modeling', 'user-journey-design', 'data-parameterization'],
     },
   ],
   ddd: [
