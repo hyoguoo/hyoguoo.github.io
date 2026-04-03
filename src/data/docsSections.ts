@@ -80,6 +80,7 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Agentic Workflow',
       slugs: [
         'state-persistent-planning-workflow',
+        'harness-engineering',
       ],
     },
     {
