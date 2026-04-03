@@ -318,6 +318,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Modeling',
       slugs: ['workload-modeling', 'user-journey-design', 'data-parameterization'],
     },
+    {
+      label: 'Tooling - k6',
+      slugs: ['k6-engine-architecture'],
+    },
   ],
   ddd: [
     {
