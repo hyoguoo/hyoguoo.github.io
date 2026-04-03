@@ -77,10 +77,15 @@ export const docsSections: Record<string, SectionConfig> = {
       ],
     },
     {
+      label: 'Agentic Workflow',
+      slugs: [
+        'state-persistent-planning-workflow',
+      ],
+    },
+    {
       label: 'Claude Code',
       slugs: [
         'claude-code-core-features-guide',
-        'state-persistent-planning-workflow',
         'claude-code-skills-guide',
         'claude-context-management',
         'claude-code-command-operation-logic',
