@@ -92,36 +92,46 @@ graph TD
 
 ```mermaid
 graph TD
+%% 클래스 정의 (가독성 및 테마 대응)
+    classDef standard fill: #F5F5F5, stroke: #333, color: #000
+    classDef process fill: #E1F5FF, stroke: #0078D4, color: #000
+    classDef decision fill: #FFF2CC, stroke: #D79B00, color: #000
+    classDef success fill: #E8F5E9, stroke: #2E7D32, color: #000
+    classDef fail fill: #F8CECC, stroke: #B85450, color: #000
+
     subgraph sg1 ["1단계: 작업 생성 및 재고 차감 (Transaction 1)"]
-        A["요청 시작"] --> B{"Tx START"};
-        B --> C["1. payment_process 테이블에<br/>'PROCESSING' 상태로 작업(Job) INSERT"];
-        C --> D["2. stock 테이블 재고 차감"];
-        D --> E{"Tx COMMIT"};
+        A["요청 시작"]:::standard --> B{"Tx START"}:::decision
+        B --> C["1. payment_process 테이블에<br/>'PROCESSING' 상태로 작업(Job) INSERT"]:::process
+        C --> D["2. stock 테이블 재고 차감"]:::process
+        D --> E{"Tx COMMIT"}:::decision
     end
 
-    E -- 성공 --> F["2단계: 외부 PG사 결제 처리"];
-    F --> G{결제 성공?};
+    E -- " 성공 " --> F["2단계: 외부 PG사 결제 처리"]:::standard
+    F --> G{결제 성공?}:::decision
+
     subgraph sg3 ["3단계: 작업 완료 (Transaction 2)"]
-        G -- Yes --> H_Success["Tx START"];
-        H_Success --> I_Success["payment_process 상태 'COMPLETED'로 UPDATE"];
-        I_Success --> J_Success["orders 테이블 상태 '결제 완료'로 변경"];
-        J_Success --> K_Success["Tx COMMIT"];
-        K_Success --> L_End["종료"];
-        G -- No --> H_Fail["Tx START"];
-        H_Fail --> I_Fail["payment_process 상태 'FAILED'로 UPDATE"];
-        I_Fail --> J_Fail["[보상 트랜잭션]<br/>차감했던 재고 복구"];
-        J_Fail --> K_Fail["Tx COMMIT"];
-        K_Fail --> L_End;
+        G -- " Yes " --> H_Success["Tx START"]:::decision
+        H_Success --> I_Success["payment_process 상태 'COMPLETED'로 UPDATE"]:::success
+        I_Success --> J_Success["orders 테이블 상태 '결제 완료'로 변경"]:::success
+        J_Success --> K_Success["Tx COMMIT"]:::decision
+        K_Success --> L_End["종료"]:::standard
+        G -- " No " --> H_Fail["Tx START"]:::decision
+        H_Fail --> I_Fail["payment_process 상태 'FAILED'로 UPDATE"]:::fail
+        I_Fail --> J_Fail["[보상 트랜잭션]<br/>차감했던 재고 복구"]:::fail
+        J_Fail --> K_Fail["Tx COMMIT"]:::decision
+        K_Fail --> L_End
     end
 
     subgraph sg_recovery ["장애 복구 로직"]
-        Z["복구 로직 시작"] --> Y["payment_process 테이블에서<br/>'PROCESSING' 상태인 작업 조회"];
-        Y --> X{"PG사에 실제 결제 성공 여부 조회 or 승인 요청"};
-
-    %% 복구 로직이 중단되었던 3단계 로직을 다시 실행
-        X -- " 결제 성공 상태 " --> H_Success;
-        X -- " 결제 실패 상태 " --> H_Fail;
+        Z["복구 로직 시작"]:::standard --> Y["payment_process 테이블에서<br/>'PROCESSING' 상태인 작업 조회"]:::process
+        Y --> X{"PG사에 실제 결제 성공 여부 조회 or 승인 요청"}:::decision
+    %% 복구 로직 연동
+        X -- " 결제 성공 상태 " --> H_Success
+        X -- " 결제 실패 상태 " --> H_Fail
     end
+
+%% 스타일 보정 (연결선 텍스트 강조)
+    linkStyle 4,14,15 stroke: #333, stroke-width: 2px, color: #000
 ```
 
 ## 보상 트랜잭션 실패 흐름 시나리오
