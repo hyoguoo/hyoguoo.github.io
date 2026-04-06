@@ -320,7 +320,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Tooling - k6',
-      slugs: ['k6-engine-architecture'],
+      slugs: ['k6-engine-architecture', 'scripting-and-thresholds'],
     },
   ],
   ddd: [
