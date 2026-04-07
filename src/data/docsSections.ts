@@ -344,7 +344,7 @@ export const docsSections: Record<string, SectionConfig> = {
   gradle: [
     {
       label: 'Core Concepts',
-      slugs: ['build-lifecycle-and-core'],
+      slugs: ['build-lifecycle-and-core', 'task-graph-and-dag'],
     },
   ],
 };
