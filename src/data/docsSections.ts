@@ -341,4 +341,10 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: ['ddd-architectures', 'application-service', 'domain-event'],
     },
   ],
+  gradle: [
+    {
+      label: 'Core Concepts',
+      slugs: ['build-lifecycle-and-core'],
+    },
+  ],
 };

@@ -32,7 +32,8 @@ export const DOCS_GROUPS: DocsGroup[] = [
     { key: 'test', label: 'Test' },
     { key: 'ai-assisted-development', label: 'AI-Assisted Development' },
   ]},
-  { label: 'DevOps & Infra', items: [
+  { label: 'Build & Infra', items: [
+    { key: 'gradle', label: 'Gradle' },
     { key: 'docker', label: 'Docker' },
   ]},
   { label: 'System Architecture', items: [
