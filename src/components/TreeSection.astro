@@ -2,12 +2,13 @@
 interface Props {
   label: string;
   labelVariant?: 'accent' | 'muted';
+  hue?: number;
 }
-const { label, labelVariant = 'muted' } = Astro.props;
+const { label, labelVariant = 'muted', hue } = Astro.props;
 ---
 
-<div class="tree-section">
-  <h2 class:list={['section-label', { 'section-label--accent': labelVariant === 'accent' }]}>
+<div class="tree-section" style={hue !== undefined ? `--section-hue: ${hue}` : undefined}>
+  <h2 class:list={['section-label', { 'section-label--accent': labelVariant === 'accent', 'section-label--colored': hue !== undefined }]}>
     {label}
   </h2>
   <slot />
@@ -42,6 +43,16 @@ const { label, labelVariant = 'muted' } = Astro.props;
     padding-bottom: 0.5rem;
     border-bottom: 2px solid var(--sl-color-text-accent);
     opacity: 0.9;
+  }
+
+  .section-label--colored {
+    color: hsl(var(--section-hue), 70%, 75%);
+    border-bottom-color: hsla(var(--section-hue), 70%, 50%, 0.4);
+  }
+
+  :root[data-theme='light'] .section-label--colored {
+    color: hsl(var(--section-hue), 65%, 35%);
+    border-bottom-color: hsla(var(--section-hue), 60%, 40%, 0.3);
   }
 
   .tree-section :global(.link-list) {

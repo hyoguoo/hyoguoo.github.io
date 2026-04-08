@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import TreeSection from './TreeSection.astro';
-import { CATEGORY_ORDER } from '../data/tagColors';
+import { CATEGORY_ORDER, getHue } from '../data/tagColors';
 
 const allPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
@@ -55,7 +55,7 @@ function formatDate(date: Date) {
     <p class="empty-state">포스팅이 없습니다.</p>
   ) : (
     sortedCategories.map(([category, posts]) => (
-      <TreeSection label={category} labelVariant="accent">
+      <TreeSection label={category} labelVariant="accent" hue={getHue(category)}>
         <ul class="post-list">
           {posts.map(post => (
             <li>

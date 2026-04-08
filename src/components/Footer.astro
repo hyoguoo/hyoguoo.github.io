@@ -2,6 +2,7 @@
 import type { Props } from '@astrojs/starlight/props';
 import Default from '@astrojs/starlight/components/Footer.astro';
 import Giscus from './Giscus.astro';
+import { getHue } from '../data/tagColors';
 
 const { entry } = Astro.props;
 const routeEntry = Astro.locals.starlightRoute?.entry;
@@ -23,7 +24,7 @@ const showDocsTags = isDocsPage && docsTags && docsTags.length > 0 && !isIndexPa
 {showDocsTags && (
   <div class="docs-tags">
     {docsTags!.map((tag: string) => (
-      <span class="docs-tag">{tag}</span>
+      <span class="docs-tag" style={`--tag-hue: ${getHue(tag)}`}>{tag}</span>
     ))}
   </div>
 )}
@@ -40,8 +41,14 @@ const showDocsTags = isDocsPage && docsTags && docsTags.length > 0 && !isIndexPa
   .docs-tag {
     font-size: var(--sl-text-xs);
     padding: 0.2rem 0.6rem;
-    background: var(--sl-color-bg-inline-code);
-    color: var(--sl-color-text-accent);
+    background: hsl(var(--tag-hue, 220), 55%, 18%);
+    color: hsl(var(--tag-hue, 220), 80%, 72%);
     border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  :root[data-theme='light'] .docs-tag {
+    background: hsl(var(--tag-hue, 220), 60%, 92%);
+    color: hsl(var(--tag-hue, 220), 55%, 32%);
   }
 </style>

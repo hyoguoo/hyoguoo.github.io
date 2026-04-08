@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import PageLayout from '../components/PageLayout.astro';
-import { TAG_HUES } from '../data/tagColors';
+import { getHue } from '../data/tagColors';
 
 const allBlogPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
@@ -36,13 +36,6 @@ function formatDate(date: Date | string | undefined) {
     month: 'short',
     day: 'numeric',
   });
-}
-
-function tagHue(tag: string): number {
-  if (tag in TAG_HUES) return TAG_HUES[tag];
-  let hash = 0;
-  for (const c of tag) hash = (hash * 31 + c.charCodeAt(0)) & 0xffff;
-  return hash % 360;
 }
 ---
 
@@ -127,7 +120,7 @@ function tagHue(tag: string): number {
                     <li>
                       <a href={`/${post.id}/`} class="post-row">
                         {tag
-                            ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                            ? <span class="post-tag" style={`--tag-hue:${getHue(tag)}`}>{tag}</span>
                             : <span />
                         }
                         <span class="post-title">{post.data.title}</span>
@@ -162,7 +155,7 @@ function tagHue(tag: string): number {
                     <li>
                       <a href={`/${doc.id}/`} class="post-row">
                         {tag
-                            ? <span class="post-tag" style={`--tag-hue:${tagHue(tag)}`}>{tag}</span>
+                            ? <span class="post-tag" style={`--tag-hue:${getHue(tag)}`}>{tag}</span>
                             : <span />
                         }
                         <span class="post-title">{doc.data.title}</span>

@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import TreeSection from './TreeSection.astro';
 import LinkList from './LinkList.astro';
 import { DOCS_GROUPS } from '../data/docsGroups';
+import { getHue } from '../data/tagColors';
 
 // docsLoader id format: 'docs/subcategory/slug' for docs, 'docs/subcategory' for index pages
 
@@ -38,6 +39,7 @@ const visibleGroups = DOCS_GROUPS.map(group => ({
       <LinkList items={group.items.map(item => ({
         title: item.label,
         url: subcategoriesWithIndex.has(item.key) ? `/docs/${item.key}/` : null,
+        hue: getHue(item.label),
       }))} />
     </TreeSection>
   ))}

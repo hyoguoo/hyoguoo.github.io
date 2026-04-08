@@ -1,6 +1,6 @@
 ---
 interface Props {
-  items: { title: string; url: string | null }[];
+  items: { title: string; url: string | null; hue?: number }[];
   label?: string;
   compact?: boolean;
 }
@@ -12,11 +12,17 @@ const { items, label, compact = false } = Astro.props;
   {items.map(item => (
     <li>
       {item.url
-        ? <a href={item.url} class="link-row">
-            <span>{item.title}</span>
+        ? <a href={item.url} class="link-row" style={item.hue !== undefined ? `--item-hue: ${item.hue}` : undefined}>
+            <span class:list={['link-title', { 'link-title--colored': item.hue !== undefined }]}>
+              {item.title}
+            </span>
             <span class="link-arrow" aria-hidden="true">→</span>
           </a>
-        : <span class="link-row link-row--disabled">{item.title}</span>
+        : <span class="link-row link-row--disabled" style={item.hue !== undefined ? `--item-hue: ${item.hue}` : undefined}>
+            <span class:list={['link-title', { 'link-title--colored': item.hue !== undefined }]}>
+              {item.title}
+            </span>
+          </span>
       }
     </li>
   ))}
@@ -59,6 +65,30 @@ const { items, label, compact = false } = Astro.props;
     text-decoration: none;
     color: var(--sl-color-text);
     transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .link-title--colored {
+    padding-left: 0.75rem;
+  }
+
+  .link-title--colored::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 1.2rem;
+    background: hsl(var(--item-hue), 60%, 65%);
+    border-radius: 2px;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+  }
+
+  :root[data-theme='light'] .link-title--colored::before {
+    background: hsl(var(--item-hue), 60%, 45%);
+    opacity: 0.5;
   }
 
   .link-list.compact li:first-child .link-row {
@@ -76,6 +106,12 @@ const { items, label, compact = false } = Astro.props;
   a.link-row:hover {
     color: var(--sl-color-text-accent);
     padding-left: 0.25rem;
+  }
+
+  a.link-row:hover .link-title--colored::before {
+    height: 1.4rem;
+    opacity: 1;
+    width: 4px;
   }
 
   .link-arrow {
