@@ -1,33 +1,84 @@
 ---
 title: "Query Processing"
 date: 2025-08-15
-lastUpdated: 2025-08-16
-tags: [MySQL]
+lastUpdated: 2026-04-09
+tags: [ MySQL ]
 description: "MySQL 서버와 스토리지 엔진 간의 핸들러 API 기반 쿼리 처리 흐름과 파싱·최적화·실행 단계를 분석한다."
 ---
 
 MySQL이 하나의 SQL 쿼리를 받아 결과를 반환하기까지, 내부는 MySQL 서버(Server)와 스토리지 엔진(Storage Engine) 두 컴포넌트가 핸들러 API를 통해 협력하여 처리한다.
 
 - MySQL 서버: 쿼리의 논리적인 처리 전반 담당
-    - SQL 파싱
-    - 권한/스키마 확인
-    - 쿼리 재작성
-    - 비용 기반 최적화
-    - 실행 계획 수립 및 제어
-    - 정렬/집계/표현식 계산
-    - 임시테이블 관리
-    - 바이너리 로그(Binlog) 관리
+    - SQL 파싱: 구문 분석 및 토큰화 수행
+    - 권한/스키마 확인: 데이터 접근 권한 및 객체 존재 여부 검증
+    - 쿼리 재작성: 논리적으로 동일하지만 더 효율적인 쿼리로 변환
+    - 비용 기반 최적화: 통계 정보를 활용한 최적의 실행 계획 수립
+    - 실행 계획 수립 및 제어: 수립된 플랜에 따라 전체 실행 흐름 관리
+    - 정렬/집계/표현식 계산: 스토리지 엔진에서 받은 로우 가공 및 계산
+    - 임시테이블 관리: 필요 시 메모리 또는 디스크에 임시 테이블 생성
+    - 바이너리 로그(Binlog) 관리: 데이터 변경 내역 기록 및 복제 지원
 - 스토리지 엔진: 데이터의 물리적인 저장 및 접근 담당
-    - 실제 데이터 / 인덱스 페이지 접근
-    - 인덱스 탐색
-    - 레코드 읽기·쓰기
-    - MVCC (Multi-Version Concurrency Control)
-    - 잠금(Lock) 관리
-    - 리두(Redo) 및 언두(Undo) 로그 관리
-    - 크래시 리커버리
-- 핸들러 API (Handler API): 서버와 스토리지 엔진 간의 인터페이스
+    - 실제 데이터 / 인덱스 페이지 접근: 디스크 I/O 및 버퍼 풀 관리
+    - 인덱스 탐색: B+Tree 구조를 활용한 데이터 검색
+    - 레코드 읽기·쓰기: 실제 행 단위 데이터 처리
+    - MVCC (Multi-Version Concurrency Control): 동시성 제어를 위한 다중 버전 관리
+    - 잠금(Lock) 관리: 레코드 및 인덱스 수준의 잠금 제어
+    - 리두(Redo) 및 언두(Undo) 로그 관리: 복구 및 트랜잭션 정합성 보장
+    - 크래시 리커버리: 시스템 장애 시 데이터 일관성 복구
+    - 핸들러 API (Handler API): 서버와 스토리지 엔진 간의 통신 인터페이스
+
+## 쿼리 처리 방식의 종류
+
+MySQL은 클라이언트와 통신하고 쿼리를 처리하는 방식에 따라 두 가지 프로토콜을 사용한다.
+
+### 1. 일반 쿼리 (Text Protocol)
+
+우리가 흔히 사용하는 방식(`COM_QUERY`)이다.
+
+- 모든 SQL 문장과 데이터를 문자열 형태로 전송
+- 매번 요청 시마다 파싱, 전처리, 최적화 단계를 새롭게 거침
+
+### 2. Prepared Statement (Binary Protocol)
+
+보안과 성능을 위해 도입된 방식(`COM_STMT_PREPARE`, `COM_STMT_EXECUTE`)으로, 쿼리의 구조와 데이터를 분리하여 처리한다.
+
+- 2단계 처리 (2-Step Process)
+    1. PREPARE: SQL 템플릿(파라미터 `?` 포함)을 서버에 전송
+        - 서버는 이 시점에 쿼리의 구조를 확정하고 파싱 및 최적화를 수행하여 Statement ID 발급
+    2. EXECUTE: 클라이언트는 Statement ID와 실제 값(파라미터)만 전송
+        - 서버는 미리 준비된 실행 계획에 값을 채워 즉시 실행
+- 바이너리 프로토콜: 데이터 전송 시 문자열 변환 없이 타입별 바이너리 형식 사용
+    - 패킷 크기 감소 및 데이터 변환 오버헤드 최소화 지원
+
+## SQL Injection 방어 원리 (DB 관점)
+
+Prepared Statement가 보안에 강력한 이유는 데이터와 명령어를 물리적으로 분리하기 때문이다.
+
+1. 문법 해석의 선행: `PREPARE` 단계에서 이미 SQL의 문법 구조(AST)가 생성되고 고정
+    - 이후 `EXECUTE` 시점에 어떤 값이 들어와도 이미 확정된 쿼리의 구조(Structure) 변경 불가능
+2. 리터럴 강제 바인딩: 바인딩되는 파라미터는 서버 내부적으로 항상 단순 리터럴(Literal) 취급
+3. 타입 안전성: 바이너리 프로토콜을 통해 데이터의 타입 정보가 명확히 전달되므로, 의도치 않은 타입 변환을 이용한 공격 방지
 
 ## 쿼리 생명주기 (Query Lifecycle)
+
+MySQL이 하나의 SQL을 처리하는 과정은 크게 4단계로 나뉜다.
+
+```mermaid
+graph TD
+    Client[클라이언트 요청] --> Parser[SQL 파서: 토큰 분해 및 AST 생성]
+    Parser --> Preprocessor[전처리기: 객체 존재 여부 및 권한 확인]
+    Preprocessor --> Optimizer[옵티마이저: 비용 기반 실행 계획 수립]
+    Optimizer --> Executor[실행 엔진: 핸들러 API 호출 및 제어]
+    Executor <--> StorageEngine[스토리지 엔진: 실제 데이터 읽기 및 쓰기]
+    Executor --> Client[결과 반환]
+```
+
+- 일반 쿼리: 요청 시마다 모든 단계를 순차적으로 수행
+- Prepared Statement:
+    - PREPARE: 파싱과 구조적 최적화를 미리 수행하여 쿼리의 골격을 확정하고 캐싱
+    - EXECUTE: 실제 값을 바인딩하고 데이터 분포에 따른 최종 실행 계획을 수립하여 실행
+
+CUTE: 전달받은 실제 값을 바인딩하고, 데이터 분포에 따른 최종 실행 계획(인덱스 선택 등)을 수립하여 `3단계(실행)`
 
 ### 1단계: 접속 / 파싱 / 전처리
 
@@ -93,38 +144,31 @@ MySQL이 하나의 SQL 쿼리를 받아 결과를 반환하기까지, 내부는 
 
 ## 요약
 
-|             기능/작업              |  주 담당   |             설명             |
-|:------------------------------:|:-------:|:--------------------------:|
-|    플랜 수립 (인덱스 선택, 조인 순서 등)     |   서버    |        옵티마이저의 핵심 역할        |
-|        인덱스 탐색 및 레코드 I/O        |   엔진    |    B+Tree 접근, 페이지 읽기/쓰기    |
-|    트랜잭션, MVCC, 잠금(Lock), 복구    |   엔진    |       InnoDB의 핵심 기능        |
-|          WHERE 조건 평가           |   서버    |       엔진이 ICP로 일부 처리       |
-| GROUP BY / ORDER BY / DISTINCT |   서버    | 인덱스로 최적화 가능 시 엔진의 순차 스캔 활용 |
-|   임시 테이블 / 파일 정렬 (Filesort)    |   서버    |       메모리 또는 디스크 사용        |
-|        조인 / 함수 / 표현식 계산        |   서버    |        논리적인 데이터 가공         |
-|          바이너리 로그 / 복제          |   서버    |      엔진과 2단계 커밋으로 협력       |
-|      파티션 프루닝 / MRR / BKA       | 서버 (결정) |       엔진이 효율적인 읽기 수행       |
+|    기능/작업     | 주 담당 |             설명              |
+|:------------:|:----:|:---------------------------:|
+|   실행 계획 수립   |  서버  |     옵티마이저를 통한 최적 경로 탐색      |
+| 인덱스 탐색 및 I/O |  엔진  |    B+Tree 접근 및 페이지 읽기 수행    |
+|  트랜잭션 및 잠금   |  엔진  |  InnoDB 내부의 MVCC 및 데이터 보호   |
+| WHERE 조건 평가  |  서버  |   엔진의 ICP 지원을 포함한 조건 필터링    |
+|   정렬 및 집계    |  서버  | 인덱스 미활용 시 정렬 버퍼 및 임시 테이블 사용 |
+|  바이너리 로그 관리  |  서버  |       복제 지원을 위한 로그 기록       |
 
 ## 실제 쿼리 실행 예시
 
 ```sql
-SELECT
-    u.name,
-    o.order_date,
-    o.amount
-FROM
-    users u
-JOIN
-    orders o ON u.id = o.user_id
-WHERE
-    u.status = 'ACTIVE' AND o.amount > 10000
-ORDER BY
-    o.order_date DESC
+# `users` 테이블: `id`(PK), `name`, `status` (`status` 컬럼에 인덱스 존재)
+# `orders` 테이블: `id`(PK), `user_id`, `order_date`, `amount` (`order_date` 컬럼에 인덱스 존재)
+SELECT u.name,
+       o.order_date,
+       o.amount
+FROM users u
+         JOIN
+     orders o ON u.id = o.user_id
+WHERE u.status = 'ACTIVE'
+  AND o.amount > 10000
+ORDER BY o.order_date DESC
 LIMIT 10;
 ```
-
-- `users` 테이블: `id`(PK), `name`, `status` (`status` 컬럼에 인덱스 존재)
-- `orders` 테이블: `id`(PK), `user_id`, `order_date`, `amount` (`order_date` 컬럼에 인덱스 존재)
 
 ### 1단계: 접속, 파싱, 전처리
 
