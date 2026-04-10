@@ -348,7 +348,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Dependency Management',
-      slugs: ['dependency-configurations'],
+      slugs: ['dependency-configurations', 'resolution-strategy'],
     },
   ],
 };
