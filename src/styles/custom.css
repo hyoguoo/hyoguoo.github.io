@@ -1,4 +1,4 @@
-/* Custom CSS - minimal overrides only */
+/* Custom CSS - Starlight overrides + global design enhancements */
 @import './tokens.css';
 
 :root {
@@ -27,6 +27,20 @@
   --sl-color-bg-sidebar: var(--t-bg);
   --sl-color-hairline-light: var(--t-border);
   --sl-color-hairline: var(--t-border);
+}
+
+/* ── Starlight content enhancements ── */
+
+/* Code blocks: rounded + subtle shadow */
+.expressive-code {
+  border-radius: var(--t-radius-md) !important;
+  box-shadow: var(--t-shadow-md) !important;
+  overflow: hidden;
+}
+
+/* Sidebar link hover enhancement */
+nav.sidebar a:hover {
+  color: var(--t-accent-light) !important;
 }
 
 /* Hide RSS icon and its container from header social links */

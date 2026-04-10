@@ -17,9 +17,16 @@ const { label, labelVariant = 'muted', hue } = Astro.props;
 <style>
   .tree-section {
     border: 1px solid var(--sl-color-hairline);
-    border-radius: 8px;
-    padding: 1.25rem 1.5rem;
+    border-radius: 10px;
+    padding: 1.35rem 1.5rem;
     background: var(--sl-color-bg-nav);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: border-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tree-section:hover {
+    border-color: color-mix(in srgb, var(--sl-color-hairline) 60%, transparent);
   }
 
   .section-label {
@@ -34,25 +41,51 @@ const { label, labelVariant = 'muted', hue } = Astro.props;
   }
 
   .section-label--accent {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     font-weight: 700;
     text-transform: none;
     letter-spacing: -0.01em;
-    color: var(--sl-color-text-accent);
     margin-bottom: 0.75rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--sl-color-text-accent);
-    opacity: 0.9;
+    padding-bottom: 0.6rem;
+    padding-left: 0.65rem;
+    position: relative;
+  }
+
+  .section-label--accent::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.15rem;
+    width: 3px;
+    height: 1.1rem;
+    border-radius: 2px;
+    background: var(--sl-color-text-accent);
   }
 
   .section-label--colored {
     color: hsl(var(--section-hue), 70%, 75%);
-    border-bottom-color: hsla(var(--section-hue), 70%, 50%, 0.4);
+    border-bottom-color: hsla(var(--section-hue), 70%, 50%, 0.25);
+  }
+
+  .section-label--colored::before {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--section-hue), 70%, 65%),
+      hsl(var(--section-hue), 60%, 45%)
+    );
   }
 
   :root[data-theme='light'] .section-label--colored {
     color: hsl(var(--section-hue), 65%, 35%);
-    border-bottom-color: hsla(var(--section-hue), 60%, 40%, 0.3);
+    border-bottom-color: hsla(var(--section-hue), 60%, 40%, 0.2);
+  }
+
+  :root[data-theme='light'] .section-label--colored::before {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--section-hue), 65%, 45%),
+      hsl(var(--section-hue), 55%, 55%)
+    );
   }
 
   .tree-section :global(.link-list) {
