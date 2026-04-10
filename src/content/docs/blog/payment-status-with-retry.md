@@ -8,6 +8,12 @@ description: "모든 결제 에러를 실패로만 처리하던 문제를 결제
 
 > 실행 환경: Java 21, Spring Boot 3.3.3
 
+> [!CAUTION]
+> 이 글은 작성 시점의 구현을 기준으로 하며, 이후 상태 모델과 복구 로직이 전면 재설계되었다.
+> UNKNOWN 상태는 RETRYING으로 대체되었고, QUARANTINED 상태가 추가되었다.
+> 예외 기반 분기는 RecoveryDecision 값 객체로, 하드코딩된 재시도 한도는 RetryPolicy 도메인 객체로 전환되었으며, getStatus 선행 조회 패턴이 도입되었다.
+> 현재 설계는 [결제 복구 상태 전이 설계](/blog/payment-recovery-state-design/)를 참고한다.
+
 ## 배경
 
 최초 구상했던 [결제 로직](/blog/payment-system-with-toss/)은 결제 정보 검증을 통해 안전한 결제 연동 시스템을 목표로 했지만, 예상치 못한 에러에 대한 처리 로직이 미흡했다.
