@@ -1,12 +1,26 @@
 ---
 title: Build Lifecycle and Core (빌드 생명주기)
 date: 2026-04-07
-lastUpdated: 2026-04-07
+lastUpdated: 2026-04-10
 tags: [ Gradle ]
 description: "Gradle의 빌드 생명주기 3단계와 Project, Task 등 핵심 모델의 동작 원리를 심층적으로 분석한다."
 ---
 
 Gradle은 JVM 기반의 유연한 빌드 자동화 도구로, 단순한 스크립트 실행기가 아닌 고도로 설계된 객체 모델(Object Model)을 기반으로 동작한다.
+
+## Gradle vs Maven
+
+Gradle은 Maven의 정적인 XML 기반 설정을 탈피하여, 동적인 DSL(Domain Specific Language)과 유연한 객체 모델을 제공한다.
+
+| 비교 항목  |        Maven         |                Gradle                |
+|:------:|:--------------------:|:------------------------------------:|
+| 설정 방식  |  고정된 XML (pom.xml)   | 유연한 Groovy/Kotlin DSL (build.gradle) |
+| 빌드 성능  |      선형적 단계 실행       |        증분 빌드 및 빌드 캐시 기반 빠른 속도        |
+| 의존성 해결 | 가까운 의존성 우선 (Nearest) |        가장 높은 버전 우선 (Highest)         |
+| 커스터마이징 |   플러그인 개발 중심 (복잡함)   |          스크립트 내 직접 로직 구현 가능          |
+
+- 유연성: Gradle은 빌드 스크립트 자체가 하나의 프로그램이므로, 조건문이나 루프를 활용한 복잡한 빌드 로직 처리 가능
+- 성능 최적화: 데몬 프로세스를 상주시키고 변경된 파일만 다시 빌드하는 증분 빌드(Incremental Build) 방식을 통해 빠른 빌드 속도 제공
 
 ## Build Lifecycle
 
