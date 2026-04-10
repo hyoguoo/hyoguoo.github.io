@@ -299,8 +299,12 @@ export const docsSections: Record<string, SectionConfig> = {
       ],
     },
     {
+      label: 'Spring Cloud',
+      slugs: ['spring-cloud-basic'],
+    },
+    {
       label: 'Additional',
-      slugs: ['spel', 'spring-cloud-basic'],
+      slugs: ['spel'],
     },
   ],
   test: [
