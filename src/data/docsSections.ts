@@ -295,12 +295,11 @@ export const docsSections: Record<string, SectionConfig> = {
         'mono-and-flux',
         'scheduler-thread-model',
         'netty-eventloop',
-        'webflux-api-gateway',
       ],
     },
     {
       label: 'Spring Cloud',
-      slugs: ['spring-cloud-basic'],
+      slugs: ['spring-cloud-connectivity', 'spring-cloud-gateway', 'spring-cloud-observability'],
     },
     {
       label: 'Additional',
