@@ -245,11 +245,11 @@ flowchart TD
     classDef check fill: #FEF9E7, color: #7D6608, stroke: #F1C40F
     classDef skip fill: #F5F5F5, color: #616161, stroke: #9E9E9E
     classDef exec fill: #FADBD8, color: #7B241C, stroke: #E74C3C
-    A["보상 TX 진입"] --> C{"1. Outbox가 IN_FLIGHT인가?\n(현재 사이클에서 선점한 건)"}:::check
-    C -- " NO " --> D["재고 복원 skip\nOutbox/Event 종결만 수행"]:::skip
-    C -- " YES " --> E{"2. PaymentEvent가 비종결인가?\n(아직 FAILED/DONE 아닌 건)"}:::check
+    A["보상 트랜잭션 진입"] --> C{"1. 대기열이 처리 중인가?\n(현재 사이클에서 선점한 건)"}:::check
+    C -- " NO " --> D["재고 복원 건너뜀\n대기열/결제 종결만 수행"]:::skip
+    C -- " YES " --> E{"2. 결제가 아직 미종결인가?\n(아직 실패/완료 아닌 건)"}:::check
     E -- " NO " --> D
-    E -- " YES " --> F["재고 복원 수행\n+ Outbox → FAILED\n+ PaymentEvent → FAILED"]:::exec
+    E -- " YES " --> F["재고 복원 수행\n+ 대기열 → 실패\n+ 결제 → 실패"]:::exec
 ```
 
 TX 시작 시점에 Outbox와 PaymentEvent를 DB에서 다시 조회하여, 두 조건 모두 충족할 때만 재고 복원을 실행한다.
@@ -271,9 +271,9 @@ flowchart TD
     classDef quarantine fill: #F3E5F5, color: #4A148C, stroke: #7B1FA2
     classDef action fill: #EBF5FB, color: #21618C, stroke: #3498DB
     A["한도 소진 시점"] --> B["PG 상태 1회 최종 재확인"]:::action
-    B -->|" DONE "| C["COMPLETE_SUCCESS(성공 승격)"]:::success
-    B -->|" PG 종결 실패\n(CANCELED/ABORTED 등) "| D["COMPLETE_FAILURE(재고 복원 + FAILED)"]:::failure
-    B -->|" PG 기록 없음/타임아웃/매핑 불가\n(판단 불가) "| F["QUARANTINE(격리, 재고 복원 금지)"]:::quarantine
+    B -->|" 승인 완료 "| C["성공 확정 (승격)"]:::success
+    B -->|" PG 종결 실패\n(취소/중단/만료 등) "| D["실패 확정 (재고 복원)"]:::failure
+    B -->|" PG 기록 없음/타임아웃/매핑 불가\n(판단 불가) "| F["격리 (관리자 개입 대기)"]:::quarantine
 ```
 
 ---
@@ -314,16 +314,16 @@ flowchart TD
 ```mermaid
 sequenceDiagram
     participant S as 서버
-    participant DB as Database
+    participant DB as DB
     participant PG as PG사
     S ->> PG: PG 승인 요청
-    PG -->> S: 200 OK (승인 완료)
+    PG -->> S: 승인 완료
     Note over S: 서버 장애 발생 (DB 커밋 전)
-    Note over DB: PaymentEvent = IN_PROGRESS, Outbox = IN_FLIGHT
-    Note over S: 5분 후 IN_FLIGHT 타임아웃 복구 → PENDING
+    Note over DB: 결제 = 진행 중, 대기열 = 처리 중
+    Note over S: 5분 후 타임아웃 복구 → 대기
     S ->> PG: PG 상태 조회
-    PG -->> S: DONE (승인 완료)
-    S ->> DB: [TX] PaymentEvent → DONE, Outbox → DONE
+    PG -->> S: 승인 완료
+    S ->> DB: [TX] 결제 완료 + 대기열 종결
 ```
 
 PG 상태를 먼저 조회함으로써 승인 재요청 없이 로컬에 바로 동기화하게 된다.
@@ -334,22 +334,22 @@ W1이 처리 중 느려져서 타임아웃이 발생하고, W2가 같은 건을 
 
 ```mermaid
 sequenceDiagram
-    participant W1 as Worker 1 (느림)
-    participant DB as Database
-    participant W2 as Worker 2
+    participant W1 as 워커 1 (느림)
+    participant DB as DB
+    participant W2 as 워커 2
     participant PG as PG사
-    W1 ->> DB: 원자적 선점 (PENDING → IN_FLIGHT)
+    W1 ->> DB: 원자적 선점 (대기 → 처리 중)
     Note over W1: 처리 지연...
-    Note over DB: IN_FLIGHT 타임아웃 복구
-    DB ->> DB: Outbox → PENDING 복원
-    W2 ->> DB: 원자적 재선점 (PENDING → IN_FLIGHT)
+    Note over DB: 타임아웃 복구
+    DB ->> DB: 대기열 → 대기 복원
+    W2 ->> DB: 원자적 재선점 (대기 → 처리 중)
     W2 ->> PG: PG 상태 조회
-    PG -->> W2: CANCELED (PG 종결 실패)
-    W2 ->> DB: [보상 TX] 재고 복원 + PaymentEvent → FAILED + Outbox → FAILED
+    PG -->> W2: 취소됨 (PG 종결 실패)
+    W2 ->> DB: [보상 TX] 재고 복원 + 결제 실패 + 대기열 실패
     Note over W1: 뒤늦게 보상 TX 시도
     W1 ->> DB: [보상 TX] 가드 검사
-    Note over DB: Outbox = FAILED (IN_FLIGHT 아님) → 가드 차단
-    W1 ->> DB: 재고 복원 skip
+    Note over DB: 대기열 = 실패 (처리 중 아님) → 가드 차단
+    W1 ->> DB: 재고 복원 건너뜀
 ```
 
 W2가 먼저 보상 TX를 커밋한 뒤, W1이 뒤늦게 같은 건에 보상 TX를 시도했지만, 재고 복구 가드가 "Outbox가 IN_FLIGHT가 아님"을 감지하여 재고 이중 복원을 차단한다.
@@ -364,18 +364,18 @@ W2가 먼저 보상 TX를 커밋한 뒤, W1이 뒤늦게 같은 건에 보상 TX
 
 ```mermaid
 sequenceDiagram
-    participant W as Worker
-    participant DB as Database
+    participant W as 워커
+    participant DB as DB
     participant PG as PG사
-    Note over DB: PaymentEvent = RETRYING (4회 실패)
-    Note over DB: Outbox = PENDING (nextRetryAt 도달)
+    Note over DB: 결제 = 재시도 중 (4회 실패)
+    Note over DB: 대기열 = 대기 (재시도 시점 도달)
     W ->> DB: 원자적 선점
     W ->> PG: PG 상태 조회
     PG -->> W: 타임아웃 (5번째 실패)
     Note over W: 한도 소진 → 격리 전 최종 확인
     W ->> PG: PG 상태 1회 최종 재확인
-    PG -->> W: DONE (승인 완료)
-    W ->> DB: [TX] PaymentEvent → DONE, Outbox → DONE
+    PG -->> W: 승인 완료
+    W ->> DB: [TX] 결제 완료 + 대기열 종결
 ```
 
 이 확인이 없었다면 5회 소진 시점에 QUARANTINED 또는 FAILED로 처리되어, 이미 승인된 결제의 재고가 복원될 수 있었지만, 마지막 getStatus 조회가 성공으로 승격시켜준다.
@@ -432,30 +432,30 @@ flowchart TD
     classDef action fill: #EBF5FB, color: #21618C, stroke: #3498DB
     classDef check fill: #FEF9E7, color: #7D6608, stroke: #F1C40F
     classDef skip fill: #F5F5F5, color: #616161, stroke: #9E9E9E
-    A["복구 틱"] --> CL["원자적 선점\nPENDING → IN_FLIGHT"]:::action
-    CL -->|" 선점 실패 "| SKIP["다른 Worker 처리 중 → 포기"]:::skip
-    CL -->|" 선점 성공 "| LC{"로컬 종결 상태 검사\nDONE/FAILED/CANCELED 등 여부"}:::check
-    LC -->|" 이미 종결\n(DONE/FAILED/CANCELED 등) "| REENTRY["REJECT_REENTRY\nOutbox만 멱등 종결"]:::skip
-    LC -->|" 비종결\n(READY/IN_PROGRESS/RETRYING) "| GS["PG 상태 선행 조회"]:::action
-    GS -->|" DONE "| SUCCESS["COMPLETE_SUCCESS"]:::success
-    GS -->|" CANCELED/ABORTED 등\nPG 종결 실패 "| FAILURE["COMPLETE_FAILURE"]:::failure
-    GS -->|" PG 기록 없음 "| CONFIRM["ATTEMPT_CONFIRM"]:::action
-    GS -->|" 타임아웃/5xx/매핑 불가\n+ 한도 미소진 "| RETRY["RETRY_LATER"]:::retryable
-    SUCCESS --> TX_DONE["PaymentEvent → DONE\nOutbox → DONE"]:::success
-    FAILURE --> GUARD{"재고 복구 가드\nOutbox IN_FLIGHT?\nEvent 비종결?"}:::check
+    A["복구 틱"] --> CL["원자적 선점\n대기 → 처리 중"]:::action
+    CL -->|" 선점 실패 "| SKIP["다른 워커가 처리 중 → 포기"]:::skip
+    CL -->|" 선점 성공 "| LC{"결제 종결 여부 검사\n완료/실패/취소 등"}:::check
+    LC -->|" 이미 종결\n(완료/실패/취소 등) "| REENTRY["재진입 거부\n대기열만 멱등 종결"]:::skip
+    LC -->|" 비종결\n(대기/진행 중/재시도 중) "| GS["PG 상태 선행 조회"]:::action
+    GS -->|" 승인 완료 "| SUCCESS["성공 확정"]:::success
+    GS -->|" 취소/중단/만료 등\nPG 종결 실패 "| FAILURE["실패 확정"]:::failure
+    GS -->|" PG 기록 없음 "| CONFIRM["PG 승인 요청"]:::action
+    GS -->|" 타임아웃/5xx/매핑 불가\n+ 한도 미소진 "| RETRY["재시도 대기"]:::retryable
+    SUCCESS --> TX_DONE["결제 완료\n대기열 종결"]:::success
+    FAILURE --> GUARD{"재고 복구 가드\n대기열 처리 중?\n결제 비종결?"}:::check
     CONFIRM --> CF["PG 승인 요청"]:::action
-    RETRY --> TX_RETRY["PaymentEvent → RETRYING\nnextRetryAt 설정\nOutbox → PENDING"]:::retryable
+    RETRY --> TX_RETRY["결제 → 재시도 중\n재시도 시점 설정\n대기열 → 대기"]:::retryable
     CF -->|" 승인 성공 "| TX_DONE
-    CF -->|" retryable + 한도 미소진 "| TX_RETRY
-    CF -->|" non-retryable "| GUARD
-    CF -->|" retryable + 한도 소진 "| FINAL
+    CF -->|" 재시도 가능 + 한도 미소진 "| TX_RETRY
+    CF -->|" 재시도 불가 "| GUARD
+    CF -->|" 재시도 가능 + 한도 소진 "| FINAL
     TX_RETRY -->|" 한도 소진 "| FINAL
     FINAL["격리 전 최종 확인\nPG 상태 1회 재확인"]:::action
-    FINAL -->|" DONE 확인 "| TX_DONE
+    FINAL -->|" 승인 완료 확인 "| TX_DONE
     FINAL -->|" PG 종결 실패 "| GUARD
-    FINAL -->|" 판단 불가 "| QU["QUARANTINE\nPaymentEvent → QUARANTINED\nOutbox → FAILED\n재고 복원 금지"]:::quarantine
-    GUARD -->|" 조건 충족 "| TX_COMP["보상 TX 실행\n재고 복원\nPaymentEvent → FAILED\nOutbox → FAILED"]:::failure
-    GUARD -->|" 조건 미충족 "| TX_SKIP["Outbox → FAILED만\n재고 복원 skip"]:::skip
+    FINAL -->|" 판단 불가 "| QU["격리\n결제 → 격리 상태\n대기열 → 실패\n재고 복원 금지"]:::quarantine
+    GUARD -->|" 조건 충족 "| TX_COMP["보상 트랜잭션 실행\n재고 복원\n결제 → 실패\n대기열 → 실패"]:::failure
+    GUARD -->|" 조건 미충족 "| TX_SKIP["대기열 → 실패만\n재고 복원 건너뜀"]:::skip
 ```
 
 ---
