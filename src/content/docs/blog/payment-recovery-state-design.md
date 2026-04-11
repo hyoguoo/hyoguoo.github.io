@@ -72,9 +72,6 @@ stateDiagram-v2
     UNKNOWN --> DONE: 재시도 성공
     UNKNOWN --> FAILED: 재시도 소진
     UNKNOWN --> UNKNOWN: 재시도 계속
-    DONE --> [*]
-    FAILED --> [*]
-    EXPIRED --> [*]
 ```
 
 또한 여러 스케줄러가 돌아가고 있고, 이를 관리하는 복구 사이클이 분산되어 있었다.
@@ -136,10 +133,6 @@ stateDiagram-v2
     RETRYING --> FAILED: non-retryable 오류 또는 재시도 소진
     RETRYING --> RETRYING: 재시도 또 실패 (한도 내)
     RETRYING --> QUARANTINED: 판단 불가 + 한도 소진
-    DONE --> [*]
-    FAILED --> [*]
-    EXPIRED --> [*]
-    QUARANTINED --> [*]
     class READY ready
     class IN_PROGRESS inprogress
     class RETRYING retrying
