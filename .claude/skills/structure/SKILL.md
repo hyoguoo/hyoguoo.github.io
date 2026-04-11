@@ -1,3 +1,8 @@
+---
+name: structure
+description: "사이트 구조와 컴포넌트 역할 파악. 사이트 구조, CSS 아키텍처, 컴포넌트 역할 확인이 필요할 때, 새 기능 추가 전 현황 파악, Starlight 업그레이드 영향도 검토 시 사용한다."
+---
+
 # /structure - 사이트 구조 & 컴포넌트 역할
 
 ## Triggers

@@ -1,3 +1,8 @@
+---
+name: description
+description: "SEO description 작성/추가/점검. description 작성, 추가, SEO 개선, 카테고리 일괄 작업, 기존 description 검토 요청 시 사용한다."
+---
+
 # /description - SEO Description 작성 가이드
 
 ## Triggers

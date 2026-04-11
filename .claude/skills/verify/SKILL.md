@@ -1,3 +1,8 @@
+---
+name: verify
+description: "스펙 준수 여부 검증. 구현 완료 후 확인 요청 시, Phase 완료 시점에, SPEC.md 언급과 함께 검증 요청이 올 때 사용한다."
+---
+
 # /verify - 스펙 준수 여부 검증
 
 ## Triggers

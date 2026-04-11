@@ -1,3 +1,8 @@
+---
+name: enhance
+description: "학습 문서 보강. /enhance 호출 시, 특정 문서나 카테고리의 보강을 요청할 때 사용한다."
+---
+
 # /enhance - 학습 문서 보강
 
 ## Triggers

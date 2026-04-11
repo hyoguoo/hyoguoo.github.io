@@ -1,3 +1,8 @@
+---
+name: status
+description: "블로그 빌드 진행 상황 확인. 세션 시작 시, 진행 상황 질문 시, PLAN.md 언급 시 사용한다."
+---
+
 # /status - 블로그 빌드 진행 상황 확인
 
 ## Triggers

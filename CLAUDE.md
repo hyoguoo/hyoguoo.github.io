@@ -124,6 +124,7 @@ description: ""           # SEO용. 작성 시 한 문장 요약 권장
 | `/description` | description 작성·추가·점검 요청 시 |
 | `/writing` | 문서 콘텐츠 작성·수정 시 (컨벤션 준수 필요 시) |
 | `/enhance` | `/enhance` 호출 시, 특정 문서·카테고리 보강 요청 시 |
+| `/review` | 글 피드백·리뷰·가독성 점검 요청 시 |
 
 ## 주요 원칙
 - 테마 커스터마이징은 Starlight CSS 변수 최소 수정 (accent 색상, 폰트만)
