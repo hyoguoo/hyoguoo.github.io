@@ -30,7 +30,20 @@ JVM의 존재는 자바 언어의 다음과 같은 특징을 결정한다.
 
 ## Java 실행 과정
 
-![java execution process](image/java-execution-process.png)
+```mermaid
+flowchart TD
+    SRC["JAVA Source<br/>(.java)"] -->|"JAVA Compiler (javac)"| BC["JAVA Byte Code<br/>(.class)"]
+    BC --> CL
+
+    subgraph JVM["JVM (JAVA Virtual Machine)"]
+        CL[Class Loader]
+        RDA[Runtime Data Area]
+        EE[Execution Engine]
+        CL --> RDA
+        CL --> EE
+        RDA <--> EE
+    end
+```
 
 - Java Compiler: Java Source Code를 Java Byte Code로 변환
 - Class Loader: 바이트 코드 로딩 / 검증 / 링킹 등 수행
@@ -78,8 +91,6 @@ JVM의 존재는 자바 언어의 다음과 같은 특징을 결정한다.
     - 실행 엔진의 일부로 동작하며, 힙(Heap) 메모리 영역에서 더 이상 참조되지 않는 객체(가비지)를 찾아 제거하고 메모리 회수
 
 ## JDK & JRE & JVM
-
-![java jdk diagram](image/java-jdk-diagram.png)
 
 - JVM(Java Virtual Machine): 자바 바이트 코드를 실행시키기 위한 가상 머신
 - JRE(Java Runtime Environment): 자바 애플리케이션을 실행하기 위한 도구(필요한 라이브러리 및 필수 파일)가 포함된 실행 환경(JRE = JVM + Standard Libraries)

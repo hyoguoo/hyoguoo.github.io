@@ -2,7 +2,7 @@
 title: "Memory"
 date: 2024-03-07
 lastUpdated: 2026-01-16
-tags: [Computer Architecture]
+tags: [ Computer Architecture ]
 description: "메모리 계층 구조와 논리/물리 주소 변환, MMU의 역할, 캐시 지역성 원리를 분석한다."
 ---
 
@@ -36,7 +36,28 @@ CPU가 논리 주소를 참조하면, 중간에서 누군가가 물리 주소로
 
 CPU 코어 내부(또는 인접)에 위치하는 장치로, 논리 주소를 물리 주소로 변환하고 메모리 보호 기능을 수행하는 핵심 하드웨어다.
 
-![MMU](image/mmu-work-schematic.png)
+```mermaid
+flowchart LR
+    subgraph CPU_CASING["CPU casing"]
+        direction LR
+        CPU[CPU] -->|virtual address| MMU[MMU]
+        TLB[TLB] <--> MMU
+    end
+
+    MMU -->|physical address| BUS[bus]
+
+    subgraph PM["physical memory"]
+        PA1[physical address #1]
+        PA2[physical address #2]
+        PA3[physical address #3]
+    end
+
+    BUS -->|physical address| PM
+```
+
+- CPU: Central Processing Unit
+- MMU: Memory Management Unit
+- TLB: Translation Lookaside Buffer
 
 ### MMU의 주요 역할
 

@@ -2,7 +2,7 @@
 title: "Design Web Crawler"
 date: 2025-10-13
 lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "웹 페이지를 수집하는 크롤러의 URL 우선순위 관리, 중복 방지, 예의 바른 크롤링(politeness) 등 대규모 시스템 설계를 다룬다."
 ---
 
@@ -35,7 +35,20 @@ description: "웹 페이지를 수집하는 크롤러의 URL 우선순위 관리
 
 ## 설계 및 수집 플로우
 
-![Web Crawler](image/web-crawler-flow.png)
+```mermaid
+flowchart LR
+    SEED[시작 URL 집합] --> STORE[미수집 URL 저장소]
+    STORE --> DL[HTML 다운로더]
+    DNS[도메인 이름 변환기] --> DL
+    DL --> PARSER[컨텐츠 파서]
+    PARSER --> DUP{중복 컨텐츠?}
+    PARSER --> CS[(컨텐츠 저장소)]
+    DUP --> EXT[URL 추출기]
+    EXT --> FILTER[URL 필터]
+    FILTER --> VISIT{이미 방문한 URL?}
+    VISIT -->|No| STORE
+    VISIT --> URLS[(URL 저장소)]
+```
 
 웹 크롤러 설계 시 위와 같이 컴포넌트를 나누어 설계할 수 있다.
 

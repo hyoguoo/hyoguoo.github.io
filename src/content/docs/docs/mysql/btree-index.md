@@ -22,7 +22,45 @@ InnoDB에서는 리프 노드에서 PK 값을 가지고 있어 실제 데이터 
 1. 보조 인덱스에서 조건에 맞는 리프 노드를 찾아 PK 조회
 2. PK를 통해 클러스터형 인덱스를 다시 검색해 최종 데이터 레코드 조회
 
-![InnoDB B-Tree](image/innodb-btree.png)
+```mermaid
+flowchart TD
+    subgraph BTree["B-Tree Index"]
+        direction TD
+        subgraph P1["Root Node - Page 1"]
+            R1["Aamer | 2\nJoana | 4\n... | 4"]
+        end
+        subgraph P2["Branch Node - Page 2"]
+            B1["Aamer | 4\nEbbe | 5\n... | 6"]
+        end
+        subgraph P3["Branch Node - Page 3"]
+            B2["Janna | 7\nLakshmi | 8\n... | 9"]
+        end
+        P1 --> P2
+        P1 --> P3
+        subgraph P4["Leaf Node - Page 4"]
+            L1["Aamer | 11800\nBabette | 10128"]
+        end
+        subgraph P5["Leaf Node - Page 5"]
+            L2["Ebbe | 10057\nFabrizio | 11854"]
+        end
+        subgraph P7["Leaf Node - Page 7"]
+            L3["Janna | 11384\nKagan | 12338"]
+        end
+        P2 --> P4
+        P2 --> P5
+        P3 --> P7
+    end
+
+    subgraph PK["Primary Key Index"]
+        subgraph PKR["Root Node"]
+            PKD["10057 | 2\n... | 3\n... | 4"]
+        end
+    end
+
+    L1 -.->|PK 조회| PKR
+    L2 -.->|PK 조회| PKR
+    L3 -.->|PK 조회| PKR
+```
 
 결국 위와 같이 여러 뎁스를 거쳐 실제 데이터 레코드를 찾아야 하기 때문에, 바로 데이터 레코드를 찾을 때 보다 약 4-5배 정도 더 많은 비용이 발생한다.
 

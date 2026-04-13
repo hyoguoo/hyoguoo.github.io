@@ -2,7 +2,7 @@
 title: "Design Notification System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "푸시 알림·SMS·이메일을 다양한 플랫폼에 하루 수천만 건 전송하는 알림 시스템의 신뢰성 있는 메시지 배달 구조를 설계한다."
 ---
 
@@ -53,7 +53,27 @@ description: "푸시 알림·SMS·이메일을 다양한 플랫폼에 하루 수
 - 알림 서버를 증설하고 자동으로 수평적 규모 확장이 가능하도록 설계
 - 메시지 큐를 이용해 시스템 컴포넌트 사이 강한 결함을 줄임(de-coupling)
 
-![Notification System](image/notification-system-flow.png)
+```mermaid
+flowchart LR
+    S1[서비스 1] --> NS[알림 서버]
+    S2[서비스 2] --> NS
+    SN[서비스 N] --> NS
+    NS --> Cache[(캐시)]
+    NS --> DB[(DB)]
+    NS --> Q1[/iOS 푸시 알림 큐/]
+    NS --> Q2[/Android 푸시 알림 큐/]
+    NS --> Q3[/SMS 큐/]
+    NS --> Q4[/이메일 큐/]
+    Q1 --> W1[작업 서버]
+    Q2 --> W2[작업 서버]
+    Q3 --> W3[작업 서버]
+    Q4 --> W4[작업 서버]
+    W1 --> TP[제3자 제공 서비스]
+    W2 --> TP
+    W3 --> TP
+    W4 --> TP
+    TP --> D[디바이스]
+```
 
 각 컴포넌트는 다음과 같은 역할을 수행한다.
 

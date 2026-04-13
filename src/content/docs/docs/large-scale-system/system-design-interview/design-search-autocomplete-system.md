@@ -2,7 +2,7 @@
 title: "Design Search Autocomplete System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "사용자 입력에 따라 100ms 이내에 인기 검색어를 제공하는 검색 자동완성 시스템을 Trie 자료구조와 캐싱 전략으로 설계한다."
 ---
 
@@ -54,7 +54,23 @@ LIMIT 5
 
 이러한 특징에 더해 이용 빈도가 높은 단어를 빠르게 찾기 위해 노드에 빈도 정보를 저장할 수도 있다.
 
-![트라이 자료구조](image/trie-data-structure.png)
+```mermaid
+flowchart TD
+    root((root)) --> t((t))
+    root --> w((w))
+    t --> tr((tr))
+    t --> to((to))
+    tr --> tre((tre))
+    tr --> tru((tru))
+    tr --> try_node(("try: 29"))
+    tre --> tree_node(("tree: 10"))
+    tru --> true_node(("true: 35"))
+    to --> toy_node(("toy: 14"))
+    w --> wi((wi))
+    wi --> wis((wis))
+    wi --> win_node(("win: 50"))
+    wis --> wish_node(("wish: 25"))
+```
 
 위 사진 처럼 트리 형태로 저장되며, 자세한 설명을 위한 용어를 정의하면 다음과 같다.
 

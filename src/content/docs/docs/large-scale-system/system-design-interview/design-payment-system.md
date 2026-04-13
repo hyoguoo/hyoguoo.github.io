@@ -2,7 +2,7 @@
 title: "Design Payment System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "서드파티 결제 대행사를 연동하여 결제 신뢰성과 멱등성(idempotency)을 보장하는 대규모 결제 시스템 설계를 다룬다."
 ---
 
@@ -34,7 +34,17 @@ description: "서드파티 결제 대행사를 연동하여 결제 신뢰성과 
 - 원장 서비스: 결제 트랜잭션에 대한 금융 기록(=원장)을 남기고, 결제 후 분석 역할 수행
 - 지갑 서비스: 판매자의 계정 잔액 기록
 
-![결제 흐름](image/design-payment-system-flow.png)
+```mermaid
+flowchart LR
+    U[결제 이벤트] -->|1 . 결제 이벤트 저장| PS[결제 서비스]
+    PS -->|3 . 결제 실행자 호출| PES[결제 실행 서비스]
+    PES -->|5 . 외부 결제 서비스 호출| EP[외부 공급자]
+    PES -->|4 . 결제 수수료 저장| DB1[(DB)]
+    PS -->|8 . 금액 거래 기록| LS[원장 서비스]
+    PS -->|6 . 판매자 잔고 갱신| WS[지갑 서비스]
+    LS -->|내부 원장 정보 기록| DB2[(DB)]
+    WS -->|잔고 정보 갱신| DB3[(DB)]
+```
 
 일반적인 결제의 흐름은 다음과 같이 흘러가게 된다.(실패 없이 모두 성공하는 경우)
 
@@ -129,7 +139,23 @@ payment_order_id에 해당하는 결제 주문 정보를 조회하는 API
 
 대부분의 회사가 2번 방식을 사용하는데, 전체 결제 프로세스는 다음과 같이 진행된다.
 
-![외부 결제 페이지 이용 흐름](image/payment-flow-with-psp.png)
+```mermaid
+flowchart TD
+    subgraph Client["클라이언트/브라우저"]
+        P1[구매 페이지]
+        P2[결제 페이지]
+        P3[결제 완료 페이지<br/>리다이렉트]
+        P4[결제 완료 페이지]
+    end
+
+    P1 -->|1 . 구매| PS[결제 서비스]
+    PS -->|4 . 토큰 저장| DB[(DB)]
+    P2 -->|2 . 비용페이지 URL 통한 결제 생성| PSP[PSP]
+    PSP -->|3 . 결제 완료| P3
+    P3 -->|6 . 결제 시작| PS
+    PS -->|7 . 결제 결과| P4
+    PSP -.->|5 . PSP 결제 페이지에서 결제| PSP
+```
 
 1. 사용자가 클라이언트 브라우저에서 결제 시작
 2. 결제 주문 정보를 수신한 결제 서비스는 결제 등록 요청을 PSP에 전송

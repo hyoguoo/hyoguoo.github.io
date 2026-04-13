@@ -8,7 +8,23 @@ description: "Java Map 인터페이스의 키-값 저장 구조와 HashMap·Link
 
 키(Key)와 값(Value)을 하나의 쌍으로 묶어 저장하는 자료 구조로, 키를 통해 값을 빠르게 탐색하는 데 최적화되어 있다.
 
-![Map 인터페이스 다이어그램](image/map-tree.png)
+```mermaid
+classDiagram
+    class Map {
+        <<interface>>
+    }
+    class SortedMap {
+        <<interface>>
+    }
+    class HashMap
+    class TreeMap
+    class LinkedHashMap
+
+    Map <|-- SortedMap
+    Map <|.. HashMap
+    SortedMap <|.. TreeMap
+    HashMap <|-- LinkedHashMap
+```
 
 ## Map Interface
 

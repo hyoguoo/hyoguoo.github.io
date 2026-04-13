@@ -2,7 +2,7 @@
 title: "Design Video Streaming Service"
 date: 2025-10-13
 lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "대규모 비디오 업로드·스트리밍 서비스의 인코딩 파이프라인, CDN 배포, 스트리밍 프로토콜 선택을 중심으로 설계한다."
 ---
 
@@ -39,7 +39,19 @@ description: "대규모 비디오 업로드·스트리밍 서비스의 인코딩
 
 ### 비디오 업로드
 
-![비디오 스트리밍 서비스 시스템](image/video-streaming-service-flow.png)
+```mermaid
+flowchart TD
+    OS[(원본 저장소)] --> TS[트랜스코딩 서버]
+    D[디바이스] --> LB[로드 밸런서]
+    LB --> API[API 서버]
+    API --> MC[(메타데이터 캐시)]
+    API --> MDB[(메타데이터 DB)]
+    TS --> TVS[(트랜스코딩<br/>비디오 저장소)]
+    TS --> TQ[/트랜스코딩 완료 큐/]
+    TQ --> TH[트랜스코딩 완료 핸들러]
+    TVS --> CDN{{CDN}}
+    D --> CDN
+```
 
 - API 서버: 비디오 스트리밍을 제외한 다른 요청 처리
 - 메타데이터 데이터베이스: 비디오 메타데이터 저장

@@ -2,7 +2,7 @@
 title: "Design Ad Click Event Aggregation System"
 date: 2025-10-13
 lastUpdated: 2025-10-13
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "광고 클릭 이벤트를 실시간에 가깝게 집계하는 시스템의 스트림 처리 파이프라인과 중복 이벤트 처리 전략을 설계한다."
 ---
 
@@ -104,7 +104,17 @@ description: "광고 클릭 이벤트를 실시간에 가깝게 집계하는 시
 
 위 흐름을 동기식으로 처리하게 된다면, 급작스러운 트래픽 증가에 대응하기 어려울 수 있기 때문에 메시지 큐를 도입하는 것이 좋다.
 
-![ad-click-event-aggregation-system](./image/ad-click-event-system.png)
+```mermaid
+flowchart LR
+    LM[로그 모니터] --> MQ1[/메시지 큐/]
+    MQ1 --> DAS[데이터 집계 서비스]
+    DAS --> MQ2[/메시지 큐/]
+    DAS --> DBP1[데이터베이스<br/>기록 프로세스]
+    DBP1 --> RDB[(원시 데이터 DB)]
+    MQ2 --> DBP2[데이터베이스<br/>기록 프로세스]
+    DBP2 --> ADB[(집계 데이터 DB)]
+    QS[질의 서비스] --> ARF[집계 결과 필터] --> ADB
+```
 
 위 설계안을 보면 두 개의 메시지 큐로 분리하여 데이터베이스에 바로 기록하지 않는 것을 볼 수 있는데, 이는 정확하게 한 번 데이터를 처리하기 위함이다.
 

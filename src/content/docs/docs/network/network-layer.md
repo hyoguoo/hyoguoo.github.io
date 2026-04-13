@@ -2,7 +2,7 @@
 title: "Network Layer - TCP/IP Layer 2"
 date: 2024-03-07
 lastUpdated: 2025-12-06
-tags: [Network]
+tags: [ Network ]
 description: "TCP/IP 2계층에서 IP 주소 체계, ARP 동작, 서브넷팅, NAT, DHCP, 라우팅 테이블 구조를 분석한다."
 ---
 
@@ -164,7 +164,26 @@ IP 주소는 네트워크를 식별하는 `네트워크 주소`와 특정 기기
 
 `127.0.0.1`로 예약된 IP 주소로, 자기 자신(Localhost)을 가리킨다. 외부 네트워크를 거치지 않고 운영체제 내부에서 통신이 이루어지며, 주로 서버 상태 점검이나 내부 프로세스 간 통신에 사용된다.
 
-![Loopback Network](image/loopback-network-ipc.png)
+```mermaid
+flowchart TD
+    subgraph AL["Application Layer"]
+        PA["Process A<br/>(Client)"]
+        PB["Process B<br/>(Server)"]
+    end
+    subgraph TL["Transport Layer"]
+        T[Transport Layer]
+    end
+    subgraph IL["Internet Layer"]
+        I["Internet Layer<br/>127.0.0.1 요청이므로<br/>하위 레이어로 패킷이 가지 않음"]
+    end
+    subgraph NL["Network Interface Layer"]
+        N[Network Interface Layer]
+    end
+
+    PA -->|" 1. 127.0.0.1:B 에 요청 "| T
+    T --> I
+    T -->|" 3. 해당 프로세스를 찾아 요청 "| PB
+```
 
 ###### 참고자료
 

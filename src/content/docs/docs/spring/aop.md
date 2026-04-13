@@ -2,7 +2,7 @@
 title: "AOP (Aspect-Oriented Programming)"
 date: 2023-06-16
 lastUpdated: 2025-09-03
-tags: [Spring]
+tags: [ Spring ]
 description: "AOP의 핵심 용어와 JDK 동적 프록시·CGLIB의 차이점, @Aspect 어드바이스 종류, 자기 호출 문제의 원인과 해결 방법을 분석한다."
 ---
 
@@ -103,7 +103,31 @@ class TestMethodInterceptor implements MethodInterceptor {
 
 Proxy Factory는 스프링에서 프록시 객체를 생성하고 요청을 처리하는 방법을 통일하여 사용할 수 있도록 추상화한 것이다.
 
-![Proxy Factory & Advice Call Flow](image/proxyfactory-advicecall-flow.png)
+```mermaid
+flowchart LR
+    subgraph proxy_factory["Proxy Factory Flow"]
+        direction LR
+        C[client] -->|1 . 프록시 요청| PF[ProxyFactory<br/>2 . 프록시 기술 선택]
+        PF -->|3 . 프록시 생성| JDK[JDK 동적 프록시]
+        PF -->|3 . 프록시 생성| CGLIB[CGLIB]
+        JDK -->|4 . jdk proxy 반환| C
+        CGLIB -->|4 . cglib proxy 반환| C
+    end
+```
+
+```mermaid
+flowchart LR
+    subgraph advice_call["Advice Call Flow"]
+        direction LR
+        C1[client] --> JDP[jdk Proxy]
+        JDP --> AIH[adviceInvocationHandler]
+        AIH -->|Advice 호출| A1[Advice]
+        A1 --> T1[target]
+        C2[client] --> CGP[cglib Proxy]
+        CGP --> AMI[adviceMethodInterceptor]
+        AMI -->|Advice 호출| A1[Advice]
+    end
+```
 
 인터페이스 유무 혹은 옵션에 따라 JDK 동적 프록시와 CGLIB를 사용하여 프록시 패턴을 구현해주는 기능을 제공한다.
 
@@ -257,7 +281,16 @@ class AopConfig {
     2. `@Aspect` 애노테이션 정보를 기반으로 어드바이저 생성
     3. 어드바이저 등록
 
-![@Aspect 사용 시 프록시 객체 등록 과정](image/aspect-flow.png)
+```mermaid
+flowchart LR
+    A[1. 빈 대상 객체 생성] -->|2 . 빈 후처리기로 전달| B[빈 후처리기]
+    B -->|3 . Advisor 조회| SC[스프링 컨테이너]
+    B -->|4 . 프록시 적용 대상 체크| ADV[Advisor]
+    ADV --- P[Pointcut]
+    ADV --- AD[Advice]
+    B -->|5 . 프록시 생성| PRX[프록시]
+    PRX -->|6 . 빈 등록| SC
+```
 
 - 프록시 객체 적용
     1. 스프링 빈 대상이 되는 객체 생성

@@ -2,7 +2,7 @@
 title: "SELECT Lock"
 date: 2023-07-17
 lastUpdated: 2025-10-12
-tags: [MySQL]
+tags: [ MySQL ]
 description: "SELECT FOR SHARE와 SELECT FOR UPDATE의 공유·배타적 잠금 동작 방식과 잠금 범위, 적합한 사용 상황을 비교한다."
 ---
 
@@ -113,7 +113,59 @@ UPDATE SKIP LOCKED;
 COMMIT;
 ```
 
-![Skip Locked 사용에 따른 트랜잭션 대기](image/skip-locked.png)
+#### SKIP LOCKED 미사용 - 트랜잭션이 순차적으로 대기
+
+```mermaid
+gantt
+    title SKIP LOCKED 미사용
+    dateFormat X
+    axisFormat %s
+
+    section 트랜잭션 1
+        처리: t1, 0, 2
+    section 트랜잭션 2
+        대기: crit, w2, 0, 2
+        처리: t2, 2, 4
+    section 트랜잭션 3
+        대기: crit, w3, 0, 4
+        처리: t3, 4, 6
+    section 트랜잭션 4
+        대기: crit, w4, 0, 6
+        처리: t4, 6, 8
+    section 트랜잭션 5
+        대기: crit, w5, 0, 8
+        처리: t5, 8, 10
+    section 트랜잭션 6
+        대기: crit, w6, 0, 10
+        처리: t6, 10, 12
+    section 트랜잭션 7
+        대기: crit, w7, 0, 12
+        처리: t7, 12, 14
+```
+
+#### SKIP LOCKED 사용 - 잠긴 행을 건너뛰어 병렬 처리
+
+```mermaid
+gantt
+    title SKIP LOCKED 사용
+    dateFormat X
+    axisFormat %s
+
+    section 트랜잭션 1
+        처리: t1, 0, 2
+    section 트랜잭션 2
+        처리: t2, 0, 2
+    section 트랜잭션 3
+        처리: t3, 0, 2
+    section 트랜잭션 4
+        처리: t4, 0, 2
+    section 트랜잭션 5
+        처리: t5, 0, 2
+    section 트랜잭션 6
+        처리: t6, 0, 2
+    section 트랜잭션 7
+        처리: t7, 0, 2
+```
 
 ###### 참고자료
 

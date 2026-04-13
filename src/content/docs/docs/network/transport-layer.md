@@ -2,7 +2,7 @@
 title: "Transport Layer - TCP/IP Layer 3"
 date: 2024-03-07
 lastUpdated: 2025-12-08
-tags: [Network]
+tags: [ Network ]
 description: "TCP의 3-Way/4-Way Handshake, 흐름 제어, 혼잡 제어, ARQ 오류 제어 메커니즘과 UDP와의 차이를 분석한다."
 ---
 
@@ -40,7 +40,31 @@ TCP는 전송 계층의 대표적인 프로토콜로, 신뢰성 있는 데이터
 
 ### TCP Segment 헤더 구조
 
-![TCP Segment Header(https://itwiki.kr/w/TCP_%ED%97%A4%EB%8D%94)](image/tcp-segment-header.png)
+```
+                        TCP Segment
+ ┌──────────────────────────────────────────────────┐
+ │          IP Header          │     TCP Header      │     TCP Data      │
+ │          (20 bytes)         │     (20 bytes)       │                   │
+ └──────────────────────────────────────────────────┘
+
+  0                   1                   2                   3
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ ┌───────────────────────────┬───────────────────────────┐
+ │     발신지 포트 주소 (16)     │     목적지 포트 주소 (16)      │
+ ├───────────────────────────┴───────────────────────────┤
+ │                  Sequence number (32)                  │
+ ├───────────────────────────────────────────────────────┤
+ │               Acknowledgement number (32)              │  20 byte
+ ├────────┬───────┬──────────┬──────────────────────────┤  (우선순위
+ │  HLEN  │ 예약   │U A P R S F│      Window size (16)     │  포함 고정
+ │(4 bits)│(6 bits)│R C S S Y I│                           │  헤더 길이)
+ │        │       │G K H T N N│                           │
+ ├────────┴───────┴──────────┼──────────────────────────┤
+ │       Checksum (16)        │     Urgent pointer (16)   │
+ ├────────────────────────────┴──────────────────────────┤
+ │                  Options and Padding                    │
+ └───────────────────────────────────────────────────────┘
+```
 
 헤더는 최소 20바이트에서 옵션에 따라 최대 60바이트까지 가질 수 있다.
 
@@ -59,7 +83,15 @@ TCP는 전송 계층의 대표적인 프로토콜로, 신뢰성 있는 데이터
 
 TCP는 전송 순서를 보장하기 위해 Sequence Number와 Acknowledgement Number를 사용하며, 아래와 같은 흐름으로 동작한다.
 
-![Segment Sequence](image/segment-sequence.png)
+```mermaid
+sequenceDiagram
+    participant A as Host A
+    participant B as Host B
+    A ->> B: Sequence Number 1000 Segment 전송
+    B ->> A: Acknowledgement Number 1001 요청
+    A ->> B: Sequence Number 1001 Segment 전송
+    B ->> A: Acknowledgement Number 1002 요청
+```
 
 ### UDP(User Datagram Protocol)
 
@@ -144,7 +176,40 @@ sequenceDiagram
 
 그 외에 FIN-WAIT-1,2 / CLOSE-WAIT / LAST-ACK / TIME-WAIT 는 연결 해제 과정에서 사용되는 상태이며, 종료되면 CLOSED 상태가 된다.
 
-![TCP State Diagram(https://en.wikipedia.org/wiki/Transmission_Control_Protocol)](image/tcp-state-diagram.png)
+```mermaid
+stateDiagram-v2
+    [*] --> CLOSED
+
+    CLOSED --> LISTEN : passive open
+    CLOSED --> SYN_SENT : active open / SYN
+
+    LISTEN --> SYN_RECEIVED : SYN / SYN+ACK
+    LISTEN --> CLOSED : close
+
+    SYN_SENT --> SYN_RECEIVED : SYN / SYN+ACK
+    SYN_SENT --> ESTABLISHED : SYN+ACK / ACK
+    SYN_SENT --> CLOSED : close
+
+    SYN_RECEIVED --> ESTABLISHED : ACK
+    SYN_RECEIVED --> FIN_WAIT_1 : close / FIN
+
+    ESTABLISHED --> FIN_WAIT_1 : close / FIN
+    ESTABLISHED --> CLOSE_WAIT : FIN / ACK
+
+    FIN_WAIT_1 --> FIN_WAIT_2 : ACK
+    FIN_WAIT_1 --> CLOSING : FIN / ACK
+    FIN_WAIT_1 --> TIME_WAIT : FIN+ACK / ACK
+
+    FIN_WAIT_2 --> TIME_WAIT : FIN / ACK
+
+    CLOSING --> TIME_WAIT : ACK
+
+    TIME_WAIT --> CLOSED : timeout (2MSL)
+
+    CLOSE_WAIT --> LAST_ACK : close / FIN
+
+    LAST_ACK --> CLOSED : ACK
+```
 
 ## TCP 신뢰성 보장 메커니즘
 

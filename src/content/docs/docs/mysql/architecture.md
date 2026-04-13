@@ -2,7 +2,7 @@
 title: "Architecture"
 date: 2023-03-20
 lastUpdated: 2026-02-21
-tags: [MySQL]
+tags: [ MySQL ]
 description: "MySQL 서버의 MySQL 엔진과 스토리지 엔진 구조를 설명하고 InnoDB의 버퍼 풀·언두 로그·체인지 버퍼 역할을 분석한다."
 ---
 
@@ -98,7 +98,44 @@ InnoDB는 MySQL에서 가장 많이 사용되는 스토리지 엔진으로, MySQ
 - 보조 인데이터 레코드의 물리적 위치가 변경되어도 덱스를 수정할 필요가 없다는 장점 존재
 - PK의 크기가 크면 보조 인덱스의 크기도 커지는 단점 존재
 
-![InnoDB Leaf Page와 PK](image/innodb-btree.png)
+```mermaid
+flowchart TD
+    subgraph BTree["B-Tree Index"]
+        subgraph P1["Root Node - Page 1"]
+            R1["Aamer | 2\nJoana | 4\n... | 4"]
+        end
+        subgraph P2["Branch Node - Page 2"]
+            B1["Aamer | 4\nEbbe | 5\n... | 6"]
+        end
+        subgraph P3["Branch Node - Page 3"]
+            B2["Janna | 7\nLakshmi | 8\n... | 9"]
+        end
+        P1 --> P2
+        P1 --> P3
+        subgraph P4["Leaf Node - Page 4"]
+            L1["Aamer | 11800\nBabette | 10128"]
+        end
+        subgraph P5["Leaf Node - Page 5"]
+            L2["Ebbe | 10057\nFabrizio | 11854"]
+        end
+        subgraph P7["Leaf Node - Page 7"]
+            L3["Janna | 11384\nKagan | 12338"]
+        end
+        P2 --> P4
+        P2 --> P5
+        P3 --> P7
+    end
+
+    subgraph PK["Primary Key Index"]
+        subgraph PKR["Root Node"]
+            PKD["10057 | 2\n... | 3\n... | 4"]
+        end
+    end
+
+    L1 -.->|PK 조회| PKR
+    L2 -.->|PK 조회| PKR
+    L3 -.->|PK 조회| PKR
+```
 
 ### 외래키 지원
 
