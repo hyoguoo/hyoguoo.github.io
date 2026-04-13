@@ -1,7 +1,7 @@
 ---
 title: "CAS (Compare-And-Swap)"
 date: 2025-01-24
-lastUpdated: 2026-03-10
+lastUpdated: 2026-04-13
 tags: [ Java ]
 description: "CAS 동작 원리와 락프리 동기화 방식을 설명하고, 락프리 스택을 통해 ABA 문제와 AtomicStampedReference 기반 방지 전략을 분석한다."
 ---
@@ -88,36 +88,55 @@ volatile 키워드는 메모리 가시성을 보장하기 위해 사용되는데
 
 ## CAS의 한계 - ABA 문제
 
-CAS는 메모리 값이 예상 값과 일치하는지만 확인하므로, 값이 A → B → A로 변경된 경우 변경이 없었다고 판단한다.
+CAS는 메모리의 현재 값만 비교하므로, 그 사이에 값이 변경되었다가 되돌아온 경우를 감지하지 못한다.
 
-락프리 스택(Lock-Free Stack)의 pop 연산을 예시로 살펴보면 다음과 같다.
+- 값이 A → B → A로 변경되어도, CAS 시점에 A이면 "변경 없음"으로 판단
+- 값이 같다는 것(동일성)과 그 사이에 변경이 없었다는 것(연속성)은 다른 개념
+
+### 발생 과정 - 락프리 스택 예시
+
+초기 스택 상태가 `top → A → B → null`일 때, 두 스레드가 동시에 pop을 시도하는 상황이다.
+
+| 단계 |        Thread 1         |    Thread 2     |    스택 상태     |
+|:--:|:-----------------------:|:---------------:|:------------:|
+| 1  | top(=A) 읽기, next(=B) 저장 |        -        | A → B → null |
+| 2  |          (선점됨)          |  pop() → A 제거   |   B → null   |
+| 3  |         (대기 중)          |  pop() → B 제거   |   (비어 있음)    |
+| 4  |         (대기 중)          | push(A) → A 재삽입 |   A → null   |
+| 5  |    CAS(top, A, B) 성공    |        -        |   B → null   |
+
+Thread 1은 1단계에서 `top = A, next = B`를 저장한 뒤, 5단계에서 top을 B로 교체한다.
+
+- CAS 성공 이유: top이 여전히 A이므로 예상 값과 일치
+- 실제 문제: B는 이미 3단계에서 스택에서 제거된 노드
+- 결과: 해제된 노드 B가 스택의 top이 되어 논리적 불일치 발생
 
 ```mermaid
-sequenceDiagram
-    participant T1 as Thread 1
-    participant S as Stack
-    participant T2 as Thread 2
-    Note over S: top → A → B → null
-    T1 ->> S: expectedTop = A 읽기
-    Note over T1: 선점 (preempted)
-    T2 ->> S: pop() — A 제거
-    Note over S: top → B → null
-    T2 ->> S: pop() — B 제거
-    Note over S: top → null
-    T2 ->> S: push(A) — A 재삽입
-    Note over S: top → A → null
-    Note over T1: 재개 (resumed)
-    T1 ->> S: CAS(top: A → B) 성공!
-    Note over S: top → B → null (B는 이미 해제됨!)
+flowchart TB
+    subgraph "5단계: CAS 후 오류 상태"
+        direction TB
+        B3["B (제거된 노드가 top)"] --> N3["null"]
+    end
+    subgraph "4단계: Thread 2 조작 후 실제 상태"
+        direction TB
+        A2["A (top)"] --> N2["null"]
+        B2["B (제거됨)"]
+    end
+
+    subgraph "1단계: Thread 1이 읽은 상태"
+        direction TB
+        A1["A (top)"] --> B1["B (next)"] --> N1["null"]
+    end
+
+    classDef removed fill: #f96, color: #000
+    class B2,B3 removed
 ```
 
-Thread 1이 `top = A`를 읽고 선점된 사이, Thread 2가 A와 B를 차례로 팝한 뒤 A를 다시 푸시했다.
+핵심은 CAS가 비교하는 것이 값(A) 뿐이라는 점이다.
 
-- Thread 1 재개 시: top이 여전히 A이므로 CAS 성공, top을 `A.next`였던 B로 교체
-- 실제 상태: B는 이미 Thread 2에 의해 제거된 노드
-- 결과: 제거된 노드 B가 스택의 top이 되는 논리적 불일치 발생
-
-값은 일치하지만 의미적으로 변경이 발생했음에도 CAS가 이를 감지하지 못하는 것이 ABA 문제다.
+- 1단계의 A: next가 B를 가리키는 노드
+- 4단계의 A: next가 null인 노드 (B와의 연결이 끊어진 상태)
+- 같은 A라도 내부 상태가 달라졌으므로, 1단계에서 저장한 next(=B)는 더 이상 유효하지 않음
 
 ### 방지 - AtomicStampedReference
 
