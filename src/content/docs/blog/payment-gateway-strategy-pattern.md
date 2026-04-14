@@ -1,12 +1,12 @@
 ---
-title: "전략 패턴을 통한 PG 독립성 확보 및 확장 가능한 결제 시스템 설계"
+title: "전략 패턴을 통한 결제 게이트웨이 추상화 및 확장성 확보"
 date: 2025-11-22
-lastUpdated: 2026-03-12
+lastUpdated: 2026-04-14
 tags: [ Payment Platform Project ]
-description: "특정 PG에 강결합된 구조를 전략 패턴과 포트-어댑터 패턴으로 분리하여 OCP를 준수하는 PG 독립 아키텍처를 설계한다."
+description: "특정 PG에 강결합된 구조를 전략 패턴과 포트-어댑터 패턴으로 분리하고, PG마다 다른 멱등성 처리를 구현체 내부에서 캡슐화하여 Application 레이어에는 동일한 결과만 노출하는 멀티 PG 아키텍처를 설계한다."
 ---
 
-> 실행 환경: Java 21, Spring Boot 3.3.3
+> 실행 환경: Java 21, Spring Boot 3.4.4
 
 ## 배경 및 문제 정의
 
@@ -18,12 +18,13 @@ description: "특정 PG에 강결합된 구조를 전략 패턴과 포트-어댑
 
 ## 해결 방향
 
-이러한 문제를 해결하기 위해 전략 패턴(Strategy Pattern)과 포트-어댑터 패턴(Port-Adapter Pattern)을 결합하여 PG 독립적인 아키텍처를 구축했다.
+이러한 문제를 해결하기 위해 전략 패턴과 포트-어댑터 패턴을 결합하여 PG 독립적인 아키텍처를 구축하고, 실제로 NicePay를 두 번째 PG로 추가하여 멀티 PG 운영을 달성했다.
 
-|                 목표                  |       달성 방법       |
-|:-----------------------------------:|:-----------------:|
-| 도메인 모델 PG 독립화 (PG 변경 시 비즈니스 로직 무수정) | 포트-어댑터 패턴으로 경계 분리 |
-|     새로운 PG 추가 시 기존 코드 무영향 (OCP)     |  전략 패턴으로 구현체 캡슐화  |
+|                 목표                  |        달성 방법        |
+|:-----------------------------------:|:-------------------:|
+| 도메인 모델 PG 독립화 (PG 변경 시 비즈니스 로직 무수정) |  포트-어댑터 패턴으로 경계 분리  |
+|     새로운 PG 추가 시 기존 코드 무영향 (OCP)     |   전략 패턴으로 구현체 캡슐화   |
+|   PG마다 다른 멱등성 처리를 상위 레이어에 노출하지 않음   | 구현체 내부에서 에러 감지 및 보상 |
 
 핵심은 추상화를 통한 의존성 역전으로, 도메인 레이어는 구체적인 PG 구현체가 아닌 추상화된 인터페이스에만 의존하도록 설계했다.
 
@@ -33,27 +34,31 @@ description: "특정 PG에 강결합된 구조를 전략 패턴과 포트-어댑
 
 애플리케이션 레이어는 구체적인 구현이 아닌 Port 인터페이스에만 의존하며, 실제 PG 통신 로직은 Infrastructure 레이어의 Strategy 구현체에서 처리된다.
 
+- 현재 Toss와 NicePay 두 전략 구현
+- 결제건마다 `gatewayType`으로 올바른 PG를 라우팅
+
 ```mermaid
 graph TB
     subgraph "Application Layer"
-        Service[PaymentConfirmServiceImpl]
-        UseCase[PaymentProcessorUseCase]
+        Service[OutboxAsyncConfirmService]
+        UseCase[PaymentCommandUseCase]
         Port[PaymentGatewayPort<br/>Interface]
     end
 
     subgraph "Infrastructure Layer"
-        Adapter[PaymentGatewayAdapter<br/>Port 구현체]
+        Adapter[InternalPaymentGatewayAdapter<br/>Port 구현체]
         Factory[PaymentGatewayFactory<br/>전략 선택]
         Strategy[PaymentGatewayStrategy<br/>Interface]
 
         subgraph "Strategy Implementations"
             Toss[TossPaymentGatewayStrategy]
-            Future[Other PG Strategy<br/>... 확장 가능]
+            Nicepay[NicepayPaymentGatewayStrategy]
         end
     end
 
     subgraph "External Systems"
         TossAPI[Toss Payments API]
+        NicepayAPI[NicePay API]
     end
 
     Service -->|사용| UseCase
@@ -62,14 +67,15 @@ graph TB
     Adapter -->|위임| Factory
     Factory -->|선택| Strategy
     Strategy -.->|구현| Toss
-    Strategy -.->|확장 가능| Future
+    Strategy -.->|구현| Nicepay
     Toss -->|호출| TossAPI
+    Nicepay -->|호출| NicepayAPI
     style Port fill: #e1f5ff, color: #000
     style Strategy fill: #e1f5ff, color: #000
     style Adapter fill: #fff4e1, color: #000
     style Factory fill: #fff4e1, color: #000
     style Toss fill: #e8f5e9, color: #000
-    style Future fill: #f5f5f5, stroke-dasharray: 5 5, color: #000
+    style Nicepay fill: #e8f5e9, color: #000
 ```
 
 ### 핵심 컴포넌트
@@ -82,9 +88,9 @@ graph TB
 // PaymentGatewayPort.java
 public interface PaymentGatewayPort {
 
-    PaymentStatusResult getStatus(String paymentKey);
+    PaymentStatusResult getStatus(String paymentKey, PaymentGatewayType gatewayType);
 
-    PaymentStatusResult getStatusByOrderId(String orderId);
+    PaymentStatusResult getStatusByOrderId(String orderId, PaymentGatewayType gatewayType);
 
     PaymentConfirmResult confirm(PaymentConfirmRequest request);
 
@@ -93,11 +99,13 @@ public interface PaymentGatewayPort {
 ```
 
 - 모든 메서드는 PG-독립적인 DTO(`PaymentStatusResult`, `PaymentConfirmRequest`) 사용 — 특정 PG에 종속되지 않는 구조
+- 예외도 벤더 중립(`PaymentGatewayRetryableException`, `PaymentGatewayNonRetryableException`)으로 통일
+- `getStatus`, `getStatusByOrderId`는 `gatewayType` 파라미터를 받아 결제건에 기록된 PG로 조회
 - PG별 데이터 변환은 Infrastructure 레이어에서 처리
 
 #### 2. InternalPaymentGatewayAdapter(어댑터 구현)
 
-Port를 구현하고 전략 패턴으로 위임하는 중재하는 역할을 수행하며, 실제 PG 통신 로직은 Strategy 구현체에 위임한다.
+Port를 구현하고 전략 패턴으로 위임하는 중재 역할을 수행하며, 실제 PG 통신 로직은 Strategy 구현체에 위임한다.
 
 ```java
 // InternalPaymentGatewayAdapter.java
@@ -110,13 +118,19 @@ public class InternalPaymentGatewayAdapter implements PaymentGatewayPort {
 
     @Override
     public PaymentConfirmResult confirm(PaymentConfirmRequest request) {
-        PaymentGatewayStrategy strategy = factory.getStrategy(properties.getType());
+        PaymentGatewayStrategy strategy = factory.getStrategy(request.gatewayType());
         return strategy.confirm(request);
     }
 
-    // 나머지 메서드도 동일한 패턴
+    // confirm/cancel은 요청의 gatewayType으로 전략 선택
+    private PaymentGatewayType resolveGatewayType(PaymentGatewayType gatewayType) {
+        return gatewayType != null ? gatewayType : properties.getType();
+    }
 }
 ```
+
+- `confirm`/`cancel`: 요청 DTO에 포함된 `gatewayType`으로 전략 선택
+- `getStatus`/`getStatusByOrderId`: `PaymentEvent`에 기록된 `gatewayType` 사용
 
 #### 3. PaymentGatewayStrategy(전략 인터페이스)
 
@@ -162,70 +176,81 @@ public class PaymentGatewayFactory {
 - Spring 자동 주입: 모든 `PaymentGatewayStrategy` 구현체가 자동으로 `List`에 주입
 - 예외 처리: 지원하지 않는 PG 타입이 설정되면 명확한 예외(`UnsupportedPaymentGatewayException`)를 발생
 
-#### 5. TossPaymentGatewayStrategy(구체적 전략 구현)
+## 구현체 내부에서의 멱등성 추상화
 
-Toss Payments API와의 실제 통신 로직을 수행하며, 구현체는 특정 PG사에 종속적인 세부 사항을 캡슐화한다.
+PG마다 다른 멱등성 보장 방식을 구현체 내부에서 캡슐화하여, Application 레이어에는 동일한 `PaymentConfirmResult`만 노출하게 구현했다.
+
+### 문제 - PG마다 다른 멱등성 처리
+
+결제 승인은 네트워크 장애, 타임아웃 등으로 중복 요청이 발생할 수 있는데, PG마다 멱등성 보장 방식이 다르다.
+
+|   PG    | 멱등성 보장 방식               | 중복 요청 시 동작                   |
+|:-------:|:------------------------|:-----------------------------|
+|  Toss   | `Idempotency-Key` 헤더 전송 | PG가 같은 요청으로 인식, **정상 응답 반환** |
+| NicePay | 멱등성 키 미지원               | **에러코드 2201 반환** (중복 승인 거절)  |
+
+이러한 처리 방식의 차이를 Application 레이어에 노출하면 PG별 분기 로직이 비즈니스 레이어에 침투하게 된다.
+
+### 해결 - 구현체 내부에서 에러를 감지하고 보상 처리
+
+NicePay 전략 구현체는 중복 승인 에러(2201)를 내부에서 catch하고, 조회 API로 보상 처리한 뒤 정상 결과를 반환했다.
 
 ```java
-// TossPaymentGatewayStrategy.java
-@Component
-@RequiredArgsConstructor
-public class TossPaymentGatewayStrategy implements PaymentGatewayStrategy {
-
-    private final PaymentGatewayInternalReceiver paymentGatewayInternalReceiver;
-
-    @Override
-    public boolean supports(PaymentGatewayType type) {
-        return type == PaymentGatewayType.TOSS;
-    }
-
-    @Override
-    public PaymentConfirmResult confirm(PaymentConfirmRequest request) {
-        // 1. 도메인 모델 → Toss-specific 모델 변환
-        TossConfirmGatewayCommand tossCommand = TossConfirmGatewayCommand.builder()
-                .orderId(request.orderId())
-                .paymentKey(request.paymentKey())
-                .amount(request.amount())
-                .idempotencyKey(generateIdempotencyKey(request.orderId()))
-                .build();
-
-        // 2. Toss API 호출
-        PaymentGatewayInfo info = PaymentInfrastructureMapper.toPaymentGatewayInfo(
-                paymentGatewayInternalReceiver.confirmPayment(
-                        PaymentInfrastructureMapper.toTossConfirmRequest(tossCommand)
-                )
-        );
-
-        // 3. Toss 응답 → 도메인 모델 변환
-        return convertToPaymentConfirmResult(info, request);
-    }
-
-    private PaymentConfirmResult convertToPaymentConfirmResult(
-            PaymentGatewayInfo info, PaymentConfirmRequest request) {
-        // Toss 상태 코드 → 도메인 상태 매핑
-        PaymentConfirmResultStatus status = determineConfirmResultStatus(info, failure);
-        return new PaymentConfirmResult(status, info.getPaymentKey(), ...);
+// NicepayPaymentGatewayStrategy.java (발췌)
+private PaymentConfirmResult executeConfirmPayment(
+        NicepayConfirmRequest confirmRequest,
+        PaymentConfirmRequest request
+) throws PaymentGatewayRetryableException, PaymentGatewayNonRetryableException {
+    try {
+        NicepayPaymentResponse response =
+                nicepayGatewayInternalReceiver.confirmPayment(confirmRequest);
+        return convertToPaymentConfirmResult(response, request);
+    } catch (PaymentGatewayApiException e) {
+        if (NICEPAY_ERROR_CODE_DUPLICATE_APPROVAL.equals(e.getCode())) {
+            // 2201 중복 승인 → 조회 API로 보상 처리
+            return handleDuplicateApprovalCompensation(request);
+        }
+        return classifyAndThrowConfirmException(e);
     }
 }
 ```
 
-해당 메서드는 계층 간 명확한 책임 분리를 위해 다음 3단계로 구성된다.
+이 구조에서 Application 레이어의 `PaymentCommandUseCase`는 PG가 Toss인지 NicePay인지, 멱등성 키를 헤더로 보내는지 보상 조회로 처리하는지 전혀 알지 못한다.
 
-1. 도메인 모델 변환: `PaymentConfirmRequest` (PG-독립 모델) → `TossConfirmGatewayCommand` (Toss-specific 모델)
-    - 멱등성 키(Idempotency Key) 생성을 통한 중복 결제 방지
-    - Toss API 요구사항에 맞는 데이터 형식 변환
-2. PG API 호출: `PaymentGatewayInternalReceiver`를 통한 실제 HTTP 통신
-    - 네트워크 통신 및 인증 처리
-    - 타임아웃, 재시도 등의 복원력 패턴 적용
-3. 응답 변환 및 매핑: Toss 응답 → 도메인 모델 (`PaymentConfirmResult`)
-    - Toss의 상태 코드를 도메인 상태(`PaymentConfirmResultStatus`)로 정규화
-    - PG-specific한 에러 정보를 도메인 예외로 변환
+```mermaid
+flowchart LR
+    subgraph "Application Layer"
+        UC[PaymentCommandUseCase]
+    end
+
+    subgraph "Infrastructure Layer"
+        subgraph "Toss 전략"
+            T1["confirm 요청\n+ Idempotency-Key 헤더"]
+            T2["PG가 중복 인식\n→ 정상 응답"]
+        end
+        subgraph "NicePay 전략"
+            N1["confirm 요청"]
+            N2{"2201\n중복 승인?"}
+            N3["tid로 PG 상태 조회"]
+        end
+    end
+
+    UC -->|" confirm(request) "| T1
+    UC -->|" confirm(request) "| N1
+    T1 --> T2
+    T2 -->|" PaymentConfirmResult\n(SUCCESS) "| UC
+    N1 --> N2
+    N2 -->|예| N3
+    N2 -->|아니오| N5["에러코드 분류\n→ 예외"]
+    N3 -->|" PaymentConfirmResult\n(SUCCESS) "| UC
+```
+
+두 경우 모두 동일한 `PaymentConfirmResult(SUCCESS, ...)` 를 받으면서, 로직을 수행할 수 있게 된다.
 
 ## 결론
 
-기술적 개선과 비즈니스 유연성을 동시에 확보했다.
+전략 패턴과 포트-어댑터 패턴을 결합하여 PG 독립적인 아키텍처를 구축하고, 실제로 NicePay를 두 번째 PG로 추가함으로써 설계의 확장성을 검증했다.
 
-1. PG 독립성 확보: 도메인/애플리케이션 레이어에서 PG-specific 타입 완전 제거
-2. 확장 가능한 구조: 기존 코드 수정 없이 새로운 PG 추가 가능
-
-향후 비즈니스 요구사항 변경에 따른 다양한 요구사항에 유연하게 대응할 수 있는 기반을 제공할 수 있게 됐다.
+1. **PG 독립성 확보**: 도메인/애플리케이션 레이어에서 PG-specific 타입 완전 제거
+2. **확장 가능한 구조**: `PaymentGatewayStrategy` 구현 + `@Component` 등록만으로 새 PG 추가 가능, Factory 코드 수정 불필요
+3. **멱등성 차이 캡슐화**: PG마다 다른 멱등성 보장 방식(헤더 vs 보상 조회)을 구현체 내부에서 처리하여 상위 레이어에 동일한 결과 타입만 노출
