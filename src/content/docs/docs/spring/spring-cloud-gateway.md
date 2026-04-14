@@ -1,7 +1,7 @@
 ---
 title: "Spring Cloud Gateway (Reactive Pipeline and Security Strategy)"
 date: 2026-04-10
-lastUpdated: 2026-04-10
+lastUpdated: 2026-04-14
 tags: [ Spring ]
 description: "Netty 기반의 논블로킹 I/O 모델과 Reactor 배압(Backpressure) 처리, 라우트 매칭의 내부 아키텍처, 그리고 불변 객체 변조를 통한 무상태(Stateless) JWT 보안 전파 전략을 심층 분석한다."
 ---
@@ -10,6 +10,19 @@ description: "Netty 기반의 논블로킹 I/O 모델과 Reactor 배압(Backpres
 
 - API Gateway는 이러한 시스템의 전면에 배치되어 외부로부터 들어오는 모든 트래픽의 유일한 진입점 역할 수행
 - 라우팅과 보안 통제 중앙화
+
+## API Gateway 솔루션 비교
+
+|   비교 항목   |  Spring Cloud Gateway  |       Nginx        |
+|:---------:|:----------------------:|:------------------:|
+|   구현 언어   |     Java (Reactor)     |         C          |
+|  I/O 모델   |   Netty 기반 논블로킹 리액티브   |    이벤트 드리븐 논블로킹    |
+|   설정 방식   |   Java 코드 / YAML 선언    |     nginx.conf     |
+| Spring 통합 |  네이티브 (동일 JVM, DI 활용)  |      별도 프로세스       |
+|   적합 환경   | Spring 기반 MSA 내부 게이트웨이 | 정적 리버스 프록시, 외부 진입점 |
+
+- Spring Cloud Gateway는 Spring 생태계와의 자연스러운 통합이 최대 강점으로, 동일 JVM 내에서 Spring Security, Spring Cloud Config 등과 직접 결합 가능
+- Nginx은 언어에 무관한 범용 게이트웨이로, Spring 외 기술 스택이 혼용되는 환경에 적합
 
 ## Reactive 아키텍처와 논블로킹 I/O 모델
 
@@ -49,6 +62,14 @@ graph TB
 - 소수 스레드 운영: Netty는 CPU 코어 수에 맞춘 극소수의 이벤트 루프(Event Loop) 스레드만으로 수만 개의 연결 처리 가능
 - 운영체제 레벨 알림: 요청을 수신한 스레드는 하위 서비스로 네트워크 요청을 비동기로 처리하여 결과를 기다리지 않고 즉시 루프로 복귀하여 다른 클라이언트의 요청 수신
 - 배압(Backpressure) 제어: Project Reactor의 데이터 스트림 모델과 결합하여 구독자 기반의 속도 조절(배압) 로직이 내부적으로 동작
+
+### 리액티브 모델 채택의 트레이드오프
+
+논블로킹 모델은 높은 처리량과 자원 효율성을 제공하지만, 다음과 같은 운영상의 비용이 수반된다.
+
+- 디버깅의 어려움: 비동기 콜백 체인에서는 전통적인 스택 트레이스가 끊기므로 오류 발생 지점을 추적하기 어려움
+- 학습 곡선: Reactor의 Mono/Flux 연산자 체인, 배압 전략, 스케줄러 모델 등 비동기 프로그래밍 패러다임에 대한 깊은 이해 필요
+- 블로킹 API 호출 금지: 이벤트 루프 스레드에서 블로킹 호출(JDBC, Thread.sleep 등)을 수행하면 전체 처리량이 급락하므로 모든 I/O를 비동기 API로 전환 필수
 
 ## 리액티브 라우팅 파이프라인의 시퀀스
 
@@ -90,11 +111,9 @@ DispatcherHandler가 요청을 받으면 등록된 모든 Route의 Predicate를 
     - `ServerWebExchange` 매개변수: HTTP 요청과 응답에 대한 모든 정보를 포함
     - `chain` 매개변수: '다음 필터'를 포함한 나머지 체인 전체를 의미
 - 'Pre' 필터 로직: `chain.filter(exchange)`를 호출하기 전의 작업
-    - 다운스트림 서비스로 요청이 전달되기 전에 실행
-    - 주로 요청 헤더를 추가하거나 인증을 수행하는 역할
+    - 다운스트림 서비스로 요청이 전달되기 전에 실행되며, 주로 요청 헤더 추가나 인증 수행
 - 'Post' 필터 로직: `chain.filter(exchange)`가 반환하는 `Mono<Void>`에 `.then()`, `flatMap` 같은 연산자를 사용하여 연결된 후속 작업
-    - 다운스트림 서비스로부터 응답이 돌아온 후에 실행
-    - 주로 응답 헤더를 추가하거나 응답 본문을 로깅하는 역할
+    - 다운스트림 서비스로부터 응답이 돌아온 후에 실행되며, 주로 응답 헤더 추가나 응답 본문 로깅
 
 ```java
 public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -116,36 +135,33 @@ public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 }
 ```
 
-## 동작 과정
+## 전체 요청 처리 파이프라인
 
-동작 과정은 내부적으로 Project Reactor와 Netty에 기반한 비동기 논블로킹(Asynchronous Non-Blocking) 모델을 사용하여, 높은 처리량과 낮은 지연 시간을 제공한다.
+내부적으로 Project Reactor와 Netty에 기반한 비동기 논블로킹 모델을 사용하여, 높은 처리량과 낮은 지연 시간을 제공한다.
 
-1. 클라이언트의 요청이 들어오면, `DispatcherHandler` 가 가장 먼저 요청을 받음
-2. 요청은 `RoutePredicateHandlerMapping` 을 통해 어떤 `Route`와 일치하는지 검사(Predicate 평가)
-3. 일치하는 `Route`를 찾으면, 요청은 `FilteringWebHandler` 로 전달되어 해당 `Route`에 정의된 필터 체인을 순차적으로 실행
-4. 필터 체인은 Pre-Filter(요청 전달 전)와 Post-Filter(응답 받은 후)로 나뉘어 동작
-5. 모든 필터링이 완료되면, 요청은 실제 마이크로서비스로 프록시되고, 응답 역시 필터 체인을 역순으로 거쳐 클라이언트에게 전달
+```mermaid
+graph TB
+    classDef reactor fill: #e8f5e9, color: #000
+    A[클라이언트 요청 유입]:::reactor --> B[DispatcherHandler 수신]
+    B --> C[RoutePredicateHandlerMapping에서 Predicate 평가]
+    C --> D[일치하는 Route 결정]
+    D --> E[FilteringWebHandler로 전달]
+    E --> F[Pre-Filter 체인 순차 실행]
+    F --> G[다운스트림 서비스로 비동기 프록시]
+    G --> H[Post-Filter 체인 역순 실행]
+    H --> I[클라이언트에게 응답 반환]
+```
 
-## 리액티브 스트림으로서의 요청 처리
+### 리액티브 스트림 관점의 처리 흐름
 
-Spring Cloud Gateway는 요청과 응답을 단일 데이터가 아닌, 이벤트의 연속적인 흐름, 즉 리액티브 스트림(Reactive Stream)으로 처리한다.
+모든 요청 처리 과정은 하나의 리액티브 파이프라인을 정의하는 것과 같다.
 
-1. 스트림 생성(Publisher 생성)
-    - 클라이언트 요청이 들어오면, Netty 서버는 이를 I/O 작업이 처리되는 이벤트 루프(Event Loop)에 할당
-    - 요청은 즉시 처리되지 않고, `ServerHttpRequest` 객체를 포함한 `Mono<ServerWebExchange>` 라는 스트림 객체로 포장
-        - `Mono` 객체는 "요청을 어떻게 처리할지"에 대한 설계도(Publisher)이며, 아직 실행되지 않은 상태
-2. 처리 파이프라인 정의(Operator 체이닝)
-    - `DispatcherHandler` 는 이 설계도를 받아, 어떤 `Route`로 보낼지 결정(`Predicate` 평가)
-    - 해당 `Route`에 필요한 필터(`GatewayFilter`,`GlobalFilter`)들을 순서대로 연결하여 파이프라인을 완성
-3. 구독과 실행(Subscription & Execution)
-    - 정의된 파이프라인의 맨 끝에서 `.subscribe()` 가 호출되는 순간, 실제 데이터 흐름이 시작
-    - 요청 데이터는 Pre-Filter 체인을 순서대로 통과한 후, 실제 마이크로서비스로 비동기적으로 전달
-    - 이때 요청을 보낸 스레드는 결과를 기다리며 멈추지 않고(Non-Blocking) 즉시 반환되어 다른 요청 처리
-4. 비동기 응답 처리(Asynchronous Response)
-    - 다운스트림 서비스로부터 응답이 오면, 이벤트로 간주되어 파이프라인을 역방향으로 타고 흐르면서 Post-Filter 로직이 적용
-    - 응답 데이터는 Post-Filter 체인을 통과하며 가공된 후, 최종적으로 클라이언트에게 전달
-
-이처럼 모든 요청 처리 과정은 하나의 거대한 파이프라인(Pipeline)을 정의하는 것과 같으며, 실제 데이터 흐름은 마지막에 구독(subscribe)이 일어날 때 시작된다.
+- 스트림 생성(Publisher 생성): 클라이언트 요청이 Netty의 이벤트 루프에 할당되면 `Mono<ServerWebExchange>` 스트림 객체로 포장
+    - `Mono` 객체는 "요청을 어떻게 처리할지"에 대한 설계도(Publisher)이며, 아직 실행되지 않은 상태
+- 처리 파이프라인 정의(Operator 체이닝): `DispatcherHandler`가 Route를 결정하고, 필요한 필터들을 순서대로 연결하여 파이프라인 완성
+- 구독과 실행(Subscription): 파이프라인의 맨 끝에서 `.subscribe()`가 호출되는 순간 실제 데이터 흐름이 시작
+    - 요청을 보낸 스레드는 결과를 기다리며 멈추지 않고(Non-Blocking) 즉시 반환되어 다른 요청 처리
+- 비동기 응답 처리: 다운스트림 서비스로부터 응답이 이벤트로 도착하면 Post-Filter 로직을 거쳐 클라이언트에게 전달
 
 ## 무상태(Stateless) 중앙 집중식 보안 전략
 
@@ -165,3 +181,6 @@ sequenceDiagram
     Gateway ->> Service: 불변 복제된 요청 객체로 라우팅
     Service -->> Client: 보안 헤더 기반의 비즈니스 로직 결과 반환
 ```
+
+- 토큰 검증 중앙화: 각 하위 서비스가 개별적으로 JWT 검증 로직을 구현할 필요 없이, 게이트웨이에서 한 번만 검증
+- 사용자 정보 전파: 검증된 토큰의 클레임(사용자 ID, 권한 등)을 커스텀 헤더(X-User-Id 등)로 변환하여 하위 서비스로 전달
