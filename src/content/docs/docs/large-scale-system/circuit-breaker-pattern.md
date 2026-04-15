@@ -2,7 +2,7 @@
 title: "Circuit Breaker Pattern"
 date: 2025-10-14
 lastUpdated: 2025-10-14
-tags: [Large-Scale System]
+tags: [ Large-Scale System ]
 description: "마이크로서비스 환경에서 장애의 연쇄 전파를 막기 위한 서킷 브레이커 패턴의 Closed/Open/Half-Open 상태 머신 동작 원리를 설명한다."
 ---
 
@@ -24,11 +24,11 @@ stateDiagram-v2
     HalfOpen --> Open: 테스트 요청 실패
 ```
 
-|          상태           | 설명                                            | 상태 전이 조건                                  |
-|:---------------------:|:----------------------------------------------|:------------------------------------------|
-|     Closed(정상 상태)     | 모든 요청은 실제 서비스를 호출하며, 실패를 모니터링                 | 실패율 또는 실패 횟수가 임계치를 초과하면 Open 상태로 전이       |
-|    Open(회로 차단 상태)     | 모든 요청을 즉시 실패 처리(Fail-fast)하며, 실제 서비스를 호출하지 않음 | 설정된 타임아웃 시간이 지나면 Half-Open 상태로 전이         |
-| Half-Open(제한적 테스트 상태) | 소수의 테스트 요청만 실제 서비스로 보내 응답을 확인                 | 테스트 요청이 성공하면 Closed로, 실패하면 다시 Open 상태로 전이 |
+|          상태           |                      설명                       |                 상태 전이 조건                  |
+|:---------------------:|:---------------------------------------------:|:-----------------------------------------:|
+|     Closed(정상 상태)     |         모든 요청은 실제 서비스를 호출하며, 실패를 모니터링         |    실패율 또는 실패 횟수가 임계치를 초과하면 Open 상태로 전이    |
+|    Open(회로 차단 상태)     | 모든 요청을 즉시 실패 처리(Fail-fast)하며, 실제 서비스를 호출하지 않음 |     설정된 타임아웃 시간이 지나면 Half-Open 상태로 전이     |
+| Half-Open(제한적 테스트 상태) |         소수의 테스트 요청만 실제 서비스로 보내 응답을 확인         | 테스트 요청이 성공하면 Closed로, 실패하면 다시 Open 상태로 전이 |
 
 ## 정밀한 장애 판단 전략
 
@@ -36,7 +36,7 @@ stateDiagram-v2
 
 - 오류 유형의 구분
     - 일반적으로 네트워크 타임아웃, `5xx` 서버 오류와 같은 시스템 오류(System Errors)만을 서킷 브레이커의 실패 횟수에 포함
-    - `4xx` 클라이언트 오류나 같은 비즈니스 로직 오류는 서비스 자체의 불안정성이 아니므로, 서킷을 여는 조건에서 제외하는 것이 일반적
+    - `4xx` 클라이언트 오류와 같은 비즈니스 로직 오류는 서비스 자체의 불안정성이 아니므로, 서킷을 여는 조건에서 제외하는 것이 일반적
 - 복합적인 임계치 설정
     - 단일 지표에만 의존하면 오작동의 원인이 될 수 있어, 복수의 조건을 결합하여 장애 판단
     - 최소 요청 횟수(Minimum Number of Calls): 실패율을 계산하기 전에, 먼저 일정량의 요청이 발생해야 한다는 전제 조건(예: 10초 동안 최소 20회 요청)
@@ -104,12 +104,12 @@ graph LR
         end
     end
 
-    style B1 fill:#ff9999, color:#000
-    style C1 fill:#99ff99, color:#000
-    style D1 fill:#99ff99, color:#000
-    style B2 fill:#ff9999, color:#000
-    style C2 fill:#99ff99, color:#000
-    style D2 fill:#99ff99, color:#000
+    style B1 fill: #ff9999, color: #000
+    style C1 fill: #99ff99, color: #000
+    style D1 fill: #99ff99, color: #000
+    style B2 fill: #ff9999, color: #000
+    style C2 fill: #99ff99, color: #000
+    style D2 fill: #99ff99, color: #000
 ```
 
 ## Spring Framework 기반 구현(Resilience4j)
@@ -118,7 +118,7 @@ Spring 생태계에서는 Netflix Hystrix가 초기에 널리 사용되었으나
 
 - 핵심 동작 원리: AOP(관점 지향 프로그래밍)
     - Resilience4j는 Spring Boot와 결합하여 AOP를 기반으로 동작
-    - 개발자가 `@CircuitBreaker` 어노테이션을 특정 메소드에 붙이면, 서킷 브레이커 로직(상태 확인, 실패 카운팅, Fallback 호출 등)실행
+    - 개발자가 `@CircuitBreaker` 어노테이션을 특정 메소드에 붙이면, 서킷 브레이커 로직(상태 확인, 실패 카운팅, Fallback 호출 등) 실행
 
 ### 구현 예시
 
@@ -154,19 +154,19 @@ public class ExternalApiService {
 
 ```yaml
 resilience4j:
-circuitbreaker:
-  instances:
-    externalApiService: # @CircuitBreaker 어노테이션의 name과 일치
-      register-health-indicator: true # Actuator 상태 표시에 포함
-      sliding-window-type: COUNT_BASED # 카운트 기반으로 실패율 측정
-      sliding-window-size: 10 # 최근 10번의 호출을 기준으로
-      failure-rate-threshold: 50 # 실패율이 50% 이상이면 서킷을 Open
-      minimum-number-of-calls: 5 # 최소 5번의 호출이 있어야 실패율 계산 시작
-      wait-duration-in-open-state: 10s # Open 상태를 10초간 유지
-      permitted-number-of-calls-in-half-open-state: 2 # Half-Open 상태에서 2번의 테스트 호출 허용
-      record-exceptions: # 실패로 간주할 예외 목록
-        - org.springframework.web.client.HttpServerErrorException
-        - java.io.IOException
+  circuitbreaker:
+    instances:
+      externalApiService: # @CircuitBreaker 어노테이션의 name과 일치
+        register-health-indicator: true # Actuator 상태 표시에 포함
+        sliding-window-type: COUNT_BASED # 카운트 기반으로 실패율 측정
+        sliding-window-size: 10 # 최근 10번의 호출을 기준으로
+        failure-rate-threshold: 50 # 실패율이 50% 이상이면 서킷을 Open
+        minimum-number-of-calls: 5 # 최소 5번의 호출이 있어야 실패율 계산 시작
+        wait-duration-in-open-state: 10s # Open 상태를 10초간 유지
+        permitted-number-of-calls-in-half-open-state: 2 # Half-Open 상태에서 2번의 테스트 호출 허용
+        record-exceptions: # 실패로 간주할 예외 목록
+          - org.springframework.web.client.HttpServerErrorException
+          - java.io.IOException
 ```
 
 ### 모니터링 통합
