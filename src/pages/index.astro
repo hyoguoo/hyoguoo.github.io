@@ -27,7 +27,7 @@ const latestDocs = allDocs
   const bDate = new Date(b.data.lastUpdated ?? 0);
   return bDate.getTime() - aDate.getTime();
 })
-.slice(0, 6);
+.slice(0, 12);
 
 function formatDate(date: Date | string | undefined) {
   if (!date) return '';
