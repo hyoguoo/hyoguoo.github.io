@@ -25,8 +25,9 @@ export const DOCS_GROUPS: DocsGroup[] = [
   { label: 'Framework', items: [
     { key: 'spring', label: 'Spring' },
   ]},
-  { label: 'Messaging & Streaming', items: [
+  { label: 'Streaming & Observability', items: [
     { key: 'kafka', label: 'Kafka' },
+    { key: 'elk', label: 'ELK' },
   ]},
   { label: 'Software Engineering', items: [
     { key: 'test', label: 'Test' },

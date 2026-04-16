@@ -354,4 +354,10 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: ['dependency-configurations', 'resolution-strategy'],
     },
   ],
+  elk: [
+    {
+      label: 'Foundations',
+      slugs: ['introduction'],
+    },
+  ],
 };

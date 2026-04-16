@@ -20,6 +20,7 @@ export const TAG_HUES: Record<string, number> = {
   'Payment Platform Project': 340,
   'Gradle': 85,
   'DDD': 145,
+  'ELK': 175,
 };
 
 export const CATEGORY_ORDER: string[] = [

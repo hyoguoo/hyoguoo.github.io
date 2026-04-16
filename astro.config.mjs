@@ -187,6 +187,11 @@ export default defineConfig({
 					autogenerate: { directory: 'docs/kafka', collapsed: true },
 				},
 				{
+					label: 'ELK',
+					collapsed: true,
+					autogenerate: { directory: 'docs/elk', collapsed: true },
+				},
+				{
 					label: 'Docker',
 					collapsed: true,
 					autogenerate: { directory: 'docs/docker', collapsed: true },
