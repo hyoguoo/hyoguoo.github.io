@@ -1,11 +1,10 @@
 ---
 title: "Transaction"
 date: 2023-03-21
-lastUpdated: 2025-09-08
-tags: [MySQL]
-description: "트랜잭션의 ACID 특성과 MySQL의 트랜잭션 범위 설정, 주의해야 할 잠금과 활성 트랜잭션 관리 방법을 정리한다."
+lastUpdated: 2026-04-17
+tags: [ MySQL ]
+description: "트랜잭션의 ACID 특성, DDL의 암묵적 커밋으로 인한 롤백 제한, MySQL 트랜잭션 범위 최소화 원칙을 정리한다."
 ---
-> 작업의 완전성을 보장해주는 기능
 
 트랜잭션은 꼭 여러 개의 변경 작업을 수행하는 쿼리가 아니더라도, 논리적인 작업 자체가 적용(Commit)되거나, 모두 적용되지 않아야(Rollback) 보장한다고 할 수 있다.
 
@@ -19,6 +18,56 @@ description: "트랜잭션의 ACID 특성과 MySQL의 트랜잭션 범위 설정
 | 일관성(Consistency) | 트랜잭션을 수행 전과 수행 후에 데이터베이스의 일관된 상태 유지        | 유니크 제약조건, 외래키 제약조건 등의 적용으로 일관성 보장                         |
 |  고립성(Isolation)  | 트랜잭션 수행 중 다른 트랜잭션의 작업이 데이터 변경을 일으키지 못하는 상태 | 잠금(Lock)과 MVCC(Multi-Version Concurrency Control) 매커니즘 사용 |
 | 지속성(Durability)  | 트랜잭션 완료 후 결과의 영구적 반영                       | 시스템 장애 시, Redo-log에서 커밋된 트랜잭션의 읽기를 통한 지속성 보장              |
+
+## DDL의 암묵적 커밋
+
+DDL(`CREATE`, `ALTER`, `DROP`, `TRUNCATE` 등)은 DML과 달리 테이블 구조 자체를 변경하는 명령이기 때문에, 트랜잭션 처리 방식도 다르다.
+
+- MySQL/InnoDB를 포함한 대부분의 DBMS에서 DDL 명령은 실행 시 암묵적으로 COMMIT이 수행
+- `START TRANSACTION` 내에서 DDL을 실행하면, 그 직전까지의 DML 변경 내역까지 함께 커밋되어 이후 `ROLLBACK`이 무효화
+- PostgreSQL은 트랜잭션 내 DDL을 지원하여 롤백이 가능하지만, MySQL은 이 동작을 지원하지 않음
+
+```sql
+START TRANSACTION;
+
+INSERT INTO users (name)
+VALUES ('Alice');
+-- Alice는 아직 커밋되지 않은 상태
+
+ALTER TABLE users
+    ADD COLUMN phone VARCHAR(20);
+-- DDL 실행 → 암묵적 COMMIT 발생 → Alice INSERT도 함께 커밋됨
+
+ROLLBACK;
+-- 이미 커밋되었으므로 Alice 데이터는 롤백되지 않음
+```
+
+### 롤백이 불가능한 이유
+
+DDL이 암묵적 커밋을 강제하는 이유는 내부 처리 방식 자체가 DML과 다르기 때문이다.
+
+- 물리적 재구성: 테이블스페이스에 새 컬럼 공간을 확보하고 기존 레코드를 새 포맷으로 재작성하며, 영향 받는 인덱스도 재구성
+- Undo 로그 부재: DML은 변경 전 행 데이터를 Undo 로그에 기록하지만, DDL은 구조 변경 자체에 대한 행 단위 Undo 기록이 없음
+- 의존 객체 연쇄: 새 스키마를 참조하는 뷰·외래키·트리거·저장 프로시저·실행 계획 캐시가 모두 영향을 받으며, 이를 역순으로 되돌리는 비용이 과도
+
+```mermaid
+flowchart TB
+    subgraph DML["DML 경로 - UPDATE users SET name = 'Bob' WHERE id = 1"]
+        D1["변경 전 데이터\nname = 'Alice'"] --> D2[Undo 로그에 기록]
+        D3["변경 내용\nname → 'Bob'"] --> D4[Redo 로그에 기록]
+        D2 --> D5["ROLLBACK 시\nUndo 로그로 원복"]
+    end
+
+    subgraph DDL["DDL 경로 - ALTER TABLE users ADD COLUMN age INT"]
+        A1[테이블 정의 변경] --> A2[메타데이터 테이블 갱신]
+        A2 --> A3["Undo 로그 없음\n롤백 불가"]
+    end
+
+    classDef dml fill: #4a9eff,color: #000
+    classDef ddl fill: #f5a623,color: #000
+    class D1,D2,D3,D4,D5 dml
+    class A1,A2,A3 ddl
+```
 
 ## 트랜잭션 범위 최소화
 

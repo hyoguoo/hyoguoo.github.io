@@ -1,10 +1,47 @@
 ---
 title: "SELECT"
 date: 2023-06-03
-lastUpdated: 2025-09-22
+lastUpdated: 2026-04-17
 tags: [ MySQL ]
-description: "SELECT 쿼리의 인덱스 활용 규칙과 WHERE·ORDER BY·GROUP BY 절에서 인덱스가 사용되는 조건을 정리한다."
+description: "SELECT 쿼리의 논리적 처리 순서와 인덱스 활용 규칙, WHERE·ORDER BY·GROUP BY·JOIN 절의 동작을 정리한다."
 ---
+
+## SQL의 논리적 처리 순서
+
+SQL은 작성 순서와 실제 논리적 처리 순서가 다르게 설계되어 있으며, 이 때문에 특정 절에서 다른 절의 별칭을 참조할 수 없는 동작이 발생한다.
+
+- 작성 순서: `SELECT` → `FROM` → `WHERE` → `GROUP BY` → `HAVING` → `ORDER BY`
+- 논리적 처리 순서: `FROM` → `ON` → `JOIN` → `WHERE` → `GROUP BY` → `HAVING` → `SELECT` → `DISTINCT` → `ORDER BY` → `LIMIT`
+
+두 순서가 다르기 때문에 다음과 같은 동작이 나타난다.
+
+- `WHERE`에서 `SELECT` 별칭 참조 불가: `SELECT`가 `WHERE`보다 나중에 처리되어 별칭이 아직 존재하지 않음
+- `HAVING`이 `GROUP BY` 직후에 위치하는 이유: 그룹 단위로 조건을 걸기 위해 그룹화 직후에 평가
+- `ORDER BY`에서는 `SELECT` 별칭 참조 가능: `ORDER BY`가 `SELECT` 이후에 처리됨
+
+```sql
+-- WHERE에서 SELECT 별칭 참조 → 에러
+SELECT salary * 12 AS annual_salary
+FROM employees
+WHERE annual_salary > 100000;
+
+-- ORDER BY에서 SELECT 별칭 참조 → 정상
+SELECT salary * 12 AS annual_salary
+FROM employees
+ORDER BY annual_salary DESC;
+```
+
+여기서 말하는 논리적 처리 순서와 실제로 DB 엔진이 데이터를 처리하는 물리적 실행 순서와는 다르다는 점에 유의해야 한다.
+
+| 구분        | 역할                          | 예                                                      |
+|-----------|-----------------------------|--------------------------------------------------------|
+| 논리적 처리 순서 | 쿼리가 무엇을 의미하는지 정의. 결과의 정답 규정 | `FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY` |
+| 물리적 실행 순서 | 옵티마이저가 어떻게 계산할지 결정          | 인덱스 스캔, 조인 순서 변경, 조건 푸시다운 등                            |
+
+옵티마이저는 결과가 동일하다는 것이 보장되는 범위 안에서 성능을 위해 실행 순서를 자유롭게 재배치한다.
+
+- `JOIN` 이후에 `WHERE`가 적용되는 것이 논리적 정의이지만, 옵티마이저는 `WHERE` 조건을 `JOIN` 이전으로 밀어내(predicate pushdown) 조인 대상 레코드 수를 줄이는 방식으로 실행
+- `WHERE`에서 `SELECT` 별칭을 참조할 수 없는 제약은 의미 단계(파서/분석기)에서 결정되므로, 옵티마이저의 실행 순서 재배치와 무관하게 컴파일 단계에서 에러 발생
 
 ## SELECT 절의 인덱스 사용
 

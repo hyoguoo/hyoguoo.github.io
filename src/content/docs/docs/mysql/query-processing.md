@@ -1,9 +1,9 @@
 ---
 title: "Query Processing"
 date: 2025-08-15
-lastUpdated: 2026-04-09
+lastUpdated: 2026-04-17
 tags: [ MySQL ]
-description: "MySQL 서버와 스토리지 엔진 간의 핸들러 API 기반 쿼리 처리 흐름과 파싱·최적화·실행 단계를 분석한다."
+description: "MySQL 서버와 스토리지 엔진 간의 핸들러 API 기반 쿼리 처리 흐름, 파싱·최적화·실행 단계, Prepared Statement의 실제 성능 특성을 분석한다."
 ---
 
 MySQL이 하나의 SQL 쿼리를 받아 결과를 반환하기까지, 내부는 MySQL 서버(Server)와 스토리지 엔진(Storage Engine) 두 컴포넌트가 핸들러 API를 통해 협력하여 처리한다.
@@ -57,13 +57,27 @@ MySQL은 클라이언트와 통신하고 쿼리를 처리하는 방식에 따라
 - 바이너리 프로토콜: 데이터 전송 시 문자열 변환 없이 타입별 바이너리 형식 사용
     - 숫자·날짜·부울 등 고정 길이 타입에서 패킷 크기 감소 및 문자열 ↔ 값 변환 오버헤드 최소화 (VARCHAR·TEXT 등 가변 문자열은 텍스트 프로토콜과 크기 차이 거의 없음)
 
-## SQL Injection 방어 원리 (DB 관점)
+#### SQL Injection 방어 원리 (DB 관점)
 
 Prepared Statement가 보안에 강력한 이유는 데이터와 명령어를 물리적으로 분리하기 때문이다.
 
 1. 문법 해석의 선행: `PREPARE` 단계에서 이미 SQL의 문법 구조(AST)가 생성되고 고정
     - 이후 `EXECUTE` 시점에 어떤 값이 들어와도 이미 확정된 쿼리의 구조(Structure) 변경 불가능
 2. 리터럴 강제 바인딩: 바인딩되는 파라미터는 서버 내부적으로 항상 단순 리터럴(Literal) 취급되어, 값에 포함된 SQL 키워드·메타문자가 문법으로 재해석되지 않음
+
+#### Prepared Statement 직접 사용
+
+MySQL은 SQL 구문으로 Prepared Statement를 직접 제어할 수 있다.
+
+```sql
+PREPARE stmt FROM 'SELECT * FROM users WHERE id = ?';
+SET @id = 42;
+EXECUTE stmt USING @id;
+DEALLOCATE PREPARE stmt;
+```
+
+- 세션 스코프: `PREPARE`된 statement는 해당 세션 내에서만 유효하며, `DEALLOCATE` 또는 세션 종료 시 소멸
+- 전역 제한: `max_prepared_stmt_count` 시스템 변수(기본값 16,382)가 서버 전체 등록 개수를 제한하며, 초과 시 새 `PREPARE`는 거부
 
 ## 쿼리 생명주기 (Query Lifecycle)
 

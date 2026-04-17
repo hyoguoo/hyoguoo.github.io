@@ -1,9 +1,9 @@
 ---
 title: "UPDATE / DELETE"
 date: 2023-07-18
-lastUpdated: 2025-09-22
-tags: [MySQL]
-description: "JOIN 기반 다중 테이블 UPDATE·DELETE와 ORDER BY·LIMIT을 활용한 부분 처리 방법을 설명한다."
+lastUpdated: 2026-04-17
+tags: [ MySQL ]
+description: "JOIN 기반 다중 테이블 UPDATE·DELETE, ORDER BY·LIMIT 부분 처리, TRUNCATE와 DELETE의 내부 동작 차이를 설명한다."
 ---
 
 `UPDATE` / `DELETE` 쿼리를 단일 테이블에 대해 한 건(또는 소량) 뿐만 아니라, 조인을 통해 여러 테이블을 동시에 대상으로 하여 `UPDATE` / `DELETE` 쿼리를 실행할 수 있다.
@@ -75,6 +75,33 @@ WHERE d.dept_no = 'd59';
 
 - JOIN 순서에 따라 성능이 달라질 수 있으므로, 실행 계획(Execution Plan) 확인
 - 여러 테이블을 동시에 삭제할 수 있으므로 관계 데이터 정리 유용
+
+## TRUNCATE vs DELETE
+
+두 명령은 모두 테이블의 데이터를 삭제하지만, 분류와 내부 동작이 달라 성능·롤백 특성이 크게 갈린다.
+
+- `DELETE` (DML): 행 단위로 삭제하며, 각 행마다 Undo·Redo 로그를 기록하여 롤백과 크래시 복구를 지원
+- `TRUNCATE` (DDL): 테이블의 데이터 페이지 할당 자체를 해제하여 공간을 빈 상태로 마킹
+
+### 동작 차이
+
+DELETE는 100만 행을 대상으로 하면 100만 번의 행 방문과 로그 기록이 발생하지만, TRUNCATE는 페이지 포인터만 제거하므로 거의 즉시 완료된다.
+
+- DELETE 경로: 각 행마다 Undo 로그 생성(롤백 대비), Redo 로그 생성(크래시 복구 대비), 트리거 정의 시 행마다 실행
+- TRUNCATE 경로: 페이지 단위의 최소 로그만 기록, 트리거 미실행, 테이블스페이스 재할당으로 통계/공간 초기화
+
+### 속성 비교
+
+|       구분       |   DELETE (DML)    | TRUNCATE (DDL) |
+|:--------------:|:-----------------:|:--------------:|
+|     동작 방식      | 행 단위 삭제 + Undo 로그 |   페이지 할당 해제    |
+|    WHERE 조건    |        가능         |  불가 (전체 삭제만)   |
+|       롤백       |        가능         | 불가 (암묵적 커밋 발생) |
+|     트리거 실행     |        실행됨        |     실행 안 됨     |
+| AUTO_INCREMENT |        유지         |      초기화       |
+|  속도 (100만 행)   |        수 분        |     수 초 이내     |
+
+MySQL에서 TRUNCATE는 DDL로 분류되므로 실행 시 암묵적 커밋이 발생하며, 트랜잭션 내에서 실행해도 롤백이 불가능하다.
 
 ###### 참고자료
 
