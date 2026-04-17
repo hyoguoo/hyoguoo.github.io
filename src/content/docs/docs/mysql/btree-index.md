@@ -25,7 +25,6 @@ InnoDB에서는 리프 노드에서 PK 값을 가지고 있어 실제 데이터 
 ```mermaid
 flowchart TD
     subgraph BTree["B-Tree Index"]
-        direction TD
         subgraph P1["Root Node - Page 1"]
             R1["Aamer | 2\nJoana | 4\n... | 4"]
         end
