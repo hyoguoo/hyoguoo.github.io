@@ -354,6 +354,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Dependency Management',
       slugs: ['dependency-configurations', 'resolution-strategy'],
     },
+    {
+      label: 'Multi-Module Architecture',
+      slugs: ['multi-project-builds'],
+    },
   ],
   elk: [
     {
