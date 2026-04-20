@@ -358,7 +358,7 @@ export const docsSections: Record<string, SectionConfig> = {
   elk: [
     {
       label: 'Foundations',
-      slugs: ['introduction', 'cluster-and-node-architecture'],
+      slugs: ['introduction', 'cluster-and-node-architecture', 'index-and-document-model'],
     },
   ],
 };
