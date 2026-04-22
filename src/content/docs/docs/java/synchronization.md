@@ -1,9 +1,9 @@
 ---
 title: "Synchronization"
 date: 2025-01-07
-lastUpdated: 2025-11-26
-tags: [Java]
-description: "Java의 synchronized·ReentrantLock·Condition을 활용한 멀티스레드 동기화 방법과 경쟁 상태 방지 전략을 정리한다."
+lastUpdated: 2026-04-22
+tags: [ Java ]
+description: "Java의 synchronized·ReentrantLock·Condition 동작 방식과 JVM 레벨의 락 에스컬레이션·AQS 구현, 가상 스레드 환경의 선택 기준까지 정리한다."
 ---
 
 멀티 스레드 환경에서는 여러 스레드가 하나의 공유 자원에 동시에 접근할 때 데이터의 무결성이 깨지는 경쟁 상태(Race Condition)가 발생할 수 있다.
@@ -43,6 +43,53 @@ public void method() {
 - 대기 중인 스레드에 인터럽트를 걸 수 없음
 - 읽기/쓰기를 구분하는 등 세밀한 제어가 불가능
 
+### JVM 레벨 동작
+
+`synchronized` 블록은 자바 컴파일러가 `monitorenter`/`monitorexit` 바이트코드로 변환하며, JVM이 객체 헤더의 락 상태를 직접 조작하여 동기화를 구현한다.
+
+- `monitorenter`: 임계 영역 진입 시점에 객체 모니터 락 획득 시도
+- `monitorexit`: 정상 종료 시 락 반납
+- 예외 발생 경로에도 락이 반납되도록 컴파일러가 암묵적 `try-finally`를 삽입
+
+#### Object Header와 Mark Word
+
+HotSpot JVM에서 모든 객체는 헤더에 Mark Word 영역을 가지며, 이곳에 락 상태가 기록된다.
+
+- 크기: 64비트 JVM 기준 64비트 (32비트 JVM은 32비트)
+- 포함 정보: 락 상태 태그, 소유 스레드 식별자, GC 에이지, 해시코드 등 상태에 따라 의미 가변
+- 태그 비트로 다음 상태 구분: 편향 가능, 경량 락, 중량 락, GC 마킹
+
+#### 락 에스컬레이션(Lock Escalation)
+
+락은 Unlocked → Lightweight → Heavyweight 3단계로 승급되며 각 전이는 특정 상황을 트리거로 한다.(JDK 15에서 Biased Locking이 제거)
+
+```mermaid
+flowchart TD
+    Unlocked[Unlocked]
+    Lightweight[Lightweight Lock]
+    Heavyweight[Heavyweight Lock]
+    Unlocked -->|스레드 접근| Lightweight
+    Lightweight -->|스핀 한계 초과| Heavyweight
+```
+
+##### Lightweight Lock (경량 락)
+
+다른 스레드가 진입하지만 선행 스레드가 곧 락을 놓을 것으로 기대되는 짧은 경쟁 상황에 사용된다.
+
+- 획득 방식: CAS(Compare-And-Swap) 원자 연산으로 Mark Word를 교체 시도
+- 실패 시 대기: 루프 안에서 CAS를 반복하며 락이 풀리기를 기다리는 busy-waiting
+- 핵심 특징: 사용자 모드에서 CPU 사이클만 소모, OS 커널 진입·컨텍스트 스위칭 없음
+- 이유: 짧은 경쟁이라면 커널 호출 비용(수 μs)보다 몇 사이클 헛도는 편이 저렴
+
+##### Heavyweight Lock (중량 락)
+
+스핀을 반복해도 락을 얻지 못할 만큼 경쟁이 길어지면 JVM이 정한 스핀 한계를 넘는 시점에 승급된다.
+
+- 승급 과정: Mark Word를 힙에 새로 할당한 `ObjectMonitor` 포인터로 교체
+- 대기 방식: OS 뮤텍스로 스레드를 `BLOCKED` 상태로 전환하여 CPU 스케줄링에서 제외
+- 핵심 특징: 커널이 스레드를 재우고 락 해제 시점에 깨워줌 → CPU 낭비 없음, 대신 깨어날 때 커널 개입 비용 발생
+- 이유: 대기가 길어지면 CPU를 헛돌리는 비용이 커널 호출 비용을 초과
+
 ## 조건 변수(Condition Variable)
 
 단순히 접근을 막는 것을 넘어 스레드 간에 특정 조건을 기다리고, 조건이 만족되었음을 알려주는 협력 매커니즘이 필요할 땐 Java 모니터의 조건 변수 기능을 사용할 수 있다.
@@ -68,7 +115,7 @@ public void method() {
 
 ### `synchronized` + `wait()`/`notify()` 사용 예시
 
-스레드가 깨어났을 때 조건이 여전히 유효한지 재검사해야 하므로 `if` 대신 `while` 문을 사용해야 한다.
+스레드가 깨어났을 때 조건이 여전히 유효한지 재검사해야 하므로 `while` 문을 사용해야 한다.
 
 ```java
 class SharedBuffer {
@@ -116,13 +163,14 @@ JDK 1.5부터 제공되는 `java.util.concurrent.locks.ReentrantLock`은 `synchr
 
 기존 `synchronized`와는 다르게 모니터 락이 아닌 직접적인 락 객체를 사용하는 방식으로 동작한다.
 
-|    **특징**    |        **`synchronized`**         |        **`ReentrantLock`**         |
-|:------------:|:---------------------------------:|:----------------------------------:|
-|   **락 타입**   |           모니터 락(JVM 관리)           |          객체 기반 락 (직접 관리)           |
-| **타임아웃 지원**  |                미지원                |           지원 (`tryLock`)           |
-| **인터럽트 지원**  |                미지원                |      지원 (`lockInterruptibly`)      |
-|  **락 세분화**   |                불가능                | 가능 (여러 개의 `ReentrantLock` 인스턴스 사용) |
-| **대기/알림 제어** | `wait()` / `notify()` 메서드로 제한적 제어 |    `Condition` 객체를 통한 세부적 제어 가능    |
+|    특징    |           `synchronized`           |              `ReentrantLock`              |
+|:--------:|:----------------------------------:|:-----------------------------------------:|
+|   락 타입   |           모니터 락(JVM 관리)            |              객체 기반 락 (직접 관리)              |
+|  JVM 구현  | Object Header Mark Word + 락 에스컬레이션 | AQS(`state` + CLH 큐) + `LockSupport.park` |
+| 타임아웃 지원  |                미지원                 |              지원 (`tryLock`)               |
+| 인터럽트 지원  |                미지원                 |         지원 (`lockInterruptibly`)          |
+|  락 세분화   |                불가능                 |    가능 (여러 개의 `ReentrantLock` 인스턴스 사용)     |
+| 대기/알림 제어 | `wait()` / `notify()` 메서드로 제한적 제어  |       `Condition` 객체를 통한 세부적 제어 가능        |
 
 ### `ReentrantLock` 동작 방식
 
@@ -198,6 +246,46 @@ class PrinterQueue {
     }
 }
 ```
+
+### JVM 레벨 동작
+
+`ReentrantLock`은 JVM 내장 모니터가 아닌 `java.util.concurrent.locks.AbstractQueuedSynchronizer`(AQS) 위에 구현된 사용자 레벨 락이다.
+
+- 락 상태를 하나의 `int state` 필드로 표현하여 CAS로 원자적 전이
+- 대기 스레드를 CLH(Craig, Landin, Hagersten) 기반의 양방향 큐로 관리
+- 실제 블로킹은 `LockSupport.park()`로 수행되어, JVM 내부에서 OS 스레드 스케줄링과 연결
+
+#### 락 획득·해제 흐름
+
+1. `lock()` 호출 시 `state`가 0이면 CAS로 1로 전이하여 즉시 획득
+2. CAS 실패 시 현재 스레드를 노드로 감싸 AQS 큐 꼬리에 추가
+3. 선행 노드가 소유자가 아니면 `LockSupport.park()`로 중단 (OS 레벨 대기)
+4. `unlock()`은 `state`를 감소시키고 0이 되면 큐의 다음 노드에 `LockSupport.unpark()` 전달
+5. 깨어난 스레드는 재시도하여 CAS 성공 시 획득
+
+#### 재진입(Reentrancy)과 공정성
+
+- 재진입: 소유 스레드가 다시 `lock()` 호출 시 `state`를 1 증가, `unlock()`마다 감소하여 0에서 해제
+- 비공정 모드 (기본값): 획득 시도 시 큐를 건너뛰고 CAS 선점 허용하여 처리량 우선
+- 공정 모드: 생성자에 `true` 지정 시 반드시 큐 순서대로 획득하여 기아 방지 우선
+
+`ReentrantLock`이 `synchronized`보다 세밀한 제어를 제공할 수 있는 근거는, 대기·해제 로직이 JVM 고정 모니터가 아닌 자바 코드 수준의 AQS로 구현되어 확장 가능하다는 점에 있다.
+
+## 가상 스레드 환경에서의 선택
+
+Java 21의 가상 스레드는 블로킹 호출 시 캐리어 스레드에서 언마운트되어 자원을 양보하도록 설계되었으나, `synchronized`는 이 메커니즘과 충돌한다.
+
+- 피닝(Pinning) 원인
+    - `synchronized` 블록 내부에서 블로킹 호출 발생 시, JVM 모니터 락이 캐리어 스레드에 종속되어 언마운트 불가
+    - 해당 캐리어 스레드는 가상 스레드가 깨어날 때까지 점유되어, `ForkJoinPool`의 캐리어 수가 고갈되면 처리량이 플랫폼 스레드 수준으로 하락
+- `ReentrantLock`의 이점
+    - AQS 기반 락은 `LockSupport.park()`로 대기하며, 이는 가상 스레드 스케줄러와 통합되어 언마운트 경로 확보
+    - 가상 스레드 도입 초기(JDK 21~23)에는 기존 `synchronized` 코드를 `ReentrantLock`으로 전환하는 것이 권장 사항
+- JEP 491 (Synchronize Virtual Threads without Pinning, JDK 24)
+    - 모니터 획득 및 `Object.wait()` 구간에서도 가상 스레드가 언마운트 가능하도록 JVM 내부가 수정
+    - 대부분의 레거시 `synchronized` 코드가 코드 수정 없이 가상 스레드 환경과 호환되는 수준으로 완화
+
+가상 스레드의 피닝과 컨티뉴에이션 메커니즘 상세는 [Virtual Thread 문서](/docs/java/virtual-thread/)에서 다룬다.
 
 ###### 참고자료
 
