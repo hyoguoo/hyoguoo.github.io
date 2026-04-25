@@ -65,7 +65,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Operations',
-      slugs: ['replication'],
+      slugs: ['replication', 'partitioning'],
     },
   ],
   'ai-assisted-development': [
