@@ -1,8 +1,8 @@
 ---
 title: "JPA (Java Persistence API)"
 date: 2024-03-07
-lastUpdated: 2025-09-06
-tags: [Spring]
+lastUpdated: 2026-04-26
+tags: [ Spring ]
 description: "JPA의 객체 중심 개발 이점과 EntityManagerFactory·EntityManager를 통한 엔티티 관리 방식, Spring Boot에서의 JPA 자동 구성을 정리한다."
 ---
 
@@ -81,6 +81,62 @@ JPA는 `EntityManagerFactory`와 `EntityManager`를 중심으로 동작한다.
 - `EntityManager`
     - 실질적인 데이터베이스 작업(저장, 수정, 삭제, 조회 등)을 처리하는 객체
     - 내부에 데이터베이스 커넥션을 유지하면서 영속성 컨텍스트를 통해 엔티티를 관리
+
+## 데이터베이스 접근 스택 구성요소
+
+JPA로 데이터를 다룰 때, 애플리케이션 코드에서 실제 데이터베이스에 도달하기까지 여러 컴포넌트가 계층적으로 협력한다.
+
+```mermaid
+flowchart TB
+    A[애플리케이션 코드]
+    B[JPA 표준 API]
+    C[Hibernate JPA 구현체]
+    D[HikariCP 커넥션 풀]
+    E[MySQL Connector/J<br/>JDBC 드라이버]
+    F[(MySQL Server)]
+    A --> B --> C --> D --> E --> F
+```
+
+|       컴포넌트        |     분류     | 역할                                                |
+|:-----------------:|:----------:|:--------------------------------------------------|
+|        JPA        |  표준 인터페이스  | ORM 동작 명세를 정의 (실제 동작은 구현체가 수행)                    |
+|     Hibernate     |  JPA 구현체   | 엔티티 매핑·SQL 생성·영속성 컨텍스트·지연 로딩 등 ORM 기능 구현          |
+|     HikariCP      | JDBC 커넥션 풀 | DB 커넥션을 미리 생성·재사용하여 연결 비용을 최소화하는 `DataSource` 구현체 |
+| MySQL Connector/J | JDBC 드라이버  | JDBC API 호출을 MySQL 프로토콜로 변환하여 서버와 실제 통신           |
+
+### JPA
+
+자바 진영의 ORM 표준 인터페이스로, 객체와 관계형 데이터베이스를 어떻게 매핑하고 관리할지에 대한 명세를 정의한다.
+
+- 패키지: `jakarta.persistence` (구 `javax.persistence`)
+- `@Entity`, `@Id`, `EntityManager`, JPQL 등 ORM에 필요한 표준 API 제공
+- 명세 자체는 동작하지 않으며, 구현체와 결합해야 실제 SQL 실행 가능
+
+### Hibernate
+
+가장 널리 쓰이는 JPA 구현체로, JPA 명세를 구현하면서 ORM 동작 전반을 담당한다.
+
+- 영속성 컨텍스트의 1차 캐시·쓰기 지연·변경 감지(Dirty Checking) 구현
+- 방언(Dialect) 설정에 따라 RDBMS 종류별로 SQL 자동 생성
+- 페치 조인, 배치 페칭 등 N+1 회피를 위한 최적화 전략 제공
+- Spring Boot의 `spring-boot-starter-data-jpa` 의존성 사용 시 기본 구현체로 자동 선택
+
+### HikariCP
+
+자바 진영에서 가장 빠른 JDBC 커넥션 풀로 알려진 `DataSource` 구현체로, 데이터베이스 커넥션의 생성·반환 비용을 최소화한다.
+
+- 매 요청마다 TCP 연결을 새로 맺지 않고, 미리 생성한 `Connection`을 풀에서 꺼내 재사용
+- 락 경쟁 최소화와 바이트코드 최적화로 다른 커넥션 풀 대비 오버헤드가 적음
+- Spring Boot 2.x 이후 기본 `DataSource` 구현체로 채택
+
+### MySQL Connector/J
+
+MySQL이 공식 제공하는 자바용 JDBC 드라이버로, 자바 애플리케이션과 MySQL 서버 사이의 통신을 담당하는 최하위 계층이다.
+
+- 드라이버 클래스: `com.mysql.cj.jdbc.Driver`
+- `java.sql.Driver`·`Connection`·`PreparedStatement` 등 JDBC 표준 인터페이스 구현체 제공
+- JDBC API 호출을 MySQL 바이너리 프로토콜로 인코딩하여 서버에 전송
+- HikariCP가 풀 내부에서 새 커넥션을 만들 때 호출되어 실제 TCP 연결 수립
 
 ## 스프링 부트에서의 JPA 설정
 
