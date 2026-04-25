@@ -20,6 +20,9 @@ const latestBlogPosts = allBlogPosts
 })
 .slice(0, 6);
 
+const DOCS_PAGE_SIZE = 12;
+const DOCS_MAX = 48;
+
 const latestDocs = allDocs
 .filter(d => d.data.lastUpdated)
 .sort((a, b) => {
@@ -27,7 +30,7 @@ const latestDocs = allDocs
   const bDate = new Date(b.data.lastUpdated ?? 0);
   return bDate.getTime() - aDate.getTime();
 })
-.slice(0, 12);
+.slice(0, DOCS_MAX);
 
 function formatDate(date: Date | string | undefined) {
   if (!date) return '';
@@ -150,26 +153,40 @@ function formatDate(date: Date | string | undefined) {
           <a href="/docs/" class="section-link">All docs →</a>
         </div>
         {latestDocs.length > 0 ? (
-            <ul class="post-list">
-              {latestDocs.map((doc, i) => {
-                const tag = (doc.data.tags as string[] | undefined)?.[0];
-                return (
-                    <li style={`animation-delay: ${i * 50}ms`}>
-                      <a href={`/${doc.id}/`} class="post-row">
-                        {tag
-                            ? <span class="post-tag" style={`--tag-hue:${getHue(tag)}`}>{tag}</span>
-                            : <span />
-                        }
-                        <span class="post-title">{doc.data.title}</span>
-                        <span class="post-date">
-                          {formatDate(doc.data.lastUpdated as Date | undefined)}
-                        </span>
-                        <span class="post-arrow">→</span>
-                      </a>
-                    </li>
-                );
-              })}
-            </ul>
+            <>
+              <ul class="post-list" data-doc-list data-page-size={DOCS_PAGE_SIZE}>
+                {latestDocs.map((doc, i) => {
+                  const tag = (doc.data.tags as string[] | undefined)?.[0];
+                  return (
+                      <li
+                          class={i >= DOCS_PAGE_SIZE ? 'is-hidden' : 'is-revealed'}
+                          style={`animation-delay: ${(i % DOCS_PAGE_SIZE) * 110}ms`}
+                      >
+                        <a href={`/${doc.id}/`} class="post-row">
+                          {tag
+                              ? <span class="post-tag" style={`--tag-hue:${getHue(tag)}`}>{tag}</span>
+                              : <span />
+                          }
+                          <span class="post-title">{doc.data.title}</span>
+                          <span class="post-date">
+                            {formatDate(doc.data.lastUpdated as Date | undefined)}
+                          </span>
+                          <span class="post-arrow">→</span>
+                        </a>
+                      </li>
+                  );
+                })}
+              </ul>
+              {latestDocs.length > DOCS_PAGE_SIZE && (
+                  <>
+                    <div class="docs-sentinel" data-docs-sentinel aria-hidden="true"></div>
+                    <a href="/docs/" class="docs-end-cta is-hidden" data-docs-cta>
+                      <span class="docs-end-cta-label">View all docs</span>
+                      <span class="docs-end-cta-arrow" aria-hidden="true">→</span>
+                    </a>
+                  </>
+              )}
+            </>
         ) : (
             <p style="color: var(--color-text-muted); font-size: 0.9rem;">문서 마이그레이션 준비 중입니다.</p>
         )}
@@ -520,4 +537,104 @@ function formatDate(date: Date | string | undefined) {
     .post-row { grid-template-columns: auto 1fr auto; }
     .post-date { display: none; }
   }
+
+  /* ── Infinite scroll ── */
+  .post-list li.is-hidden { display: none; }
+
+  @keyframes postFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .post-list li.is-revealed,
+  .docs-end-cta.is-revealed {
+    animation: postFadeIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .post-list li.is-revealed,
+    .docs-end-cta.is-revealed { animation: none; }
+  }
+
+  .docs-sentinel {
+    height: 1px;
+    width: 100%;
+  }
+
+  .docs-end-cta {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.95rem 1.25rem;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--t-radius-md);
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    transition: all var(--t-duration) var(--t-ease);
+  }
+
+  .docs-end-cta:hover {
+    border-style: solid;
+    border-color: var(--color-accent);
+    color: var(--color-accent-light);
+    background: var(--color-accent-glow);
+  }
+
+  .docs-end-cta-arrow {
+    transition: transform var(--t-duration) var(--t-ease);
+  }
+
+  .docs-end-cta:hover .docs-end-cta-arrow {
+    transform: translateX(4px);
+  }
+
+  .docs-end-cta.is-hidden {
+    display: none;
+  }
 </style>
+
+<script>
+  const list = document.querySelector<HTMLElement>('[data-doc-list]');
+  const sentinel = document.querySelector<HTMLElement>('[data-docs-sentinel]');
+  const cta = document.querySelector<HTMLElement>('[data-docs-cta]');
+  if (list && sentinel) {
+    const pageSize = Number(list.dataset.pageSize ?? 12);
+    const items = Array.from(list.children) as HTMLElement[];
+    let shown = pageSize;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) return;
+      const next = Math.min(shown + pageSize, items.length);
+      for (let i = shown; i < next; i++) {
+        const item = items[i];
+        const localIndex = i - shown;
+        item.style.animationDelay = `${localIndex * 110}ms`;
+        item.classList.remove('is-hidden');
+        item.classList.add('is-revealed');
+      }
+      shown = next;
+      if (shown >= items.length) {
+        observer.disconnect();
+        if (cta) {
+          const lastItemDelay = (next - 1 - (next - pageSize)) * 110;
+          cta.style.animationDelay = `${lastItemDelay + 200}ms`;
+          cta.classList.remove('is-hidden');
+          cta.classList.add('is-revealed');
+        }
+      }
+    }, { rootMargin: '0px 0px -10% 0px' });
+
+    observer.observe(sentinel);
+  }
+</script>
