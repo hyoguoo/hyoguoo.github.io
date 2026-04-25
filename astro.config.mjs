@@ -17,6 +17,10 @@ export default defineConfig({
 		starlight({
 			title: "hyoguoo.log",
 			description: 'Backend Engineer, Java & Spring',
+			defaultLocale: 'root',
+			locales: {
+				root: { label: '한국어', lang: 'ko' },
+			},
 			social: [
 				{ icon: 'github', label: 'GitHub', href: 'https://github.com/hyoguoo' },
 			],
@@ -218,6 +222,7 @@ export default defineConfig({
 				},
 			],
 			components: {
+				Head: './src/components/Head.astro',
 				Footer: './src/components/Footer.astro',
 				Header: './src/components/Header.astro',
 				MobileMenuFooter: './src/components/MobileMenuFooter.astro',

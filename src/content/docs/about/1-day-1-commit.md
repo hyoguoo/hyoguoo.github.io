@@ -2,6 +2,7 @@
 title: "1일 1커밋 효용성"
 date: 2024-02-18
 lastUpdated: 2025-08-04
+description: "1일 1커밋과 알고리즘 풀이 스트릭을 1년 반 이상 이어오며 느낀 시작 동기, 장단점, 그리고 게이미피케이션이 꾸준함에 어떻게 작용했는지를 정리한다."
 ---
 ![GitHub 잔디](images/github_grass.png)
 

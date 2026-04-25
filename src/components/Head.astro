@@ -1,0 +1,87 @@
+---
+import Default from '@astrojs/starlight/components/Head.astro';
+
+const SITE_URL = 'https://hyoguoo.github.io';
+const AUTHOR_NAME = 'hyoguoo';
+const AUTHOR_URL = 'https://github.com/hyoguoo';
+const DEFAULT_OG_IMAGE = `${SITE_URL}/og.png`;
+
+const route = Astro.locals.starlightRoute;
+const entry = route.entry;
+const data: any = entry.data;
+const id: string = entry.id;
+
+const isBlog = id.startsWith('blog/') && !id.endsWith('/index');
+const isDocs = id.startsWith('docs/') && !id.endsWith('/index');
+const isArticle = (isBlog || isDocs) && Boolean(data?.date);
+
+const toIso = (d: unknown): string | undefined => {
+	if (!d) return undefined;
+	if (d instanceof Date) return d.toISOString();
+	const parsed = new Date(d as string);
+	return isNaN(parsed.getTime()) ? undefined : parsed.toISOString();
+};
+
+const published = toIso(data?.date);
+const modified = toIso(data?.lastUpdated) ?? published;
+const tags: string[] = Array.isArray(data?.tags) ? data.tags : [];
+
+const pageUrl = new URL(Astro.url.pathname, SITE_URL).toString();
+
+const articleSchema = isArticle
+	? {
+			'@context': 'https://schema.org',
+			'@type': isBlog ? 'BlogPosting' : 'TechArticle',
+			headline: data.title,
+			description: data.description,
+			datePublished: published,
+			dateModified: modified,
+			author: {
+				'@type': 'Person',
+				name: AUTHOR_NAME,
+				url: AUTHOR_URL,
+			},
+			publisher: {
+				'@type': 'Person',
+				name: AUTHOR_NAME,
+				url: SITE_URL,
+			},
+			mainEntityOfPage: {
+				'@type': 'WebPage',
+				'@id': pageUrl,
+			},
+			image: DEFAULT_OG_IMAGE,
+			inLanguage: 'ko',
+			keywords: tags.length > 0 ? tags.join(', ') : undefined,
+	  }
+	: null;
+
+const segments = Astro.url.pathname.split('/').filter(Boolean);
+const breadcrumbItems = [
+	{ name: 'Home', url: `${SITE_URL}/` },
+	...segments.map((seg, i) => ({
+		name: i === segments.length - 1 && data?.title ? data.title : seg,
+		url: `${SITE_URL}/${segments.slice(0, i + 1).join('/')}/`,
+	})),
+];
+const breadcrumbSchema = {
+	'@context': 'https://schema.org',
+	'@type': 'BreadcrumbList',
+	itemListElement: breadcrumbItems.map((b, i) => ({
+		'@type': 'ListItem',
+		position: i + 1,
+		name: b.name,
+		item: b.url,
+	})),
+};
+---
+
+<Default />
+{isArticle && published && <meta property="article:published_time" content={published} />}
+{isArticle && modified && <meta property="article:modified_time" content={modified} />}
+{isArticle && <meta property="article:author" content={AUTHOR_NAME} />}
+{isArticle && tags.map((tag) => <meta property="article:tag" content={tag} />)}
+{articleSchema && (
+	<script type="application/ld+json" set:html={JSON.stringify(articleSchema)} />
+)}
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
