@@ -1,7 +1,43 @@
 // @ts-check
+import fs from 'node:fs';
+import path from 'node:path';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import sitemap from '@astrojs/sitemap';
 import starlightBlog from 'starlight-blog';
+
+const CONTENT_ROOT = './src/content/docs';
+
+function buildLastModMap() {
+	const map = new Map();
+	const walk = (dir, urlBase) => {
+		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+			const full = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				walk(full, urlBase + '/' + entry.name);
+				continue;
+			}
+			if (!/\.mdx?$/.test(entry.name)) continue;
+
+			const raw = fs.readFileSync(full, 'utf-8');
+			const fmMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+			if (!fmMatch) continue;
+			const lu = fmMatch[1].match(/^lastUpdated:\s*(.+)$/m);
+			if (!lu) continue;
+			const dateStr = lu[1].trim().replace(/^['"]|['"]$/g, '');
+			const date = new Date(dateStr);
+			if (isNaN(date.getTime())) continue;
+
+			const stem = entry.name.replace(/\.mdx?$/, '');
+			const pathname = stem === 'index' ? urlBase + '/' : urlBase + '/' + stem + '/';
+			map.set(pathname || '/', date.toISOString());
+		}
+	};
+	walk(CONTENT_ROOT, '');
+	return map;
+}
+
+const lastModMap = buildLastModMap();
 
 // https://astro.build/config
 export default defineConfig({
@@ -233,6 +269,14 @@ export default defineConfig({
 				SiteTitle: './src/components/SiteTitle.astro',
 			},
 			customCss: ['./src/styles/custom.css'],
+		}),
+		sitemap({
+			serialize(item) {
+				const pathname = new URL(item.url).pathname;
+				const lastmod = lastModMap.get(pathname);
+				if (lastmod) item.lastmod = lastmod;
+				return item;
+			},
 		}),
 	],
 });
