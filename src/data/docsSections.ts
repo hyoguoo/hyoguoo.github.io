@@ -4,7 +4,7 @@ export const docsSections: Record<string, SectionConfig> = {
   java: [
     {
       label: 'JVM',
-      slugs: ['jvm', 'jvm-execution-and-optimization', 'garbage-collection'],
+      slugs: ['jvm', 'jvm-runtime-model', 'jvm-execution-and-optimization', 'jvm-jit', 'garbage-collection'],
     },
     {
       label: 'Basic Syntax',
