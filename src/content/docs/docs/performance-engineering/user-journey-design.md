@@ -1,7 +1,7 @@
 ---
 title: "User Journey Design"
 date: 2026-04-03
-lastUpdated: 2026-04-03
+lastUpdated: 2026-04-30
 tags: [ Performance Engineering ]
 description: "비즈니스 임팩트 중심의 시나리오 구성과 정교한 Think Time 설계를 통해 실제 사용자와 유사한 부하 생성 로직을 구축하는 방법을 다룬다."
 ---
@@ -50,6 +50,20 @@ graph TD
 - 정적 대기 시간의 한계: 모든 요청 사이에 동일한 간격을 두면 시스템 자원 사용이 비정상적으로 일정해져 동시성 병목 발견이 어려움
 - 확률 분포 적용: 실제 사용자는 각자 다른 속도로 페이지를 읽으므로, 지수 분포나 정규 분포를 적용하여 요청 간격을 무작위화
 - 무작위성 확보: k6의 `sleep()` 함수와 무작위 난수 생성기를 결합하여 범위 내 무작위 대기 시간 적용
+
+## Per-User Throughput (1인당 요청률 산출)
+
+사이클이 정의되면 1명의 사용자가 시스템에 가하는 부하를 정량적으로 환산할 수 있다.
+
+### Cycle Time 분해
+
+```text
+Cycle Time = Σ(call latency) + Σ(think time)
+λ_user      = (사이클당 호출 수) / Cycle Time   [req/s/user]
+```
+
+- 사이클 시간은 콜 처리 시간 합과 think time 합으로 구성
+- 콜 처리 시간이 100ms 이내라면 think time이 사이클 시간의 대부분 차지 (보통 think가 10배 이상)
 
 ## Person-like Load Generation (사람처럼 행동하는 부하 생성)
 

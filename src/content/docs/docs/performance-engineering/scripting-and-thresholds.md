@@ -1,7 +1,7 @@
 ---
 title: "Scripting and Thresholds"
 date: 2026-04-06
-lastUpdated: 2026-04-06
+lastUpdated: 2026-04-30
 tags: [ Performance Engineering ]
 description: "k6의 체크와 임계치를 활용하여 SLA를 정의하고 모듈화된 성능 테스트 코드를 작성하는 방법을 분석한다."
 ---
@@ -67,6 +67,31 @@ export const options = {
     http_req_duration: ['p(95)<500'],
     // 특정 태그(정적 자원)에 대해 별도의 기준 설정
     'http_req_duration{staticAsset:yes}': ['p(99)<1000'],
+  },
+};
+```
+
+### Cost-based Differentiated SLO (처리 비용 기반 차등 임계치)
+
+엔드포인트마다 본질적인 처리 비용이 다르므로, 일괄 임계치를 적용하는 것보단 부류별로 임계치를 달리 잡아야 SLO가 의미를 가진다.
+
+|      부류      | P95 베이스라인 | P95 한계 부근 |       비고        |
+|:------------:|:---------:|:---------:|:---------------:|
+|    단순 조회     | ≤ 200 ms  | ≤ 800 ms  |   인덱스 hit 위주    |
+|    조인/페이징    | ≤ 400 ms  |  ≤ 1.2 s  |   디스크 I/O 가능    |
+| 인증/암호화 (CPU) | ≤ 500 ms  |  ≤ 1.5 s  | BCrypt 등 CPU 점유 |
+|   트랜잭션 쓰기    | ≤ 600 ms  |  ≤ 1.5 s  |   락·flush 포함    |
+
+각 부류를 k6 태그로 구분하여 임계치를 분리한다.
+
+```javascript
+export const options = {
+  thresholds: {
+    'http_req_duration{class:read}': ['p(95)<200'],
+    'http_req_duration{class:join}': ['p(95)<400'],
+    'http_req_duration{class:auth}': ['p(95)<500'],
+    'http_req_duration{class:write}': ['p(95)<600'],
+    'http_req_failed': ['rate<0.01'],
   },
 };
 ```
