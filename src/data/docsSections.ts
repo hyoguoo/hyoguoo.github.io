@@ -210,7 +210,7 @@ export const docsSections: Record<string, SectionConfig> = {
   redis: [
     {
       label: 'Basic',
-      slugs: ['basic', 'data-structure', 'key-management'],
+      slugs: ['basic', 'data-structure', 'key-management', 'lua-script'],
     },
     {
       label: 'Use Cases',
