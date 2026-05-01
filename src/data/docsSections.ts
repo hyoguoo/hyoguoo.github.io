@@ -328,7 +328,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Analysis',
-      slugs: ['use-methodology', 'bottleneck-identification'],
+      slugs: ['use-methodology', 'bottleneck-identification', 'capacity-planning'],
     },
   ],
   ddd: [
