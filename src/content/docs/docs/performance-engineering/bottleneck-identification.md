@@ -1,7 +1,7 @@
 ---
 title: Bottleneck Identification
 date: 2026-04-08
-lastUpdated: 2026-04-30
+lastUpdated: 2026-05-03
 tags: [ Performance Engineering ]
 description: "부하 테스트 분석을 통해 시스템의 한계를 파악하고 DB 커넥션 풀 고갈, 락 경합, 가상 스레드 피닝 등 핵심 병목 지점을 진단하는 방법론을 다룬다."
 ---
@@ -14,7 +14,7 @@ description: "부하 테스트 분석을 통해 시스템의 한계를 파악하
 
 ```mermaid
 graph TD
-    classDef point fill: #f96, stroke: #333, stroke-width: 2px, color: #000
+    classDef point fill: #f96,stroke: #333,stroke-width: 2px,color: #000
     A[부하 증가] --> B{자원 사용률 확인}
     B -- 정상 --> C[응답 시간 선형 유지]
     B -- 임계치 도달 --> D[Knee Point 발생]:::point
@@ -60,6 +60,35 @@ DB TPS Ceiling = pool size / D̄
 
 - 풀 5 + D̄ 100ms → `5 / 0.1 = 50 TPS`가 DB 풀의 이론 천장
 - D̄가 길어지면 풀 천장 하락
+
+#### Pool Oversizing Pitfalls
+
+풀 크기를 무리하게 늘리면 처리량이 비례해서 증가하지 않고 오히려 새로운 병목으로 전이된다.
+
+|         구분         |          현상          |                                원인                                 |
+|:------------------:|:--------------------:|:-----------------------------------------------------------------:|
+| max_connections 한계 |   신규 연결 거절·503 발생    |     앱 노드 N대 × 풀 P가 DB 한계(MySQL 기본 151, PostgreSQL 기본 100) 초과      |
+|      연결당 메모리       | idle 상태에서도 메모리 상시 점유 |         PostgreSQL 기준 연결당 약 10MB → 풀 500이면 idle 5GB 고정 사용         |
+|   파일 디스크립터·포트 고갈   |  소켓 생성 실패, 연결 자체 실패  | TCP 연결마다 fd와 ephemeral port 소비, `ulimit`/`ip_local_port_range` 도달 |
+
+DB 내부에서는 동시 트랜잭션이 늘수록 처리량이 오히려 감소한다.
+
+- 컨텍스트 스위칭 폭증: vCPU 수 대비 동시 트랜잭션이 과다하면 CPU 시간이 실 작업보다 스위칭에 더 소비되어 Buckle Point에 진입
+- 락 경합 비선형 상승: 동시 트랜잭션 수에 비례해 row/page/gap lock 충돌이 증가하고 InnoDB 데드락 빈도 상승
+
+#### HikariCP Sizing Guideline
+
+HikariCP는 작은 풀에서 최적화되도록 설계되어, 풀이 수백 단위로 커지면 내부 ConcurrentBag 핸드오프 비용 자체가 무시할 수 없는 오버헤드가 된다.
+
+- 공식 권장 공식: `pool_size = ((core_count × 2) + effective_spindle_count)`
+- 통상 한 자릿수에서 수십 사이가 실효 범위
+- 풀 증설보다 D̄ 단축(인덱스 추가, N+1 제거, 트랜잭션 범위 축소)이 같은 ×2 효과를 부작용 없이 달성
+
+운영 관점에서도 큰 풀은 다음과 같은 부작용을 동반한다.
+
+- 재기동 시 Connect Storm: DB 재시작 후 앱 N대가 일제히 P개씩 재연결 시도 → 핸드셰이크 큐 폭발로 2차 장애 유발
+- JVM 웜업 비용 증가: prepared statement 캐시와 메타데이터가 풀 크기에 비례해 누적 → 배포 직후 Connection Timeout 사례와 직결
+- 모니터링 가시성 하락: 풀 사용률은 낮아 보이지만 실제 병목은 DB 내부에 형성 → "풀은 여유 있는데 응답이 느림" 상태로 진단에 어려움 발생
 
 ### Thread Pool Saturation
 
