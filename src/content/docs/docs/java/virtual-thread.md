@@ -1,7 +1,7 @@
 ---
 title: "Virtual Thread"
 date: 2026-02-19
-lastUpdated: 2026-04-16
+lastUpdated: 2026-05-03
 tags: [ Java ]
 description: "Java 21의 가상 스레드 경량 모델의 JVM 스케줄러 기반 동작 방식과 플랫폼 스레드와의 차이, 구조적 동시성을 설명한다."
 ---
@@ -70,6 +70,20 @@ graph LR
 - JVM은 언마운트 시점에 CPU 레지스터와 스택의 데이터를 힙으로 복사하고, 재개 시점에 다시 복구
 - 스택에 네이티브 프레임(JNI로 호출된 C/C++ 함수의 스택)이 포함된 경우에는 힙 복사 불가로 언마운트 실패 - 피닝(Pinning) 발생의 직접적 원인 중 하나
 
+## 캐리어 스레드 풀과 오버커밋먼트(Overcommitment)
+
+캐리어를 놓지 못한 채 블로킹되는 가상 스레드가 생기면, 스케줄러가 임시 캐리어를 추가해 ForkJoinPool 크기를 `parallelism` 값 너머로 일시 확장하는 메커니즘이다.
+
+|                  프로퍼티                  |       역할        |   기본값    |
+|:--------------------------------------:|:---------------:|:--------:|
+| jdk.virtualThreadScheduler.parallelism |  평상시 캐리어 스레드 수  | CPU 코어 수 |
+| jdk.virtualThreadScheduler.maxPoolSize | 일시 확장 가능한 최대 크기 |   256    |
+
+- 상한 도달: 모든 캐리어가 블로킹되어 `maxPoolSize`(256)에 닿으면 더 이상 확장 불가, 처리량은 플랫폼 스레드 수준으로 하락
+- 도달 가속: `synchronized` 구간이 잦거나 길수록 상한에 빠르게 도달
+- 진단: `-Djdk.tracePinnedThreads=full` 또는 JFR `jdk.VirtualThreadPinned` 이벤트로 피닝 위치 추적
+- 근본 해결: `synchronized` → `ReentrantLock` 전환, JDK 24(JEP 491) 이상 사용
+
 ## 플랫폼 스레드와 가상 스레드 비교
 
 |    구분    | 플랫폼 스레드 (Platform Thread) | 가상 스레드 (Virtual Thread) |
@@ -104,13 +118,18 @@ graph LR
 - 피닝(Pinning) 현상
     - 발생 원인: `synchronized` 블록은 JVM 모니터 락이 캐리어 스레드 단위로 관리
         - JNI·네이티브 프레임이 스택에 포함된 구간에서는 연속(Continuation) 저장 이 불가능하여 언마운트 실패
-    - 영향: I/O 대기 중에도 캐리어 스레드가 점유되어, `ForkJoinPool`의 캐리어 수(기본값: CPU 코어 수)가 고갈되면 전체 처리량이 플랫폼 스레드 수준으로 하락
+    - 영향: I/O 대기 중에도 캐리어 스레드가 점유되어, 오버커밋먼트로 풀이 일시 확장되더라도 `maxPoolSize`(기본 256) 상한에 도달하면 처리량이 플랫폼 스레드 수준으로 하락
     - 해결: `synchronized` 대신 `ReentrantLock`으로 전환하여 언마운트 경로 확보
     - JDK 24 개선: JEP 491에 의해 `synchronized` 블록 내부의 블로킹 호출도 피닝 없이 언마운트 가능하도록 수정되어, 대부분의 레거시 코드가 수정 없이 가상 스레드와 호환
 - ThreadLocal 메모리 관리
     - 가상 스레드가 언마운트될 때 `ThreadLocal`에 저장된 데이터는 힙으로 이동하여 관리
     - 대용량 데이터를 `ThreadLocal`에 저장할 경우, 수백만 개의 가상 스레드가 동시에 존재하면 힙 메모리 부족 현상 발생 가능
     - 가상 스레드 환경에서는 `ThreadLocal` 사용을 최소화하거나, 가벼운 데이터 위주로 구성하는 것이 좋음
+- 다운스트림 리소스 고갈
+    - 발생 원인: 가상 스레드는 거의 무제한 생성 가능하지만, DB 커넥션 풀, 외부 API 쿼터, 파일 디스크립터 같은 하위 자원은 한정적
+    - 영향: 동시 수만 개의 작업이 한정된 풀(예: HikariCP 기본 `maximumPoolSize=10`)에 동시에 접근하여 즉시 고갈, 대기열 폭증과 connection timeout 유발
+    - WebFlux 대비 한계: 리액티브 스트림즈와 달리 가상 스레드에는 표준 백프레셔(Backpressure) 메커니즘이 없어 호출 측에서 동시성 제어 책임 부담
+    - 해결: `Semaphore`로 동시 작업 수 제한, 커넥션 풀 크기를 트래픽에 맞게 재산정, 구조적 동시성(`StructuredTaskScope`)으로 작업 lifecycle 관리
 
 ## 성능적 측면에서의 고려사항
 
