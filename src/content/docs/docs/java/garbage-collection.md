@@ -1,9 +1,9 @@
 ---
 title: "Garbage Collection"
 date: 2024-06-17
-lastUpdated: 2026-04-29
+lastUpdated: 2026-05-03
 tags: [ Java ]
-description: "JVM 가비지 컬렉션의 세대별 이동 단계와 java.lang.ref 패키지를 활용한 객체 참조 제어 기법을 정리한다."
+description: "JVM 가비지 컬렉션의 세대별 이동 단계와 Full GC 예방 전략, java.lang.ref 패키지를 활용한 객체 참조 제어 기법을 정리한다."
 ---
 
 Java 프로그래밍 언어는 메모리 관리를 자동화하기 위해 가비지 컬렉션(Garbage Collection, GC)이라는 메커니즘을 사용한다.
@@ -95,6 +95,73 @@ Old 영역의 가용 공간이 부족해질 때 발생한다.
 
 - 참조 복잡도: Young 영역보다 크고 참조 관계가 복잡하여 분석에 긴 시간 소요
 - 성능 영향: Minor GC보다 훨씬 긴 STW 유발로 애플리케이션 응답성에 큰 영향 미침
+
+## Full GC 예방
+
+Full GC는 Young, Old, Metaspace를 한 번에 회수하는 가장 비용이 큰 GC로, 수 초에 달하는 STW로 인해 서비스 가용성에 직접적인 영향을 준다.
+
+- Major GC와의 구분: Major GC는 Old 영역만 대상이지만, Full GC는 Heap 전체와 Metaspace까지 포함
+- 핵심 트리거: Old 영역 가용 공간 부족, Promotion Failure, Metaspace 한계 도달, `System.gc()` 명시 호출
+
+Full GC는 결국 Old 영역에 가비지가 누적되는 속도를 늦추는 것이 핵심이며, 코드 레벨 누수 차단부터 JVM 옵션 튜닝까지 다층적인 접근이 필요하다.
+
+### 메모리 누수 차단
+
+도달 가능 상태로 잘못 유지된 객체는 GC 대상에서 제외되어 Old 영역에 누적된다.
+
+- 정적 컬렉션 누적: `static` 필드의 `Map`/`List`에 엔트리만 추가하고 제거하지 않을 때 발생
+- ThreadLocal 정리 누락: 스레드 풀 환경에서 `remove()` 미호출 시 스레드 재사용으로 인해 영구 참조 유지
+- 캐시 무한 증가: 만료 정책 없는 캐시 → 사이즈·시간 기반 축출 정책 적용 또는 `SoftReference` 활용
+- 리스너·콜백 해제 누락: 등록만 하고 해제하지 않으면 이벤트 소스가 대상 객체의 강한 참조 유지
+
+### 조기 승격(Premature Promotion) 방지
+
+Young 영역이 너무 작거나 Survivor 공간이 부족하면 단명 객체조차 Old로 넘어가 가비지 누적을 가속화한다.
+
+- Young 영역 크기 확보: `-XX:NewRatio`(Old:Young 비율) 또는 `-Xmn`으로 Young 절대 크기 명시
+- Survivor 비율 조정: `-XX:SurvivorRatio`로 Eden:Survivor 비율을 조정해 Survivor 부족으로 인한 즉시 승격 방지
+- 객체 age 분포 점검: `-XX:+PrintTenuringDistribution`으로 Tenuring Threshold 적정성 검증
+
+### 큰 객체 직접 할당 최소화
+
+`PretenureSizeThreshold`를 넘는 큰 객체는 Eden을 거치지 않고 Old 영역에 직접 할당되어 Old 가비지 발생률을 높인다.
+
+- 컬렉션 초기 용량 지정: `new ArrayList<>(expectedSize)`처럼 예상 크기 명시로 내부 배열 재할당으로 인한 큰 객체 양산 회피
+- 버퍼·배열 재사용: 대용량 `byte[]`이나 `ByteBuffer`는 객체 풀 또는 `ThreadLocal`로 재활용
+
+### GC 알고리즘 선택
+
+워크로드 특성에 맞는 컬렉터를 선택하면 Full GC 발생 자체를 줄이거나 STW 시간을 대폭 단축할 수 있다.
+
+|     컬렉터     |            특성             |      적합 시나리오       |
+|:-----------:|:-------------------------:|:------------------:|
+|    G1 GC    | Region 단위 점진 회수, Mixed GC |  대용량 힙(4GB 이상) 서버  |
+|     ZGC     |   동시 회수, STW 1ms 미만 보장    |    초저지연 요구 서비스     |
+| Shenandoah  |       동시 압축, 짧은 STW       | 지연 민감 + ZGC 미지원 환경 |
+| Parallel GC |       처리량 우선 STW 발생       |  응답성보다 처리량 위주 배치   |
+
+### Heap과 Metaspace 크기 설정
+
+크기 설정 자체가 Full GC 빈도와 회수 효율을 좌우한다.
+
+- `-Xms`와 `-Xmx` 동일 설정: 런타임 힙 확장 비용 제거 및 OS 메모리 예측 가능성 확보
+- Heap 적정 설정: 너무 작으면 빈번한 Full GC, 너무 크면 단일 회수 시 STW 시간 증가
+- Metaspace 상한 명시: `-XX:MaxMetaspaceSize` 미설정 시 OS 메모리까지 확장되어 동적 클래스 로딩 누수 시 Full GC 폭주
+
+### `System.gc()` 호출 통제
+
+명시적 GC 호출은 즉시 Full GC를 트리거하며 외부 라이브러리(NIO Direct Buffer 회수, RMI DGC 등)에서 호출되기도 한다.
+
+- `-XX:+DisableExplicitGC`: `System.gc()` 호출을 무시하도록 설정
+- `-XX:+ExplicitGCInvokesConcurrent`: G1/CMS 사용 시 Full GC 대신 Concurrent GC로 전환
+
+### 모니터링과 조기 진단
+
+Full GC 발생 후 대응이 아닌 사전 감지가 핵심이다.
+
+- `jstat -gcutil`: Old 영역 점유율(`O`) 추세를 관찰하여 누수 의심 패턴 조기 발견
+- GC 로그 분석: `-Xlog:gc*:file=gc.log` (Java 9+) 또는 `-Xloggc:` (Java 8)로 Full GC 빈도와 회수 효율 추적
+- 회수 효율 평가: Full GC 후에도 Old 점유율이 거의 줄지 않으면 메모리 누수 강하게 의심
 
 ## 프레임워크 내부의 참조 제어 (java.lang.ref)
 
