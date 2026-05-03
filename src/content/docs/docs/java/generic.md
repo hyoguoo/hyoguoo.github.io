@@ -2,7 +2,7 @@
 title: "Generics"
 date: 2023-01-08
 lastUpdated: 2025-11-28
-tags: [Java]
+tags: [ Java ]
 description: "Java 제네릭의 타입 파라미터 선언 방식과 와일드카드·경계 타입, 타입 소거(Type Erasure) 동작 원리를 분석한다."
 ---
 
@@ -75,9 +75,11 @@ flowchart LR
 ```java
 class Box<T> {
 
-    static T item; // 컴파일 에러
+    static T item; // 컴파일 에러: 클래스의 타입 파라미터 T는 static 컨텍스트에서 사용 불가
 
-    static int compare(T t1, T t2) { ...} // 컴파일 에러
+    static int compare(T t1, T t2) {
+        //... 
+    } // 컴파일 에러: 동일 사유 (단, `static <T> int compare(T t1, T t2)`처럼 메서드 자체 타입 파라미터를 선언하면 가능)
 }
 ```
 

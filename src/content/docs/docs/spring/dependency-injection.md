@@ -2,7 +2,7 @@
 title: "Dependency Injection"
 date: 2024-03-07
 lastUpdated: 2025-08-22
-tags: [Spring]
+tags: [ Spring ]
 description: "스프링의 세 가지 의존성 주입 방식인 생성자·필드·세터 주입의 동작 원리를 비교하고 생성자 주입이 권장되는 이유를 분석한다."
 ---
 
@@ -193,7 +193,8 @@ public class BService {
 생성자 주입도 마찬가지로 순환 참조가 발생하게 되지만 에러 발생 시점이 다르다.
 
 - 생성자 주입: 애플리케이션을 실행하는 시점에 에러 발생
-- 필드 주입 및 수정자 주입: 애플리케이션 실행 중 에러 발생(스프링 부트 2.6 이상부터는 생성자 주입과 마찬가지로 애플리케이션 실행 시점에 에러 발생)
+- 필드 주입 및 수정자 주입(Spring Boot 2.6 미만): 애플리케이션 실행 중 에러 발생
+- Spring Boot 2.6 이상: 기본적으로 순환 참조 자체가 금지되어 시작 시점에 실패 (`spring.main.allow-circular-references=true`로 이전 동작 복구 가능)
 
 ### 2. 불변성
 

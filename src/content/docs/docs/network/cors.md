@@ -2,7 +2,7 @@
 title: "CORS (Cross-Origin Resource Sharing)"
 date: 2022-10-13
 lastUpdated: 2025-12-30
-tags: [Network]
+tags: [ Network ]
 description: "동일 출처 정책(SOP)과 CORS의 단순 요청·Preflight·인증 정보 요청 시나리오별 동작 원리를 정리한다."
 ---
 
@@ -81,14 +81,14 @@ sequenceDiagram
 
 - 클라이언트 설정: `credentials: 'include'` (fetch API) 또는 `withCredentials = true` (axios/XHR) 설정 필요
 - 서버 설정 제약 사항
-  - `Access-Control-Allow-Origin`에는 와일드카드(`-`)를 사용할 수 없으며, 반드시 구체적인 Origin(예: `http://localhost:3000`) 명시 필요
-  - `Access-Control-Allow-Credentials: true` 헤더 추가 필요
+    - `Access-Control-Allow-Origin`에는 와일드카드(`*`)를 사용할 수 없으며, 반드시 구체적인 Origin(예: `http://localhost:3000`) 명시 필요
+    - `Access-Control-Allow-Credentials: true` 헤더 추가 필요
 
 ## 주요 응답 헤더
 
 서버는 다음 헤더들을 통해 CORS 정책을 브라우저에 알린다.
 
-- `Access-Control-Allow-Origin`: 요청을 허용할 출처. 단일 도메인 또는 `-`
+- `Access-Control-Allow-Origin`: 요청을 허용할 출처. 단일 도메인 또는 `*`
 - `Access-Control-Allow-Methods`: 허용할 HTTP 메서드 (GET, POST, PUT, OPTIONS 등)
 - `Access-Control-Allow-Headers`: 허용할 커스텀 헤더
 - `Access-Control-Allow-Credentials`: 쿠키 등 인증 정보 허용 여부

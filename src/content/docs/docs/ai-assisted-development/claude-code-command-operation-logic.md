@@ -102,7 +102,7 @@ graph TD
 ---
 name: code-reviewer # Subagent의 고유한 이름 (필수)
 description: 코드의 품질, 성능, 보안 측면을 검토하는 전문 리뷰 Subagent. # Subagent의 역할과 전문성 설명
-tools: Read, Glob, Write # Subagent가 사용할 수 있는 도구 목록 (예: Read, Glob, Write, run_shell_command 등)
+tools: Read, Glob, Write # Subagent가 사용할 수 있는 도구 목록 (예: Read, Glob, Write, Bash 등)
 model: sonnet # 이 Subagent에 최적화된 특정 AI 모델 지정 가능 (선택)
 skills:                         # 이 Subagent가 미리 로드하여 전문성을 강화할 Skill 목록 (선택)
 

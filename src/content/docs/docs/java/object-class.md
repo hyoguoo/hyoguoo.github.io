@@ -2,7 +2,7 @@
 title: "Object class"
 date: 2024-03-07
 lastUpdated: 2025-11-07
-tags: [Java]
+tags: [ Java ]
 description: "Object 클래스가 제공하는 equals·hashCode·toString·clone 메서드의 역할과 올바른 재정의 방법을 설명한다."
 ---
 
@@ -11,17 +11,17 @@ description: "Object 클래스가 제공하는 equals·hashCode·toString·clone
 - `import` 문 없이 사용 가능
 - 모든 클래스의 최고 조상으로, 모든 클래스는 `Object` 클래스의 멤버를 상속받음
 
-|         Object class method         |                         description                         |
-|:-----------------------------------:|:-----------------------------------------------------------:|
-|     `protected Object clone()`      |                            객체 복제                            |
-| `public boolean equals(Object obj)` |                       객체의 내용이 같은지 비교                        |
-|     `protected void finalize()`     |                 객체 소멸 전에 호출(가비지 컬렉터에 의해 호출)                 |
-|      `public Class getClass()`      |               객체의 클래스 정보를 담고 있는 Class 인스턴스 반환               |
-|       `public int hashCode()`       |                        객체의 해시코드를 반환                         |
-|     `public String toString()`      |                         객체를 문자열로 반환                         |
-|       `public void notify()`        |                객체 자신을 사용하려고 기다리는 스레드를 하나만 깨움                |
-|      `public void notifyAll()`      |                객체 자신을 사용하려고 기다리는 스레드를 모두 깨움                 |
-|        `public void wait()`         | 다른 스레드가 `notify()` 혹은 `notifyAll()`을 호출할 때까지 지정된 시간동안 대기 지정 |
+|         Object class method         |                     description                     |
+|:-----------------------------------:|:---------------------------------------------------:|
+|     `protected Object clone()`      |                        객체 복제                        |
+| `public boolean equals(Object obj)` |                   객체의 내용이 같은지 비교                    |
+|     `protected void finalize()`     |             객체 소멸 전에 호출(가비지 컬렉터에 의해 호출)             |
+|      `public Class getClass()`      |           객체의 클래스 정보를 담고 있는 Class 인스턴스 반환           |
+|       `public int hashCode()`       |                    객체의 해시코드를 반환                     |
+|     `public String toString()`      |                     객체를 문자열로 반환                     |
+|       `public void notify()`        |            객체 자신을 사용하려고 기다리는 스레드를 하나만 깨움            |
+|      `public void notifyAll()`      |            객체 자신을 사용하려고 기다리는 스레드를 모두 깨움             |
+|        `public void wait()`         | 다른 스레드가 `notify()` 혹은 `notifyAll()`을 호출할 때까지 무기한 대기 |
 
 ## equals(Object obj)
 

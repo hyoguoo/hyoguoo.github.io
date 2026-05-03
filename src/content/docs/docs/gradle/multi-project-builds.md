@@ -149,7 +149,7 @@ graph TD
 | 내부 모듈의 API 노출 필요 | `api project(':common-api')`               |   공용 인터페이스 전파    |
 
 - `implementation project()`: 해당 모듈의 컴파일 클래스패스만 현재 모듈에 포함, 전이되지 않음
-- `api project()`: 모듈이 노출하는 공용 타입이 상위 모듈로 전파되어야 할 때 사용
+- `api project()`: 모듈이 노출하는 공용 타입이 상위 모듈로 전파되어야 할 때 사용 (해당 모듈에 `java-library` 플러그인 적용 필요)
 - 캡슐화 원칙: 기본적으로 `implementation`을 사용하고, 인터페이스 공유가 명확한 경우에만 `api` 선택
 
 ## 아키텍처 예시

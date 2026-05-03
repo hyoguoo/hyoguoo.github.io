@@ -2,7 +2,7 @@
 title: "DNS (Domain Name System)"
 date: 2023-11-01
 lastUpdated: 2025-12-09
-tags: [Network]
+tags: [ Network ]
 description: "DNS의 계층적 도메인 구조, Local/Root/TLD/Authoritative 서버의 역할, 도메인 이름 해석 과정을 정리한다."
 ---
 
@@ -25,7 +25,7 @@ DNS는 거대한 분산 데이터베이스 시스템으로, 역트리(Inverted T
 | 1단계  |  TLD (Top Level Domain)   |      국가 코드(ccTLD)나 일반 목적(gTLD)을 나타냄       |     `kr`, `com`, `org`     |
 | 2단계  | SLD (Second Level Domain) |       조직의 종류나 성격을 나타냄 (국가 도메인인 경우)        | `co` (Company), `go` (Gov) |
 | 3단계  |        Domain Name        |            사용자가 등록한 실제 도메인 이름             |         `example`          |
-| 4단계  |   Hostname (Sub Domain)   |              특정 서버나 서비스를 식별               |    `www`, `blog`, `api`    |
+| 4단계  | Sub Domain (Hostname 포함)  |              특정 서버나 서비스를 식별               |    `www`, `blog`, `api`    |
 
 ## DNS 서버의 종류
 

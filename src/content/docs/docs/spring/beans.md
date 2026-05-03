@@ -2,7 +2,7 @@
 title: "Beans"
 date: 2022-10-10
 lastUpdated: 2025-08-22
-tags: [Spring]
+tags: [ Spring ]
 description: "스프링 빈의 등록 방식과 초기화·소멸 생명주기 콜백, 싱글톤·프로토타입·웹 스코프의 동작 특성과 차이점을 정리한다."
 ---
 
@@ -84,7 +84,7 @@ public class SpringConfig {
 
 `@Configuration`에 두 가지 속성이 존재하는데, 각 역할은 다음과 같다.
 
-- `value`: `@Configuration` 선언된 클래스의 이름을 지정
+- `value`: 해당 `@Configuration` 클래스가 컨테이너에 등록될 때 사용할 빈 이름을 명시적으로 지정 (지정하지 않으면 자동 생성된 이름 사용)
 - `proxyBeanMethods`: 스프링이 관리하는 빈을 참조할 때 프록시를 사용하여 싱글톤 보장(기본값 `true`)
     - 직접 생성한 객체를 사용하는 것이 아닌, `CGLIB`에 의해 생성된 프록시 객체를 사용하여 싱글톤 보장
 
@@ -133,7 +133,7 @@ public class Example {
 ```
 
 - 최신 스프링에서 가장 권장하는 방법
-- `javax.annotation.PostConstruct`인 자바 표준 기술
+- `jakarta.annotation.PostConstruct`인 자바 표준 기술 (Spring Boot 3.0 이전에는 `javax.annotation.PostConstruct`)
 - 컴포넌트 스캔과 궁합이 좋음
 - 외부 라이브러리에는 적용 불가능 -> 이 경우 `@Bean`의 `initMethod`, `destroyMethod`를 사용
 

@@ -37,7 +37,7 @@ void main() {
 
 ```mermaid
 flowchart TD
-    classDef point fill: #f96, color: #000
+    classDef point fill: #f96,color: #000
     A[사용자 입력] --> B{처리 방식 선택}
     B -- 문자열 결합 --> C[동적 쿼리 생성]
     C --> D[DBMS 구문 분석]

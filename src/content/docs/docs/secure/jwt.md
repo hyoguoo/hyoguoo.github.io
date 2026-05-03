@@ -2,7 +2,7 @@
 title: "JWT (JSON Web Token)"
 date: 2026-02-15
 lastUpdated: 2026-02-15
-tags: [Secure]
+tags: [ Secure ]
 description: "JWT의 Header, Payload, Signature 구조와 HS256·RS256 서명 방식, Refresh Token Rotation 전략을 분석한다."
 ---
 
@@ -23,10 +23,13 @@ Header.Payload.Signature
 
 ### 1. Header (헤더)
 
-토큰 자체에 대한 메타데이터를 담고 있으며, 두 가지 정보를 필수로 포함한다.
+토큰 자체에 대한 메타데이터를 담고 있다.
 
-- `typ` (Type): 토큰의 타입을 지정(보통 `JWT`로 고정)
-- `alg` (Algorithm): 토큰을 서명(sign)하는 데 사용된 암호화 알고리즘 지정(예: `HS256`, `RS256`)
+- 필수
+    - `alg` (Algorithm): 토큰을 서명(sign)하는 데 사용된 알고리즘 지정(예: `HS256`, `RS256`)
+- 선택
+    - `typ` (Type): 토큰의 미디어 타입(보통 `JWT`로 설정 권장)
+    - `cty` (Content Type): 페이로드의 콘텐츠 타입(중첩 JWT 등 특수 상황에서만 사용)
 
 ```json
 {
@@ -71,7 +74,7 @@ Header.Payload.Signature
 
 서명은 토큰의 무결성(Integrity)과 발급자의 신원(Authenticity)을 보장하는 가장 중요한 부분이다.
 
-- 서명은 인코딩된 `Header`와 `Payload`를 합치고, 지정된 비밀 키(Secret) 또는 개인 키(Private Key)를 사용하여 `alg`에 명시된 알고리즘으로 암호화하여 생성
+- 서명은 인코딩된 `Header`와 `Payload`를 합치고, 지정된 비밀 키(Secret) 또는 개인 키(Private Key)를 사용하여 `alg`에 명시된 알고리즘으로 서명(signing)을 계산하여 생성
 - 수신 측은 이 서명을 검증함으로써, 토큰이 중간에 변경되지 않았으며 신뢰할 수 있는 발급자에 의해 발급되었음을 확인
 
 ## 서명 알고리즘
@@ -148,19 +151,19 @@ sequenceDiagram
     participant C as Client
     participant S as Auth Server
     participant DB as Database (Redis/DB)
-    Note over C, S: [로그인 단계]
+    Note over C,S: [로그인 단계]
     C ->> S: 로그인 요청 (ID/PW)
     S ->> S: 사용자 인증
     S ->> DB: Refresh Token 저장
     S -->> C: Access Token & Refresh Token 발급
-    Note over C, S: [일반 요청 단계]
+    Note over C,S: [일반 요청 단계]
     C ->> S: API 요청 (with Access Token)
     S ->> S: Access Token 서명 검증
     S -->> C: 응답 데이터 전송
-    Note over C, S: [Access Token 만료 시]
+    Note over C,S: [Access Token 만료 시]
     C ->> S: API 요청 (Expired AT)
     S -->> C: 401 Unauthorized (Expired)
-    Note over C, S: [토큰 갱신 단계]
+    Note over C,S: [토큰 갱신 단계]
     C ->> S: 토큰 갱신 요청 (with Refresh Token)
     S ->> DB: Refresh Token 존재 및 유효성 확인
     DB -->> S: 확인 완료

@@ -2,9 +2,10 @@
 title: "Collections"
 date: 2022-11-28
 lastUpdated: 2025-11-10
-tags: [Java]
+tags: [ Java ]
 description: "Java 컬렉션 프레임워크의 List·Set·Queue 계층 구조와 ArrayList·LinkedList·HashSet 등 주요 구현체의 특징을 비교한다."
 ---
+
 컬렉션은 객체 그룹을 저장하고 조작하기 위한 표준화된 프레임워크를 제공한다.
 
 ```mermaid
@@ -78,7 +79,7 @@ Iterator 인터페이스를 상속한 가장 기본이 되는 인터페이스로
 |     Stack     |         Vector         |      List      |     O     |   O   |  X   | Vector의 하위 클래스로 LIFO 구조의 스택 |
 |  LinkedList   | AbstractSequentialList |  List, Deque   |     O     |   O   |  X   |       연결 리스트 기반의 리스트        |
 |  ArrayDeque   |   AbstractCollection   |     Deque      |     O     |   O   |  X   |          배열 기반의 덱           |
-| PriorityQueue |     AbstractQueue      |     Queue      |     O     |   O   |  O   |           우선순위 큐            |
+| PriorityQueue |     AbstractQueue      |     Queue      |     O     |   X   |  △   | 우선순위 큐(head만 정렬, 순회 순서 미보장) |
 |    HashSet    |      AbstractSet       |      Set       |     X     |   X   |  X   |        해시 테이블 기반의 집합        |
 | LinkedHashSet |        HashSet         |      Set       |     X     |   O   |  X   |    해시 테이블과 연결 리스트 기반의 집합    |
 |    TreeSet    |      AbstractSet       |   SortedSet    |     X     |   O   |  O   |       이진 검색 트리 기반의 집합       |

@@ -74,7 +74,7 @@ graph TD
         L((Leader)) --- F1((Follower))
         L --- F2((Follower))
     end
-    
+
     L -->|Append| Log[(Metadata Log)]
     Log -.->|Sync| B[Brokers]
 ```
@@ -82,7 +82,7 @@ graph TD
 - 노드의 역할 분리 (Node Roles): KRaft 클러스터의 각 노드는 `controller`, `broker`, `combined` 중 하나의 역할을 가짐
     - 컨트롤러(Controller) 노드: Raft 쿼럼에 참여하여 메타데이터를 처리하고 저장하는 역할만 수행(데이터 I/O는 처리하지 않음)
     - 브로커(Broker) 노드: 기존처럼 데이터 I/O(쓰기/읽기)를 담당하지만, 메타데이터 관리는 컨트롤러에게 위임
-    - 혼합(Combined) 노드: 컨트롤러와 브로커 역할을 동시에 수행(테스트 환경이나 소규모 클러스터에 적합)
+    - 혼합(Combined) 노드: 컨트롤러와 브로커 역할을 동시에 수행(개발/테스트 용도로만 권장하며, 프로덕션 환경에서는 Isolated mode 사용 권장)
 
 컨트롤러 노드는 과반수 이상의 동의를 얻어야만 메타데이터 변경을 승인하는 Raft 합의 알고리즘을 사용하기 때문에 3대 이상의 홀수 개 노드로 구성하는 것이 일반적이다.
 

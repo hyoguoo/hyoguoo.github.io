@@ -2,7 +2,7 @@
 title: "Virtual Memory"
 date: 2024-03-07
 lastUpdated: 2026-01-11
-tags: [Operating System]
+tags: [ Operating System ]
 description: "가상 메모리의 페이징 기법과 페이지 테이블을 통한 논리-물리 주소 변환, 요구 페이징과 페이지 폴트 처리 과정을 분석한다."
 ---
 
@@ -45,7 +45,7 @@ description: "가상 메모리의 페이징 기법과 페이지 테이블을 통
 
 ## 페이지 폴트(Page Fault)
 
-CPU가 액세스하려는 페이지가 현재 물리 메모리에 없을 때(유효 비트가 0일 때) 발생하는 하드웨어 인터럽트다.
+CPU가 액세스하려는 페이지가 현재 물리 메모리에 없을 때(유효 비트가 0일 때) 발생하는 동기 예외(synchronous exception/fault)로, CPU가 명령어 실행 중 발생시킨다.
 
 ```mermaid
 sequenceDiagram
@@ -56,7 +56,7 @@ sequenceDiagram
     participant Memory as 물리 메모리
     CPU ->> PageTable: 1. 논리 주소 요청
     PageTable -->> CPU: 2. 유효 비트 0 확인 (Trap 발생)
-    Note over CPU, OS: 3. 페이지 폴트 인터럽트 발생
+    Note over CPU,OS: 3. 페이지 폴트 인터럽트 발생
     OS ->> Disk: 4. 해당 페이지 위치 탐색 및 읽기 요청
     Disk ->> Memory: 5. 빈 프레임에 페이지 로드
     Memory -->> PageTable: 6. 페이지 테이블 업데이트 (유효 비트 1 설정)

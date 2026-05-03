@@ -48,8 +48,8 @@ graph TD
     B2[Code in B] -->|implementation| Lib2[Library Y]
     A2[Code in A] -->|Depends on| B2
     A2 -.-x|Cannot use| Lib2
-    style Lib fill: #f96, color: #000
-    style Lib2 fill: #ccc, color: #000
+    style Lib fill: #f96,color: #000
+    style Lib2 fill: #ccc,color: #000
 ```
 
 ## compileOnly and runtimeOnly
@@ -83,9 +83,13 @@ graph TD
 
 ## 실무 적용 예시
 
-Spring Boot 프로젝트에서 흔히 볼 수 있는 의존성 구성의 전형적인 모습이다.
+Spring Boot 프로젝트에서 흔히 볼 수 있는 의존성 구성의 전형적인 모습이다.(`api` 구성은 `java-library` 플러그인을 적용한 모듈에서만 사용 가능)
 
 ```gradle
+plugins {
+    id 'java-library' // api 구성을 사용하기 위해 필요
+}
+
 dependencies {
     // 공용 인터페이스 노출이 필요한 경우 (멀티 모듈의 core 등)
     api 'org.apache.commons:commons-lang3:3.12.0'

@@ -2,7 +2,7 @@
 title: "Dockerfile"
 date: 2026-02-05
 lastUpdated: 2026-02-06
-tags: [Docker]
+tags: [ Docker ]
 description: "FROM, COPY, RUN, ENTRYPOINT 등 Dockerfile 핵심 명령어와 멀티 스테이지 빌드를 통한 이미지 최적화 방법을 설명한다."
 ---
 
@@ -15,7 +15,7 @@ Dockerfile은 도커 이미지를 빌드하기 위한 일련의 명령어를 기
 
 Dockerfile의 각 명령어는 이미지의 레이어를 형성하며, 효율적인 빌드를 위해 각 명령어의 특성을 정확히 이해해야 한다.
 
-- FROM: 베이스 이미지를 지정하며 Dockerfile의 첫 줄은 반드시 이 명령어로 시작 필요
+- FROM: 베이스 이미지를 지정하며 Dockerfile은 일반적으로 `FROM` 명령어로 시작 (단, parser directive, 주석, global `ARG`는 `FROM` 앞에 올 수 있음)
 - WORKDIR: 명령어가 실행될 컨테이너 내의 작업 디렉터리를 설정하며, 해당 경로가 없으면 자동으로 생성
 - COPY vs ADD
     - `COPY`: 호스트 컴퓨터의 파일을 컨테이너 내부로 단순 복사

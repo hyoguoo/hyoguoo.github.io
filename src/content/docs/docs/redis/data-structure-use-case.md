@@ -2,7 +2,7 @@
 title: "Data Structure Use Case"
 date: 2024-10-08
 lastUpdated: 2025-10-06
-tags: [Redis]
+tags: [ Redis ]
 description: "Redis의 Sorted Set, Set, Hash, Bitmap, Geospatial 자료구조를 실시간 리더보드, 좋아요 처리, DAU 측정 등 실무 사례에 적용하는 방법을 설명한다."
 ---
 
@@ -142,7 +142,9 @@ SETBIT dau:20240815 1001 1
 -- 1001번 사용자가 2024년 8월 15일에 접속했음을 1로 표시
 BITCOUNT dau:20240815
 -- 2024년 8월 15일에 접속한 사용자 수(1의 개수) 확인
-BITOP AND dau:20240815 dau:20240816 dau:20240817
+BITOP AND dau:retention:20240815-17 dau:20240815 dau:20240816 dau:20240817
+-- BITOP의 첫 인자는 결과를 저장할 destkey이므로, 원본 일별 비트맵을 덮어쓰지 않도록 별도 키 사용
+BITCOUNT dau:retention:20240815-17
 -- 2024년 8월 15일, 16일, 17일에 모두 접속한 사용자 수 확인
 ```
 
@@ -152,7 +154,7 @@ BITOP AND dau:20240815 dau:20240816 dau:20240817
 
 - `GEOADD`: 특정 키에 장소의 이름(member)과 경도, 위도 좌표를 추가
 - `GEODIST`: 두 장소 간의 직선거리를 계산
-- `GEOSEARCH`: 특정 지점을 기준으로 반경(BYRADIUS) 또는 사각형 영역(BYBOX) 내에 있는 장소 검색 
+- `GEOSEARCH`: 특정 지점을 기준으로 반경(BYRADIUS) 또는 사각형 영역(BYBOX) 내에 있는 장소 검색
 
 ```redis
 GEOADD user 50.1234 30.1234 142

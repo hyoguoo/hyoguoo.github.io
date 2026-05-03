@@ -2,7 +2,7 @@
 title: "Built-in Function"
 date: 2023-05-23
 lastUpdated: 2025-09-18
-tags: [MySQL]
+tags: [ MySQL ]
 description: "MySQL의 날짜·문자열·숫자·집계·흐름 제어 내장 함수의 종류와 사용법을 정리한다."
 ---
 
@@ -33,7 +33,7 @@ SELECT NOW()     -- 2021-08-17 22:38:00
 `GROUP BY`의 결과로 나온 여러 행의 값을 하나의 문자열로 결합하는 함수이다.
 
 - 값들을 연결하기 위해 제한적인 메모리 버퍼 공간을 사용
-- 기본적으로 1024 바이트의 메모리 버퍼를 사용(`max_group_concat_len` 시스템 변수로 조정 가능)
+- 기본적으로 1024 바이트의 메모리 버퍼를 사용(`group_concat_max_len` 시스템 변수로 조정 가능)
 
 ```sql
 SELECT dept_no, GROUP_CONCAT(emp_no ORDER BY hire_date SEPARATOR ', ')

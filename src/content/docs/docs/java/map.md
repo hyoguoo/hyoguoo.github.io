@@ -2,7 +2,7 @@
 title: "Map"
 date: 2023-06-15
 lastUpdated: 2025-11-11
-tags: [Java]
+tags: [ Java ]
 description: "Java Map 인터페이스의 키-값 저장 구조와 HashMap·LinkedHashMap·TreeMap의 내부 구현 방식과 성능 특성을 비교한다."
 ---
 
@@ -42,7 +42,7 @@ classDiagram
 |     Class     | Base Class  | Base Interface | 순서 보장 |  탐색 시간   |
 |:-------------:|:-----------:|:--------------:|:-----:|:--------:|
 |    HashMap    | AbstractMap |      Map       |   X   |   O(1)   |
-|    TreeMap    |  SortedMap  |  NavigableMap  |   O   | O(log n) |
+|    TreeMap    | AbstractMap |  NavigableMap  |   O   | O(log n) |
 | LinkedHashMap |   HashMap   |      Map       |   O   |   O(1)   |
 
 ### HashMap
