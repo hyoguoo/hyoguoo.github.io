@@ -282,6 +282,7 @@ export const docsSections: Record<string, SectionConfig> = {
         'spring-boot-core-execution',
         'spring-boot-properties',
         'spring-boot-auto-configuration',
+        'spring-boot-logging',
       ],
     },
     {
