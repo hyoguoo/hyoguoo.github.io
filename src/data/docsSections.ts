@@ -218,7 +218,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Operations',
-      slugs: ['data-backup', 'sentinel', 'cluster'],
+      slugs: ['data-backup', 'memory', 'sentinel', 'cluster'],
     },
   ],
   secure: [
