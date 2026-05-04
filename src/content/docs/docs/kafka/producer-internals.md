@@ -1,7 +1,7 @@
 ---
 title: "Producer Internals"
 date: 2025-10-02
-lastUpdated: 2026-03-04
+lastUpdated: 2026-05-04
 tags: [ Kafka ]
 description: "Kafka 프로듀서의 비동기 전송 구조, Sticky Partitioner 전략, 배치 처리 및 멱등성 보장 메커니즘을 분석한다."
 ---
@@ -99,8 +99,31 @@ Producer ---> Partitioner --->  { TopicB [ P0 | P1 | P2 ] }
     - 필요 조건
         - acks=all
         - retries > 0
-        - max.in.flight.requests.per.connection <= 5
+        - max.in.flight.requests.per.connection <= 5 (브로커가 PID·파티션별로 최근 5개 Seq만 추적하므로 그 이상은 검증 불가)
 - max.in.flight.requests.per.connection: 브로커로부터 응답을 받지 않은 상태에서 한 번에 보낼 수 있는 최대 요청 수
+
+```mermaid
+sequenceDiagram
+    participant P as Producer
+    participant B as Broker
+    Note over P: 프로듀서 설정<br/>enable.idempotence=true (멱등성 활성)<br/>max.in.flight.requests.per.connection = 5
+    Note over B: 브로커는 PID·파티션별로 최근 5개 Seq를 추적<br/>(이 윈도우 크기는 브로커에 고정된 값)
+    par PID와 시퀀스 번호를 부여하여 연속 전송
+        P ->> B: 메시지 1 (Seq=1)
+    and
+        P ->> B: 메시지 2 (Seq=2)
+    and
+        P ->> B: 메시지 3 (Seq=3)
+    end
+    Note over B: Seq 1, 2, 3 모두 로그에 정상 저장
+    B -->> P: Seq 2 Ack
+    B -->> P: Seq 3 Ack
+    B -x P: Seq 1 Ack가 네트워크 장애로 유실됨
+    Note over P: Seq 1만 응답을 받지 못해 실패로 간주<br/>retries 설정에 따라 다시 전송 시도
+    P ->> B: 메시지 1 (Seq=1) 재전송
+    Note over B: 시퀀스 윈도우에서 Seq 1이 이미 저장된 것을 확인<br/>중복으로 판단하여 저장 생략
+    B -->> P: Seq 1 Ack (저장 없이 응답만)
+```
 
 ### 시퀀스 기반 중복 및 순서 검증
 
@@ -111,8 +134,30 @@ Producer ---> Partitioner --->  { TopicB [ P0 | P1 | P2 ] }
 - 순서 검증: 브로커는 시퀀스 번호를 통해 메시지가 탐지된 순서대로 기록되도록 검사
     - 시퀀스가 증가하지 않고 예상된 순서가 아닐 경우 해당 요청은 정상 처리하지 않음
 
+```mermaid
+flowchart TD
+    A[Producer가 메시지 전송<br/>PID와 시퀀스 번호 N 포함<br/>max.in.flight=5 설정에 따라 응답 없이 최대 5개 동시 전송] --> B{브로커가 N과<br/>최근 5개 시퀀스 윈도우를 비교<br/>윈도우 크기는 브로커에 고정된 값}
+    B -->|기대한 바로 다음 번호가 도착| C[정상 메시지로 판단<br/>로그에 저장하고 윈도우 갱신]
+    B -->|윈도우 안의 이미 저장된 번호| D[재시도로 인한 중복으로 판단<br/>저장하지 않고 Ack만 반환]
+    B -->|번호를 건너뛴 미래 번호가 도착| E[순서가 어긋난 것으로 판단<br/>OutOfOrderSequenceException 발생]
+    C --> F[Producer에게 Ack 응답]
+    D --> F
+    E --> G[Producer가 누락된 시퀀스부터<br/>다시 전송]
+```
+
 ### In-flight 요청과 재전송 순서 보장
 
-- max.in.flight.requests.per.connection 설정은 멱등성 활성화 시 브로커와 클라이언트가 안정적으로 순서(Ordering)를 유지하기 위해 필요(최대 5 권장)
-- 멱등성이 활성화된 프로듀서는 동일한 PID/시퀀스 번호를 유지하며 재전송 시에도 순서가 보존되도록 브로커가 검사
-- 재전송 과정에서 브로커는 이전 시퀀스 상태를 참고하고 중복 저장 방지
+`max.in.flight.requests.per.connection`은 프로듀서가 응답을 기다리지 않고 동시에 보낼 수 있는 요청 수이며, 값이 클수록 처리량은 늘지만 재시도가 끼어들 때 순서가 어긋날 위험도 함께
+커진다.
+
+- 순서가 어긋나는 주요 원인은 재시도
+    - TCP 단일 connection은 보낸 순서대로 도착을 보장하므로, 첫 전송만 놓고 보면 도착 순서가 어긋나지 않음
+    - 일부 요청이 일시 실패하여 재시도되면, 그 사이 다른 요청은 이미 브로커에 가 있어 도착 순서가 어긋남
+- 브로커는 두 방향으로 시퀀스를 검증
+    - 앞 방향(Gap 검증): 기대값보다 미래 Seq가 도착하면 `OutOfOrderSequenceException`으로 거절하여 프로듀서가 누락분을 다시 보내도록 유도
+        - 이 검증에는 마지막 저장 Seq 하나만 알면 충분
+    - 뒤 방향(중복 검증): 이미 저장한 Seq가 다시 도착하면(주로 재시도) 저장 없이 같은 Ack을 그대로 반환
+        - 이를 위해 브로커는 (PID, 파티션) 단위로 최근 배치들의 메타데이터(첫·마지막 Seq, 오프셋)를 인메모리 큐에 보관 → 어떤 재전송이든 즉시 식별 가능
+- 멱등성 활성 시 in-flight 값이 5 이하로 제한되는 이유
+    - 브로커의 추적 윈도우 크기가 `NUM_BATCHES_TO_RETAIN = 5`로 고정되어 있어, 그 이상의 in-flight는 재시도 식별 불가
+    - 6 이상으로 설정하면 가장 오래된 배치가 윈도우 밖으로 밀려나므로 클라이언트가 `ConfigException`으로 거부
