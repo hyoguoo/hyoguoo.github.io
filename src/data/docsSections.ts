@@ -129,6 +129,7 @@ export const docsSections: Record<string, SectionConfig> = {
         'topic-and-partition-internals',
         'producer-internals',
         'consumer-internals',
+        'offset-commit-internals',
         'replication-internals',
         'message-delivery-semantics',
       ],
