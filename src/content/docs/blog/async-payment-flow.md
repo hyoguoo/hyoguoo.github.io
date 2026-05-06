@@ -132,9 +132,12 @@ sequenceDiagram
 
 100 req/s 목표에서 TPS는 53에 그치고, Confirm(결제 승인 요청) p95는 36초에 달했다.
 
-|          케이스          | TPS  | API 응답 med | API 응답 p95 | 처리 불가 요청 |
-|:---------------------:|:----:|:----------:|:----------:|:--------:|
-| sync-high (2~3.5s 지연) | 53.0 |  10,199ms  |  36,079ms  |  6,575   |
+|          케이스          | TPS  | API 응답 med | API 응답 p95 | 부하 미수용 |
+|:---------------------:|:----:|:----------:|:----------:|:------:|
+| sync-high (2~3.5s 지연) | 53.0 |  10,199ms  |  36,079ms  | 6,575  |
+
+> **부하 미수용 (k6 dropped iterations)**: ramping-arrival-rate 모드에서 가용 VU가 없어 발사 트리거가 잘린 가상 요청 수. HTTP 스레드 점유로 직전 요청이 회수되지
+> 않으면 다음 요청 슬롯이 누락되어 누적된다.
 
 1. 100 req/s가 들어오면 1초 동안 100개의 스레드가 Toss API 대기 상태 진입 후 각 스레드가 평균 2.75초를 점유
 2. 2~3초 뒤에는 동시에 200개 이상의 요청이 스레드를 점유하게 되어, Tomcat 스레드 풀(200개) 포화
@@ -152,12 +155,12 @@ sequenceDiagram
 ```mermaid
 graph TB
 %% 클래스 정의 (가독성 및 테마 대응 규칙 적용)
-    classDef main fill: #E1F5FF, stroke: #0078D4, color: #000
-    classDef pending fill: #FFF2CC, stroke: #D79B00, color: #000
-    classDef success fill: #E8F5E9, stroke: #2E7D32, color: #000
-    classDef external fill: #F5F5F5, stroke: #333, color: #000
-    classDef recovery fill: #FADAD8, stroke: #B85450, color: #000
-    classDef note fill: #FFFFFF, stroke: #333, color: #000
+    classDef main fill: #E1F5FF,stroke: #0078D4,color: #000
+    classDef pending fill: #FFF2CC,stroke: #D79B00,color: #000
+    classDef success fill: #E8F5E9,stroke: #2E7D32,color: #000
+    classDef external fill: #F5F5F5,stroke: #333,color: #000
+    classDef recovery fill: #FADAD8,stroke: #B85450,color: #000
+    classDef note fill: #FFFFFF,stroke: #333,color: #000
 
     subgraph SyncPath ["결제 승인 핵심 경로 — 단일 TX"]
         direction TB
@@ -225,10 +228,10 @@ public void handle(PaymentConfirmEvent event) {
 ```mermaid
 graph TD
 %% 클래스 정의 (가독성 및 장애 단계 구분)
-    classDef main fill: #E1F5FF, stroke: #0078D4, color: #000
-    classDef pending fill: #FFF2CC, stroke: #D79B00, color: #000
-    classDef external fill: #F5F5F5, stroke: #333, color: #000
-    classDef recovery fill: #FADAD8, stroke: #B85450, color: #000
+    classDef main fill: #E1F5FF,stroke: #0078D4,color: #000
+    classDef pending fill: #FFF2CC,stroke: #D79B00,color: #000
+    classDef external fill: #F5F5F5,stroke: #333,color: #000
+    classDef recovery fill: #FADAD8,stroke: #B85450,color: #000
     A["결제 승인 요청"]:::external --> B["비동기 핸들러 동시 실행"]:::main
     B --> C["각 처리기: DB 커넥션 점유"]:::main
 %% 장애 가속 구간
@@ -237,7 +240,7 @@ graph TD
 %% 최종 장애 상태
     E --> F["에러율 80%, TPS ≈ 0<br/>(시스템 장애)"]:::recovery
 %% 위험 흐름 강조
-    linkStyle 2,3,4 stroke: #FF3333, stroke-width: 2px
+    linkStyle 2,3,4 stroke: #FF3333,stroke-width: 2px
 ```
 
 원인은 Backpressure(생산 속도가 소비 속도를 초과할 때 생산을 억제하는 메커니즘) 부재였다.
@@ -269,14 +272,14 @@ public AsyncTaskExecutor immediateHandlerExecutor(
 
 N(동시 실행 상한)을 다양하게 바꿔가며 벤치마크를 돌렸을 때, 예상과 다른 결과가 나왔다.
 
-|       케이스       | TPS  | 처리 불가 요청 |
-|:---------------:|:----:|:--------:|
-| 동시 제한 10 / 저지연  | 8.1  |  11,022  |
-| 동시 제한 100 / 저지연 | 23.8 |  10,472  |
-| 동시 제한 200 / 저지연 | 26.7 |  10,096  |
-| 동시 제한 200 / 고지연 | 24.0 |  10,434  |
+|       케이스       | TPS  | 부하 미수용 |
+|:---------------:|:----:|:------:|
+| 동시 제한 10 / 저지연  | 8.1  | 11,022 |
+| 동시 제한 100 / 저지연 | 23.8 | 10,472 |
+| 동시 제한 200 / 저지연 | 26.7 | 10,096 |
+| 동시 제한 200 / 고지연 | 24.0 | 10,434 |
 
-동시 제한을 걸었을 때 처리 불가 요청이 폭발적으로 늘어나면서, 비동기로 전환했는데 기대한 성능이 나오지 않는 상황이 발생했다.
+동시 제한을 걸었을 때 부하 미수용이 폭발적으로 늘어나면서, 비동기로 전환했는데 기대한 성능이 나오지 않는 상황이 발생했다.
 
 ### 원인 분석 - ConcurrencyThrottleSupport
 
@@ -328,10 +331,10 @@ sequenceDiagram
 
 ### 요약 - 1차/2차 구현의 문제점
 
-|             구현              |                    문제                    |
-|:---------------------------:|:----------------------------------------:|
-|         제한 없음 (1차)          | Backpressure 부재 → HikariCP 고갈 → 에러율 80%  |
-| setConcurrencyLimit(N) (2차) | 호출 스레드 직접 블로킹 → HTTP 응답 지연 → 처리 불가 요청 폭발 |
+|             구현              |                   문제                    |
+|:---------------------------:|:---------------------------------------:|
+|         제한 없음 (1차)          | Backpressure 부재 → HikariCP 고갈 → 에러율 80% |
+| setConcurrencyLimit(N) (2차) | 호출 스레드 직접 블로킹 → HTTP 응답 지연 → 부하 미수용 폭증  |
 
 N(동시 처리 수)을 아무리 키워도 구조적 한계가 있었으며, 고지연 환경에서는 동시에 처리해야 할 요청 수가 N을 쉽게 넘어서고, N을 무한히 키우면 1차와 같은 자원 고갈이 재현된다.
 
@@ -364,12 +367,12 @@ After:  HTTP 스레드 → queue.offer(orderId) → [즉시 반환] → 202 응�
 ```mermaid
 graph TB
 %% 클래스 정의 (역할별 색상 구분 및 가독성 확보)
-    classDef http fill: #E1F5FF, stroke: #0078D4, color: #000
-    classDef queue fill: #FFF2CC, stroke: #D79B00, color: #000
-    classDef worker fill: #E8F5E9, stroke: #2E7D32, color: #000
-    classDef fallback fill: #FADAD8, stroke: #B85450, color: #000
-    classDef external fill: #F5F5F5, stroke: #333, color: #000
-    classDef response fill: #FFFFFF, stroke: #333, color: #000
+    classDef http fill: #E1F5FF,stroke: #0078D4,color: #000
+    classDef queue fill: #FFF2CC,stroke: #D79B00,color: #000
+    classDef worker fill: #E8F5E9,stroke: #2E7D32,color: #000
+    classDef fallback fill: #FADAD8,stroke: #B85450,color: #000
+    classDef external fill: #F5F5F5,stroke: #333,color: #000
+    classDef response fill: #FFFFFF,stroke: #333,color: #000
 
     subgraph SyncPath ["HTTP 경로 — 빠른 반환"]
         direction TB
@@ -411,8 +414,8 @@ graph TB
     H --> L
     C -.->|" 큐 오버플로우 시 대기 유지 "| O
 %% 연결선 스타일
-    linkStyle 13,14,15 stroke: #333, stroke-width: 2px
-    linkStyle 16 stroke: #FF3333, stroke-dasharray: 5 5
+    linkStyle 13,14,15 stroke: #333,stroke-width: 2px
+    linkStyle 16 stroke: #FF3333,stroke-dasharray: 5 5
 ```
 
 ### PaymentConfirmChannel
@@ -538,11 +541,11 @@ ConfirmImmediateWorker 하나로 처리하는 것이 아니라, OutboxWorker라�
 ```mermaid
 graph LR
 %% 클래스 정의 (가독성 및 테마 대응 규칙 적용)
-    classDef entry fill: #F5F5F5, stroke: #333, color: #000
-    classDef data fill: #FFF2CC, stroke: #D79B00, color: #000
-    classDef fast fill: #E1F5FF, stroke: #0078D4, color: #000
-    classDef safety fill: #FADAD8, stroke: #B85450, color: #000
-    classDef success fill: #E8F5E9, stroke: #2E7D32, color: #000
+    classDef entry fill: #F5F5F5,stroke: #333,color: #000
+    classDef data fill: #FFF2CC,stroke: #D79B00,color: #000
+    classDef fast fill: #E1F5FF,stroke: #0078D4,color: #000
+    classDef safety fill: #FADAD8,stroke: #B85450,color: #000
+    classDef success fill: #E8F5E9,stroke: #2E7D32,color: #000
     A["결제 승인 요청"]:::entry --> B["DB: 대기열 등록"]:::data
     B --> C{"큐 등록"}:::data
 %% Fast Track: 실시간성 보장
@@ -556,8 +559,8 @@ graph LR
     D --> G["결제 완료"]:::success
     F --> G
 %% 연결선 스타일
-    linkStyle 2 stroke: #0078D4, stroke-width: 2px, color: #0078D4
-    linkStyle 3 stroke: #FF3333, stroke-width: 2px, color: #FF3333
+    linkStyle 2 stroke: #0078D4,stroke-width: 2px,color: #0078D4
+    linkStyle 3 stroke: #FF3333,stroke-width: 2px,color: #FF3333
 ```
 
 - OutboxImmediateWorker(Fast Track): 메모리 채널(LinkedBlockingQueue)에서 이벤트를 꺼내 즉시 처리하는 성능 가속기(정상 상황에서 대부분의 이벤트에 해당)
@@ -582,50 +585,54 @@ LinkedBlockingQueue 도입 전, @Async와 ConcurrencyThrottleSupport 조합의 �
 - 응답 지연: 동시 실행 제한(N) 적용 시 호출 스레드 자체가 블로킹되어 HTTP 응답 시간이 Toss API 지연 시간과 동기화됨
 - 결론: 큐 적체 기능이 없는 단순 비동기 처리는 고부하 상황에서 안전장치 역할을 수행할 수 없음
 
-### 2단계: LBQ + Worker 아키텍처 기본 성능 검증
+### 2단계: LBQ + Worker 아키텍처 효과 정량 확인
 
-LinkedBlockingQueue와 가상 스레드 Worker를 도입한 뒤, 백그라운드 프로세스가 없는 클린 환경에서 기준 성능을 측정했다.
+@Async 1차(제한 없음) / 2차(setConcurrencyLimit) 한계를 해소한 LinkedBlockingQueue + Worker 가상 스레드 구조에서 100 req/s 고부하 측정을 진행했다.
+측정 정밀도를 위해 `confirm_ms` Trend를 별도 도입해 checkout 노이즈가 섞이지 않은 순수 confirm 응답 시간을 분리 수집했다.
 
-|     지연 환경      | 케이스 |  TPS  | API 응답 med | 결제 완료 med | 처리 불가 요청 |
-|:--------------:|:---:|:-----:|:----------:|:---------:|:--------:|
-| 고지연 (2.0~3.5s) | 동기  | 54.3  |  6,118ms   |  3,221ms  |  1,934   |
-| 고지연 (2.0~3.5s) | 비동기 | 71.2  |    7ms     |  2,872ms  |    0     |
-| 저지연 (0.1~0.3s) | 동기  | 107.3 |   212ms    |   213ms   |    0     |
-| 저지연 (0.1~0.3s) | 비동기 | 84.1  |    8ms     |   308ms   |    0     |
+|     지연 환경      | 케이스 | TPS  | Confirm med | Confirm p95 | 부하 미수용 |
+|:--------------:|:---:|:----:|:-----------:|:-----------:|:------:|
+| 고지연 (2.0~3.5s) | 동기  | 57.7 |   5,098ms   |   7,191ms   | 2,689  |
+| 고지연 (2.0~3.5s) | 비동기 | 64.4 |  **15ms**   |   1,189ms   |   99   |
 
-- 가용성 확보: 외부 지연 상황에서도 비동기 방식은 7ms 내외의 응답 속도를 유지하며 유실 0건 달성
-- 비동기 우위 확인: 고지연 환경에서 동기 방식 대비 우수한 처리량과 가용성 입증
+- HTTP 스레드 즉시 해방 검증: Confirm med 약 340배 차이 — 비동기 측은 채널 offer 후 즉시 202 반환으로 외부 PG 지연을 흡수하지 않음
+- 부하 미수용 96% 감소: Tomcat 스레드 200개가 외부 PG 대기에 묶이지 않아 신규 요청 수용 능력 확보
+- 백프레셔 검증: 1차 / 2차 구현에서 발생한 HikariCP 고갈 또는 HTTP 응답 블로킹 없이 안정적 처리
 
-### 3단계: 테스트 환경 변수 — 연속 부하 시 인프라 경합
+### 3단계: 환경 변동성 격리 + 클린 환경 베이스라인
 
-부하 테스트 파라미터(MAX_VUS 1000, Capacity 5000) 상향 후 반복 측정을 통해 시스템 가변성을 확인했다.
+반복 측정에서 라운드별 수치 변동을 관찰하여 두 종류로 분리했다.
 
-| 지연 환경 | 케이스 | TPS  | API 응답 med |    비고    |
-|:-----:|:---:|:----:|:----------:|:--------:|
-|  고지연  | 동기  | 39.8 |  9,075ms   | 성능 저하 발생 |
-|  고지연  | 비동기 | 63.4 |   153ms    | 응답 시간 급등 |
-|  저지연  | 동기  | 82.2 |  1,646ms   | 지연 시간 폭증 |
-|  저지연  | 비동기 | 74.3 |  1,091ms   | 자원 경합 심화 |
+- 시스템 변경에 의한 변동: 메트릭 분리, 자원 파라미터 조정 등 의도된 차이
+- 측정 환경에 의한 변동: Mac CPU thermal, Docker VM 자원 경합 등 노이즈
 
-- 성능 변동성: 반복되는 테스트로 인한 Docker VM 자원 경합 및 CPU 온도 상승이 지표에 반영
-- 인프라 영향력: 애플리케이션 아키텍처뿐만 아니라 실행 환경의 물리적 컨디션이 임계 성능에 지대한 영향을 미침을 확인
+후자를 격리하기 위해 백그라운드 프로세스 최소화 및 온도 안정 상태에서 동일 조건 3회 반복 측정으로 평균을 산출했다.
+
+|     지연 환경      | 케이스 |   TPS    | API 응답 med | 결제 완료 med | 부하 미수용 |
+|:--------------:|:---:|:--------:|:----------:|:---------:|:------:|
+| 고지연 (2.0~3.5s) | 동기  |   54.3   |  6,118ms   |  3,221ms  | 1,934  |
+| 고지연 (2.0~3.5s) | 비동기 | **71.2** |  **7ms**   |  2,872ms  | **0**  |
+| 저지연 (0.1~0.3s) | 동기  |  107.3   |   212ms    |   213ms   |   0    |
+| 저지연 (0.1~0.3s) | 비동기 |   84.1   |  **8ms**   |   308ms   |   0    |
+
+- 재현성 확보: 3회 모두 일관된 평균값 도출, 부하 미수용 0건 수렴
+- 환경 변동성 입증: 이전 측정의 부하 미수용 변동이 환경 노이즈였음이 클린 환경에서 입증
+- 가용성 격차 확인: 고지연 환경에서 비동기는 응답 7ms 내외로 스레드를 즉시 해방, 부하 미수용 0건 달성
 
 ### 4단계: 최종 최적화 및 임계 성능 도출
 
-반복 실험을 통해 도출한 최적 파라미터 조합을 적용하여 최종 성능을 확정했다.
+반복 실험을 통해 도출한 최적 파라미터 조합(HikariCP 30 / Worker 300 / Batch Size 100)을 적용하여 최종 성능을 확정했다.
 
-|     지연 환경      |     케이스     |   TPS   | API 응답 med | 결제 완료 med | 결제 완료 p95 | 처리 불가 요청 |
-|:--------------:|:-----------:|:-------:|:----------:|:---------:|:---------:|:--------:|
-| 고지연 (2.0~3.5s) |  sync-high  | 54.1/s  |  6,157ms   |  3,190ms  |  9,343ms  |  1,945   |
-| 고지연 (2.0~3.5s) | outbox-high | 79.8/s  |   5.3ms    |  2,820ms  |  3,423ms  |    0     |
-| 저지연 (0.1~0.3s) |  sync-low   | 106.4/s |   210ms    |   211ms   |   299ms   |    0     |
-| 저지연 (0.1~0.3s) | outbox-low  | 93.5/s  |   6.3ms    |   305ms   |   321ms   |    0     |
+|     지연 환경      |     케이스     |   TPS   | API 응답 med | 결제 완료 med | 결제 완료 p95 | 부하 미수용 |
+|:--------------:|:-----------:|:-------:|:----------:|:---------:|:---------:|:------:|
+| 고지연 (2.0~3.5s) |  sync-high  | 54.1/s  |  6,157ms   |  3,190ms  |  9,343ms  | 1,945  |
+| 고지연 (2.0~3.5s) | outbox-high | 79.8/s  |   5.3ms    |  2,820ms  |  3,423ms  |   0    |
+| 저지연 (0.1~0.3s) |  sync-low   | 106.4/s |   210ms    |   211ms   |   299ms   |   0    |
+| 저지연 (0.1~0.3s) | outbox-low  | 93.5/s  |   6.3ms    |   305ms   |   321ms   |   0    |
 
-HikariCP 30, Worker 300, Batch Size 100 설정을 기준으로 진행했다.
-
-- 성능 혁상: 고지연 환경에서 동기 전략 대비 약 47.5%의 압도적인 TPS 향상 달성
+- 성능 향상: 고지연 환경에서 동기 전략 대비 약 47.5%의 TPS 향상 달성
 - 자원 효율성: 커넥션 풀을 30으로 최적화하여 컨텐션 비용을 줄이고 시스템 안정성을 강화
-- 고가용성: 기존 다수의 처리 불가 요청을 0건으로 유지
+- 고가용성: 부하 미수용 1,945건 → 0건 (-100%)
 
 ## 결론
 
@@ -633,7 +640,7 @@ HikariCP 30, Worker 300, Batch Size 100 설정을 기준으로 진행했다.
 
 ### 1. 비동기 아키텍처에서의 Backpressure 중요성
 
-- 동시 실행 제한 없이 @Async 적용 시 HikariCP 고갈(에러율 80%) 발생 및 제한 시 HTTP 스레드 블로킹(처리 불가 요청 10,000건 이상) 유발
+- 동시 실행 제한 없이 @Async 적용 시 HikariCP 고갈(에러율 80%) 발생 및 제한 시 HTTP 스레드 블로킹(부하 미수용 10,000건 이상) 유발
 - LinkedBlockingQueue 용량 상한과 Worker 수를 통해 생산 및 소비 속도의 균형을 맞추는 구조 필요
 
 ### 2. 인메모리 채널 기반 메시지 발행의 위험성
@@ -645,12 +652,12 @@ HikariCP 30, Worker 300, Batch Size 100 설정을 기준으로 진행했다.
 
 외부 API 지연이 스레드 고갈로 전파되는 것을 격리하는 역할이며, 클린 환경 최종 검증에서 이를 확인했다.
 
-|          핵심 지표           |    동기 방식     |  비동기(Outbox)  |
-|:------------------------:|:------------:|:-------------:|
-|       고지연 처리 불가 요청       |  1,945건 유실   | 0건 유실 (-100%) |
-| 고지연 결제 응답성 (Confirm med) | 6,157ms (마비) |      7ms      |
-|     고지연 전체 처리량 (TPS)     |     54.1     |  79.8 (+47%)  |
-|       상시 저지연 처리 속도       |  213ms (우위)  |     308ms     |
+|          핵심 지표           |    동기 방식     | 비동기(Outbox) |
+|:------------------------:|:------------:|:-----------:|
+|        고지연 부하 미수용        |    1,945건    | 0건 (-100%)  |
+| 고지연 결제 응답성 (Confirm med) | 6,157ms (마비) |     7ms     |
+|     고지연 전체 처리량 (TPS)     |     54.1     | 79.8 (+47%) |
+|     상시 저지연 결제 완료 시간      |  213ms (우위)  |    308ms    |
 
 - 아키텍처 트레이드오프: 저지연 환경에서 Sync가 유리한 것은 자연스러운 결과
 - 안전장치로서의 가치: Outbox 패턴은 외부 API 장애 시 시스템이 무너지지 않도록 지탱하는 가치를 데이터로 입증
