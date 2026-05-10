@@ -358,7 +358,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Multi-Module Architecture',
-      slugs: ['multi-project-builds'],
+      slugs: ['multi-project-builds', 'convention-plugins'],
     },
   ],
   elk: [
