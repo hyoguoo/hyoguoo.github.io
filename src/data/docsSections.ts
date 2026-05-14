@@ -362,7 +362,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Performance & Quality',
-      slugs: ['incremental-build-and-cache'],
+      slugs: ['incremental-build-and-cache', 'testing-and-coverage'],
     },
   ],
   elk: [
