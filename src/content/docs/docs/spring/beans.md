@@ -62,11 +62,87 @@ Bean은 스프링을 구성하는 핵심 요소로, 빈 정의 메타데이터(B
 6. 소멸 전 콜백: 빈이 소멸되기 직전에 호출
 7. 스프링 종료
 
-### 초기화·소멸 콜백 방식 비교
+## 초기화·소멸 콜백 방식 비교
 
-- `@PostConstruct`, `@PreDestroy`: 자바 표준 기술로 가장 권장됨 (단, 외부 라이브러리에는 어노테이션 추가 불가)
-- `@Bean(initMethod, destroyMethod)`: 외부 라이브러리의 특정 메서드를 콜백으로 지정할 때 사용함 (추론 기능으로 `close`, `shutdown` 자동 감지 가능)
-- 인터페이스(`InitializingBean`, `DisposableBean`): 스프링 전용 인터페이스에 의존하므로 최신 설계에서는 지양함
+### `@PostConstruct`, `@PreDestroy`
+
+자바 표준 기술로 가장 권장된다.
+
+```java
+class MyBean {
+
+    @PostConstruct
+    void init() {
+    }
+
+    @PreDestroy
+    void close() {
+    }
+}
+```
+
+### `@Bean(initMethod, destroyMethod)`
+
+외부 라이브러리의 특정 메서드를 콜백으로 지정할 때 사용한다.
+
+```java
+
+@Bean(initMethod = "init", destroyMethod = "close")
+HikariDataSource dataSource() {
+    return new HikariDataSource();
+}
+```
+
+### 인터페이스(`InitializingBean`, `DisposableBean`)
+
+스프링 전용 인터페이스에 의존하므로 최신 설계에서는 권장되지 않는다.
+
+```java
+class MyBean implements InitializingBean, DisposableBean {
+
+    @Override
+    public void afterPropertiesSet() {
+    }
+
+    @Override
+    public void destroy() {
+    }
+}
+```
+
+#### @Bean(initMethod, destroyMethod) 상세
+
+`@Bean(initMethod, destroyMethod)`는 리플렉션으로 호출하는 방식으로 콜백을 등록하기 때문에, 라이브러리마다 종료 메서드 이름이 다르더라도 자유롭게 지정할 수 있다.
+
+```java
+
+@Configuration
+class InfraConfig {
+
+    @Bean(destroyMethod = "close")
+    JedisPool jedisPool() {
+        return new JedisPool("localhost", 6379);
+    }
+
+    @Bean(destroyMethod = "close")
+    HikariDataSource dataSource() {
+        HikariConfig config = new HikariConfig();
+        config.setJdbcUrl("jdbc:mysql://...");
+        return new HikariDataSource(config);
+    }
+}
+```
+
+라이브러리마다 종료 메서드 이름이 다르더라도, 임의의 메서드명을 지정하여 컨테이너가 종료 시점에 호출하도록 할 수 있다.
+
+|         라이브러리          |             종료 메서드              |
+|:----------------------:|:-------------------------------:|
+|        HikariCP        |            `close()`            |
+| Netty `EventLoopGroup` |     `shutdownGracefully()`      |
+|   Quartz `Scheduler`   |          `shutdown()`           |
+|        커스텀 클래스         | `cleanup()`, `dispose()` 등 자유롭게 |
+
+`destroyMethod`를 지정하지 않으면, 스프링이 `close()` 같은 일반적인 종료 메서드를 자동으로 찾아 등록하기 때문에, 의도치 않은 호출을 막으려면 명시적으로 빈 문자열로 비활성화해야 한다.
 
 ## 스코프 (Scope)
 
