@@ -28,7 +28,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Advanced',
-      slugs: ['varargs', 'generic', 'lambda', 'reflection', 'serialization'],
+      slugs: ['varargs', 'generic', 'lambda', 'reflection', 'annotation', 'serialization'],
     },
     {
       label: 'Effective Java',
