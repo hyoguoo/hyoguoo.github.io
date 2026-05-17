@@ -1,9 +1,9 @@
 ---
 title: "Beans"
 date: 2022-10-10
-lastUpdated: 2026-05-15
+lastUpdated: 2026-05-17
 tags: [ Spring ]
-description: "스프링 빈의 BeanDefinition 메타데이터와 생명주기 관리 원리, 싱글톤과 프로토타입 간 스코프 불일치 문제 및 해결 방안을 분석한다."
+description: "스프링 빈의 BeanDefinition 메타데이터와 생명주기 관리 원리, @Configuration의 CGLIB 프록시 싱글톤 보장, 싱글톤과 프로토타입 간 스코프 불일치 문제 및 해결 방안을 분석한다."
 ---
 
 > 스프링 빈(Bean) : 스프링 컨테이너가 생성하고 생명주기를 관리하는 자바 객체
@@ -51,6 +51,44 @@ Bean은 스프링을 구성하는 핵심 요소로, 빈 정의 메타데이터(B
 
 - 외부 라이브러리 객체 등록: 소스 코드를 수정할 수 없는 외부 라이브러리를 빈으로 등록할 때 필수적임
 - 조건부 빈 등록: 런타임 환경이나 특정 설정값에 따라 구현체를 동적으로 선택해야 하는 경우 유용함
+- 생성 과정에 로직이 필요한 경우: 빌더 호출, 검증, 여러 빈의 조립 등 생성 자체가 한 줄로 끝나지 않을 때 메서드 본문에 로직을 담을 수 있음
+
+## @Configuration과 @Component의 차이
+
+`@Configuration` 클래스를 CGLIB 프록시로 감싸서, `@Bean` 메서드 호출을 가로채 이미 생성된 빈이 있으면 컨테이너 캐시에서 반환하여 싱글톤을 보장한다.
+
+```java
+
+@Configuration
+class AppConfig {
+
+    @Bean
+    Repository repository() {
+        return new Repository();
+    }
+
+    @Bean
+    Service service() {
+        return new Service(repository());  // 직접 호출처럼 보이지만 프록시가 가로채 컨테이너 캐시 반환
+    }
+
+    @Bean
+    AuditLog auditLog() {
+        return new AuditLog(repository());  // 위와 동일한 Repository 인스턴스
+    }
+}
+```
+
+`repository()`는 코드상 두 번 호출되지만 실제 인스턴스는 하나만 생성되어 `service()`와 `auditLog()` 모두 같은 Repository 빈을 참조한다.
+
+```mermaid
+flowchart LR
+    Caller[Service 빈 생성] -->|repository 호출| Proxy[CGLIB Proxy<br>AppConfig 상속]
+    Proxy -->|컨테이너 lookup| Container[ApplicationContext]
+    Container -->|이미 존재| Cached[기존 Repository 반환]
+    Container -->|없으면| Create[실제 메서드 실행]
+    Create -->|등록 후 반환| Container
+```
 
 ## 빈 생명주기
 
