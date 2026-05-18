@@ -1,9 +1,9 @@
 ---
-title: "Spring Boot Logging"
+title: "Spring Logging Stack with MDC"
 date: 2026-05-04
-lastUpdated: 2026-05-04
+lastUpdated: 2026-05-18
 tags: [ Spring ]
-description: "Spring Boot 애플리케이션 로깅의 기본 스택(SLF4J + Logback) 구성, 로그 레벨·패턴 설정, 프로파일별 로그 분리, MDC 컨텍스트 부여와 비동기·가상 스레드 환경의 전파 주의점까지 정리한다."
+description: "Spring Boot 애플리케이션의 SLF4J + Logback 기반 로깅 스택 구성과 로그 레벨·패턴·프로파일 분리, ThreadLocal 기반 MDC 컨텍스트 부여, @Async·리액티브·가상 스레드 환경에서 TaskDecorator로 컨텍스트를 전파하는 정석 패턴을 다룬다."
 ---
 
 Spring Boot는 별도 설정 없이도 표준 로깅 스택을 제공하며, 운영 수준의 컨텍스트 추적·구조화 로그까지 같은 스택 위에서 확장할 수 있다.

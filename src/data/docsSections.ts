@@ -283,7 +283,6 @@ export const docsSections: Record<string, SectionConfig> = {
         'spring-boot-core-execution',
         'spring-boot-properties',
         'spring-boot-auto-configuration',
-        'spring-boot-logging',
       ],
     },
     {
@@ -302,7 +301,11 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Spring Cloud',
-      slugs: ['spring-cloud-connectivity', 'spring-cloud-gateway', 'spring-cloud-observability'],
+      slugs: ['spring-cloud-connectivity', 'spring-cloud-gateway', 'spring-cloud-resilience', 'spring-cloud-config-server'],
+    },
+    {
+      label: 'Observability',
+      slugs: ['observability-logging-stack', 'observability-distributed-tracing'],
     },
     {
       label: 'Additional',
