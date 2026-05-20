@@ -1,12 +1,12 @@
 ---
-title: "Spring Logging Stack with MDC"
+title: "Spring Logging Stack with MDC and Structured Logging"
 date: 2026-05-04
-lastUpdated: 2026-05-18
+lastUpdated: 2026-05-20
 tags: [ Spring ]
-description: "Spring Boot 애플리케이션의 SLF4J + Logback 기반 로깅 스택 구성과 로그 레벨·패턴·프로파일 분리, ThreadLocal 기반 MDC 컨텍스트 부여, @Async·리액티브·가상 스레드 환경에서 TaskDecorator로 컨텍스트를 전파하는 정석 패턴을 다룬다."
+description: "Spring Boot의 SLF4J + Logback 로깅 스택과 ThreadLocal 기반 MDC, TaskDecorator·Reactor Context·가상 스레드 환경에서의 컨텍스트 전파, LogstashEncoder JSON 인코딩과 OpenTelemetry semantic convention에 맞춘 키 표준화까지 운영 수준 로깅 구성을 정리한다."
 ---
 
-Spring Boot는 별도 설정 없이도 표준 로깅 스택을 제공하며, 운영 수준의 컨텍스트 추적·구조화 로그까지 같은 스택 위에서 확장할 수 있다.
+Spring Boot는 별도 설정 없이도 표준 로깅 스택을 제공하며, 컨텍스트 추적·구조화 출력까지 같은 스택 위에서 확장된다.
 
 ## 기본 로깅 스택
 
@@ -100,8 +100,7 @@ Logback 패턴 문법으로 출력 형식을 정의한다.
 내부 구현은 `ThreadLocal<Map<String, String>>` 기반으로, 같은 스레드 내에서만 컨텍스트가 공유된다.
 
 - Logback 1.2.x 시대(Spring Boot 2.x)에는 `InheritableThreadLocal`을 사용해 `new Thread()`로 만든 자식 스레드에 자동 전파되던 동작이 있었음
-- Logback 1.4+(Spring Boot 3.x) 이후 일반 `ThreadLocal`로 교체되어 자식 스레드 자동 전파는 더 이상 보장되지 않으므로, 비동기 전파는 이후 절의 `TaskDecorator` 같은
-  명시적 패턴으로 처리해야 함
+- Logback 1.4+(Spring Boot 3.x) 이후 일반 `ThreadLocal`로 교체되어 자식 스레드 자동 전파는 더 이상 보장되지 않으므로, 비동기 전파는 이후 절의 명시적 패턴으로 처리해야 함
 
 ```mermaid
 graph TD
@@ -155,18 +154,17 @@ public class MdcFilter extends OncePerRequestFilter {
 - 서블릿 워커 스레드는 풀에서 재사용되므로 `clear()` 누락 시 이전 요청 컨텍스트가 다음 요청 로그에 노출
 - 예외 발생 경로에서도 정리되도록 반드시 `finally`에 배치
 
-## 비동기 전파 문제
+## 비동기 환경에서의 컨텍스트 전파
 
-MDC가 ThreadLocal 기반이므로 작업이 다른 스레드로 넘어가는 순간 컨텍스트가 사라진다.
+MDC는 `ThreadLocal`에 묶여 있으므로 작업이 다른 스레드로 넘어가는 순간 컨텍스트가 사라진다. 실행 모델별로 명시적 전파 패턴이 필요하다.
 
-|           시나리오           |                  현상                  |
-|:------------------------:|:------------------------------------:|
-|       `@Async` 호출        |        새 스레드에서 실행되어 MDC 비어 있음        |
-| `ExecutorService.submit` |           풀 스레드에 컨텍스트 미전파            |
-|   CompletableFuture 체인   |         다음 단계가 다른 스레드일 수 있음          |
-|       가상 스레드(Loom)       | 가상 스레드 자체는 정상이나 작업이 별개 풀로 넘어가면 동일 문제 |
+|            실행 모델            |                           유실 시점                           |               전파 수단               |
+|:---------------------------:|:---------------------------------------------------------:|:---------------------------------:|
+|      `@Async`·스레드 풀 작업      |                    작업이 풀 스레드로 이관되는 시점                     |          `TaskDecorator`          |
+| Reactor·WebFlux(리액티브 파이프라인) |                 operator가 다른 스레드에서 실행될 때                  | Reactor Context + 자동 컨텍스트 전파 hook |
+|        가상 스레드(Loom)         | `Executors.newVirtualThreadPerTaskExecutor` 등에서 새 VT 생성 시 |     동일하게 `TaskDecorator`류 래핑      |
 
-### `TaskDecorator`로 전파 해결
+### 스레드 풀: `TaskDecorator`
 
 Spring `TaskExecutor`에 데코레이터를 등록해 작업 제출 시점에 컨텍스트 스냅샷을 떠두고 실행 시점에 복원한다.
 
@@ -178,8 +176,9 @@ public class MdcTaskDecorator implements TaskDecorator {
         Map<String, String> contextMap = MDC.getCopyOfContextMap();
         return () -> {
             try {
-                if (contextMap != null)
+                if (contextMap != null) {
                     MDC.setContextMap(contextMap);
+                }
                 runnable.run();
             } finally {
                 MDC.clear();
@@ -202,9 +201,69 @@ public class AsyncConfig implements AsyncConfigurer {
 }
 ```
 
-- 핵심은 `getCopyOfContextMap()`으로 스냅샷을 잡고, 실행 스레드에서 `setContextMap()`으로 복원, 종료 시 `clear()`
-- Spring 4.3부터 `TaskDecorator` 인터페이스 제공
-- 최근 자바 버전에서 preview로 제안되는 `ScopedValue`가 ThreadLocal 대안으로 거론되지만, MDC API는 여전히 ThreadLocal 기반
+- 제출 측 스레드에서 `getCopyOfContextMap()`으로 스냅샷을 잡고, 실행 스레드에서 `setContextMap()`으로 복원, 종료 시 `clear()`
+- `CompletableFuture.supplyAsync`처럼 풀에 작업을 직접 던지는 경로는 데코레이터를 거치지 않아 `Runnable`을 동일하게 래핑하거나 데코레이터 적용 `Executor`를 명시적으로 전달
+
+### 가상 스레드
+
+가상 스레드도 자체 `ThreadLocal` 슬롯을 가지므로 단일 VT 내부에서는 MDC가 동일하게 동작하지만, 작업마다 새 VT를 생성하는 구조라 executor 경계에서는 동일한 유실이 발생한다.
+
+- `Executors.newVirtualThreadPerTaskExecutor()` 제출 작업은 새 VT에서 시작되어 MDC가 비어 있음
+- 해결 방식은 스레드 풀과 동일하게 `TaskDecorator`/`Runnable` 래퍼로 스냅샷·복원·정리
+
+## 구조화 로깅 (Structured Logging)
+
+운영 환경에서는 사람이 읽기 위한 텍스트 로그보다 Loki·Elasticsearch가 인덱싱할 수 있는 기계 친화 JSON 형태가 표준이다.
+
+### LogstashEncoder JSON 인코딩
+
+`net.logstash.logback:logstash-logback-encoder`가 사실상 표준 인코더이며, Logback appender에 붙이면 로그 한 줄을 JSON 한 객체로 직렬화한다.
+
+```xml
+
+<configuration>
+  <appender name="STDOUT_JSON" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="net.logstash.logback.encoder.LogstashEncoder">
+      <includeMdcKeyName>requestId</includeMdcKeyName>
+      <includeMdcKeyName>traceId</includeMdcKeyName>
+      <includeMdcKeyName>spanId</includeMdcKeyName>
+      <customFields>{"service.name":"order-service","deploy.env":"prod"}</customFields>
+      <fieldNames>
+        <timestamp>@timestamp</timestamp>
+        <message>message</message>
+        <logger>logger_name</logger>
+        <thread>thread_name</thread>
+        <levelValue>[ignore]</levelValue>
+      </fieldNames>
+    </encoder>
+  </appender>
+  <root level="INFO">
+    <appender-ref ref="STDOUT_JSON"/>
+  </root>
+</configuration>
+```
+
+- `includeMdcKeyName`: MDC 키를 JSON 최상위 필드로 노출 (지정하지 않으면 `mdc` 객체로 중첩)
+- `customFields`: 인스턴스 공통 메타데이터(서비스명, 배포 환경 등)를 매 로그 라인에 정적으로 부착
+- `fieldNames`: 기본 필드명을 표준 키로 매핑하거나 `[ignore]`로 출력 제외
+
+### 키 표준화
+
+로그를 트레이스·메트릭과 같은 식별자로 묶기 위해 키 명명을 OpenTelemetry semantic conventions에 맞춘다.
+
+|       키        |          내용          |               표준 근거                |
+|:--------------:|:--------------------:|:----------------------------------:|
+|  `@timestamp`  |    ISO-8601 타임스탬프    |       Elasticsearch/Loki 관례        |
+|    `level`     |      로그 레벨 문자열       |        OTel Logs Data Model        |
+|   `message`    |      포매팅된 로그 본문      |        OTel Logs Data Model        |
+| `logger_name`  |    로거(클래스/패키지) 이름    |                 관례                 |
+|   `trace_id`   | 현재 활성 Span의 trace ID |   W3C Trace Context / OTel Logs    |
+|   `span_id`    | 현재 활성 Span의 span ID  |   W3C Trace Context / OTel Logs    |
+| `service.name` |      논리 서비스 식별자      | OTel Resource semantic conventions |
+|  `deploy.env`  |        배포 환경         | OTel Resource semantic conventions |
+
+- MDC에는 카멜케이스(`traceId`)로 담더라도 인코더에서 `trace_id`로 매핑해 OTel 표준 필드와 어긋나지 않게 유지
+- Micrometer Tracing이 활성 Span 정보를 MDC에 `traceId`·`spanId` 키로 자동 채워주므로, 인코더 매핑만 잡으면 표준 필드로 노출
 
 ## 활용 시나리오
 
