@@ -196,6 +196,10 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   'operating-system': [
     {
+      label: 'Foundations',
+      slugs: ['introduction'],
+    },
+    {
       label: 'Process & CPU',
       slugs: ['kernel', 'process', 'thread', 'cpu-scheduling'],
     },
