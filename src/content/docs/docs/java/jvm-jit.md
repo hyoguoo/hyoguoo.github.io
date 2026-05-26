@@ -1,7 +1,7 @@
 ---
 title: "JVM JIT Compiler"
 date: 2026-04-29
-lastUpdated: 2026-04-29
+lastUpdated: 2026-05-26
 tags: [ Java ]
 description: "HotSpot JIT의 Mixed Mode와 Hot Method Detection, C1/C2 계층 컴파일, Code Cache, Deoptimization, 주요 최적화 기법, Warm-up 전략을 정리한다."
 ---
@@ -264,6 +264,41 @@ public int getSafeCount() {
     return counter.getCount();
 }
 ```
+
+### Implicit Null Check (암묵적 Null 체크)
+
+자바의 모든 객체 접근은 잠재적인 null 체크 대상이며, 이를 매번 명시적 분기(test, jz)로 처리하면 CPU 분기 예측기에 큰 부담을 준다.
+
+- HotSpot JIT는 대부분의 참조가 null이 아닐 것이라는 가정을 바탕으로, 검사 자체를 생략
+- 하드웨어의 메모리 보호 기능을 활용하는 공격적 최적화 적용
+
+#### 동작 원리
+
+JIT는 null 체크 분기 명령을 생성하지 않고 곧장 메모리 주소에 접근하는 기계어를 생성하게 된다.
+
+```mermaid
+sequenceDiagram
+    participant Java as Java 코드
+    participant JIT as JIT 컴파일된 기계어
+    participant MMU as CPU MMU / 커널
+    participant Sig as JVM 시그널 핸들러
+    Java ->> JIT: s.length() 호출
+    Note over JIT: 분기 검사 없이 즉시 접근
+    JIT ->> MMU: mov rcx, [rax+16] (rax=0)
+    MMU -->> Sig: 하드웨어 예외 발생 (SIGSEGV)
+    Sig ->> Sig: 현재 PC 위치 분석
+    Sig -->> Java: NullPointerException으로 변환 후 전달
+```
+
+1. 만약 참조값이 null(0x0)이라면 CPU 내의 MMU(Memory Management Unit)가 보호된 페이지에 대한 접근으로 판단하여 하드웨어 예외 발생
+2. OS 커널은 이 예외를 가로채어 프로세스에 SIGSEGV(Unix 계열) 시그널 전달
+3. JVM은 미리 등록해둔 시그널 핸들러를 통해 이 신호를 수신
+4. 현재 실행 중인 코드 위치(PC)를 확인하여 이를 NullPointerException으로 변환해 다시 던짐
+
+#### 트레이드오프와 성능
+
+- 정상 경로(Non-null): 체크 명령 자체가 사라지므로 분기 오버헤드가 0에 수렴하여 매우 빠른 성능 발휘
+- 예외 경로(Null): 실제 null이 들어왔을 때는 커널 모드 전환, 시그널 디스패치, 스택 추적 등의 비용이 발생하여 명시적 체크보다 훨씬 비싼 비용 발생
 
 ### Loop Optimization(루프 최적화)
 
