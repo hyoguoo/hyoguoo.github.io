@@ -148,7 +148,7 @@ class Exception {
 }
 ```
 
-## 사용 자정의 예외
+## 사용자 정의 예외
 
 기존에 정의된 예외 클래스 외에, 애플리케이션의 특정 비즈니스 로직에 맞는 예외를 직접 정의할 수 있다.
 
@@ -186,7 +186,7 @@ class MyException extends Exception { // Exception 또는 RuntimeException 상�
 2. 로직 수행 및 전파
     - 예외가 발생했을 때, 수행해야하는 로직 처리
     - 후처리 완료 후, 예외가 발생했음을 상위 호출자에게도 알리기 위해 예외를 다시 전달
-2. 예외 변환 (Exception Translation)
+3. 예외 변환 (Exception Translation)
     - `SQLException`과 같은 저수준(low-level)의 특정 구현 예외를, `DataAccessException`과 같은 추상화된 사용자 정의 예외로 변환
     - 이때 `throw new DataAccessException(e)`처럼 생성자에 원본 예외(`e`)를 넘겨주어야(예외 체이닝), 원본 스택 트레이스가 소실되지 않음
 
