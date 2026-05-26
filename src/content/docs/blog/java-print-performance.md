@@ -1,10 +1,11 @@
 ---
 title: "System.out.println()의 동작 원리와 성능 이슈"
 date: 2025-08-05
-lastUpdated: 2025-08-05
-tags: [Java]
+lastUpdated: 2026-05-26
+tags: [ Java ]
 description: "System.out.println()이 사용하는 PrintStream의 동작 원리와 멀티 스레드 환경에서의 성능 이슈를 분석한다."
 ---
+
 `PrintStream` 클래스는 `OutputStream`을 상속받아 출력 스트림을 구현하며, 다양한 타입의 데이터를 출력할 수 있는 메서드를 제공한다.
 
 ```java
@@ -133,3 +134,33 @@ private void writeln(String s) {
     - 출력 버퍼가 자주 flush되어 성능 저하
     - synchronized/lock 경쟁으로 인한 쓰레드 병목 현상 발생
     - 콘솔 IO 속도는 CPU 연산보다 훨씬 느림
+- 톰캣 등에서 여러 스레드가 동시에 출력을 시도할 경우 락 경합으로 인한 병목 현상 발생
+- 하나의 스레드가 I/O 작업을 완료할 때까지 다른 스레드들은 대기 상태에 머물게 되어 시스템 처리량이 급격히 저하
+
+## Logback과 AsyncAppender를 통한 개선
+
+로깅 프레임워크는 이러한 성능 문제를 해결하기 위해 비동기 전파 및 사용자 공간 버퍼링 기술을 활용한다.
+
+### 사용자 공간 버퍼링
+
+Logback의 FileAppender는 BufferedOutputStream을 사용하여 데이터를 사용자 공간 메모리에 모아두었다가 한꺼번에 커널로 전달한다.
+
+- 시스템 콜 빈도를 획기적으로 줄여 Mode Switch로 인한 오버헤드 최소화
+- 기본 8KB 등의 버퍼를 사용하여 디스크 쓰기 효율을 극대화
+
+### AsyncAppender를 통한 비동기 분리
+
+비즈니스 스레드와 I/O 스레드를 분리하여 응답 시간에서 입출력 부담을 제거하는 방식이다.
+
+```mermaid
+flowchart TB
+    A[비즈니스 스레드들] -->|로그 이벤트| Q[ArrayBlockingQueue]
+    Q --> W[Worker 스레드]
+    W -->|위임| F[FileAppender]
+    F -->|write 시스템 콜| OS[(커널)]
+```
+
+- 비즈니스 스레드는 큐에 로그 이벤트를 넣고 즉시 반환되므로 디스크 지연의 영향을 직접 받지 않음
+- 큐를 통해 백프레셔(Backpressure)를 통제하며, 큐가 가득 찼을 때의 동작(drop 또는 block)을 명시적으로 설정할 수 있음
+- 결과적으로 시스템의 응답성과 처리량을 보장하면서 안전하게 로그를 기록
+
