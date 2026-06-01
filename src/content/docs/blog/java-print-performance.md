@@ -1,30 +1,35 @@
 ---
 title: "System.out.println()의 동작 원리와 성능 이슈"
 date: 2025-08-05
-lastUpdated: 2026-05-26
+lastUpdated: 2026-06-01
 tags: [ Java ]
-description: "System.out.println()이 사용하는 PrintStream의 동작 원리와 멀티 스레드 환경에서의 성능 이슈를 분석한다."
+description: "System.out.println()이 사용하는 PrintStream의 스트림 계층과 autoFlush·synchronized·블로킹 IO가 맞물려 만드는 성능 이슈를 실측과 함께 분석한다."
 ---
+
+> 측정 환경: Corretto JDK 24 (macOS), 인용 코드는 JDK 24의 `java.base` 소스 기준
+
+`System.out.println()` 한 줄은, 반복문이나 다중 스레드 환경에서 애플리케이션의 처리량을 끌어내리는 병목이 되기도 한다.
+
+- `System.out.println()`은 한 줄을 출력하기 위해 내부에서 무슨 일을 하는가
+- 그 과정의 어떤 비용이 성능을 떨어뜨리는가
+- 어떻게 개선할 수 있으며, 로깅 프레임워크는 무엇이 다른가
 
 `PrintStream` 클래스는 `OutputStream`을 상속받아 출력 스트림을 구현하며, 다양한 타입의 데이터를 출력할 수 있는 메서드를 제공한다.
 
 ```java
-public class Main {
-
-    public static void main(String[] args) {
-        System.out.println("Hello, World!");
-    }
+void main() {
+    System.out.println("Hello, World!");
 }
 ```
 
 `System.out`은 `PrintStream` 타입의 static 객체이며, `println()`을 포함한 다양한 출력 메서드를 제공하여 간편하게 콘솔에 데이터를 출력할 수 있다.
 
-## `System.out.println()` 호출
+## `System.out`의 초기화 과정과 `PrintStream` 인스턴스 생성
 
-`PrintStream`을 import하거나 인스턴스를 생성 없이 `System.out.println()`을 바로 사용할 수 있는 데, 그 이유는 다음과 같다.
+`PrintStream`을 import하거나 인스턴스를 생성 없이 `System.out.println()`을 바로 사용할 수 있는데, 그 이유는 다음과 같다.
 
 - `System` 클래스는 `java.lang` 패키지에 포함되어 있으며, 기본적으로 import되는 패키지이기 때문에 별도 import 없이 사용 가능
-- `System` 클래스 내부에 `PrintStream` 타입의 static 필드 `out`이 정의되어 있음
+- `System` 클래스 내부에 `PrintStream` 타입의 static 필드 `out`이 정의
 
 ```java
 
@@ -58,30 +63,80 @@ public final class System {
 
 이 작업은 Java 코드가 아닌 JVM 내부 native 코드에서 수행되며, 실제로는 메모리 상의 `System.out` 필드에 객체가 강제로 할당된다.
 
-## `System.out.println()` 내부 구현 코드 분석
-
-일반적으로 사용하는 `System.out.println()` 호출은 `PrintStream` 클래스 구현을 그대로 사용하는 경우가 대부분이며, 이 경우 다음과 같은 흐름으로 동작한다.
+이때 `initPhase1()`이 만들어 주는 `System.out`의 실제 구성은 다음과 같다.
 
 ```java
-public void println(Object x) {
-    String s = String.valueOf(x);
+// java.lang.System
+private static PrintStream newPrintStream(OutputStream out, String enc) {
+    if (enc != null) {
+        return new PrintStream(new BufferedOutputStream(out, 128), true,
+                Charset.forName(enc, UTF_8.INSTANCE));
+    }
+    return new PrintStream(new BufferedOutputStream(out, 128), true);
+}
+```
+
+- 최하위 스트림은 표준 출력(stdout)에 연결된 `FileOutputStream`이며, 그 위를 128바이트 `BufferedOutputStream`이 래핑
+- `PrintStream`은 `autoFlush=true`로 생성되며, 이 설정값이 뒤에서 다룰 성능 이슈의 핵심 원인이 됨
+
+## PrintStream의 스트림 계층 구조
+
+`println()`이 호출한 문자열은 곧바로 OS로 나가지 않고, `PrintStream` 내부의 여러 계층을 거쳐 전달된다.
+
+```java
+private PrintStream(boolean autoFlush, OutputStream out) {
+    super(out);
+    // ...
+    this.charOut = new OutputStreamWriter(this, charset);
+    this.textOut = new BufferedWriter(charOut);
+    // ...
+}
+```
+
+`PrintStream`은 생성 시 다음과 같이 중간 계층을 구성하며, 각 계층의 역할은 다음과 같이 구분된다.
+
+|    계층     |           타입           |               역할                |
+|:---------:|:----------------------:|:-------------------------------:|
+| `textOut` |    `BufferedWriter`    |         문자(char) 단위 버퍼링         |
+| `charOut` |  `OutputStreamWriter`  | 내부 `StreamEncoder`로 Charset 인코딩 |
+|   `out`   | `BufferedOutputStream` |     인코딩된 바이트를 모았다가 하위로 내보냄      |
+
+```mermaid
+flowchart TB
+    P["println 호출"] --> T["textOut (BufferedWriter)"]
+    T -->|" 문자 버퍼링 "| C["charOut (OutputStreamWriter / StreamEncoder)"]
+    C -->|" Charset 인코딩하여 바이트화 "| O["out (BufferedOutputStream · 128B)"]
+    O -->|" 버퍼가 차거나 flush될 때 "| F["FileOutputStream"]
+    F -->|" write 시스템 콜 "| K[("커널 / OS")]
+```
+
+1. 문자열은 `textOut`에서 문자 버퍼에 저장
+2. `charOut`에서 바이트로 인코딩
+3. `out`의 바이트 버퍼를 거쳐 최종적으로 `FileOutputStream`이 `write` 시스템 콜을 통해 커널로 전달
+
+## `System.out.println()` 내부 구현 코드 분석
+
+`System.out.println("Hello, World!")`처럼 문자열을 출력하면 `println(String x)`가 호출되며, 그 흐름은 다음과 같다.
+
+```java
+public void println(String x) {
     if (getClass() == PrintStream.class) {
-        // need to apply String.valueOf again since first invocation
-        // might return null
-        writeln(String.valueOf(s));
+        writeln(String.valueOf(x));
     } else {
         // 하위 클래스 확장 시의 예외적 경로
         synchronized (this) {
-            print(s);
+            print(x);
             newLine();
         }
     }
 }
-
 ```
 
-- `System.out`은 JVM이 직접 생성한 `PrintStream` 인스턴스이므로, 일반적으로는 `writeln()` 경로로 실행
-- `writeln()`은 내부적으로 출력 버퍼에 문자열을 쓰고, 줄바꿈 후 flush까지 수행하는 방식으로 구현
+`getClass() == PrintStream.class` 분기는 `PrintStream`을 그대로 쓰는 경우와 상속받아 오버라이드한 경우를 가르는 최적화 장치다.
+
+- `System.out`은 JVM이 직접 생성한 순수 `PrintStream` 인스턴스이므로 항상 `writeln()` 경로로 실행
+- 하위 클래스라면 오버라이드된 `print()`/`newLine()`이 호출되어야 하므로 별도 경로로 분기
+- `println(Object)` 등 다른 오버로드도 동일한 구조로 `writeln()`을 호출
 
 `writeln(String s)`의 상세 구현을 살펴보면 다음과 같다.
 
@@ -109,19 +164,18 @@ private void writeln(String s) {
     - 스트림이 닫히지 않았는지 확인
     - 닫힌 경우 `IOException` 발생시켜 출력 중단
 2. textOut.write(s) / textOut.newLine()
-    - 문자열 및 줄바꿈 문자를 내부 문자 버퍼(`StreamEncoder`)에 쓰기 수행
+    - 문자열 및 줄바꿈 문자를 내부 문자 버퍼(`BufferedWriter`)에 쓰기 수행
     - 개행은 플랫폼에 맞는 \n, \r\n 등 줄바꿈 문자로 추가
     - 실제 출력은 하지 않고, 버퍼에만 저장
 3. textOut.flushBuffer()
-    - 문자 버퍼에 저장된 내용을 지정된 Charset으로 인코딩하여 바이트 배열로 변환
-    - 인코딩된 바이트 배열 데이터를 `StreamEncoder` 내부의 `OutputStream`에 저장
+    - 문자 버퍼에 저장된 내용을 `charOut`으로 흘려보내 지정된 Charset으로 인코딩
+    - 인코딩된 바이트 배열 데이터를 `StreamEncoder` 내부에 저장
 4. charOut.flushBuffer()
-    - `StreamEncoder` 내부 `OutputStream`에 저장된 바이트 데이터를 실제 출력 스트림으로 전달
-    - 최종적으로 native 메서드를 호출하게 되며, 실제 OS 단에서 출력이 이루어짐
+    - `StreamEncoder`에 저장된 바이트 데이터를 최하위 출력 스트림 `out`으로 전달
+    - 이 단계까지는 `out`의 바이트 버퍼에 쌓일 뿐, OS로 나가지는 않음
 5. if (autoFlush) out.flush()
-    - 기본 true로 설정되어 있어 자동으로 flush() 수행
-    - 일반적으로 위 과정으로 이미 flush된 상태이기 때문에 추가 동작은 없음
-    - 명시적으로 flush 호출을 통해 출력 스트림을 강제로 비우는 역할
+    - `System.out`은 `autoFlush=true`이므로 매 호출마다 `out.flush()`를 수행
+    - 버퍼에 남은 데이터까지 강제로 비워 즉시 출력되도록 보장하며, 이때 native 메서드를 통해 실제 `write` 시스템 콜이 발생
 
 ## 성능 저하의 원인
 
