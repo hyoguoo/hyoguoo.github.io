@@ -8,11 +8,20 @@ description: "System.out.println()이 느린 이유(autoFlush·전역 synchroniz
 
 > 측정 환경: Corretto JDK 24 (macOS), 인용 코드는 JDK 24의 `java.base` 소스 기준
 
-`System.out.println()` 한 줄은, 반복문이나 다중 스레드 환경에서 애플리케이션의 처리량을 끌어내리는 병목이 되기도 한다.
+`System.out.println()`은 운영 코드에서 피해야 할 출력 방식인데, 성능 관점에서 다음과 같은 문제가 있다.
 
-- `System.out.println()`은 한 줄을 출력하기 위해 내부에서 무슨 일을 하는가
-- 그 과정의 어떤 비용이 성능을 떨어뜨리는가
-- 어떻게 개선할 수 있으며, 로깅 프레임워크는 무엇이 다른가
+- 전역 락: JVM에 하나뿐인 `System.out` 인스턴스를 모든 스레드가 `synchronized`로 공유
+- autoFlush: 줄마다 강제로 flush하여 `write` 시스템 콜이 라인 수만큼 반복
+- 블로킹 IO: 출력이 끝날 때까지 호출 스레드가 대기
+
+이 글은 그 비용을 내부 구현과 벤치마크로 분석한 뒤, 로깅 프레임워크가 이를 어떻게 해결하는지 살펴본다.
+
+- `System.out.println()`의 내부 동작과 `PrintStream`의 스트림 계층 구조
+- 그 동작 방식이 처리량에 미치는 영향을 벤치마크로 실측
+- 버퍼링(`immediateFlush`)과 비동기(`AsyncAppender`)가 실제 서비스의 응답 시간·처리량에 만드는 차이
+- 어떤 환경에서 무엇을 선택할지에 대한 트레이드오프
+
+## `System.out`과 `PrintStream`의 역할
 
 `PrintStream` 클래스는 `OutputStream`을 상속받아 출력 스트림을 구현하며, 다양한 타입의 데이터를 출력할 수 있는 메서드를 제공한다.
 
