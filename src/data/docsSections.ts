@@ -181,7 +181,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Advanced',
-      slugs: ['proxy', 'cors'],
+      slugs: ['proxy', 'load-balancing', 'cors'],
     },
   ],
   oop: [

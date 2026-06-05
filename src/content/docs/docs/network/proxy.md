@@ -54,6 +54,8 @@ description: "프록시의 Forward/Reverse 배치 유형별 역할, 캐싱·로�
 | Forward Proxy | 클라이언트 앞단 |             클라이언트를 대신해 외부 서버로 요청 전송</br>내부망에서 외부망 접속 제어, 캐싱, 익명화 목적으로 사용             |
 | Reverse Proxy |  서버 앞단   | 서버를 대신해 외부의 요청 수신</br>로드 밸런싱, 보안(서버 IP 숨김), SSL Offloading 목적으로 사용(Nginx, HAProxy 등) |
 
+이중 로드밸런서는 Reverse Proxy의 대표적인 활용 사례로, 여러 대의 원 서버로 트래픽을 분산시켜 서버 부하를 완화하고 가용성을 높이는 역할을 한다.
+
 ### 기타 배치 유형
 
 - Egress Proxy: 내부망에서 외부 인터넷으로 나가는 트래픽을 제어(Forward Proxy의 일종)
