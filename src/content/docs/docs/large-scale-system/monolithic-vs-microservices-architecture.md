@@ -1,7 +1,7 @@
 ---
 title: "Monolithic & Microservices Architecture"
 date: 2025-10-21
-lastUpdated: 2026-04-15
+lastUpdated: 2026-06-09
 tags: [ Large-Scale System ]
 description: "모놀리식과 마이크로서비스(MSA) 아키텍처의 구조적 차이와 각각의 장단점을 비교하고, 전환 시 고려사항을 다룬다."
 ---
@@ -45,8 +45,8 @@ description: "모놀리식과 마이크로서비스(MSA) 아키텍처의 구조�
 
 ```mermaid
 graph TB
-    classDef mono fill: #fdd, color: #000
-    classDef msa fill: #dfd, color: #000
+    classDef mono fill: #fdd,color: #000
+    classDef msa fill: #dfd,color: #000
 
     subgraph Monolithic [모놀리식 아키텍처]
         APP[단일 애플리케이션]:::mono
@@ -109,6 +109,15 @@ REST API나 gRPC 같은 동기식 호출은 하나의 서비스 지연이나 장
 
 - 하나의 요청을 추적하기 위해 여러 서비스의 로그를 연결하는 분산 추적 시스템 필요
 - API Gateway를 통한 인증·인가·라우팅의 중앙 집중화로 공통 관심사 파편화 방지
+
+## 트레이드오프 사례
+
+아키텍처 선택에 정답은 없으며, MSA에서 모놀리식으로 회귀하거나 모놀리식을 의도적으로 유지한 사례도 존재한다.
+
+- Amazon Prime Video의 모놀리식 회귀: 오디오·비디오 품질 모니터링 시스템을 분산 마이크로서비스에서 단일 프로세스로 통합하여 인프라 비용을 약 90% 절감하고 확장 병목 해소
+    - 서비스 간 데이터 전송과 오케스트레이션 오버헤드가 분리의 이점을 압도한 사례
+- Stack Overflow의 모놀리식 유지: 단일 코드베이스를 유지하면서도 소수의 서버로 대규모 트래픽을 처리
+    - 분산 대신 수직 확장과 고도의 성능 최적화에 집중하여 운영 단순성 확보
 
 ## 전환 시점의 판단 기준
 
