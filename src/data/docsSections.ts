@@ -141,6 +141,7 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: [
         'monolithic-vs-microservices-architecture',
         'synchronous-vs-asynchronous-communication',
+        'inter-service-communication-protocols',
         'saga-pattern',
         'transactional-outbox-pattern',
         'circuit-breaker-pattern',
