@@ -145,6 +145,7 @@ export const docsSections: Record<string, SectionConfig> = {
         'saga-pattern',
         'transactional-outbox-pattern',
         'circuit-breaker-pattern',
+        'timeout-and-retry-pattern',
         'rate-limiting-pattern',
       ],
     },
