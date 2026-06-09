@@ -147,6 +147,7 @@ export const docsSections: Record<string, SectionConfig> = {
         'circuit-breaker-pattern',
         'timeout-and-retry-pattern',
         'rate-limiting-pattern',
+        'deployment-strategies',
       ],
     },
     {
