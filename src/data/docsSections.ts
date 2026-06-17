@@ -20,7 +20,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Data Processing',
-      slugs: ['collections', 'map', 'iterator-stream', 'optional'],
+      slugs: ['collections', 'stack-queue-deque', 'map', 'iterator-stream', 'optional'],
     },
     {
       label: 'Multi-Thread',
