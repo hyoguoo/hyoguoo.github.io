@@ -312,7 +312,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Observability',
-      slugs: ['observability-foundations', 'observability-logging-stack', 'observability-distributed-tracing'],
+      slugs: ['observability-foundations', 'observability-logging-stack', 'observability-distributed-tracing', 'observability-spring-integration'],
     },
     {
       label: 'Additional',
