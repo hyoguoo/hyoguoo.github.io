@@ -61,7 +61,7 @@ HotSpot JVM에서 모든 객체는 헤더에 Mark Word 영역을 가지며, 이�
 
 #### 락 에스컬레이션(Lock Escalation)
 
-락은 Unlocked → Lightweight → Heavyweight 3단계로 승급되며 각 전이는 특정 상황을 트리거로 한다.(JDK 15에서 Biased Locking이 제거)
+락은 Unlocked → Lightweight → Heavyweight 3단계로 승급되며 각 전이는 특정 상황을 트리거로 한다.(JDK 15에서 Biased Locking이 기본 비활성화·폐기됨)
 
 ```mermaid
 flowchart TD
