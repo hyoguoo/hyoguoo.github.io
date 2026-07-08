@@ -3,8 +3,10 @@ title: "Spring Boot Auto-Configuration, Instrumentation and Sampling"
 date: 2026-06-22
 lastUpdated: 2026-07-01
 tags: [ Spring ]
-description: "스프링 부트가 의존성 추가만으로 Tracer·SpanExporter 빈을 자동 구성하고 ServerHttpObservationFilter·WebClient·DataSource·Kafka에 자동 계측 hook을 거는 방식, management.tracing 프로퍼티, @Observed 커스텀 Span, Head·Tail 샘플링과 ParentBased Sampler, BatchSpanProcessor 큐 튜닝까지 발신 측 의사결정을 다룬다."
+description: "스프링 부트가 의존성 추가만으로 Tracer·SpanExporter 빈을 자동 구성하고 ServerHttpObservationFilter·WebClient·DataSource·Kafka에 자동 계측 hook을 거는 방식, management.tracing 프로퍼티, @Observed 커스텀 Span, Head·Tail 샘플링과 ParentBased Sampler까지 발신 측 의사결정을 다룬다."
 ---
+
+스프링 부트에서 추적 파이프라인은 의존성이 만드는 자동 구성 부분과, 그 위에서 개발자가 조정하는 발신 측 설정 부분으로 나뉜다.
 
 ## 의존성 매트릭스
 
@@ -35,7 +37,7 @@ management:
       endpoint: http://localhost:4318/v1/traces   # OTel Collector OTLP/HTTP 수신부
 ```
 
-- `sampling.probability`: 미설정 시 0.1(기본적으로 90%의 트레이스는 생성되지 않음)
+- `sampling.probability`: 미설정 시 0.1 (나머지 90%는 샘플링에서 제외되어 기록·전송되지 않음)
 - `propagation.type`: 송신·수신 헤더 규격을 동시에 지정하며, 송신과 수신을 다르게 두려면 `produce`·`consume`로 분리
 - `otlp.tracing.endpoint`: 이 값이 없으면 SpanExporter 빈이 등록되지 않아 추적이 외부로 나가지 않음
 
@@ -53,6 +55,14 @@ bridge가 있으면 스프링 부트는 주요 I/O 경계에 자동으로 Observ
 
 - 공통 원리: 모든 자동 계측은 등록된 `ObservationRegistry`를 통과시켜 Observation을 만들고, `TracingObservationHandler`가 그 이벤트로 Span을 생성
 - 계측되지 않는 직접 호출(예: 수동 `HttpURLConnection`)은 hook 바깥이라 inject가 누락
+
+## 커스텀 계측: @Observed
+
+자동 계측이 닿지 않는 애플리케이션 내부 로직은 `@Observed`로 직접 Observation을 만들어 Span으로 남긴다.
+
+- 동작: 메서드에 `@Observed(name = "...")`를 붙이면 `ObservedAspect`(AOP)가 호출을 감싸 Observation 생성
+- 활성화 조건: `ObservedAspect`는 자동 구성되지 않으므로 빈으로 직접 등록하고 `spring-boot-starter-aop` 의존성 필요
+- 사용 지점: 결제 검증·재고 차감처럼 비즈니스 의미 단위에 Span을 남겨, I/O 경계 위주의 자동 계측만으로는 안 보이는 구간을 추적
 
 ## 샘플링 전략
 
@@ -100,6 +110,5 @@ graph TD
 |    10~50%    |  대부분의 패턴을 포착 가능  |     적절한 비용      |         일반적인 프로덕션 환경         |
 |     1~5%     |  전체적인 추세만 파악 가능  |     비용 최소화      |   초고트래픽 환경, 비용 최적화가 우선인 경우   |
 
-- 비율을 높이면 희귀 오류 포착 확률이 오르지만 비용이 증가하고, 낮추면 비용은 절감되나 드문 오류를 놓칠 확률이 커짐
 - 적응형 샘플링: 트래픽 추이에 따라 비율을 동적으로 조절해 최소한의 가시성을 항상 확보하는 방식으로, 고정 비율의 트레이드오프를 완화
 

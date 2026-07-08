@@ -13,7 +13,7 @@ description: "서비스 경계를 넘는 추적 컨텍스트 전파를 위한 W3
 추적 컨텍스트가 한 서비스의 메모리를 벗어나 다음 서비스로 이어지려면 표준화된 헤더 포맷에 직렬화되어야 한다.
 
 - 전파 대상: `traceId`, `spanId`(다음 서비스의 부모가 됨), sampled flag
-- 두 진영: 글로벌 웹 표준인 W3C Trace Context와 Zipkin/Brave 계열의 B3
+- 두 계열: 글로벌 웹 표준인 W3C Trace Context와 Zipkin/Brave 계열의 B3
 
 ### W3C Trace Context
 
@@ -34,7 +34,7 @@ traceparent: 00-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01
 
 ### B3 Propagation
 
-넷플릭스 Zipkin에서 출발한 규격으로, 헤더를 하나로 합친 single 포맷과 항목별로 분리한 multi 포맷을 모두 지원한다.
+Zipkin에서 출발한 규격으로, 헤더를 하나로 합친 single 포맷과 항목별로 분리한 multi 포맷을 모두 지원한다.
 
 single 포맷은 모든 정보를 한 헤더에 하이픈으로 연결한다.
 

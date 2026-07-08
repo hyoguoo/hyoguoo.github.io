@@ -53,7 +53,7 @@ graph TD
 
 ### Context와 Baggage
 
-Context는 실행 흐름의 현재 추적 상태를 담는 컨테이너이며, Baggage는 그 컨테이너 안에 들어가는 데이터 항목 중 하나다. 
+Context는 실행 흐름의 현재 추적 상태를 담는 컨테이너이며, Baggage는 그 컨테이너 안에 들어가는 데이터 항목 중 하나다.
 
 - Baggage는 Context의 부분 집합
 - 둘 다 Span 흐름을 따라 전파되지만 전파되는 헤더와 사용 목적이 다름
@@ -67,11 +67,11 @@ Context가 담는 항목은 다음과 같다.
 
 Context는 실행 모델에 따라 저장소가 달라지며, 이 차이가 비동기·리액티브 환경에서 컨텍스트 유실의 원인이 된다.
 
-|      실행 모델      |              Context 저장소               |
-|:---------------:|:--------------------------------------:|
-|     동기 스레드      |             `ThreadLocal`              |
-| Reactor·WebFlux |  Reactor Context (Subscriber Context)  |
-|  가상 스레드(Loom)   | preview `ScopedValue` 또는 `ThreadLocal` |
+|      실행 모델      |             Context 저장소              |
+|:---------------:|:------------------------------------:|
+|     동기 스레드      |            `ThreadLocal`             |
+| Reactor·WebFlux | Reactor Context (Subscriber Context) |
+|  가상 스레드(Loom)   |    `ScopedValue` 또는 `ThreadLocal`    |
 
 Baggage는 사용자 정의 key-value 모음으로, Trace를 따라다니며 자동으로 다음 서비스로 전파된다.
 
