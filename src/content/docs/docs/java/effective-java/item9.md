@@ -86,18 +86,18 @@ class Test {
 
 1. `try` 블록 안에서 `BufferedReader` 객체 생성
 2. `try` 블록 안에서 `BufferedReader` 객체의 `readLine()` 메서드를 호출
-3. `finally` 블록 수행
-4. `finally` 블록 실행 후 `AutoCloseable` 인터페이스를 구현한 `close()` 메서드를 호출
+3. `try` 블록이 끝나면 `AutoCloseable` 인터페이스를 구현한 `close()` 메서드가 자동 호출
+4. (선언되어 있다면) `finally` 블록 수행
 
 - 예외 발생
 
 1. `try` 블록 안에서 `BufferedReader` 객체를 생성
 2. `try` 블록 안에서 `BufferedReader` 객체의 `readLine()` 메서드를 호출
 3. `readLine()` 메서드에서 예외 발생
-4. `catch` 블록 진입하여 예외 처리(없는 경우 상위 호출 스택으로 전파)
-5. `finally` 블록 수행
-6. finally 블록 실행 후 `AutoCloseable` 인터페이스를 구현한 `close()` 메서드가 호출
-7. `close()` 메서드에서도 예외가 발생 시 이 예외는 별도 처리 됨
+4. 예외가 전파되기 전에 `AutoCloseable`의 `close()` 메서드가 먼저 호출됨
+5. `catch` 블록 진입하여 예외 처리(없는 경우 상위 호출 스택으로 전파)
+6. (선언되어 있다면) `finally` 블록 수행
+7. `close()`에서도 예외가 발생하면 원래 예외를 덮지 않고 suppressed로 별도 처리
 
 결과적으로 예외 발생 시 realLine에서 발생한 예외가 `close()` 메서드에서 발생한 예외를 덮어쓰지 않는다.  
 `close()`에서 발생한 예외는 별도로 처리되기 때문에 stack trace에는 `readLine()`에서 발생한 예외만 남게 되고,  

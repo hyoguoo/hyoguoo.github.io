@@ -138,14 +138,14 @@ Set과 유사하지만, 각 요소에 점수(score)를 부여해 자동으로 �
 
 #### 명령어
 
-|     명령어     |                                             기능                                              |                 예시                 |
-|:-----------:|:-------------------------------------------------------------------------------------------:|:----------------------------------:|
-|   `ZADD`    |                                          요소와 점수 삽입                                          |  `ZADD leaderboard 100 "player1"`  |
-|  `ZRANGE`   | 인덱스 범위 내 요소 조회 <br> WITHSCORES: 스코어 함께 출력 / REV: 역순 / BYLEX: 사전 순 정렬 / BYSCORES: 스코어 범위로 조회 |     `ZRANGE leaderboard 0 -1`      |
-|   `ZREM`    |                                            요소 삭제                                            |    `ZREM leaderboard "player1"`    |
-|  `ZINCRBY`  |                                           점수 값 증가                                           | `ZINCRBY leaderboard 50 "player1"` |
-|  `ZSCORE`   |                                        특정 요소의 점수 조회                                         |   `ZSCORE leaderboard "player1"`   |
-| `ZREVRANGE` |                                     높은 점수 순으로 정렬된 요소 조회                                     |    `ZREVRANGE leaderboard 0 -1`    |
+|     명령어     |                                             기능                                             |                 예시                 |
+|:-----------:|:------------------------------------------------------------------------------------------:|:----------------------------------:|
+|   `ZADD`    |                                         요소와 점수 삽입                                          |  `ZADD leaderboard 100 "player1"`  |
+|  `ZRANGE`   | 인덱스 범위 내 요소 조회 <br> WITHSCORES: 스코어 함께 출력 / REV: 역순 / BYLEX: 사전 순 정렬 / BYSCORE: 스코어 범위로 조회 |     `ZRANGE leaderboard 0 -1`      |
+|   `ZREM`    |                                           요소 삭제                                            |    `ZREM leaderboard "player1"`    |
+|  `ZINCRBY`  |                                          점수 값 증가                                           | `ZINCRBY leaderboard 50 "player1"` |
+|  `ZSCORE`   |                                        특정 요소의 점수 조회                                        |   `ZSCORE leaderboard "player1"`   |
+| `ZREVRANGE` |                                    높은 점수 순으로 정렬된 요소 조회                                     |    `ZREVRANGE leaderboard 0 -1`    |
 
 #### Skip List
 

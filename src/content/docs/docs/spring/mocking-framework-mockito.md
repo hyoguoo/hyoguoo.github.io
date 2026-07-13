@@ -84,6 +84,8 @@ void spyTest() {
 
 `@MockBean`이나 `@SpyBean`을 사용하면, 기존과 다른 설정의 컨텍스트가 필요하다고 간주되어 컨텍스트 캐시가 재사용되지 않는다.
 
+`@MockBean`·`@SpyBean`은 Spring Boot 3.4부터 deprecated되어, 현재 버전에서는 `@MockitoBean`·`@MockitoSpyBean`(spring-test) 사용이 권장된다.
+
 ```java
 
 @WebMvcTest(MemberController.class)

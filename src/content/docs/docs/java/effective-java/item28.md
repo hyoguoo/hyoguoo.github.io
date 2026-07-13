@@ -63,8 +63,8 @@ class Main {
         List<Integer> intList = List.of(42); // 2. 원소가 하나인 리스트 생성
         Object[] objects = stringLists; // 3. Object 배열에 List<String> 배열을 대입(배열은 공변이기 때문에 가능)
         objects[0] = intList; // 4. Object 배열의 첫 번째 원소에 2번에서 생성한 intList를 대입(런타임에서 List<Integer> -> List raw type으로 변환되어 가능)
-        String s = stringLists[0].get(0); // 컴파일 에러
-        // stringLists[0]에 저장된 List<Integer> 인스턴스에서 첫 번째 원소인 5는 Integer이기 때문에 String으로 형변환할 수 없음
+        String s = stringLists[0].get(0); // 런타임 에러 (ClassCastException)
+        // stringLists[0]에 저장된 List<Integer> 인스턴스에서 첫 번째 원소인 42는 Integer이기 때문에 String으로 형변환할 수 없음
     }
 }
 ```

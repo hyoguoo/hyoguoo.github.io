@@ -85,7 +85,7 @@ Claude는 다음 기준들을 복합적으로 사용하여 Skills를 자동으�
 
 1. 설명(description) 매칭: 사용자 요청 또는 현재 작업 목표와 Skill의 `description` (frontmatter에 정의된) 간의 유사도 분석
 2. 컨텍스트 분석: 현재 작업 중인 파일, 프로젝트 구조, 이전 대화 내용 등 전반적인 컨텍스트를 파악하여 가장 적합한 Skill을 식별
-3. 명시적 호출: 사용자가 `@skill-name` 형태 (또는 Command를 통해 Skill을 트리거)로 특정 Skill을 직접 지정할 경우, Claude는 해당 Skill을 강제로 활성화
+3. 명시적 호출: 사용자가 `/skill-name` 형태 (또는 Command를 통해 Skill을 트리거)로 특정 Skill을 직접 지정할 경우, Claude는 해당 Skill을 강제로 활성화
 
 ```mermaid
 graph TD

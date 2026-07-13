@@ -17,14 +17,14 @@ Java 기반 웹 애플리케이션에서 요청-응답 구조의 서버를 구�
 
 ## Servlet 클래스 계층 구조
 
-서블릿은 `javax.servlet.Servlet` 인터페이스를 기반으로 하며, 주로 `javax.servlet.http.HttpServlet` 클래스를 상속받아 구현된다.
+서블릿은 `jakarta.servlet.Servlet` 인터페이스를 기반으로 하며, 주로 `jakarta.servlet.http.HttpServlet` 클래스를 상속받아 구현된다.
 
 ```
-javax.servlet.Servlet (인터페이스)
+jakarta.servlet.Servlet (인터페이스)
          ↑
-javax.servlet.GenericServlet (추상 클래스)
+jakarta.servlet.GenericServlet (추상 클래스)
          ↑
-javax.servlet.http.HttpServlet (추상 클래스)
+jakarta.servlet.http.HttpServlet (추상 클래스)
 ```
 
 - `Servlet`: 서블릿의 최상위 인터페이스. `init()`, `service()`, `destroy()` 등의 메서드를 정의

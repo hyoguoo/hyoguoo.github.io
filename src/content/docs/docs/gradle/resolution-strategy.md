@@ -20,7 +20,7 @@ Gradle은 버전 충돌을 자동으로 해결하는 강력한 엔진을 갖추�
 ./gradlew dependencies --configuration compileClasspath
 ```
 
-- `(*)` 표시: 이미 다른 곳에서 상위 버전이 선택되어 생략된 의존성
+- `(*)` 표시: 해당 의존성의 하위 트리가 트리 앞부분에서 이미 출력되어 생략됨
 - `->` 표시: 버전 충돌로 인해 Gradle이 강제로 변경한 버전
 
 ### Gradle의 기본 전략: Highest Version

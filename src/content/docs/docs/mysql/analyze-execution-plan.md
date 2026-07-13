@@ -75,7 +75,7 @@ SELECT ((SELECT COUNT(*) FROM employees) + (SELECT COUNT(*) FROM departments)) A
 - DEPENDENT SUBQUERY/UNION: 외부 쿼리의 값에 의존하는 단위 SELECT 쿼리, 외부 쿼리가 먼저 수행되어야 하므로 일반 서브쿼리보다 성능 저하가 발생할 수 있음
 - DEPENDENT DERIVED: 외부 쿼리의 값에 의존하는 단위 SELECT 쿼리로, LATERAL JOIN을 사용하여 외부 컬럼을 참조하는 경우
 - UNCACHEABLE SUBQUERY/UNION: 캐시가 불가능한 서브쿼리로, 사용자 변수 / NOT-DETERMINISTIC 속성의 스토어드 루틴 / RAND() 같은 함수가 서브쿼리 내에 사용된 경우
-- MATERIALIZE: DERIVED와 비슷하게 쿼리의 내용을 임시 테이블로 생성하는 쿼리(동일하지는 않음)
+- MATERIALIZED: DERIVED와 비슷하게 쿼리의 내용을 임시 테이블로 생성하는 쿼리(동일하지는 않음)
 
 ```sql
 EXPLAIN

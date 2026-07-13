@@ -18,7 +18,7 @@ ES의 저장 단위는 Index > Document > Field 3단 계층이며, 물리적으�
 | Document |   하나의 JSON 객체, 검색·색인 최소 단위   |  Row   |
 |  Field   | 문서의 key-value 쌍, 매핑상의 타입 보유  | Column |
 
-- Index 이름은 소문자와 `-`·`_`만 허용되며 날짜 패턴(`logs-2026.04`)이나 Data Stream 뒷단 인덱스로 주로 사용
+- Index 이름은 소문자·숫자와 `-`, `_`, `.` 등이 허용되며(일부 특수문자·선행 문자 제한 존재) 날짜 패턴(`logs-2026.04`)이나 Data Stream 뒷단 인덱스로 주로 사용
 - Document는 스키마리스처럼 보이지만 최초 색인 시 Dynamic Mapping으로 타입이 자동 고정되므로 사실상 스키마 존재
 - Field는 한 값이 여러 타입으로 동시 색인 가능 (`text` + `keyword` multi-field)
 

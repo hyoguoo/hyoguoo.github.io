@@ -108,7 +108,7 @@ Pruning이 동작하려면 WHERE 절에 파티션 키가 연산 없이 들어와
 
 - 동작: `WHERE created_at >= '2024-02-15'` (원시 컬럼 비교)
 - 미동작: `WHERE YEAR(created_at) = 2024` (함수로 감싸 옵티마이저가 범위 추론 실패)
-- 확인: `EXPLAIN PARTITIONS SELECT ...`의 `partitions` 컬럼에서 실제 스캔 대상 확인 가능
+- 확인: `EXPLAIN SELECT ...`의 `partitions` 컬럼에서 실제 스캔 대상 확인 (MySQL 8.0은 `PARTITIONS` 키워드 없이 자동 표시)
 
 쿼리 패턴이 파티션 키와 일치하지 않으면 모든 파티션 스캔(전체 테이블 스캔보다도 비용 증가) 위험이 있다.
 

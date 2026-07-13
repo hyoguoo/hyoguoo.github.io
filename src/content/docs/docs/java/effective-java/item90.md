@@ -81,7 +81,7 @@ class Period implements Serializable {
 `EnumSet` 클래스 생성 시 `RegularEnumSet`과 `JumboEnumSet` 두 가지 인스턴스를 반환하게 되는데, 이 두 인스턴스의 차이는 다음과 같다.
 
 - `RegularEnumSet` 인스턴스: 64개 이하의 원소를 가질 때 사용
-- `JumboEnumSet` 인스턴스: 64개 이상의 원소를 가질 때 사용
+- `JumboEnumSet` 인스턴스: 64개를 초과하는 원소를 가질 때 사용
 
 64개짜리 열거 타입을 가진 `RegularEnumSet` 인스턴스를 직렬화하고 원소를 추가한 후 역직렬화하면 `JumboEnumSet` 인스턴스가 생성되어야 하는데,  
 이를 위해 `EnumSet` 클래스는 직렬화 프록시 패턴을 사용해 적절한 인스턴스를 생성하도록 구현되어 있다.

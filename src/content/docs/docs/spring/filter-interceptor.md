@@ -33,7 +33,7 @@ flowchart LR
 - 스프링 영역에 있지 않아, 스프링에 구현 된 예외 처리기를 적용 받지 않아 예외 처리 별도로 해야 함
 - 필터는 체인하여 여러 개를 사용할 수 있으며, 체인된 순서대로 필터 실행
 
-필터는 `javax.servlet.Filter` 인터페이스를 구현하여 사용한다.
+필터는 `jakarta.servlet.Filter` 인터페이스를 구현하여 사용한다.
 
 ```java
 public interface Filter {

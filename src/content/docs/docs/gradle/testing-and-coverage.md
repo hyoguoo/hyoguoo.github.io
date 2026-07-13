@@ -13,7 +13,7 @@ Gradle은 JVM 포크 단위의 병렬 실행과 입출력 추적 기반 캐시�
 JUnit 5로 테스트를 실행하려면 두 가지 조건이 모두 필요하다.
 
 1. JUnit 5(Jupiter) 라이브러리가 의존성에 포함
-    - `spring-boot-starter-test`만 추가하면 자동으로 해결(Spring Boot 2.4부터 Jupiter를 기본 포함)
+    - `spring-boot-starter-test`만 추가하면 자동으로 해결(Spring Boot 2.2부터 Jupiter를 기본 포함, 2.4부터 Vintage 엔진 제거)
 2. Gradle `test` Task가 JUnit Platform 방식으로 동작하도록 설정
     - 자동화되어 있지 않아 `useJUnitPlatform()`을 직접 호출하여 명시적으로 활성화
 

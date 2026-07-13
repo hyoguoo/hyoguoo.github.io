@@ -77,7 +77,7 @@ sequenceDiagram
         LocalDNS ->> TLD: 5. google.com 서버 질의
         TLD -->> LocalDNS: google.com 네임 서버 IP 반환
         LocalDNS ->> Auth: 6. www.google.com IP 질의
-        Auth -->> LocalDNS: 실제 IP 주소 (223.130.x.x) 반환
+        Auth -->> LocalDNS: 실제 IP 주소 (142.250.x.x) 반환
         LocalDNS ->> LocalDNS: 결과 캐싱 (TTL 만큼 저장)
         LocalDNS -->> Client: IP 주소 전달
     end

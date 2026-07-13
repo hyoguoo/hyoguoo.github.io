@@ -14,7 +14,7 @@ description: "Optional 반환의 장단점과 컨테이너 타입에 Optional을
 - null 반환
 - Optional 반환
 
-이 중 null을 반환하는 것이 가장 유연하고 사용하기 쉬우며, null 반환 메서드보다 오류 가능성이 적다.  
+이 중 Optional을 반환하는 것이 예외를 던지는 것보다 유연하고 사용하기 쉬우며, null을 반환하는 메서드보다 오류 가능성이 적다.  
 만약 Optional 반환을 사용한다고 했을 땐 절대 null을 반환하지 말아야 한다.(Optional 정책 위반)  
 반환값이 없을 수 있으며, 클라이언트에게 이를 명확하게 알려줘야 할 때 Optional을 반환하는 것이 좋다.
 

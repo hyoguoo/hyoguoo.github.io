@@ -78,7 +78,7 @@ SQL 표준에서 정의하는 격리 수준은 네 가지이며, InnoDB 스토�
 
 InnoDB 스토리지 엔진에서 기본으로 사용되는 격리 수준으로, MVCC(Multi-Version Concurrency Control)를 이용한 방식이다.
 
-- 트랜잭션이 시작되는 시점에 스냅샷을 생성하여, 이후 트랜잭션 내의 모든 SELECT 쿼리는 해당 스냅샷을 기준으로 데이터를 조회(=MVCC)
+- 트랜잭션 내 첫 SELECT(일관된 읽기) 시점에 스냅샷을 생성하여, 이후 트랜잭션 내의 모든 SELECT 쿼리는 해당 스냅샷을 기준으로 데이터를 조회(=MVCC)
 - 다른 트랜잭션이 데이터를 변경하고 커밋하는 경우, 현재 트랜잭션은 자신의 트랜잭션 번호보다 낮은 트랜잭션 번호를 가진 언두 로그의 데이터를 조회
 
 ### MVCC(Multi Version Concurrency Control)를 이용한 `Non-Repeatable Read` 방지
@@ -102,7 +102,7 @@ InnoDB 스토리지 엔진에서 기본으로 사용되는 격리 수준으로, 
 
 ### MVCC(Multi Version Concurrency Control)와 Read View
 
-`REPEATABLE READ`는 트랜잭션이 시작된 시점의 Read View(해당 시점에 활성 상태인 트랜잭션들의 ID 목록)를 사용하여 일관된 읽기를 보장한다.
+`REPEATABLE READ`는 트랜잭션 내 첫 일관된 읽기 시점에 생성한 Read View(해당 시점에 활성 상태인 트랜잭션들의 ID 목록)를 사용하여 일관된 읽기를 보장한다.
 
 - 조회 원리: 데이터를 읽을 때 레코드의 트랜잭션 ID(`DB_TRX_ID`)를 Read View와 비교하여 알맞는 버전의 데이터 조회
     - 자신의 트랜잭션 번호보다 크거나 현재 활성 중인 트랜잭션이 변경한 값이라면, 언두 로그를 통해 이전 버전의 데이터를 계속해서 탐색

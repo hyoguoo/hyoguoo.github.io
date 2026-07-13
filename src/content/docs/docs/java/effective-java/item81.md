@@ -67,8 +67,8 @@ public class Test {
 
 1. `ready.countDown()`로 작업자 스레드가 준비됨을 알림
 2. `start.await()`로 모든 작업자 스레드가 준비될 때까지 기다림(`start.countDown()`을 대기)
-3. `read.await()`로 모든 작업자 스레드가 준비될 때까지 기다림
-4. `done.countDown()`으로 2번에서 대기한 작업자 스레드를 깨움
+3. `ready.await()`로 모든 작업자 스레드가 준비될 때까지 기다림
+4. `start.countDown()`으로 2번에서 대기한 작업자 스레드를 깨움
 5. `done.await()`로 모든 작업자 스레드가 작업을 완료할 때까지 기다림
 6. `action.run()`으로 작업을 수행
 7. `done.countDown()`으로 작업을 완료함을 알림

@@ -16,7 +16,7 @@ description: "리틀의 법칙(Little's Law)과 대기 행렬 이론을 통해 �
 시스템 내의 평균 고객 수와 도착률, 평균 체류 시간 사이의 관계를 설명하는 성능 공학의 가장 기초적인 법칙이다.
 
 - 공식: `L = λW`
-    - `L (Lead Time / Inventory)`: 시스템 내에 머물고 있는 평균 요청 수 (Concurrency / VU)
+    - `L (Inventory / WIP)`: 시스템 내에 머물고 있는 평균 요청 수 (Concurrency / VU)
     - `λ (Throughput / Arrival Rate)`: 단위 시간당 도착하는 요청 수 (TPS / RPS)
     - `W (Wait Time / Residence Time)`: 요청이 시스템에 머무는 평균 시간 (Latency / Response Time)
 
