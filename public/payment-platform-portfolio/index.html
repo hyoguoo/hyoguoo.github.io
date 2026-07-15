@@ -886,18 +886,18 @@
           <div class="spec-metrics">
             <div class="s-metric">
               <span class="s-metric-val">Exactly-Once</span>
-              <span class="s-metric-lbl"><strong>초과 판매 및 유령 매출 0건.</strong> 결제 승인 멱등성 보장</span>
-              <span class="s-metric-biz">이 보장이 깨지면 배송 불가 주문의 보상 처리, 중복 결제 환불, 어긋난 장부를 맞추는 정산 대사가 전부 운영 비용으로 돌아온다.</span>
+              <span class="s-metric-lbl">초과 판매 및 <strong>결제 승인 멱등성 보장</strong></span>
+              <span class="s-metric-biz">· 보장이 깨지면 중복 결제 가능성 존재<br>· 전부 운영 비용으로 직결</span>
             </div>
             <div class="s-metric">
               <span class="s-metric-val">+47.5<i style="font-size:16px; font-style:normal; color:var(--muted);">%</i></span>
-              <span class="s-metric-lbl">동기식 아키텍처 대비 <strong>비동기 처리량 향상</strong> (k6 부하 테스트)</span>
-              <span class="s-metric-biz">같은 인프라로 더 큰 순간 부하를 감당한다. 트래픽 급증을 증설 없이 흡수하는 여유가 된다.</span>
+              <span class="s-metric-lbl">동기식 아키텍처 대비 <strong>비동기 처리량 향상</strong></span>
+              <span class="s-metric-biz">· 같은 인프라로 더 큰 순간 부하 감당<br>· 트래픽 급증을 증설 없이 흡수하는 여유 확보</span>
             </div>
             <div class="s-metric">
               <span class="s-metric-val">920</span>
-              <span class="s-metric-lbl">매 커밋 CI에서 실행되는 <strong>비즈니스 로직 단위·통합 검증</strong></span>
-              <span class="s-metric-biz">정산과 재고가 걸린 로직의 회귀를 커밋 단위에서 잡는다. 결제 코드의 변경이 운영 장애로 번지기 전에 차단되는 구조다.</span>
+              <span class="s-metric-lbl">CI를 통한 <strong>비즈니스 로직 단위·통합 검증</strong></span>
+              <span class="s-metric-biz">· 핵심 비즈니스 로직의 회귀를 커밋 단위에서 검증<br>· 코드 변경이 장애로 번지기 전에 차단</span>
             </div>
           </div>
         </div>
@@ -978,10 +978,10 @@
     <div class="card why-async reveal">
       <div class="card-head"><h3>비동기 처리(202 Accepted) 설계 의도</h3></div>
       <div class="card-pad why-rows">
-        <div class="why-row"><span class="wk bad">기존 동기 방식의 한계</span><span>결제 확정 API가 PG사의 응답을 동기적으로 대기할 경우 사용자는 수 초간 로딩 화면에 갇히게 되며(이 대기는 곧 구매 이탈로 이어진다),<br>PG사에 장애가 발생하면 결제 서비스 전체의 가용성이 연쇄적으로 저하된다.</span></div>
-        <div class="why-row"><span class="wk good">비동기 아키텍처 전환</span><span>요청 접수 즉시 202 Accepted를 반환하고, 실제 승인 처리는 백그라운드에서 비동기로 수행한다. 클라이언트는 주문 상태를 폴링(Polling)하며,<br>외부 PG사의 응답 지연이나 장애가 사용자 경험(응답성)에 직접적인 영향을 주지 않는다.</span></div>
-        <div class="why-row"><span class="wk">성능 개선 지표</span><span>동일 로직을 동기·비동기 두 방식으로 구현하여 k6 부하 테스트를 진행했다. 외부 PG 지연 환경 기준 비동기 방식의 TPS가 약 47.5% 우수했으며, 사용자 체감 응답 시간은 1,150ms에서 150ms 수준으로 단축되었다. 순간적인 부하 집중 상황에서도 유실 없이 요청을 처리함을 입증했다.<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 있다.</span></div>
-        <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>202 응답은 두 가지 선행 조건의 완수를 의미한다.<br>재고가 안전하게 선점되었고, PG사 결제 요청 명령이 Outbox(발행 대기열)에 안전하게 적재되었음을 보장한다.<br>응답 직후 서버 장애가 발생하더라도, 영속화된 이 두 상태를 기반으로 처리는 누락 없이 재개된다.</span></div>
+        <div class="why-row"><span class="wk bad">기존 동기 방식의 한계</span><span>· 확정 API가 PG 응답을 동기로 대기하는 구조 — 사용자는 수 초간 로딩 화면에 갇힘<br>· 이 대기가 곧 구매 이탈로 직결<br>· PG 장애 시 결제 서비스 전체 가용성이 연쇄 저하</span></div>
+        <div class="why-row"><span class="wk good">비동기 아키텍처 전환</span><span>· 요청 접수 즉시 202 Accepted 반환, 실제 승인은 백그라운드 비동기 처리<br>· 클라이언트는 주문 상태를 폴링으로 확인<br>· PG 응답 지연·장애가 사용자 경험(응답성)에 직접 영향 없음</span></div>
+        <div class="why-row"><span class="wk">성능 개선 지표</span><span>· 동일 로직을 동기·비동기로 구현해 k6 부하 테스트 비교<br>· 외부 PG 지연 환경에서 비동기 TPS 약 47.5% 우수<br>· 사용자 체감 응답 시간 1,150ms → 150ms 단축<br>· 순간 부하 집중에도 유실 없는 요청 처리 입증<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 정리</span></div>
+        <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
       </div>
     </div>
     <div class="sub-label">단계별 세부 프로세스 · 항목 클릭 시 확장</div>
@@ -1096,9 +1096,9 @@
     <div class="card why-async reveal">
       <div class="card-head"><h3>설계 의도</h3></div>
       <div class="card-pad why-rows">
-        <div class="why-row"><span class="wk">Self-loop 재시도 구조</span><span>복잡한 재시도 전용 인프라를 추가하지 않고 동일한 Kafka 토픽으로 재발행한다. 정상 흐름과 재시도 흐름이 완전히 동일한 파이프라인을 타므로 검증이 단순하고 견고하다.</span></div>
-        <div class="why-row"><span class="wk">재시도 횟수 DB 영속화</span><span>횟수를 메시지 헤더에만 두면 유실 시 무한 재시도 루프에 빠질 수 있다. DB(pg_inbox)에 시도 횟수를 영속화하여 어떤 장애 상황에서도 보장된 한도 내에서 안전하게 격리되도록 설계했다.</span></div>
-        <div class="why-row"><span class="wk">동시성 경합 차단</span><span>재시도와 중복 수신이 동시에 겹치더라도, DB의 주문당 1행 제약(UNIQUE)과 행 선점 잠금(SKIP LOCKED)을 통해 동일 결제건이 PG사를 중복 호출하는 사고를 원천 차단한다.</span></div>
+        <div class="why-row"><span class="wk">Self-loop 재시도 구조</span><span>· 재시도 전용 인프라 없이 동일한 Kafka 토픽으로 재발행<br>· 정상 흐름과 재시도 흐름을 같은 파이프라인 공유하여 단순하고 견고한 검증</span></div>
+        <div class="why-row"><span class="wk">재시도 횟수 DB 영속화</span><span>· 횟수를 메시지 헤더에만 두면 유실 시 무한 재시도 루프 위험<br>· 시도 횟수를 DB(pg_inbox)에 영속화해 어떤 장애에도 보장된 한도 내 안전한 격리</span></div>
+        <div class="why-row"><span class="wk">동시성 경합 차단</span><span>· 재시도와 중복 수신이 동시에 겹치는 상황 발생 가능<br>· 주문당 1행 제약(UNIQUE)과 행 선점 잠금(SKIP LOCKED)으로 동일 결제건의 PG 중복 호출 원천 차단</span></div>
       </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-confirm-flow" target="_blank" rel="noopener">상세 문서 보기 · PG 결제 확인 처리 흐름 ↗</a></div>
@@ -1156,12 +1156,12 @@
     <div class="const-panel reveal">
       <div class="sub-label">핵심 운영 상수 · 값과 근거 모두 코드에서 검증</div>
       <div class="consts">
-        <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">대부분의 벤더 5xx 에러나 타임아웃은 수 초 내에 회복된다. 지수 백오프 기반의 4회 시도로 일시적 장애를 극복하며, 이를 초과할 경우 장기 장애로 간주하여 추가적인 중복 승인 위험을 방지하기 위해 즉시 격리 처리한다.</span></div>
-        <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">메시지 재배달은 컨슈머 재시작이나 파티션 리밸런싱 직후 단시간 내에 집중 발생한다. 1시간의 만료 시간(TTL)은 해당 위험 구간을 충분히 커버하면서도 Redis의 메모리 사용량을 안정적으로 통제한다.</span></div>
-        <div class="const"><span class="cv">P8D</span><span class="ck">재고·product 멱등 TTL</span><span class="cs">691200s = 7d + 1d</span><span class="cw">Kafka의 기본 메시지 보관 주기는 7일이므로, 이 기간 동안에는 언제든 메시지가 재배달될 위험이 존재한다. 중복 방지 TTL을 이보다 1일 더 긴 8일로 설정하여 이중 차감 및 데이터 정합성 훼손을 원천 차단한다.</span></div>
-        <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">단일 파티션 내에서 재시도가 길어지면 후속 결제 처리까지 지연되는 헤드 오브 라인 블로킹(HOLB) 현상이 발생한다. 1초 간격 5회 시도 후 실패 시 즉시 DLQ로 라우팅하여 전체 파이프라인의 병목을 해소한다.</span></div>
-        <div class="const"><span class="cv">EOS</span><span class="ck">결과 확정 커밋</span><span class="cs">DB + offset + 발행 원자 1단위</span><span class="cw">DB 상태 갱신과 비동기 재고 이벤트 발행이 분리되면 중간 장애 시 데이터 정합성이 깨질 수 있다. DB 트랜잭션, Kafka 오프셋 커밋, 메시지 발행을 단일 트랜잭션(EOS)으로 묶어 정확히 1회(Exactly-Once) 처리를 보장한다.</span></div>
-        <div class="const"><span class="cv">10d</span><span class="ck">DLQ 보관 기간</span><span class="cs">864000000ms &gt; 재주입 가능 기간 8d</span><span class="cw">DLQ 메시지는 최대 8일(멱등 TTL) 내에 재주입되어 복구될 수 있도록 설계되었다. 따라서 DLQ 토픽의 보관 기간을 10일로 넉넉히 설정하여 복구 시기를 놓쳐 메시지가 영구 유실되는 사고를 방지한다.</span></div>
+        <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 대부분의 벤더 5xx·타임아웃은 수 초 내 회복<br>· 지수 백오프 4회 시도로 일시 장애 극복<br>· 초과 시 장기 장애로 간주해 중복 승인 위험 차단 위해 즉시 격리</span></div>
+        <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">· 메시지 재배달은 컨슈머 재시작·파티션 리밸런싱 직후 단시간에 집중<br>· 1시간 TTL로 위험 구간을 충분히 커버하면서 Redis 메모리도 안정적 통제</span></div>
+        <div class="const"><span class="cv">P8D</span><span class="ck">재고·product 멱등 TTL</span><span class="cs">691200s = 7d + 1d</span><span class="cw">· Kafka 기본 보관 주기 동안(7일) 재배달 위험 존재<br>· 중복 방지 TTL을 하루 더 긴 8일로 설정해 이중 차감·정합성 훼손 원천 차단</span></div>
+        <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">· 단일 파티션에서 재시도가 길어지면 후속 결제까지 밀리는 헤드 오브 라인 블로킹(HOLB) 위험<br>· 1초 간격 5회 시도 후 실패 시 즉시 DLQ 라우팅으로 파이프라인 병목 해소</span></div>
+        <div class="const"><span class="cv">EOS</span><span class="ck">결과 확정 커밋</span><span class="cs">DB + offset + 발행 원자 1단위</span><span class="cw">· DB 상태 갱신과 재고 이벤트 발행이 분리되면 중간 장애 시 정합성 훼손 위험<br>· 특정 서비스는 DB 트랜잭션·Kafka 오프셋 커밋·메시지 발행을 단일 트랜잭션(EOS) 방식을 사용해 정확히 1회(Exactly-Once) 보장</span></div>
+        <div class="const"><span class="cv">10d</span><span class="ck">DLQ 보관 기간</span><span class="cs">864000000ms &gt; 재주입 가능 기간 8d</span><span class="cw">· DLQ 메시지는 최대 8일(멱등 TTL) 내 재주입으로 복구 가능<br>· 그보다 넉넉한 10일 보관으로 복구 시기를 놓친 영구 유실 사고 방지</span></div>
       </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/idempotency" target="_blank" rel="noopener">상세 문서 보기 · Checkout 멱등성과 TOCTOU ↗</a></div>
@@ -1174,12 +1174,12 @@
       <p>단일 기능 개발은 설계 → 계획 → 구현 → 마무리 4단계 라이프사이클을 따른다.<br>각 단계별로 명확한 산출물을 생성하며,<br>엄격한 리뷰를 통과해야만 다음 단계로 진입할 수 있다.</p>
     </div>
     <div class="wf-grid reveal">
-      <div class="wf-card"><div class="wf-head"><span class="wn">01</span><span class="we">discuss</span></div><div class="wt">설계</div><div class="wd">해결할 문제와 요구사항 범위를 정의하고 아키텍처 설계 문서를 작성한다. 결제 도메인 특유의 정합성 및 리스크 관점 리뷰를 통과해야 한다.</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">02</span><span class="we">plan</span></div><div class="wt">계획</div><div class="wd">구현 과정을 세분화된 TDD 태스크 단위로 분할한다. 각 태스크는 '실패하는 테스트 작성 ➡️ 프로덕션 코드 구현'의 엄격한 순서를 정의한다.</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">03</span><span class="we">execute</span></div><div class="wt">구현</div><div class="wd">정의된 태스크 단위로 실제 코드를 작성한다. 개별 태스크 완료 시마다 전체 테스트 스위트를 구동하여 기존 기능의 회귀(Regression) 결함을 방지한다.</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">04</span><span class="we">ship</span></div><div class="wt">마무리</div><div class="wd">코드 리뷰 피드백 반영, 기술 문서(Wiki) 동기화, 산출물 아카이빙을 거쳐 최종 Pull Request를 생성하고 머지(Merge)를 준비한다.</div></div>
+      <div class="wf-card"><div class="wf-head"><span class="wn">01</span><span class="we">discuss</span></div><div class="wt">설계</div><div class="wd">· 해결할 문제와 요구사항 범위 정의 후 아키텍처 설계 문서 작성<br>· 결제 도메인 특유의 정합성·리스크 관점 리뷰 통과 필수</div></div>
+      <div class="wf-card"><div class="wf-head"><span class="wn">02</span><span class="we">plan</span></div><div class="wt">계획</div><div class="wd">· 구현 과정을 세분화된 TDD 태스크 단위로 분할<br>· 각 태스크는 '실패 테스트 작성 ➡️ 프로덕션 코드 구현' 순서 준수</div></div>
+      <div class="wf-card"><div class="wf-head"><span class="wn">03</span><span class="we">execute</span></div><div class="wt">구현</div><div class="wd">· 정의된 태스크 단위로 실제 코드 작성<br>· 태스크 완료마다 전체 테스트 스위트 구동으로 기존 기능 회귀 방지</div></div>
+      <div class="wf-card"><div class="wf-head"><span class="wn">04</span><span class="we">ship</span></div><div class="wt">마무리</div><div class="wd">· 코드 리뷰 피드백 반영 · 기술 문서(Wiki) 동기화 · 산출물 아카이빙<br>· 최종 Pull Request 생성 후 머지 준비</div></div>
     </div>
-    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b>: 생성자가 자신의 결과물을 스스로 판정하지 않는다.<br>구현 에이전트와 리뷰 에이전트의 역할을 분리하고, 각 단계의 전환 지점마다 사용자(Human)의 최종 확인을 거친다.</p>
+    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b><br>· 생성자가 자신의 결과물을 스스로 판정하지 않는 구조<br>· 구현 에이전트와 리뷰 에이전트의 역할 분리<br>· 각 단계 전환 지점마다 사용자(Human)의 최종 확인</p>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/ai-workflow" target="_blank" rel="noopener">상세 문서 보기 · 서브에이전트 기반 워크플로우 ↗</a></div>
   </section>
 
@@ -1197,8 +1197,8 @@
         </table>
       </div>
     </div>
-    <div class="meas-note reveal"><b>알람 검증</b>: 1차로 Prometheus 규칙 테스트 도구(promtool)에 합성 시계열 25케이스를 주입해, 울려야 할 상황과 침묵해야 할 상황(오탐 방지)을 모두 회귀 테스트로 고정했다. 2차로 Toxiproxy로 네트워크를 실제로 끊거나 지연시키고 컨테이너를 강제 정지해, 라이브 스택에서 알람이 실제로 발화하는지 확인했다.</div>
-    <div class="meas-note reveal"><b>운영 관점</b>: 장애 인지가 고객 문의나 수동 로그 확인이 아니라 알람에서 시작되고, 격리된 결제는 관리자 화면에서 사유를 확인한 뒤 버튼 한 번으로 안전하게 종결된다. 장애 지속 시간과 건별 복구 비용을 줄이는 방향으로 운영 장치를 설계했다.</div>
+    <div class="meas-note reveal"><b>알람 검증</b><br>· 1차 — promtool에 합성 시계열 25케이스 주입, 울릴 상황과 침묵할 상황(오탐 방지)을 회귀 테스트로 고정<br>· 2차 — Toxiproxy로 네트워크 절단·지연 + 컨테이너 강제 정지, 라이브 스택에서 실제 발화 확인</div>
+    <div class="meas-note reveal"><b>운영 관점</b><br>· 장애 인지의 출발점을 고객 문의·수동 로그가 아닌 알람으로 전환<br>· 격리된 결제는 관리자 화면에서 사유 확인 후 버튼 한 번으로 안전 종결<br>· 장애 지속 시간과 건별 복구 비용을 줄이는 운영 장치 설계</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/metrics" target="_blank" rel="noopener">상세 문서 보기 · 결제 지표 모니터링 ↗</a></div>
   </section>
 
@@ -1276,6 +1276,7 @@
   "use strict";
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
+  function escBr(s){return esc(s).replace(/\n/g,"<br>");}  /* 줄바꿈(\n)만 <br>로 — 불렛 산문용 */
   function chips(a){return (a||[]).map(function(c){return '<span class="chip">'+esc(c)+"</span>";}).join("");}
   var SVGNS="http://www.w3.org/2000/svg";
   function sv(t,a){var e=document.createElementNS(SVGNS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
@@ -1322,7 +1323,7 @@
      branches:[{type:"info",tag:"멱등",text:"같은 Idempotency-Key 재요청은 200으로 기존 주문 그대로 반환."},{type:"info",tag:"취소",text:"PG 결제창에서 취소/실패 시 서버 상태 변화 없음."}]},
     {no:2,title:"확정 진입 (confirm → 202)",actor:"browser → payment",purpose:"데이터 위변조 검증 및 재고 선점을 완료한 뒤, 상태를 IN_PROGRESS로 확정한다.",invariant:"202 반환 시점에는 outbox PENDING이 반드시 존재한다.",
      steps:[{t:"결제 확정 요청 — POST /confirm",c:["OutboxAsyncConfirmService.confirm"]},{t:"위변조·상태 가드 — 금액·소유자·상태 검증, 위반 시 4xx",c:["validateConfirmRequest"]},{t:"재고 선점(선차감) — Redis 원자 차감, TX 밖",c:["decrementStock","stock_decrement_atomic.lua"]},{t:"확정 TX — READY→IN_PROGRESS + paymentKey + outbox PENDING",c:["executeConfirmTx","createPendingRecord"]},{t:"커밋 후 발행 트리거 등록 (AFTER_COMMIT 드롭 방지)",c:["confirmPublisher.publish"]},{t:"202 Accepted 즉시 반환 → 폴링 시작",c:[]}],
-     branches:[{type:"fail",tag:"재고 부족",text:"원자 차감 REJECTED → 실패 확정(FAILED) + 409.",code:"handleStockFailure"},{type:"warn",tag:"캐시 장애",text:"CACHE_DOWN → 격리(QUARANTINED) + 409.",code:"markStockCacheDownQuarantine"},{type:"info",tag:"초과 판매 0",text:"확정 저장이 실패해도 선점된 재고 차감을 롤백하지 않는다. 누락된 수량은 모니터링 지표로 감지하여 운영 프로세스로 회수하며, 초과 판매 방지를 최우선으로 한다."}]},
+     branches:[{type:"fail",tag:"재고 부족",text:"원자 차감 REJECTED → 실패 확정(FAILED) + 409.",code:"handleStockFailure"},{type:"warn",tag:"캐시 장애",text:"CACHE_DOWN → 격리(QUARANTINED) + 409.",code:"markStockCacheDownQuarantine"},{type:"info",tag:"초과 판매 0",text:"확정 저장이 실패해도 선점된 재고 차감을 롤백하지 않음. 누락 수량은 모니터링 지표로 감지해 운영 회수 — 초과 판매 방지 최우선."}]},
     {no:3,title:"명령 발행 (outbox relay)",actor:"payment → Kafka",purpose:"Outbox에 PENDING 상태로 적재된 명령을 Kafka 메시지로 정확히 1회(Exactly-Once) 발행한다.",invariant:"claimToInFlight CAS로 동시 발행이 1건으로 직렬화된다.",
      steps:[{t:"커밋 직후 즉시 발행 — AFTER_COMMIT 리스너가 가상 스레드로 relay",c:["OutboxImmediateEventHandler","OutboxRelayService.relay"]},{t:"중복 발행 방지 선점 — PENDING→IN_FLIGHT 원자 CAS",c:["claimToInFlight"]},{t:"확정 명령 발행 — payment.commands.confirm (key=orderId)",c:["messagePublisherPort.send"]},{t:"발행 완료 — IN_FLIGHT→DONE",c:["outbox.toDone"]}],
      branches:[{type:"recover",tag:"발행 실패",text:"Kafka 발행 실패 시 릴레이 트랜잭션 롤백을 통해 선점 상태를 해제하고 PENDING으로 복구한다."},{type:"recover",tag:"재픽업",text:"OutboxWorker(5초 주기) PENDING 재픽업 + IN_FLIGHT 5분 타임아웃 회수."}]},
@@ -1331,7 +1332,7 @@
      branches:[{type:"fail",tag:"확정 거절",text:"4xx NonRetryable → pg_inbox FAILED → events.confirmed FAILED."},{type:"warn",tag:"일시 오류",text:"5xx/timeout → self-loop 재시도(지수 backoff), attempt 한도(4) 소진 시 DLQ → QUARANTINED 자동 격리."},{type:"warn",tag:"멱등 응답",text:"DuplicateHandled → vendor getStatus 재조회 → 금액 일치면 APPROVED, 불일치/INDETERMINATE면 QUARANTINED.",code:"DuplicateApprovalHandler"}]},
     {no:5,title:"결과 확정 + 재고 반영 (EOS)",actor:"payment ← Kafka",purpose:"수신된 승인 결과에 따라 결제를 최종 종결하고 재고 확정 또는 보상 트랜잭션을 수행한다.",invariant:"재고 확정 이벤트는 결정적 키라 중복 발행이 무해(멱등).",
      steps:[{t:"결과 수신 — ConfirmedEventConsumer (KafkaTransactionManager)",c:["PaymentConfirmResultUseCase.handle"]},{t:"종결 가드 — 진행 가능 상태(READY/IN_PROGRESS)만 통과",c:["canApplyConfirmResult"]},{t:"메시지 멱등 마킹 — payment_event_dedupe INSERT IGNORE",c:["markIfAbsent"]},{t:"상태 분기 (승인/실패/격리)",c:[]},{t:"EOS 원자 커밋 — RDB + offset + producer 한 단위",c:[]}],
-     branches:[{type:"done",tag:"승인",text:"금액 재검증 통과 → IN_PROGRESS→DONE + 재고 확정 이벤트(stock-committed) 발행.",code:"markPaymentAsDone"},{type:"warn",tag:"금액 불일치",text:"AMOUNT_MISMATCH → 격리 위임."},{type:"fail",tag:"실패",text:"FAILED → 데이터 유실 방지를 위해 결제 상태 종결 전에 재고 보상을 우선적으로 수행하여 실패 확정."},{type:"warn",tag:"격리",text:"QUARANTINED → 재고 보상 → 격리 위임."},{type:"recover",tag:"EOS abort",text:"RuntimeException → 재배달(1s×5) → 초과 시 events.confirmed.dlq. 적체분은 관리자의 안전한 수동 재주입 절차를 통해 복구한다."}]},
+     branches:[{type:"done",tag:"승인",text:"금액 재검증 통과 → IN_PROGRESS→DONE + 재고 확정 이벤트(stock-committed) 발행.",code:"markPaymentAsDone"},{type:"warn",tag:"금액 불일치",text:"AMOUNT_MISMATCH → 격리 위임."},{type:"fail",tag:"실패",text:"FAILED → 재고 보상을 먼저 수행한 뒤 실패 종결(데이터 유실 방지)."},{type:"warn",tag:"격리",text:"QUARANTINED → 재고 보상 → 격리 위임."},{type:"recover",tag:"EOS abort",text:"RuntimeException → 재배달(1s×5) → 초과 시 events.confirmed.dlq. 적체분은 관리자가 수동 재주입으로 복구."}]},
     {no:6,title:"결과 조회 (폴링)",actor:"browser → payment",purpose:"클라이언트가 폴링을 통해 결제의 최종 처리 상태를 확인한다.",invariant:"종결(DONE/FAILED) 전까지 PROCESSING으로 응답한다.",
      steps:[{t:"최종 상태 조회 — GET /{orderId}/status",c:["PaymentStatusServiceImpl"]},{t:"진행 중이면 PROCESSING, 종결되면 DONE/FAILED → 성공/실패 페이지",c:[]}],
      branches:[{type:"warn",tag:"격리 폴링",text:"QUARANTINED는 PROCESSING 지속 → 관리자가 안전하게 실패 종결(FAILED)을 승인하기 전까지 폴링을 유지한다."}]}
@@ -1612,7 +1613,7 @@
     if(id==="QUARANTINED")h+='<div class="mini"><h4>재고 보상 · 격리 안전 종결</h4><div class="row"><span class="k">토큰 조건</span><span>decrement:done 토큰이 있을 때만 재고 보상 — 유령 재고 방지.</span></div><div class="row"><span class="k">CAS 전이</span><span>event WHERE status=QUARANTINED 조건부 UPDATE로 order 동조, 복구 race 차단.</span></div><div class="row"><span class="k">DLQ</span><span>events.confirmed.dlq 적체분은 원 토픽 재주입으로 EOS 재처리.</span></div></div>';
     else if(id==="DONE")h+='<div class="mini"><h4>재고 확정 · 승인</h4><div class="row"><span class="k">확정</span><span>stock-committed 발행 — 결정적 키로 product가 멱등 흡수, 차감 1회.</span></div><div class="row"><span class="k">재발행</span><span>RDB DONE 후 브로커 커밋 유실 시 종결 가드가 재발행 복구.</span></div></div>';
     cfDetail.innerHTML=h;}
-  cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 의미·진입 메서드·폴링 응답·후속 상태 전이가 표시된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE / FAILED / EXPIRED는 종결 상태 — 여기 도달하면 폴링이 끝난다.</span></div><div class="row"><span class="k">함정</span><span>QUARANTINED는 종결이 아니다 — 폴링이 PROCESSING에서 멈춰 관리자를 기다린다.</span></div><div class="row"><span class="k">EOS</span><span>결과 확정은 DB·오프셋·발행 커밋이 한 단위.</span></div><div class="row"><span class="k">범위</span><span>이 지도는 confirm 흐름의 6개 상태. 전체 목록엔 취소 흐름의 CANCELED·PARTIAL_CANCELED(종결) 2종이 더 있다 — 별도 경로라 여기선 제외.</span></div></div>';
+  cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 의미·진입 메서드·폴링 응답·후속 상태 전이가 표시된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE·FAILED·EXPIRED에 도달하면 폴링 종료.</span></div><div class="row"><span class="k">예외</span><span>QUARANTINED는 종결이 아니라 관리자 개입 대기 — 폴링은 PROCESSING에서 멈춘다.</span></div></div>';
 
   /* ================= §05 MODULES (통합 뷰) ================= */
   (function(){
@@ -1710,7 +1711,7 @@
       {edge:"pg>payment",kind:"normal",label:"events.confirmed",state:"IN_PROGRESS → DONE"},
       {edge:"payment>product",kind:"normal",label:"stock-committed · 재고 확정 (결정적 키)"}
     ]},
-    {name:"PG 5xx — 재시도로 복구",outcome:{status:"DONE",color:"done",props:["재시도로 복구 (4회 미만)","3중 중복 방지"]},impact:"재시도가 없다면 가장 빈번한 장애인 네트워크 순단마다 유입된 결제가 그대로 실패로 끝난다. 짧은 순단이 매출 손실로 이어지는 경로를 차단한다.",hops:[
+    {name:"PG 5xx — 재시도로 복구",outcome:{status:"DONE",color:"done",props:["재시도로 복구 (4회 미만)","3중 중복 방지"]},impact:"\n· 재시도가 없다면 가장 빈번한 장애인 네트워크 순단마다 유입 결제가 그대로 실패\n· 짧은 순단이 매출 손실로 이어지는 경로 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm"},
       {edge:"payment>pg",kind:"normal",label:"commands.confirm 발행"},
       {edge:"pg>vendor",kind:"normal",label:"승인 호출"},
@@ -1721,7 +1722,7 @@
       {edge:"pg>payment",kind:"recover",label:"events.confirmed",state:"IN_PROGRESS → DONE"},
       {edge:"payment>product",kind:"recover",label:"stock-committed"}
     ]},
-    {name:"EOS abort — DLQ 재주입",outcome:{status:"DONE",color:"done",props:["관리자 재주입으로 복구","멱등 재처리"]},impact:"이 메시지가 유실되면 벤더 승인은 완료됐지만 주문은 미완으로 남아, 건별 확인과 환불 대응이 필요한 정산 불일치가 된다. DLQ 보존과 재주입이 전량 복구를 보장한다.",hops:[
+    {name:"EOS abort — DLQ 재주입",outcome:{status:"DONE",color:"done",props:["관리자 재주입으로 복구","멱등 재처리"]},impact:"\n· 메시지가 유실되면 벤더 승인은 완료됐지만 주문은 미완으로 잔류\n· 건별 확인·환불 대응이 필요한 정산 불일치 발생, DLQ 보존과 재주입이 전량 복구 보장",hops:[
       {edge:"pg>payment",kind:"normal",label:"events.confirmed 수신"},
       {edge:"payment~self",kind:"fail",label:"결과 확정 커밋 실패 (EOS abort)"},
       {edge:"payment~self",kind:"retry",label:"재배달 · FixedBackOff 1s×5"},
@@ -1729,26 +1730,26 @@
       {edge:"dlq>payment",kind:"recover",label:"reprocess-dlq · 원 토픽 재발행",why:{tag:"왜 원 토픽",text:"별도 자동 컨슈머 대신 검증된 EOS 파이프라인을 재사용한다. 이미 상태가 종결되었거나 발행 후 8일이 경과한 메시지는 타임스탬프 검증으로 차단한다.",src:"DLQ-QUARANTINE-RECOVERY",dref:4}},
       {edge:"payment>product",kind:"recover",label:"stock-committed · 재고 확정"}
     ]},
-    {name:"격리 — 관리자 안전 종결",outcome:{status:"FAILED",color:"failed",props:["안전 종결","유령 재고 0","감사 기록"]},impact:"격리 건을 임의로 성공 처리하면 입금 없는 매출(유령 매출)이 잡히고, 맹목적으로 재고를 복원하면 유령 재고가 생긴다. 실패 종결 단일 경로와 조건부 복원이 두 손실을 모두 차단한다.",hops:[
+    {name:"격리 — 관리자 안전 종결",outcome:{status:"FAILED",color:"failed",props:["안전 종결","유령 재고 0","감사 기록"]},impact:"\n· 격리 건을 임의로 성공 처리하면 입금 없는 유령 매출, 맹목 복원하면 유령 재고 발생\n· 실패 종결 단일 경로와 조건부 복원이 두 손실 모두 차단",hops:[
       {edge:"pg>payment",kind:"warn",label:"events.confirmed QUARANTINED 수신",state:"→ QUARANTINED"},
       {edge:"payment~self",kind:"warn",label:"폴링 PROCESSING에 멈춤 (종결 상태가 아님)",why:{tag:"왜 대기하는가",text:"QUARANTINED는 종결이 아니다 — 자동 처리가 불가능한 상태라 자동으로 끝내지 않고 관리자 확인을 기다린다.",src:"CONFIRM-FLOW §9"}},
       {edge:"admin>payment",kind:"recover",label:"resolve-quarantine (관리자 POST)"},
       {edge:"payment>redis",kind:"recover",label:"차감 표식이 있을 때만 재고 복원",why:{tag:"왜 조건부",text:"차감 표식(decrement:done)이 '실제로 차감했다'는 사실의 원본 기록이다. 차감한 적 없는 결제까지 복원하면 유령 재고가 발생한다 — 표식이 있을 때만 복원해 이를 막는다.",src:"DLQ-QUARANTINE-RECOVERY",dref:3}},
       {edge:"payment~self",kind:"recover",label:"CAS: WHERE status=QUARANTINED → FAILED (order 동조)",state:"QUARANTINED → FAILED",why:{tag:"왜 FAILED만",text:"격리 진입은 벤더 승인 전이라 실제 결제가 발생하지 않았다. DONE으로 복구하면 유령 매출 — 안전 실패 종결만 지원한다.",src:"DLQ-QUARANTINE-RECOVERY",dref:2}}
     ]},
-    {name:"재고 부족 — 즉시 실패",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","409 즉시 반환"]},impact:"재고 없는 결제를 승인하면 배송 불가 주문이 생겨 보상과 고객 응대 비용으로 이어진다. 확정 전에 거절해 그런 주문 자체가 만들어지지 않게 한다.",hops:[
+    {name:"재고 부족 — 즉시 실패",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","409 즉시 반환"]},impact:"\n· 재고 없는 결제를 승인하면 배송 불가 주문이 생겨 보상·고객 응대 비용 발생\n· 확정 전에 거절해 그런 주문 자체를 원천 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
       {edge:"payment>redis",kind:"fail",label:"Lua 원자 차감 REJECTED (재고 부족)",state:"READY → FAILED",why:{tag:"왜 선차감",text:"재고를 선점한 후 확정을 진행한다. 재고를 못 잡으면 그 자리에서 실패 처리한다 — 초과 판매 가능성을 원천 차단한다.",src:"PAYMENT-FLOW 단계2"}}
     ]},
-    {name:"재고 캐시 장애 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["보수적 격리","409 반환"]},impact:"차감 여부를 모른 채 진행하면 초과 판매나 유령 재고 중 하나의 손실로 귀결된다. 보수적 격리는 어느 쪽도 발생시키지 않는다.",hops:[
+    {name:"재고 캐시 장애 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["보수적 격리","409 반환"]},impact:"\n· 차감 여부를 모른 채 진행하면 초과 판매 혹은 유령 재고 발생\n· 보수적 격리는 어느 쪽도 발생시키지 않음",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
       {edge:"payment>redis",kind:"warn",label:"CACHE_DOWN — 재고 판단 불가",state:"READY → QUARANTINED",why:{tag:"왜 격리",text:"캐시 장애로 인해 차감 여부를 확정할 수 없다. 임의 진행 대신 격리해 수동 판단을 기다린다 — 보수적 방향.",src:"CONFIRM-FLOW §2"}}
     ]},
-    {name:"금액 불일치 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["양방향 방어","위변조 차단"]},impact:"승인 금액이 다른 결제를 통과시키면 그 차액만큼 정산에서 손실이 난다. 주문 금액과의 재검증이 위변조·계약 위반으로 인한 손실을 차단한다.",hops:[
+    {name:"금액 불일치 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["양방향 방어","위변조 차단"]},impact:"\n· 승인 금액이 다른 결제 발생 시 차액만큼 손실 발생\n· 주문 금액과의 재검증으로 손실 차단",hops:[
       {edge:"pg>payment",kind:"normal",label:"events.confirmed APPROVED 수신"},
       {edge:"payment~self",kind:"warn",label:"금액 재검증 불일치",state:"→ QUARANTINED",why:{tag:"왜 격리",text:"PG가 승인 금액을 반드시 채워 보내고, payment가 주문 금액과 다시 대조한다. 어긋나면 즉시 격리 처리한다 — 위변조나 계약 위반의 신호이기 때문이다.",src:"CONFIRM-FLOW §7"}}
     ]},
-    {name:"PG 한도 소진 — 자동 격리",outcome:{status:"QUARANTINED",color:"quar",props:["무한 재시도 차단","금전 손실 0"]},impact:"한도 없이 재시도하면 벤더 호출 비용과 중복 승인 위험이 장애 시간에 비례해 쌓인다. 한도에서 멈춰 격리하면 실패한 결제가 유실 대신 관리자 판단을 기다리는 추적 가능한 상태로 남는다.",hops:[
+    {name:"PG 한도 소진 — 자동 격리",outcome:{status:"QUARANTINED",color:"quar",props:["무한 재시도 차단","금전 손실 0"]},impact:"\n· 한도 없이 재시도하면 벤더 호출 비용·중복 승인 위험이 장애 시간에 비례해 누적\n· 한도에서 멈춰 격리하면 실패 결제가 유실 대신 관리자 판단을 기다리는 추적 가능한 상태로 잔류",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm"},
       {edge:"payment>pg",kind:"normal",label:"commands.confirm"},
       {edge:"pg>vendor",kind:"normal",label:"승인 호출"},
@@ -1849,7 +1850,7 @@
         li.addEventListener("click",act);
         li.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();act(ev);}});
       });
-      scnOutcome.innerHTML='<span class="obadge" style="color:var('+CV[sc.outcome.color]+');background:color-mix(in srgb,var('+CV[sc.outcome.color]+') 14%,transparent)"><span style="width:9px;height:9px;border-radius:50%;background:var('+CV[sc.outcome.color]+')"></span>'+esc(sc.outcome.status)+'</span><span class="props">'+sc.outcome.props.map(function(p){return '<span class="prop">'+esc(p)+'</span>';}).join('')+'</span>'+((SCN_OBS[i]&&SCN_OBS[i].length)?'<span class="obs-group"><span class="obs-label">관측</span>'+SCN_OBS[i].map(function(mm){return '<span class="obs-m">'+esc(mm)+'</span>';}).join('')+'</span>':'')+(sc.impact?'<span class="scn-impact"><b>손실 방어</b>'+esc(sc.impact)+'</span>':'');
+      scnOutcome.innerHTML='<span class="obadge" style="color:var('+CV[sc.outcome.color]+');background:color-mix(in srgb,var('+CV[sc.outcome.color]+') 14%,transparent)"><span style="width:9px;height:9px;border-radius:50%;background:var('+CV[sc.outcome.color]+')"></span>'+esc(sc.outcome.status)+'</span><span class="props">'+sc.outcome.props.map(function(p){return '<span class="prop">'+esc(p)+'</span>';}).join('')+'</span>'+((SCN_OBS[i]&&SCN_OBS[i].length)?'<span class="obs-group"><span class="obs-label">관측</span>'+SCN_OBS[i].map(function(mm){return '<span class="obs-m">'+esc(mm)+'</span>';}).join('')+'</span>':'')+(sc.impact?'<span class="scn-impact"><b>손실 방어</b>'+escBr(sc.impact)+'</span>':'');
     }
 
     function setHop(k,manual){var sc=SCENARIOS[curScn];if(k<0||k>=sc.hops.length)return;curHop=k;var h=sc.hops[k];
@@ -1887,52 +1888,52 @@
   /* ================= §06 DESIGN DECISIONS ================= */
   var DECISIONS=[
     {t:"재고 차감 후 저장 실패 시 자동 복구 배제",tag:"초과 판매 0",
-     ctx:"재고 차감에는 성공했으나 직후 DB 확정 저장이 실패한 극단적 장애 상황에 대한 정책이다. (일반적인 PG 거절 등은 자동 복구됨)",
-     why:"자동 복구를 시도하다 서버가 다운되면, 차감 기록은 남고 복구 내역은 유실되어 원인 추적이 불가능한 영구적 불일치가 발생할 수 있다.",
-     alt:"실패 시 무조건 재고 롤백 시도 (롤백 중 장애 시 유실 위험)",
-     tradeoff:"자동 롤백 대신 미복구 수량을 모니터링 지표로 노출해 수동 회수한다. 재고가 일시적으로 과소 표기될 수 있으나 초과 판매(Over-selling)는 원천 차단된다.",
+     ctx:"· 재고 차감 성공 직후 DB 확정 저장이 실패한 극단적 장애 상황에 대한 정책 (일반 PG 거절 등은 자동 복구 대상)",
+     why:"· 자동 복구를 시도하다 서버가 다운되면 차감 기록은 남고 복구 내역은 유실\n· 원인 추적이 불가능한 영구적 불일치 위험",
+     alt:"· 실패 시 무조건 재고 롤백 시도 (롤백 중 장애 시 유실 위험)",
+     tradeoff:"· 자동 롤백 대신 미복구 수량을 모니터링 지표로 노출해 수동 회수\n· 재고 일시 과소 표기는 감수, 초과 판매(Over-selling)는 원천 차단",
      src:"PAYMENT-FLOW 단계2 · StockRetentionMetrics"},
     {t:"결제 실패 시 '재고 복원 선행, 상태 기록 후행' 원칙",tag:"재고 유실 0",
-     ctx:"PG사 승인 거절 등으로 결제를 최종 실패(FAILED) 처리하고 재고를 복원하는 정상 복구 경로에서의 순서 문제다.",
-     why:"상태를 먼저 '실패'로 갱신하면, 직후 장애 발생 시 재고 복원 로직이 실행되지 않아 결제는 취소되고 재고는 차감된 채 남는 유실이 발생한다.",
-     alt:"결제 실패 상태 기록 후 재고 복원 (순서 반대)",
-     tradeoff:"멱등성이 보장된 재고 복원을 먼저 수행하고 결제 상태를 갱신한다. 중간에 어떤 장애가 발생해 재시도하더라도 재고 유실 없이 안전하게 복구된다.",
+     ctx:"· PG 승인 거절 등으로 결제를 최종 실패(FAILED) 처리하고 재고를 복원하는 정상 복구 경로의 순서 문제",
+     why:"· 상태를 먼저 '실패'로 갱신하면 직후 장애 시 재고 복원 로직 미실행\n· 결제는 취소, 재고는 차감된 채 남는 유실 발생",
+     alt:"· 결제 실패 상태 기록 후 재고 복원 (순서 반대)",
+     tradeoff:"· 멱등성이 보장된 재고 복원을 먼저 수행 후 결제 상태 갱신\n· 중간 장애로 재시도해도 재고 유실 없이 안전하게 복구",
      src:"CONFIRM-FLOW handleFailed"},
     {t:"격리(QUARANTINED) 상태는 '실패 종결' 단일 경로만 허용",tag:"유령 매출 0",
-     ctx:"장애로 격리된 결제 건을 관리자가 수동으로 개입해 후처리할 때 지원할 기능 범위에 대한 결정이다.",
-     why:"격리는 대개 벤더 승인 여부를 확신할 수 없을 때 발생한다. 이를 임의로 성공(DONE) 처리하면 대금 입금 없이 매출만 잡히는 치명적인 정산 오류가 발생할 수 있다.",
-     alt:"관리자가 격리 건을 강제로 성공(DONE) 복구 기능 제공",
-     tradeoff:"안전이 보장된 실패(FAILED) 종결 기능만 우선 제공한다. 성공 복구를 위해서는 PG사 원장 대사(Reconciliation) 기능이 선행되어야 하므로 후속 과제로 분리했다.",
+     ctx:"· 장애로 격리된 결제를 관리자가 수동 개입해 후처리할 때 지원할 기능 범위 결정",
+     why:"· 격리는 대개 벤더 승인 여부를 확신할 수 없을 때 발생\n· 임의로 성공(DONE) 처리하면 대금 입금 없이 매출만 잡히는 치명적 정산 오류 위험",
+     alt:"· 관리자가 격리 건을 강제로 성공(DONE) 복구하는 기능 제공",
+     tradeoff:"· 안전이 보장된 실패(FAILED) 종결 기능만 우선 제공\n· 성공 복구는 PG 원장 대사(Reconciliation) 선행이 필요해 후속 과제로 분리",
      src:"DLQ-QUARANTINE-RECOVERY"},
     {t:"격리 건 복구 시 '차감 증명 토큰' 기반 선택적 재고 복원",tag:"유령 재고 0",
-     ctx:"다양한 이유로 격리된 결제를 일괄 실패 처리할 때, 개별 결제건의 실제 재고 차감 여부를 어떻게 판별할 것인가의 문제다.",
-     why:"격리 사유를 무시하고 맹목적으로 재고를 +1 복원하면, 애초에 차감되지 않았던 결제건까지 복원되어 실제 보유량보다 재고가 늘어나는 오류가 발생한다.",
-     alt:"격리된 모든 결제건에 대해 일괄적으로 재고 복원 명령 수행",
-     tradeoff:"재고 차감 시 발급되는 증명 토큰(decrement:done) 존재 여부를 확인해 조건부로 복원한다. 이를 통해 유령 재고 생성을 원천 차단한다.",
+     ctx:"· 격리된 결제를 일괄 실패 처리할 때 개별 건의 실제 재고 차감 여부 판별 문제",
+     why:"· 격리 사유를 무시하고 맹목적으로 재고를 +1 복원하면 차감된 적 없는 건까지 복원\n· 실제 보유량보다 재고가 늘어나는 오류 발생",
+     alt:"· 격리된 모든 결제건에 일괄 재고 복원 명령 수행",
+     tradeoff:"· 재고 차감 시 발급되는 증명 토큰(decrement:done) 존재 여부를 확인해 조건부 복원\n· 유령 재고 생성 원천 차단",
      src:"DLQ-QUARANTINE-RECOVERY · stock_compensation_if_decremented.lua"},
     {t:"DLQ 메시지는 원본 토픽 재주입 방식으로 복구",tag:"검증된 경로 재사용",
-     ctx:"최종 실패하여 Dead Letter Queue(DLQ)에 적재된 메시지들을 수동으로 재처리하는 아키텍처 구성 문제다.",
-     why:"DLQ 전용 컨슈머를 분리하면, 기존 파이프라인이 보장하던 멱등성과 정확히 1회(Exactly-Once) 처리 로직을 중복 구현하고 재검증해야 하는 파편화 리스크가 따른다.",
-     alt:"DLQ 전용 별도 백그라운드 소비 워커 구축",
-     tradeoff:"메시지를 원본 토픽(events.confirmed)으로 재발행하여 기존 검증된 메인 파이프라인을 재사용한다. 보존 기한이 지난 지연 메시지는 타임스탬프 기반으로 방어한다.",
+     ctx:"· 최종 실패로 DLQ(Dead Letter Queue)에 적재된 메시지를 수동 재처리하는 아키텍처 구성 문제",
+     why:"· DLQ 전용 컨슈머를 분리하면 기존 파이프라인의 멱등성·정확히 1회(Exactly-Once) 로직을 중복 구현·재검증 필요\n· 그만큼 파편화 리스크 발생",
+     alt:"· DLQ 전용 별도 백그라운드 소비 워커 구축",
+     tradeoff:"· 메시지를 원본 토픽(events.confirmed)으로 재발행해 검증된 메인 파이프라인 재사용\n· 보존 기한 지난 지연 메시지는 타임스탬프 기반 방어",
      src:"DLQ-QUARANTINE-RECOVERY"},
     {t:"PG 재시도 횟수 상태의 DB 영속화",tag:"격리 도달 보장",
-     ctx:"지수 백오프 기반 PG 호출 재시도 로직에서 현재 시도 횟수(Attempt)의 상태(State) 관리 위임 대상 결정이다.",
-     why:"재시도 횟수를 인메모리나 Kafka 메시지 헤더에만 의존할 경우, 인프라 재시작이나 메시지 유실 시 횟수가 초기화되어 무한 재시도 루프에 빠질 위험이 있다.",
-     alt:"Kafka 메시지 헤더(Header)를 통한 Stateless 시도 횟수 전달",
-     tradeoff:"모든 재시도 이력을 DB(pg_inbox.attempt)에 중앙 집중화한다. 어떤 경로로 워커가 실행되더라도 한도(4회) 초과 시 반드시 격리됨을 강력히 보장한다.",
+     ctx:"· 지수 백오프 기반 PG 재시도에서 현재 시도 횟수(Attempt) 상태 관리 위임 대상 결정",
+     why:"· 재시도 횟수를 인메모리·Kafka 헤더에만 의존하면 인프라 재시작·메시지 유실 시 횟수 초기화\n· 무한 재시도 루프 위험",
+     alt:"· Kafka 메시지 헤더를 통한 Stateless 시도 횟수 전달",
+     tradeoff:"· 모든 재시도 이력을 DB(pg_inbox.attempt)에 중앙 집중화\n· 어떤 경로로 워커가 실행돼도 한도(4회) 초과 시 반드시 격리 보장",
      src:"DLQ-REACHABILITY"},
     {t:"DB 커밋과 메시지 발행을 단일 트랜잭션(EOS)으로 묶음",tag:"정확히 1회",
-     ctx:"결제 상태 갱신(DB)과 재고 확정 완료 이벤트(Kafka) 발행 간의 원자성(Atomicity) 보장 방안이다.",
-     why:"DB 커밋과 메시지 발행이 분리되면, 두 작업 사이의 찰나에 서버가 크래시될 경우 DB 상태와 다운스트림 시스템 간의 영구적인 데이터 불일치가 발생한다.",
-     alt:"At-Least-Once 보장 (DB 저장 후 비동기 이벤트 발행 및 다운스트림 멱등성 의존)",
-     tradeoff:"Kafka의 Exactly-Once Semantics(EOS)를 활용해 DB 커밋과 메시지 발행을 원자적 단위로 묶는다. 성능 트레이드오프가 있으나 금융/재고 데이터의 정합성을 최우선시했다.",
+     ctx:"· 결제 상태 갱신(DB)과 재고 확정 이벤트(Kafka) 발행 간의 원자성(Atomicity) 보장 방안",
+     why:"· DB 커밋과 메시지 발행이 분리되면 두 작업 사이 찰나의 크래시에 취약\n· DB 상태와 다운스트림 간 영구적 데이터 불일치 발생",
+     alt:"· At-Least-Once 보장 (DB 저장 후 비동기 발행 + 다운스트림 멱등성 의존)",
+     tradeoff:"· Kafka Exactly-Once Semantics(EOS)로 DB 커밋과 메시지 발행을 원자적 단위로 결합\n· 성능 트레이드오프는 감수, 금융·재고 데이터 정합성 최우선",
      src:"CONFIRM-FLOW §5 · KafkaTransactionManager"},
     {t:"MSA 환경 내 서비스 간 공통 모듈 의존성 완벽 분리",tag:"독립 배포",
-     ctx:"4개의 독립된 마이크로서비스 간에 유사한 형태의 DTO 및 도메인 객체를 어떻게 공유할 것인가의 아키텍처 결정이다.",
-     why:"공통 모듈(Core Library)을 추출해 공유하면 개발 초기엔 편리하나, 단일 의존성 병목으로 인해 한 서비스의 변경이 전체 서비스의 재배포를 강제하는 결합이 생긴다.",
-     alt:"공통 DTO 및 도메인을 묶은 Core Shared Module 운영",
-     tradeoff:"코드의 중복(Duplication)을 감수하더라도 독립성(Independence)을 택한다. 통신은 오직 HTTP/Kafka 인터페이스 스펙으로만 결합하여 개별 서비스의 자율 배포를 보장한다.",
+     ctx:"· 4개 독립 마이크로서비스 간 유사한 DTO·도메인 객체를 어떻게 공유할지에 대한 아키텍처 결정",
+     why:"· 공통 모듈(Core Library) 공유는 개발 초기엔 편리\n· 단일 의존성 병목으로 한 서비스 변경이 전체 재배포를 강제하는 결합 발생",
+     alt:"· 공통 DTO·도메인을 묶은 Core Shared Module 운영",
+     tradeoff:"· 코드 중복(Duplication)을 감수하고 독립성(Independence) 선택\n· 통신은 오직 HTTP·Kafka 인터페이스 스펙으로만 결합해 개별 서비스 자율 배포 보장",
      src:"STRUCTURE 모듈 의존 그래프"}];
   (function(){
     var dw=document.getElementById("decisions-grid");
@@ -1943,10 +1944,10 @@
     var half=Math.ceil(DECISIONS.length/2);
     DECISIONS.forEach(function(d,i){var det=document.createElement("details");det.className="dcard";det.id="dec-"+i;
       det.innerHTML='<summary class="d-top"><span class="d-caret" aria-hidden="true">\u25b8</span><span class="d-t">'+esc(d.t)+'</span><span class="d-tag">'+esc(d.tag)+'</span></summary>'
-        +'<div class="d-line ctx"><b>상황</b>'+esc(d.ctx)+'</div>'
-        +'<div class="d-line prob"><b>문제</b>'+esc(d.why)+'</div>'
-        +'<div class="d-line bad"><b>기각된 대안</b>'+esc(d.alt)+'</div>'
-        +'<div class="d-line pick"><b>채택된 방안</b>'+esc(d.tradeoff)+'</div>'
+        +'<div class="d-line ctx"><b>상황</b>'+escBr(d.ctx)+'</div>'
+        +'<div class="d-line prob"><b>문제</b>'+escBr(d.why)+'</div>'
+        +'<div class="d-line bad"><b>기각된 대안</b>'+escBr(d.alt)+'</div>'
+        +'<div class="d-line pick"><b>채택된 방안</b>'+escBr(d.tradeoff)+'</div>'
         +'<div class="d-src">출처 · '+esc(d.src)+'</div>';
       (i<half?colL:colR).appendChild(det);});
     dw.appendChild(colL);dw.appendChild(colR);
@@ -2016,7 +2017,7 @@
       else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 — 더 이상의 상태 전이 없음.</p>';
       if(id==="QUARANTINED")h+='<div class="mini"><h4>결제 쪽과의 차이</h4><div class="row"><span class="k">PG</span><span>해당 단계에서 처리가 즉각 종결되며, 격리 결과를 결제 서비스로 회신한다.</span></div><div class="row"><span class="k">Payment</span><span>결제 서비스의 QUARANTINED는 종결 상태가 아니며, 관리자가 개입할 때까지 대기한다.</span></div></div>';
       det.innerHTML=h;}
-    det.innerHTML='<div class="dhead"><h3 class="big">PG 벤더 처리 상태</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">명령을 받은 pg-service가 벤더를 호출하며 오가는 5상태. <b>IN_PROGRESS는 self-loop</b>로 attempt를 쌓다 한도(4) 소진 시 QUARANTINED로 자동 격리된다.</p><div class="mini"><h4>보정 우회</h4><div class="row"><span class="k">중복</span><span>DuplicateApprovalHandler는 PENDING을 건너뛰고 createDirectInProgress / createDirectTerminal로 직접 진입한다(벤더 재호출 없이).</span></div></div>';
+    det.innerHTML='<div class="dhead"><h3 class="big">PG 벤더 처리 상태</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">명령을 받은 pg-service가 벤더를 호출하며 오가는 5상태. <b>IN_PROGRESS는 self-loop</b>로 attempt를 쌓다 한도(4) 소진 시 QUARANTINED로 자동 격리된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">멱등</span><span>중복 승인 명령은 PENDING을 건너뛰고 벤더 재호출 없이 직접 처리 — 이중 승인 차단.</span></div></div>';
   })();
   (function(){
     var bp=document.getElementById("smTabPay"),bg=document.getElementById("smTabPg"),lp=document.getElementById("sm-payment"),lg=document.getElementById("sm-pg");
@@ -2028,22 +2029,22 @@
   /* ================= §08 OBSERVABILITY & ALERTING ================= */
   var ALERTS=[
     {label:"코디네이터 · EOS",color:"inprog",items:[
-      {a:"KafkaCoordinatorTxnAbortRising",d:"결제 확정 결과를 DB 저장과 Kafka 발행까지 한 트랜잭션으로 묶는 EOS(Exactly-Once) 커밋이 반복 중단되는 징후. 확정 처리가 재시도로 밀리기 시작했다는 첫 신호이며, 방치하면 실패분이 DLQ까지 흘러간다.",m:"커밋 중단이 짧은 간격으로 반복 관측될 때 · 1분 지속"},
-      {a:"KafkaCoordinatorLagHigh",d:"PG가 회신한 승인·실패 결과(events.confirmed)가 소비되지 못하고 쌓이는 상태. 결과가 브로커에 도착해 있어도 결제 상태에 반영되지 않아, 사용자에게는 결제가 '진행 중'으로 계속 보인다. 파티션 병목이나 소비 스레드 고갈이 주 원인이다.",m:"미소비 적체(consumer lag) 1,000건 초과 · 1분 지속"},
-      {a:"KafkaBrokerUnavailable",d:"Kafka 브로커 자체가 응답하지 않는 최상위 장애. 확정 명령도 결과 회신도 오가지 못해 비동기 결제 경로 전체가 정지한다. 완전 정지 시 지표가 0이 되는 게 아니라 아예 사라지는(absent) 사각까지 함께 감지한다.",m:"브로커 수 1 미만 또는 지표 소멸(absent) · 2분 지속"}
+      {a:"KafkaCoordinatorTxnAbortRising",d:"· DB 저장과 Kafka 발행을 한 트랜잭션으로 묶는 EOS(Exactly-Once) 커밋이 반복 중단되는 징후\n· 확정 처리가 재시도로 밀리기 시작한 첫 신호\n· 방치 시 실패분이 DLQ까지 유입",m:"커밋 중단이 짧은 간격으로 반복 관측될 때 · 1분 지속"},
+      {a:"KafkaCoordinatorLagHigh",d:"· PG 회신 결과(events.confirmed)가 소비되지 못하고 적체\n· 브로커에 도착해도 결제 상태 미반영 — 사용자에겐 계속 '진행 중'으로 노출\n· 파티션 병목·소비 스레드 고갈이 주원인",m:"미소비 적체(consumer lag) 1,000건 초과 · 1분 지속"},
+      {a:"KafkaBrokerUnavailable",d:"· Kafka 브로커 자체가 응답하지 않는 최상위 장애\n· 확정 명령·결과 회신이 모두 막혀 비동기 결제 경로 전체 정지\n· 완전 정지 시 지표가 0이 아니라 소멸(absent)하는 사각까지 감지",m:"브로커 수 1 미만 또는 지표 소멸(absent) · 2분 지속"}
     ]},
     {label:"종결 가드",color:"quar",items:[
-      {a:"GuardSkipDangerousStatusHigh",d:"이미 실패·격리로 종결된 결제에 PG 응답이 뒤늦게 도착해 폐기되는 비율 급증. 가드가 상태 덮어쓰기는 막아 주지만, 이 비율이 높다는 것 자체가 PG망 지연이나 타임아웃 설정 이상으로 승인 응답까지 버려지고 있을 수 있다는 신호다.",m:"종결 후 폐기된 응답 ÷ 전체 종결 처리 10% 초과 (5분 평균) · 1분 지속"}
+      {a:"GuardSkipDangerousStatusHigh",d:"· 이미 실패·격리로 종결된 결제에 PG 응답이 뒤늦게 도착해 폐기되는 비율 급증\n· 가드가 상태 덮어쓰기는 차단\n",m:"종결 후 폐기된 응답 ÷ 전체 종결 처리 10% 초과 (5분 평균) · 1분 지속"}
     ]},
     {label:"DLQ",color:"failed",items:[
-      {a:"DlqAppCounterRising",d:"자동 재시도를 모두 소진해 관리자 복구가 필요해진 결제가 발생. payment의 EOS 커밋 실패분 DLQ 발행과 pg의 재시도 소진 격리, 두 경로를 각 서비스가 처리 시점에 직접 기록하는 메트릭으로 감지한다.",m:"DLQ 도달·격리 신규 발생 1건 이상 (5분 윈도우) · 1분 지속"},
-      {a:"DlqTopicOffsetRising",d:"처리 불가 결제의 발생을 서비스 메트릭이 아닌 DLQ 토픽에서 감지. 토픽에 새 메시지가 쌓였는지(오프셋 증가)를 kafka-exporter가 관측하므로, 서버 크래시로 서비스 메트릭이 유실돼도 포착한다.",m:".dlq 토픽 신규 메시지 1건 이상 (5분 윈도우) · 1분 지속"},
-      {a:"DlqCommandsConsumerLag",d:"DLQ로 빠진 확정 명령을 받아 격리 처리하는 소비자가 밀리는 중. 이 큐는 적체 0이 정상 상태라, 남아 있는 1건도 방치된 미해결 결제를 뜻한다.",m:"DLQ 컨슈머 미소비 적체 1건 이상 · 1분 지속"}
+      {a:"DlqAppCounterRising",d:"· 자동 재시도를 모두 소진해 관리자 복구가 필요한 결제 발생\n· payment의 EOS 커밋 실패분 DLQ 발행 + pg의 재시도 소진 격리, 두 경로를 각 서비스가 처리 시점에 직접 기록하는 메트릭으로 감지",m:"DLQ 도달·격리 신규 발생 1건 이상 (5분 윈도우) · 1분 지속"},
+      {a:"DlqTopicOffsetRising",d:"· 처리 불가 결제를 서비스 메트릭이 아닌 DLQ 토픽에서 감지\n· 새 메시지 적재(오프셋 증가)를 kafka-exporter가 관측 — 서버 크래시로 서비스 메트릭이 유실돼도 포착",m:".dlq 토픽 신규 메시지 1건 이상 (5분 윈도우) · 1분 지속"},
+      {a:"DlqCommandsConsumerLag",d:"· DLQ로 빠진 확정 명령을 받아 격리 처리하는 소비자가 적체\n· 이 큐는 적체 0이 정상 — 남은 1건도 방치된 미해결 결제",m:"DLQ 컨슈머 미소비 적체 1건 이상 · 1분 지속"}
     ]},
     {label:"가용성",color:"done",items:[
-      {a:"ServiceDown",d:"4개 서비스 중 하나가 지표 수집에 응답하지 않는 상태. 프로세스 비정상 종료(OOM, 크래시)로 해당 구간의 결제 흐름이 통째로 멈췄음을 뜻한다.",m:"지표 수집(scrape) 실패 (up == 0) · 1분 지속"},
-      {a:"DependencyDown",d:"서비스가 10초마다 직접 점검하는 핵심 의존성(MySQL, Redis)의 연결 단절. 재고 차감용 Redis가 끊기면 확정 접수가, DB가 끊기면 상태 저장이 그 자리에서 실패한다.",m:"헬스 판정 DOWN 또는 지표 소멸(absent) · 즉시"},
-      {a:"DependencyHealthStale",d:"MySQL·Redis 연결을 10초마다 점검하는 폴러 스레드 자체가 멈춘 상태(블로킹·데드락). 폴러가 멈추면 지표가 마지막 값(대부분 정상)으로 굳어, 이후 의존성이 실제로 죽어도 DependencyDown이 울리지 않는다. 그래서 마지막 점검 완료 시각이 계속 갱신되는지를 따로 지켜보다, 점검이 끊긴 것 자체를 알람으로 올린다.",m:"마지막 점검 후 60초 초과 또는 지표 소멸(absent) · 즉시"}
+      {a:"ServiceDown",d:"· 4개 서비스 중 하나가 지표 수집에 무응답\n· 프로세스 비정상 종료(OOM·크래시)로 해당 구간 결제 흐름 전체 정지",m:"지표 수집(scrape) 실패 (up == 0) · 1분 지속"},
+      {a:"DependencyDown",d:"· 서비스가 10초마다 점검하는 핵심 의존성(MySQL·Redis) 연결 단절\n· 재고 차감용 Redis가 끊기면 확정 접수, DB가 끊기면 상태 저장이 그 자리에서 실패",m:"헬스 판정 DOWN 또는 지표 소멸(absent) · 즉시"},
+      {a:"DependencyHealthStale",d:"· MySQL·Redis를 10초마다 점검하는 폴러 스레드 자체가 멈춘 상태(블로킹·데드락)\n· 폴러가 멈추면 지표가 마지막 값(대부분 정상)으로 굳어 실제 장애에도 DependencyDown 미발화\n· 그래서 마지막 점검 완료 시각의 갱신 여부를 따로 감시해 점검 중단 자체를 알람화",m:"마지막 점검 후 60초 초과 또는 지표 소멸(absent) · 즉시"}
     ]}
   ];
   (function(){
@@ -2053,7 +2054,7 @@
         var tr=document.createElement("tr");
         var cells="";
         if(k===0)cells+='<td class="t-group" rowspan="'+g.items.length+'"><span class="gd" style="background:var('+CV[g.color]+')"></span>'+esc(g.label)+'</td>';
-        cells+='<td class="t-alert">'+esc(it.a)+'</td><td>'+esc(it.d)+'</td><td class="t-trg">'+esc(it.m||"")+'</td>';
+        cells+='<td class="t-alert">'+esc(it.a)+'</td><td>'+escBr(it.d)+'</td><td class="t-trg">'+esc(it.m||"")+'</td>';
         tr.innerHTML=cells;tb.appendChild(tr);
       });
     });
@@ -2061,30 +2062,30 @@
 
   /* ================= §10 SUMMARY ================= */
   var SOLVES=[
-    {t:"분산 환경의 트랜잭션 정합성 확보",d:"상태 저장 및 이벤트 발행을 단일 트랜잭션으로 묶고(Transactional Outbox), 3개의 개별 서비스가 각자 멱등성을 보장하여 상태와 재고가 불일치하는 현상을 원천 방지했다."},
-    {t:"장애 전파 차단 및 상태 복구",d:"결과를 확정할 수 없는 결제 건은 격리(Quarantined) 처리 후 안전하게 재고를 롤백하고 실패로 종결한다. 처리되지 못한 메시지(DLQ)는 별도 수집 후 토픽에 재주입하여 복구한다."},
-    {t:"초과 판매 및 유령 재고 차단",d:"재고를 선차감하여 초과 판매를 차단하고, 장애 발생 시 보수적으로 재고를 관리한다. '차감 이력'이 있는 경우에만 복원을 수행하도록 설계하여 유령 재고 생성을 완벽히 방어했다."}
+    {t:"분산 환경의 트랜잭션 정합성 확보",d:"· 상태 저장과 이벤트 발행 사실을 단일 트랜잭션으로 결합\n· 3개 서비스가 각자 멱등성 보장\n· 상태와 재고 불일치 원천 방지"},
+    {t:"장애 전파 차단 및 상태 복구",d:"· 결과를 확정할 수 없는 결제는 격리 후 재고 롤백·실패 종결\n· 처리 실패 메시지(DLQ)는 별도 수집 후 토픽 재주입으로 복구"},
+    {t:"초과 판매 및 유령 재고 차단",d:"· 재고 선차감으로 초과 판매 차단\n· 장애 시 보수적 재고 관리\n· '차감 이력'이 있을 때만 복원해 유령 재고 생성 방어"}
   ];
   var LIMITS=[
     {t:"Transactional Outbox가 새로 만든 운영 책임",kind:"설계 비용",cls:"cost",
-     what:"발행 상태를 별도 아웃박스 테이블로 관리하므로, 결제 한 건마다 행 저장과 선점·완료 상태 갱신까지 총 세 번의 추가 쓰기가 결제 DB에 발생한다. 커밋 직후 즉시 발행으로 지연은 최소화했지만, 안전망인 폴링 워커는 발행 대상이 없어도 5초마다 테이블을 조회하며, 발행이 끝난 레코드는 삭제 없이 누적된다.",
-     why:"DB 변경 로그를 직접 구독하는 CDC(변경 데이터 캡처, Debezium 등) 방식으로 릴레이를 교체하면 폴링 조회와 상태 갱신 쓰기가 사라지고, 캡처된 행은 바로 삭제할 수 있어 테이블 누적도 해소된다. 다만 커넥터 인프라 운영이 새로 추가되므로, 우선 보존 기간 기반의 정리 워커를 도입하고 CDC 전환은 트래픽 증가 시점에 검토할 계획이다."},
+     what:"\n· 발행 상태를 별도 아웃박스 테이블로 관리 — 결제 한 건마다 행 저장·선점·완료까지 총 3회 추가 쓰기 발생\n· 커밋 직후 즉시 발행으로 지연은 최소화\n· 안전망 폴링 워커는 발행 대상이 없어도 5초마다 테이블 조회\n· 레코드 누적 및 관리 비용 발생",
+     why:"\n· CDC(변경 데이터 캡처, Debezium 등)로 릴레이를 교체하면 폴링 조회·상태 갱신 쓰기 제거, 캡처된 행 즉시 삭제로 누적도 해소\n· 다만 커넥터 인프라 운영이 새로 추가되는 비용\n· 우선 보존 기간 기반 정리 워커 도입, CDC 전환은 트래픽 증가 시점에 검토"},
     {t:"격리(Quarantined) 결제의 '성공 복구'",kind:"향후 로드맵",cls:"follow",
-     what:"현재는 격리된 결제 건을 안전하게 '실패'로 종결하여 환불 처리하는 기능까지만 지원하며, 이를 '성공' 상태로 복원하는 플로우는 아직 구현되지 않았다.",
-     why:"PG사 측에 실제 승인 여부를 조회(Polling/Webhook)하는 인프라를 연동하고, 그 결과를 바탕으로 성공 상태를 갱신하는 기능을 향후 도입할 계획이다."},
+     what:"\n· 현재는 격리 결제를 '실패'로 안전 종결·환불하는 기능까지만 지원\n· '성공' 상태로 복원하는 플로우는 미구현",
+     why:"\n· PG 측 실제 승인 여부 조회(Polling/Webhook) 인프라 연동\n· 그 결과로 성공 상태를 갱신하는 기능 향후 도입"},
     {t:"DLQ(Dead Letter Queue) 자동 재주입",kind:"향후 로드맵",cls:"follow",
-     what:"브로커(Kafka) 장애가 길어지면 실패한 메시지가 DLQ에 누적된다. 현재는 안전 검사(재주입 유효 기간 확인 등)를 거친 후 관리자가 화면에서 직접 재주입한다.",
-     why:"수동 복구 절차의 정합성이 충분히 검증되었으므로, 브로커 회복을 시스템이 감지하여 자동으로 재주입하는 워커(Worker)를 추가하는 것이 다음 단계다."},
+     what:"\n· 브로커(Kafka) 장애가 길어지면 실패 메시지가 DLQ에 누적\n· 현재는 안전 검사(재주입 유효 기간 확인 등) 후 관리자가 화면에서 직접 재주입",
+     why:"\n· 수동 복구 절차의 정합성은 충분히 검증 완료\n· 다음은 브로커 회복을 감지해 자동 재주입하는 워커 추가"},
     {t:"MSA 아키텍처 기반 부하 재측정",kind:"향후 로드맵",cls:"follow",
-     what:"위키 벤치마크 보고서에 공개된 수치(TPS 47.5% 증가, 응답시간 87% 단축)는 모놀리스 환경에서 측정된 데이터다.",
-     why:"4개의 독립된 마이크로서비스로 분리된 현재 아키텍처에서 인프라 구성(Gateway, Eureka 등)을 포함해 부하 테스트(k6) 수치를 새롭게 갱신하는 것이 목표다."}
+     what:"\n· 위키 벤치마크 보고서 공개 수치(TPS 47.5% 증가·응답시간 87% 단축)는 모놀리스 환경 측정치",
+     why:"\n· 4서비스로 분리된 현재 아키텍처 + 인프라 구성(Gateway·Eureka 등) 포함\n· k6 부하 테스트 수치 새로 갱신이 목표"}
   ];
   (function(){
     var sg=document.getElementById("solves-grid"),lg=document.getElementById("limits-grid");
     if(sg)SOLVES.forEach(function(s){var c=document.createElement("div");c.className="solve";
-      c.innerHTML='<div class="s-t">'+esc(s.t)+'</div><div class="s-d">'+esc(s.d)+'</div>';sg.appendChild(c);});
+      c.innerHTML='<div class="s-t">'+esc(s.t)+'</div><div class="s-d">'+escBr(s.d)+'</div>';sg.appendChild(c);});
     if(lg)LIMITS.forEach(function(l){var c=document.createElement("div");c.className="limit "+l.cls;
-      c.innerHTML='<div class="l-h"><span class="l-t">'+esc(l.t)+'</span><span class="l-kind">'+esc(l.kind)+'</span></div><div class="l-d"><b>지금</b>'+esc(l.what)+'</div><div class="l-d"><b>다음</b>'+esc(l.why)+'</div>';lg.appendChild(c);});
+      c.innerHTML='<div class="l-h"><span class="l-t">'+esc(l.t)+'</span><span class="l-kind">'+esc(l.kind)+'</span></div><div class="l-d"><b>지금</b>'+escBr(l.what)+'</div><div class="l-d"><b>다음</b>'+escBr(l.why)+'</div>';lg.appendChild(c);});
   })();
 
   /* ================= UX CHROME (progress · back-to-top) ================= */
