@@ -2173,7 +2173,7 @@
   /* 가로 스크롤 컨테이너 — 잘림 힌트 페이드 토글 */
   (function(){
     var sxUpds=[];
-    document.querySelectorAll(".map-wrap, .swim-wrap, .dtable-wrap, .mtable-wrap").forEach(function(el){
+    document.querySelectorAll(".map-wrap, .swim-wrap, .dtable-wrap, .mtable-wrap, #nav").forEach(function(el){
       function upd(){el.classList.toggle("sx-more",el.scrollWidth-el.clientWidth-el.scrollLeft>8);}
       el.addEventListener("scroll",upd,{passive:true});
       window.addEventListener("resize",upd);
