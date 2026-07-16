@@ -16,8 +16,7 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
         +'<div class="d-line ctx"><b>상황</b>'+escBr(d.ctx)+'</div>'
         +'<div class="d-line prob"><b>문제</b>'+escBr(d.why)+'</div>'
         +'<div class="d-line bad"><b>기각된 대안</b>'+escBr(d.alt)+'</div>'
-        +'<div class="d-line pick"><b>채택된 방안</b>'+escBr(d.tradeoff)+'</div>'
-        +'<div class="d-src">출처 · '+esc(d.src)+'</div>';
+        +'<div class="d-line pick"><b>채택된 방안</b>'+escBr(d.tradeoff)+'</div>';
       (i<half?colL:colR).appendChild(det);});
     dw.appendChild(colL);dw.appendChild(colR);
   })();
@@ -118,7 +117,7 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
 
   /* ================= SCENARIO MATRIX ================= */
   (function(){var tb=document.querySelector("#scn-matrix tbody");if(!tb)return;
-    var LB={done:"DONE",failed:"FAILED",quar:"QUARANTINED"};
+    var LB={done:"DONE",failed:"FAILED",quar:"QUARANTINED",expired:"EXPIRED"};
     SCN_MATRIX.forEach(function(r){var tr=document.createElement("tr");
       tr.innerHTML='<td class="m-name">'+esc(r[0])+'</td><td><span class="m-st" style="color:var('+CV[r[1]]+');background:color-mix(in srgb,var('+CV[r[1]]+') 13%,transparent)">'+esc(LB[r[1]])+'</span></td><td>'+esc(r[2])+'</td><td>'+esc(r[3])+'</td><td style="font-family:var(--mono);font-size:11px;color:var(--muted)">'+esc(r[4])+'</td>';
       tb.appendChild(tr);});

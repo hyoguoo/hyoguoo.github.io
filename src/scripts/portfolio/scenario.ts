@@ -34,7 +34,7 @@ import { SCN_NODES, SCN_EDGES, SCENARIOS, SCN_WHEN, SCN_OBS } from '../../data/p
     var scnSpeedBtn=document.getElementById("scnSpeed");
     if(scnSpeedBtn)scnSpeedBtn.addEventListener("click",function(){speed=speed===1?2:1;scnSpeedBtn.textContent=speed+"\u00d7";});
 
-    var GRP_LB={done:"성공으로 끝남",failed:"실패로 종결",quar:"격리로 멈춤"};
+    var GRP_LB={done:"성공으로 끝남",failed:"실패로 종결",quar:"격리로 멈춤",expired:"만료로 종결"};
     var curGrpKind=null,grpBody=null;
     SCENARIOS.forEach(function(sc,i){
       if(sc.outcome.color!==curGrpKind){curGrpKind=sc.outcome.color;
@@ -71,7 +71,7 @@ import { SCN_NODES, SCN_EDGES, SCENARIOS, SCN_WHEN, SCN_OBS } from '../../data/p
         g.appendChild(tx);scnBadges.appendChild(g);});
       scnHopcount.textContent=sc.hops.length+" 홉";
       var th="";sc.hops.forEach(function(h,k){var nn=edgeNodes(h.edge);var pathTxt=nn.length>1?nn[0]+" → "+nn[1]:nn[0]+" ↻";
-        th+='<li class="scn-hop k-'+h.kind+'" data-k="'+k+'" tabindex="0"><span class="hn">'+(k+1)+'</span><span><span class="path">'+esc(pathTxt)+'</span><span class="lab">'+esc(h.label)+'</span>'+(h.state?'<span class="stx">'+esc(h.state)+'</span>':'')+(h.why?'<span class="why"><b>'+esc(h.why.tag)+'</b> '+esc(h.why.text)+' <span class="src">['+esc(h.why.src)+']</span>'+(h.why.dref!=null?' <a class="why-link" href="#dec-'+h.why.dref+'">근거 →</a>':'')+'</span>':'')+'</span></li>';});
+        th+='<li class="scn-hop k-'+h.kind+'" data-k="'+k+'" tabindex="0"><span class="hn">'+(k+1)+'</span><span><span class="path">'+esc(pathTxt)+'</span><span class="lab">'+esc(h.label)+'</span>'+(h.state?'<span class="stx">'+esc(h.state)+'</span>':'')+(h.why?'<span class="why"><b>'+esc(h.why.tag)+'</b> '+esc(h.why.text)+(h.why.src?' <span class="src">['+esc(h.why.src)+']</span>':'')+(h.why.dref!=null?' <a class="why-link" href="#dec-'+h.why.dref+'">근거 →</a>':'')+'</span>':'')+'</span></li>';});
       scnTimeline.innerHTML=th;
       scnTimeline.querySelectorAll(".scn-hop").forEach(function(li){
         function act(ev){if(ev.target&&ev.target.closest&&ev.target.closest("a"))return;stopPlay();setHop(+li.dataset.k,true);}

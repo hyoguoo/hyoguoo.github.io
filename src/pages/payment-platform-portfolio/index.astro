@@ -320,7 +320,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="states">
     <div class="sec-head reveal">
       <h2>상태 머신 — 결제와 PG</h2>
-      <p>내부 결제(Payment)와 외부 통신(PG)의 생명주기를 분리했다.<br>독립적인 상태 머신을 두어, 외부 시스템의 장애나 지연이 내부 결제 상태로 전파되는 것을 차단한다.</p>
+      <p>내부 결제(Payment)와 외부 통신(PG)의 생명주기를 분리했다.<br>독립적인 상태 머신을 두어, 외부 시스템의 장애나 지연이 내부 결제 상태로 전파되는 것을 차단한다.<br>같은 격리라도 PG는 거기서 종결하지만, 결제는 관리자 확인까지 종결을 미룬다 — 종결의 의미가 서비스마다 달라 상태 머신을 하나로 합치지 않았다.</p>
     </div>
     <div class="svc-switch reveal">
       <button class="svc-btn" id="smTabPay" type="button" aria-pressed="true"><span class="sd" style="background:var(--svc-payment)"></span><span class="sm2">결제 · PaymentEventStatus</span></button>
@@ -364,7 +364,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="pgretry">
     <div class="sec-head reveal">
       <h2>PG 명령 처리와 재시도</h2>
-      <p>결제 명령을 받아 PG사를 호출하고, 실패 시 재시도하며, 한도 초과 시 격리하는 전체 절차다.<br>이 아키텍처의 핵심 기능 중 하나로서,<br>지연 큐나 별도 스케줄러 없이 오직 Kafka 재발행만으로 재시도 메커니즘을 구현했다.</p>
+      <p>결제 명령을 받아 PG사를 호출하고, 실패 시 재시도하며, 한도 초과 시 격리하는 전체 절차다.<br>지연 큐나 별도 스케줄러 없이 오직 Kafka 재발행만으로 재시도를 구현한 것이 이 설계의 특징이다.<br>PG 재시도는 2→6→18→54초로 간격을 늘리는 지수 백오프(최대 4회), 결제 측 Kafka 컨슈머 재시도는 1초 고정 5회 — 기다리는 장애가 달라 백오프 방식을 나눴다.</p>
     </div>
     <div class="card reveal">
       <div class="card-head"><h3>명령 처리 파이프라인</h3><span class="term-tag">정상 흐름과 장애 복구 경로 통합</span></div>
@@ -439,11 +439,10 @@ import '../../styles/payment-portfolio.css';
     <div class="const-panel reveal">
       <div class="sub-label">핵심 운영 상수 · 값과 근거 모두 코드에서 검증</div>
       <div class="consts">
-        <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 대부분의 벤더 5xx·타임아웃은 수 초 내 회복<br>· 지수 백오프 4회 시도로 일시 장애 극복<br>· 초과 시 장기 장애로 간주해 중복 승인 위험 차단 위해 즉시 격리</span></div>
-        <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">· 메시지 재배달은 컨슈머 재시작·파티션 리밸런싱 직후 단시간에 집중<br>· 1시간 TTL로 위험 구간을 충분히 커버하면서 Redis 메모리도 안정적 통제</span></div>
-        <div class="const"><span class="cv">P8D</span><span class="ck">재고·product 멱등 TTL</span><span class="cs">691200s = 7d + 1d</span><span class="cw">· Kafka 기본 보관 주기 동안(7일) 재배달 위험 존재<br>· 중복 방지 TTL을 하루 더 긴 8일로 설정해 이중 차감·정합성 훼손 원천 차단</span></div>
+        <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 대부분의 벤더 5xx·타임아웃은 수 초 내 회복<br>· 지수 백오프 4회 시도로 일시 장애 극복<br>· 초과 시 장기 장애로 간주해 중복 승인 위험을 차단하려 즉시 격리</span></div>
+        <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">· 메시지 재전송은 컨슈머 재시작·파티션 리밸런싱 직후 단시간에 집중<br>· 1시간 TTL로 위험 구간을 충분히 커버하면서 Redis 메모리도 안정적 통제</span></div>
+        <div class="const"><span class="cv">P8D</span><span class="ck">재고·product 멱등 TTL</span><span class="cs">691200s = 7d + 1d</span><span class="cw">· Kafka 기본 보관 주기 동안(7일) 재전송 위험 존재<br>· 중복 방지 TTL을 하루 더 긴 8일로 설정해 이중 차감·정합성 훼손 원천 차단</span></div>
         <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">· 단일 파티션에서 재시도가 길어지면 후속 결제까지 밀리는 헤드 오브 라인 블로킹(HOLB) 위험<br>· 1초 간격 5회 시도 후 실패 시 즉시 DLQ 라우팅으로 파이프라인 병목 해소</span></div>
-        <div class="const"><span class="cv">EOS</span><span class="ck">결과 확정 커밋</span><span class="cs">DB + offset + 발행 원자 1단위</span><span class="cw">· DB 상태 갱신과 재고 이벤트 발행이 분리되면 중간 장애 시 정합성 훼손 위험<br>· 특정 서비스는 DB 트랜잭션·Kafka 오프셋 커밋·메시지 발행을 단일 트랜잭션(EOS) 방식을 사용해 정확히 1회(Exactly-Once) 보장</span></div>
         <div class="const"><span class="cv">10d</span><span class="ck">DLQ 보관 기간</span><span class="cs">864000000ms &gt; 재주입 가능 기간 8d</span><span class="cw">· DLQ 메시지는 최대 8일(멱등 TTL) 내 재주입으로 복구 가능<br>· 그보다 넉넉한 10일 보관으로 복구 시기를 놓친 영구 유실 사고 방지</span></div>
       </div>
     </div>
@@ -462,7 +461,7 @@ import '../../styles/payment-portfolio.css';
       <div class="wf-card"><div class="wf-head"><span class="wn">03</span><span class="we">execute</span></div><div class="wt">구현</div><div class="wd">· 정의된 태스크 단위로 실제 코드 작성<br>· 태스크 완료마다 전체 테스트 스위트 구동으로 기존 기능 회귀 방지</div></div>
       <div class="wf-card"><div class="wf-head"><span class="wn">04</span><span class="we">ship</span></div><div class="wt">마무리</div><div class="wd">· 코드 리뷰 피드백 반영 · 기술 문서(Wiki) 동기화 · 산출물 아카이빙<br>· 최종 Pull Request 생성 후 머지 준비</div></div>
     </div>
-    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b><br>· 생성자가 자신의 결과물을 스스로 판정하지 않는 구조<br>· 구현 에이전트와 리뷰 에이전트의 역할 분리<br>· 각 단계 전환 지점마다 사용자(Human)의 최종 확인</p>
+    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b><br>· 생성자가 자신의 결과물을 스스로 판정하지 않는 구조<br>· 구현 에이전트와 리뷰 에이전트의 역할 분리<br>· 각 단계 전환 지점마다 사용자의 최종 확인</p>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/ai-workflow" target="_blank" rel="noopener">상세 문서 보기 · 서브에이전트 기반 워크플로우 ↗</a></div>
   </section>
 
@@ -470,7 +469,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="alerting">
     <div class="sec-head reveal">
       <h2>관측과 알람</h2>
-      <p>단순 지표 수집을 넘어 4개 영역에 걸친 10개의 핵심 경보 규칙을 도입했다.<br>25종의 회귀 테스트와 인위적 장애 주입을 통해 예외 징후 감지 능력을 검증했다.</p>
+      <p>단순 지표 수집을 넘어 4개 영역에 걸친 10개의 핵심 경보 규칙을 도입했다.<br>25종의 회귀 테스트와 인위적 장애 주입으로 예외 징후 감지 능력을 검증했다.</p>
     </div>
     <div class="card reveal">
       <div class="dtable-wrap">
@@ -499,7 +498,7 @@ import '../../styles/payment-portfolio.css';
     <div class="tr3-grid reveal">
       <div class="tr3">
         <div class="tr3-h"><span class="tr3-n">1</span><span class="tr3-t">프로세스 경계 (네트워크 통신)</span></div>
-        <p class="tr3-why">HTTP 또는 Kafka를 통해 다른 마이크로서비스로 넘어갈 때마다 인메모리 추적 문맥이 소실된다.</p>
+        <p class="tr3-why">HTTP나 Kafka를 타고 다른 마이크로서비스로 넘어갈 때마다 인메모리 추적 문맥이 소실된다.</p>
         <ul class="tr3-list">
           <li>추적 식별자인 <code>traceparent</code>(W3C 표준)를 HTTP 및 Kafka 헤더에 적재하여 전송한다.</li>
           <li>수신 측은 해당 식별자를 부모(Parent Span)로 인식하여 새로운 구간을 이어 붙인다.</li>

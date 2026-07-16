@@ -24,7 +24,7 @@ export const FLOW_STEPS = [
     {f:"payment",lab:"확정 TX — IN_PROGRESS + outbox PENDING"},
     {f:"payment",t:"browser",lab:"202 Accepted"},
     {cut:1},
-    {st:"③ 명령 발행 — outbox relay",f:"payment",t:"kafka",lab:"commands.confirm 발행 · CAS 선점"},
+    {st:"③ 명령 발행 — outbox relay",f:"payment",t:"kafka",lab:"commands.confirm 발행 · 조건부 선점"},
     {st:"④ 벤더 호출 — PG",f:"kafka",t:"pg",lab:"명령 수신 · dedupe SETNX 1h"},
     {f:"pg",lab:"inbox 선점 · SKIP LOCKED"},
     {f:"pg",t:"vendor",lab:"승인 호출"},
