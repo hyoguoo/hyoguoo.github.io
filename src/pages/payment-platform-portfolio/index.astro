@@ -193,14 +193,14 @@ import '../../styles/payment-portfolio.css';
         <div class="spec-section">
           <div class="spec-title">Distributed Observability</div>
           <div class="ov-trace" id="ovTrace">
-            <div class="ot-t">결제 한 건이 남긴 기록</div>
+            <div class="ot-t">결제 한 건에 대한 추적성 확보</div>
             <div class="ot-body">
               <div class="ot-l"><span class="ot-svc" style="color:#9aa5b1">gateway</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">confirm 접수 · payment 라우팅</span></div>
               <div class="ot-l"><span class="ot-svc" style="color:#5ba3ff">payment</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">READY → IN_PROGRESS · outbox 저장</span></div>
               <div class="ot-l"><span class="ot-svc" style="color:#a58ef5">PG</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">가상 스레드 워커가 문맥 복원 · 벤더 승인 200</span></div>
               <div class="ot-l"><span class="ot-svc" style="color:#45cf8b">product</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">Kafka 건너 재고 확정 · 중복 걸러냄</span></div>
             </div>
-            <p class="ot-note">스레드가 바뀌고 Kafka를 건너도 같은 traceId. 어느 서비스 로그를 열어도 이 결제를 찾을 수 있다.</p>
+            <p class="ot-note">스레드가 바뀌고 Kafka를 거쳐도 같은 traceId를 유지하여, 결제 한 건의 전체 경로를 추적할 수 있다.</p>
           </div>
         </div>
         
@@ -209,7 +209,7 @@ import '../../styles/payment-portfolio.css';
     
     <!-- Hints -->
     <div class="ov-hint reveal" style="margin-top:40px;">
-      <span class="ov-hk">읽는 법</span>
+      <span class="ov-hk">화면 안내</span>
       <span class="ov-hi">노드·카드 <b>클릭</b></span>
       <span class="ov-hi">시나리오 <b>재생 ▶</b> · <b>←/→</b></span>
       <span class="ov-hi">상태 머신 <b>결제/pg 토글</b></span>
@@ -217,7 +217,7 @@ import '../../styles/payment-portfolio.css';
       <span class="ov-hi">시나리오·상태 머신 선택 <b>URL 공유</b></span>
     </div>
     <div class="ov-hint reveal">
-      <span class="ov-hk">색 언어</span>
+      <span class="ov-hk">상태 색상</span>
       <span class="ov-hi"><i class="cdot" style="background:var(--accent)"></i>정상 진행</span>
       <span class="ov-hi"><i class="cdot" style="background:var(--st-quar)"></i>주의(재시도·격리)</span>
       <span class="ov-hi"><i class="cdot" style="background:var(--st-failed)"></i>실패</span>
@@ -230,7 +230,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="arch">
     <div class="sec-head reveal">
       <h2>시스템 아키텍처</h2>
-      <p>서비스 간 코드 의존 없이 모든 통신을 HTTP와 Kafka로 처리한다.</p>
+      <p>서비스 간 직접적인 코드 의존 없이 모든 통신을 HTTP와 Kafka로 통신한다.</p>
     </div>
     <div class="arch-layout reveal">
       <div class="card">
@@ -259,14 +259,14 @@ import '../../styles/payment-portfolio.css';
       <p>결제 확정 요청 접수(202 Accepted)를 시작으로,<br>PG 승인과 최종 재고 반영이 비동기로 완결되는 전체 파이프라인이다.</p>
     </div>
     <div class="card reveal">
-      <div class="card-head"><h3>정상 경로 · 22단계</h3><span class="term-tag">실패 분기는 §03</span></div>
+      <div class="card-head"><h3>정상 경로 · 22단계</h3><span class="term-tag">실패 분기는 시나리오 섹션 참고</span></div>
       <p class="sr-only">화면 낭독기 안내: 이 그림의 22단계는 바로 아래 단계 카드들에 같은 내용이 텍스트로 실려 있다.</p>
       <div class="swim-wrap" id="swimWrap"></div>
     </div>
     <div class="card why-async reveal">
       <div class="card-head"><h3>비동기 처리(202 Accepted) 설계 의도</h3></div>
       <div class="card-pad why-rows">
-        <div class="why-row"><span class="wk bad">기존 동기 방식의 한계</span><span>· 확정 API가 PG 응답을 동기로 대기하는 구조 — 사용자는 수 초간 로딩 화면에 갇힘<br>· 이 대기가 곧 구매 이탈로 직결<br>· PG 장애 시 결제 서비스 전체 가용성이 연쇄 저하</span></div>
+        <div class="why-row"><span class="wk bad">기존 동기 방식의 한계</span><span>· 확정 API가 PG 응답을 동기로 대기하는 구조<br>· 이 대기가 길어지면 구매 이탈로 직결<br>· PG 장애 시 서비스 전체 가용성 저하로 번짐</span></div>
         <div class="why-row"><span class="wk good">비동기 아키텍처 전환</span><span>· 요청 접수 즉시 202 Accepted 반환, 실제 승인은 백그라운드 비동기 처리<br>· 클라이언트는 주문 상태를 폴링으로 확인<br>· PG 응답 지연·장애가 사용자 경험(응답성)에 직접 영향 없음</span></div>
         <div class="why-row"><span class="wk">성능 개선 지표</span><span>· 동일 로직을 동기·비동기로 구현해 k6 부하 테스트 비교<br>· 외부 PG 지연 환경에서 비동기 TPS 약 47.5% 우수<br>· 사용자 체감 응답 시간 1,150ms → 150ms 단축<br>· 순간 부하 집중에도 유실 없는 요청 처리 입증<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 정리</span></div>
         <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
@@ -281,7 +281,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="scenario">
     <div class="sec-head reveal">
       <h2>실패와 복구 시나리오</h2>
-      <p>실패가 어디서 갈라져 어떤 경로로 복구되는지 8가지 시나리오로 정리했다.</p>
+      <p>예외 상황이 어떤 경로로 복구되는지 8가지 시나리오로 정리했다.</p>
     </div>
     <div class="reveal">
       <div class="scn-picker" id="scnPicker"></div>
@@ -325,7 +325,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="states">
     <div class="sec-head reveal">
       <h2>상태 머신 — 결제와 PG</h2>
-      <p>내부 결제(Payment)와 외부 통신(PG)의 생명주기를 분리했다.<br>독립적인 상태 머신을 두어, 외부 시스템의 장애나 지연이 내부 결제 상태로 전파되는 것을 차단한다.<br>같은 격리라도 PG는 거기서 종결하지만, 결제는 관리자 확인까지 종결을 미룬다 — 종결의 의미가 서비스마다 달라 상태 머신을 하나로 합치지 않았다.</p>
+      <p>내부 결제(Payment)와 외부 통신(PG)의 생명주기를 분리했다.</p>
     </div>
     <div class="svc-switch reveal">
       <button class="svc-btn" id="smTabPay" type="button" aria-pressed="true"><span class="sd" style="background:var(--svc-payment)"></span><span class="sm2">결제 · PaymentEventStatus</span></button>
@@ -369,7 +369,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="pgretry">
     <div class="sec-head reveal">
       <h2>PG 명령 처리와 재시도</h2>
-      <p>결제 명령을 받아 PG사를 호출하고, 실패 시 재시도하며, 한도 초과 시 격리하는 전체 절차다.<br>지연 큐나 별도 스케줄러 없이 오직 Kafka 재발행만으로 재시도를 구현한 것이 이 설계의 특징이다.<br>PG 재시도는 2→6→18→54초로 간격을 늘리는 지수 백오프(최대 4회), 결제 측 Kafka 컨슈머 재시도는 1초 고정 5회 — 기다리는 장애가 달라 백오프 방식을 나눴다.</p>
+      <p>결제 명령을 받아 PG사를 호출하고, 실패 시 재시도하며, 한도 초과 시 격리하는 전체 절차다.<br>지연 큐나 별도 스케줄러 없이 오직 Kafka 재발행만으로 재시도를 구현한 것이 이 설계의 특징이다.<br>PG 재시도는 2→6→18→54초로 간격을 늘리는 지수 백오프(최대 4회)를 적용했다.</p>
     </div>
     <div class="card reveal">
       <div class="card-head"><h3>명령 처리 파이프라인</h3><span class="term-tag">정상 흐름과 장애 복구 경로 통합</span></div>
@@ -404,7 +404,7 @@ import '../../styles/payment-portfolio.css';
           <div class="card card-pad">
             <div style="text-align:center;margin-bottom:10px"><span class="term-tag" id="hexHint">레이어를 클릭</span></div>
             <div class="hexlayers" id="hexlayers"></div>
-            <div class="depnote">의존 방향 — <b>바깥에서 안으로</b><br>presentation → port.in · infrastructure → port.out<br>application → domain (프레임워크 0)</div>
+            <div class="depnote">의존 방향 — <b>바깥에서 안으로</b><br>presentation → port.in · infrastructure → port.out<br>application → domain</div>
           </div>
         </div>
         <div class="layer-cards" id="layerCards"></div>
@@ -447,7 +447,7 @@ import '../../styles/payment-portfolio.css';
         <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 대부분의 벤더 5xx·타임아웃은 수 초 내 회복<br>· 지수 백오프 4회 시도로 일시 장애 극복<br>· 초과 시 장기 장애로 간주해 중복 승인 위험을 차단하려 즉시 격리</span></div>
         <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">· 메시지 재전송은 컨슈머 재시작·파티션 리밸런싱 직후 단시간에 집중<br>· 1시간 TTL로 위험 구간을 충분히 커버하면서 Redis 메모리도 안정적 통제</span></div>
         <div class="const"><span class="cv">P8D</span><span class="ck">재고·product 멱등 TTL</span><span class="cs">691200s = 7d + 1d</span><span class="cw">· Kafka 기본 보관 주기 동안(7일) 재전송 위험 존재<br>· 중복 방지 TTL을 하루 더 긴 8일로 설정해 이중 차감·정합성 훼손 원천 차단</span></div>
-        <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">· 단일 파티션에서 재시도가 길어지면 후속 결제까지 밀리는 헤드 오브 라인 블로킹(HOLB) 위험<br>· 1초 간격 5회 시도 후 실패 시 즉시 DLQ 라우팅으로 파이프라인 병목 해소</span></div>
+        <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">· 재시도가 길어지면 후속 결제까지 밀리는 위험 존재<br>· 1초 간격 5회 시도 후 실패 시 즉시 DLQ 라우팅으로 파이프라인 병목 해소</span></div>
         <div class="const"><span class="cv">10d</span><span class="ck">DLQ 보관 기간</span><span class="cs">864000000ms &gt; 재주입 가능 기간 8d</span><span class="cw">· DLQ 메시지는 최대 8일(멱등 TTL) 내 재주입으로 복구 가능<br>· 그보다 넉넉한 10일 보관으로 복구 시기를 놓친 영구 유실 사고 방지</span></div>
       </div>
     </div>
@@ -464,9 +464,9 @@ import '../../styles/payment-portfolio.css';
       <div class="wf-card"><div class="wf-head"><span class="wn">01</span><span class="we">discuss</span></div><div class="wt">설계</div><div class="wd">· 해결할 문제와 요구사항 범위 정의 후 아키텍처 설계 문서 작성<br>· 결제 도메인 특유의 정합성·리스크 관점 리뷰 통과 필수</div></div>
       <div class="wf-card"><div class="wf-head"><span class="wn">02</span><span class="we">plan</span></div><div class="wt">계획</div><div class="wd">· 구현 과정을 세분화된 TDD 태스크 단위로 분할<br>· 각 태스크는 '실패 테스트 작성 ➡️ 프로덕션 코드 구현' 순서 준수</div></div>
       <div class="wf-card"><div class="wf-head"><span class="wn">03</span><span class="we">execute</span></div><div class="wt">구현</div><div class="wd">· 정의된 태스크 단위로 실제 코드 작성<br>· 태스크 완료마다 전체 테스트 스위트 구동으로 기존 기능 회귀 방지</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">04</span><span class="we">ship</span></div><div class="wt">마무리</div><div class="wd">· 코드 리뷰 피드백 반영 · 기술 문서(Wiki) 동기화 · 산출물 아카이빙<br>· 최종 Pull Request 생성 후 머지 준비</div></div>
+      <div class="wf-card"><div class="wf-head"><span class="wn">04</span><span class="we">ship</span></div><div class="wt">마무리</div><div class="wd">· 코드 리뷰 피드백 반영 후 변경 설명 페이지 자동 생성 — 머지 전 최종 확인<br>· 기술 문서(Wiki) 동기화 · 산출물 아카이빙 · 최종 Pull Request 생성</div></div>
     </div>
-    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b><br>· 생성자가 자신의 결과물을 스스로 판정하지 않는 구조<br>· 구현 에이전트와 리뷰 에이전트의 역할 분리<br>· 각 단계 전환 지점마다 사용자의 최종 확인</p>
+    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b><br>· 생성자가 자신의 결과물을 스스로 판정하지 않는 구조<br>· 구현 에이전트와 리뷰 에이전트의 역할 분리<br>· 각 단계 전환 지점마다 사용자의 최종 확인<br>· 모든 판정·구현 루프에 반복 상한과 종료 조건 내장</p>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/ai-workflow" target="_blank" rel="noopener">상세 문서 보기 · 서브에이전트 기반 워크플로우 ↗</a></div>
   </section>
 
@@ -484,8 +484,8 @@ import '../../styles/payment-portfolio.css';
         </table>
       </div>
     </div>
-    <div class="meas-note reveal"><b>알람 검증</b><br>· 1차 — promtool에 합성 시계열 25케이스 주입, 울릴 상황과 침묵할 상황(오탐 방지)을 회귀 테스트로 고정<br>· 2차 — Toxiproxy로 네트워크 절단·지연 + 컨테이너 강제 정지, 라이브 스택에서 실제 발화 확인</div>
-    <div class="meas-note reveal"><b>운영 관점</b><br>· 장애 인지의 출발점을 고객 문의·수동 로그가 아닌 알람으로 전환<br>· 격리된 결제는 관리자 화면에서 사유 확인 후 버튼 한 번으로 안전 종결<br>· 장애 지속 시간과 건별 복구 비용을 줄이는 운영 장치 설계</div>
+    <div class="meas-note reveal"><b>알람 검증 테스트</b><br>· 1차 — 울릴 상황과 침묵할 상황(오탐 방지)을 회귀 테스트로 고정<br>· 2차 — 네트워크 절단·지연 + 컨테이너 강제 정지, 라이브 스택에서 실제 발화 확인</div>
+    <div class="meas-note reveal"><b>운영 관점</b><br>· 장애 인지의 출발점을 고객 문의·수동 로그가 아닌 알람으로 전환<br>· 장애 지속 시간과 건별 복구 비용을 줄이는 운영 장치 설계</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/metrics" target="_blank" rel="noopener">상세 문서 보기 · 결제 지표 모니터링 ↗</a></div>
   </section>
 
@@ -493,7 +493,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="tracing">
     <div class="sec-head reveal">
       <h2>분산 트레이싱 — 추적이 단절되는 3가지 구간</h2>
-      <p>모든 로그와 추적 정보는 4개의 마이크로서비스 전반에 걸쳐 단일 traceId로 바인딩된다.<br>추적 문맥(Trace Context)이 단절될 수 있는 세 가지 구간과 그 복구 기법을 기술한다.</p>
+      <p>모든 로그와 추적 정보는 4개의 마이크로서비스 전반에 걸쳐 단일 traceId로 바인딩된다.<br>추적 문맥(Trace Context)이 단절될 수 있는 구간에서도 끊김 없는 추적을 보장하기 위해 3가지 설계 장치를 도입했다.</p>
     </div>
     <div class="card reveal" style="margin-bottom:18px">
       <div class="card-head"><h3>traceId 하나, 이어붙임 세 번</h3></div>
@@ -529,7 +529,7 @@ import '../../styles/payment-portfolio.css';
         </ul>
       </div>
     </div>
-    <div class="meas-note reveal"><b>검증</b>: 결제 한 건을 흘려보낸 뒤 4개 서비스 로그에서 같은 traceId가 모두 발견되는지 확인하는 스크립트로 이 연속성을 점검한다.</div>
+    <div class="meas-note reveal"><b>검증</b>: 결제 한 건을 흘려보낸 뒤 4개 서비스 로그에서 같은 traceId가 모두 발견되는지 확인하는 스크립트로 연속성 점검</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/trace-propagation" target="_blank" rel="noopener">상세 문서 보기 · 트레이싱 컨텍스트 전파 ↗</a></div>
   </section>
 

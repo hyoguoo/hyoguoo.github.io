@@ -38,7 +38,7 @@ export const SCENARIOS = [
       {edge:"pg>payment",kind:"normal",label:"events.confirmed",state:"IN_PROGRESS → DONE"},
       {edge:"payment>product",kind:"normal",label:"stock-committed · 재고 확정 (결정적 키)"}
     ]},
-    {name:"PG 5xx — 재시도로 복구",outcome:{status:"DONE",color:"done",props:["재시도로 복구 (4회 미만)","3중 중복 방지"]},impact:"\n· 재시도가 없다면 가장 빈번한 장애인 네트워크 순단마다 유입 결제가 그대로 실패\n· 짧은 순단이 매출 손실로 이어지는 경로 차단",hops:[
+    {name:"PG 5xx — 재시도로 복구",outcome:{status:"DONE",color:"done",props:["재시도로 복구 (4회 미만)","3중 중복 방지"]},impact:"\n· 재시도가 없다면 빈번하게 발생할 수 있는 네트워크 장애로 결제가 그대로 실패\n· 일시적 장애가 매출 손실로 이어지는 경로 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm"},
       {edge:"payment>pg",kind:"normal",label:"commands.confirm 발행"},
       {edge:"pg>vendor",kind:"normal",label:"승인 호출"},
@@ -82,7 +82,7 @@ export const SCENARIOS = [
     ]},
     {name:"재고 동시 결제 — 원자 차감으로 초과 판매 차단",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","원자 차감 직렬화"]},impact:"\n· 동시 요청이 같은 재고를 겹쳐 차감하면 재고보다 많이 팔리는 초과 판매 발생\n· Lua 원자 차감이 경합을 직렬화해 밀린 요청은 그 자리에서 실패",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 동시 다건 진입"},
-      {edge:"payment>redis",kind:"fail",label:"Lua 원자 차감 REJECTED (경합 밀림)",state:"READY → FAILED",why:{tag:"왜 원자 차감",text:"재고 확인과 차감을 Lua 스크립트 하나로 묶어 원자적으로 실행해 동시 요청을 직렬화한다. 남은 재고를 못 잡은 요청은 그 자리에서 실패한다 — 초과 판매를 원천 차단한다."}}
+      {edge:"payment>redis",kind:"fail",label:"Lua 원자 차감 REJECTED",state:"READY → FAILED",why:{tag:"왜 원자 차감",text:"재고 확인과 차감을 Lua 스크립트 하나로 묶어 원자적으로 실행해 동시 요청을 직렬화한다. 남은 재고를 못 잡은 요청은 그 자리에서 실패한다 — 초과 판매를 원천 차단한다."}}
     ]},
     {name:"재고 캐시 장애 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["보수적 격리","409 반환"]},impact:"\n· 차감 여부를 모른 채 진행하면 초과 판매 혹은 유령 재고 발생\n· 보수적 격리는 어느 쪽도 발생시키지 않음",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},

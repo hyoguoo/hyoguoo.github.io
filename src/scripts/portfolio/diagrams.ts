@@ -136,7 +136,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DI
       var t=sv("text",{x:n.x+n.w/2,y:n.y+19,"text-anchor":"middle",class:"pf-t"});t.textContent=n.t;svg.appendChild(t);
       var s=sv("text",{x:n.x+n.w/2,y:n.y+34,"text-anchor":"middle",class:"pf-s"});s.textContent=n.s;svg.appendChild(s);
     });
-    var dn=sv("text",{x:375,y:122,class:"sw-lab self"});dn.textContent="이미 본 메시지면 여기서 버림";svg.appendChild(dn);
+    var dn=sv("text",{x:375,y:122,class:"sw-lab self"});dn.textContent="이미 처리한 메시지면 여기서 종료";svg.appendChild(dn);
     mount.appendChild(svg);
   })();
 
@@ -173,7 +173,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DI
   PAYMENT.forEach(function(s,i){
     var card=document.createElement("details");card.className="pstage";card.id="ps-"+i;
     var h='<summary class="ps-top"><span class="ps-num">'+s.no+'</span><span class="ps-title">'+esc(s.title)+'</span><span class="ps-actor">'+esc(s.actor)+'</span><span class="ps-more" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></summary>';
-    h+='<p class="ps-sub">'+esc(s.purpose)+'<span class="ps-inv">불변식 — '+esc(s.invariant)+'</span></p>';
+    h+='<p class="ps-sub">'+esc(s.purpose)+'<span class="ps-inv">핵심 — '+esc(s.invariant)+'</span></p>';
     h+='<div class="sub-label">진행</div><ol class="steps">';
     s.steps.forEach(function(st){h+='<li><span>'+esc(st.t)+(st.c&&st.c.length?'<span class="codes">'+chips(st.c)+'</span>':'')+'</span></li>';});
     h+='</ol>';

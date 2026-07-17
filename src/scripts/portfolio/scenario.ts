@@ -34,7 +34,7 @@ import { SCN_NODES, SCN_EDGES, SCENARIOS, SCN_WHEN, SCN_OBS } from '../../data/p
     var scnSpeedBtn=document.getElementById("scnSpeed");
     if(scnSpeedBtn)scnSpeedBtn.addEventListener("click",function(){speed=speed===1?2:1;scnSpeedBtn.textContent=speed+"\u00d7";});
 
-    var GRP_LB={done:"성공으로 끝남",failed:"실패로 종결",quar:"격리로 멈춤",expired:"만료로 종결"};
+    var GRP_LB={done:"성공",failed:"실패",quar:"격리로 멈춤",expired:"만료"};
     var curGrpKind=null,grpBody=null;
     SCENARIOS.forEach(function(sc,i){
       if(sc.outcome.color!==curGrpKind){curGrpKind=sc.outcome.color;

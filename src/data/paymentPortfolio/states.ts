@@ -6,7 +6,7 @@ export const STATES = {
     IN_PROGRESS:{color:"inprog",terminal:false,meaning:"confirm TX 커밋, paymentKey 기록",entry:"executePayment",polling:"PROCESSING",out:[{to:"DONE",label:"APPROVED 수신"},{to:"FAILED",label:"FAILED 수신"},{to:"QUARANTINED",label:"QUARANTINED / AMOUNT_MISMATCH"}]},
     DONE:{color:"done",terminal:true,meaning:"PG 결제 완료 — 승인 시각까지 기록된 상태",entry:"markPaymentAsDone",polling:"DONE",out:[]},
     FAILED:{color:"failed",terminal:true,meaning:"재고 부족 / PG 종결 실패 / 격리 안전 종결",entry:"markPaymentAsFail · failFromQuarantine",polling:"FAILED",out:[]},
-    QUARANTINED:{color:"quar",terminal:false,meaning:"자동 처리가 불가능해 격리된 상태 (수동 확인 필요). 종결이 아니어서 폴링 응답이 PROCESSING에 머문다.",entry:"markPaymentAsQuarantined",polling:"PROCESSING ⚠",out:[{to:"FAILED",label:"관리자 안전 종결",recover:true}]},
+    QUARANTINED:{color:"quar",terminal:false,meaning:"자동 처리가 불가능해 격리된 상태 (수동 확인 필요). 종결이 아니어서 폴링 응답이 PROCESSING에 머문다.",entry:"markPaymentAsQuarantined",polling:"PROCESSING ⚠",out:[{to:"FAILED",label:"관리자 안전 종결"}]},
     EXPIRED:{color:"expired",terminal:true,meaning:"만료 스케줄러가 READY 결제를 종결",entry:"만료 스케줄러",polling:"PROCESSING",out:[]}
   };
 
@@ -20,7 +20,7 @@ export const SEDGES = [
     {from:"IN_PROGRESS",to:"DONE",d:"M452,214 Q612,116 668,112",lx:566,ly:146,label:"APPROVED"},
     {from:"IN_PROGRESS",to:"FAILED",d:"M456,247 Q600,296 668,296",lx:566,ly:288,label:"FAILED 수신"},
     {from:"IN_PROGRESS",to:"QUARANTINED",d:"M405,256 L405,401",lx:414,ly:335,label:"불일치 / 격리",anchor:"start"},
-    {from:"QUARANTINED",to:"FAILED",d:"M468,420 Q648,394 704,320",lx:604,ly:392,label:"관리자 안전 종결",recover:true}
+    {from:"QUARANTINED",to:"FAILED",d:"M468,420 Q648,394 704,320",lx:604,ly:392,label:"관리자 안전 종결"}
   ];
 
 export const PG_STATES = {

@@ -17,7 +17,7 @@ export const ALERTS = [
     ]},
     {label:"가용성",color:"done",items:[
       {a:"ServiceDown",d:"· 4개 서비스 중 하나가 지표 수집에 무응답\n· 프로세스 비정상 종료(OOM·크래시)로 해당 구간 결제 흐름 전체 정지",m:"지표 수집(scrape) 실패 (up == 0) · 1분 지속"},
-      {a:"DependencyDown",d:"· 서비스가 10초마다 점검하는 핵심 의존성(MySQL·Redis) 연결 단절\n· 재고 차감용 Redis가 끊기면 확정 접수, DB가 끊기면 상태 저장이 그 자리에서 실패",m:"헬스 판정 DOWN 또는 지표 소멸(absent) · 즉시"},
-      {a:"DependencyHealthStale",d:"· MySQL·Redis를 10초마다 점검하는 폴러 스레드 자체가 멈춘 상태(블로킹·데드락)\n· 폴러가 멈추면 지표가 마지막 값(대부분 정상)으로 굳어 실제 장애에도 DependencyDown 미발화\n· 그래서 마지막 점검 완료 시각의 갱신 여부를 따로 감시해 점검 중단 자체를 알람화",m:"마지막 점검 후 60초 초과 또는 지표 소멸(absent) · 즉시"}
+      {a:"DependencyDown",d:"· 서비스가 10초마다 점검하는 핵심 의존성(MySQL·Redis) 연결 단절",m:"헬스 판정 DOWN 또는 지표 소멸(absent) · 즉시"},
+      {a:"DependencyHealthStale",d:"· MySQL·Redis를 10초마다 점검하는 폴러 스레드 자체가 멈춘 상태\n· 폴러가 멈추면 실제 장애에도 DependencyDown 검증 불가\n· 마지막 점검 완료 시각의 갱신 여부를 따로 체크하여 점검 중단 자체를 알람화",m:"마지막 점검 후 60초 초과 또는 지표 소멸(absent) · 즉시"}
     ]}
   ];
