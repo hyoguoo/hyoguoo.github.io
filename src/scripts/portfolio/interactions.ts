@@ -76,6 +76,28 @@ import { reduce } from './util';
     window.addEventListener("afterprint",function(){opened.forEach(function(d){d.open=false;});opened=[];});
   })();
 
+  /* 히어로 진화 타임라인 — 페이즈 hover/focus 툴팁 (스크롤러 밖 공유 요소로 위치, 세로 클리핑 회피) */
+  (function(){
+    var tip=document.getElementById("evoTip"),evo=document.querySelector(".evo");
+    if(!tip||!evo)return;
+    var steps=evo.querySelectorAll(".evo-step[data-tip]");if(!steps.length)return;
+    function show(step){
+      tip.textContent=step.getAttribute("data-tip")||"";tip.hidden=false;
+      var host=tip.offsetParent||document.body,hr=host.getBoundingClientRect(),r=step.getBoundingClientRect();
+      var left=r.left-hr.left,max=host.clientWidth-tip.offsetWidth-4;
+      if(left>max)left=max;if(left<0)left=0;
+      tip.style.left=left+"px";tip.style.top=(r.bottom-hr.top+10)+"px";
+    }
+    function hide(){tip.hidden=true;}
+    steps.forEach(function(s){
+      s.addEventListener("mouseenter",function(){show(s);});
+      s.addEventListener("mouseleave",hide);
+      s.addEventListener("focus",function(){show(s);});
+      s.addEventListener("blur",hide);
+    });
+    window.addEventListener("resize",hide);
+  })();
+
   /* ================= THEME — 시스템 → 라이트 → 다크 순환 ================= */
   var themeBtn=document.getElementById("themeBtn"),themeLabel=document.getElementById("themeLabel"),root=document.documentElement;
   var MODES=["system","light","dark"],mode="system";
