@@ -1,7 +1,7 @@
 // @ts-nocheck
 // payment-platform 포트폴리오 — 아키텍처맵·스윔레인·PG플로우·트레이스·단계카드·상태머신·헥사 (이식된 로직).
 import { reduce, esc, chips, sv, CV } from './util';
-import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DIFF, LAYER_META, FLOW_LANES, FLOW_STEPS } from '../../data/paymentPortfolio';
+import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_META, FLOW_LANES, FLOW_STEPS } from '../../data/paymentPortfolio';
 
   /* ---------- 히어로 로그 스트림 — 무한 루프용 블록 복제 ---------- */
   (function(){
@@ -105,14 +105,15 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DI
     svg.appendChild(defs);
     var NODES=[
       {id:"recv",x:160,y:16,w:200,t:"명령 수신",s:"Kafka consumer",c:"--svc-pg"},
-      {id:"dedupe",x:160,y:96,w:200,t:"중복 차단",s:"Redis 기록 · 1시간",c:"--svc-pg"},
+      {id:"dedupe",x:160,y:96,w:200,t:"멱등 키 기록",s:"SETNX — 없으면 기록·있으면 차단",c:"--svc-pg"},
       {id:"inbox",x:160,y:176,w:200,t:"inbox 저장 · PENDING",s:"주문당 1행 (UNIQUE)",c:"--svc-pg"},
       {id:"claim",x:160,y:256,w:200,t:"워커 선점 · IN_PROGRESS",s:"행 잠금 (SKIP LOCKED)",c:"--svc-pg"},
       {id:"call",x:160,y:336,w:200,t:"PG사 호출",s:"Toss / NicePay",c:"--svc-pg"},
       {id:"record",x:60,y:440,w:200,t:"결과 기록",s:"APPROVED / FAILED · outbox 적재",c:"--st-done"},
       {id:"publish",x:60,y:532,w:200,t:"결과 발행 → payment",s:"events.confirmed",c:"--st-done"},
-      {id:"inc",x:556,y:440,w:200,t:"시도 횟수 +1",s:"DB(pg_inbox.attempt)에 기록",c:"--st-quar"},
-      {id:"exhaust",x:540,y:532,w:232,t:"DLQ 이동 + 격리",s:"commands.confirm.dlq · QUARANTINED",c:"--st-failed"}
+      {id:"inc",x:556,y:440,w:200,t:"시도 횟수 +1",s:"DB(pg_inbox.attempt)에서 관리",c:"--st-quar"},
+      {id:"exhaust",x:540,y:532,w:232,t:"DLQ 이동 + 격리",s:"commands.confirm.dlq · QUARANTINED",c:"--st-failed"},
+      {id:"redisdel",x:456,y:176,w:190,t:"멱등 키 삭제",s:"remove → 재배달 재처리",c:"--st-failed"}
     ];
     var EDGES=[
       {d:"M260,62 L260,96",k:"0"},
@@ -124,7 +125,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DI
       {d:"M160,486 L160,532",k:"ok"},
       {d:"M656,486 L656,530",k:"fail",lab:"4회 도달",lx:668,ly:512,anchor:"start"},
       {d:"M758,452 C866,380 866,66 364,34",k:"retry",dash:1,lab:"4회 미만 — 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:120},
-      {d:"M538,556 L264,556",k:"fail",lab:"격리 결과도 같은 길로 회신",lx:400,ly:548}
+      {d:"M360,199 L456,199",k:"fail",lab:"저장 실패",lx:408,ly:190}
     ];
     EDGES.forEach(function(e){
       var cls="pf-edge"+(e.k!=="0"?" pk-"+e.k:"")+(e.dash?" dash":"");
@@ -210,14 +211,14 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DI
     h+='<dl class="kv"><dt>진입</dt><dd>'+chips(st.entry.split(" · "))+'</dd><dt>종결 여부</dt><dd>'+(st.terminal?"예 (폴링 종료)":"아니오 (폴링 계속)")+'</dd><dt>폴링 응답</dt><dd><code>'+esc(st.polling)+'</code></dd></dl>';
     if(st.out.length){h+='<div class="sub-label">후속 상태 전이</div><div class="transitions">';st.out.forEach(function(o){h+='<div class="trans"><span class="arr">──▶</span><span class="to" style="color:var('+CV[STATES[o.to].color]+')">'+o.to+'</span><span class="tl">'+esc(o.label)+(o.recover?' · 신규':'')+'</span></div>';});h+='</div>';}
     else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 — 더 이상의 상태 전이 없음.</p>';
-    if(id==="QUARANTINED")h+='<div class="mini"><h4>재고 보상 · 격리 안전 종결</h4><div class="row"><span class="k">토큰 조건</span><span>decrement:done 토큰이 있을 때만 재고 보상 — 유령 재고 방지.</span></div><div class="row"><span class="k">조건부 갱신</span><span>현재 상태가 QUARANTINED일 때만 FAILED로 갱신 — order 동조, 지연 회신과의 복구 경합 차단.</span></div><div class="row"><span class="k">DLQ</span><span>events.confirmed.dlq 적체분은 원 토픽 재주입으로 EOS 재처리.</span></div></div>';
+    if(id==="QUARANTINED")h+='<div class="mini"><h4>재고 보상 · 격리 안전 종결</h4><div class="row"><span class="k">키 조건</span><span>decrement:done 키가 있을 때만 재고 보상 — 유령 재고 방지.</span></div><div class="row"><span class="k">조건부 갱신</span><span>현재 상태가 QUARANTINED일 때만 FAILED로 갱신 — order 동조, 지연 회신과의 복구 경합 차단.</span></div><div class="row"><span class="k">DLQ</span><span>events.confirmed.dlq 적체분은 원 토픽 재주입으로 EOS 재처리.</span></div></div>';
     else if(id==="DONE")h+='<div class="mini"><h4>재고 확정 · 승인</h4><div class="row"><span class="k">확정</span><span>stock-committed 발행 — 결정적 키로 product가 멱등 흡수, 차감 1회.</span></div><div class="row"><span class="k">재발행</span><span>RDB DONE 후 브로커 커밋 유실 시 종결 가드가 재발행 복구.</span></div></div>';
     cfDetail.innerHTML=h;}
   cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 의미·진입 메서드·폴링 응답·후속 상태 전이가 표시된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE·FAILED·EXPIRED에 도달하면 폴링 종료.</span></div><div class="row"><span class="k">예외</span><span>QUARANTINED는 종결이 아니라 관리자 개입 대기 — 폴링은 PROCESSING에서 멈춘다.</span></div></div>';
 
   /* ================= §05 MODULES (통합 뷰) ================= */
   (function(){
-    var hexlayers=document.getElementById("hexlayers"),layerCards=document.getElementById("layerCards"),svcDiff=document.getElementById("svcDiff");
+    var hexlayers=document.getElementById("hexlayers"),layerCards=document.getElementById("layerCards");
     if(!hexlayers||!layerCards)return;
     /* 헥사고날 다이어그램 — 공통 골격 1회 */
     var svg=sv("svg",{viewBox:"0 0 340 300",role:"img","aria-label":"헥사고날 레이어"});
@@ -260,14 +261,4 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, SVC_DI
     });
     h+='<p style="margin:4px 2px 0;font-size:11.5px;color:var(--faint)">구성 예시는 payment-service 기준 — 나머지 서비스도 같은 골격이다.</p>';
     layerCards.innerHTML=h;
-    /* 서비스별 차이 */
-    if(svcDiff){
-      var sh="";
-      SVC_DIFF.forEach(function(s){
-        sh+='<div class="svc-row"><span class="sname"><span class="sd2" style="background:var('+CV[s.id]+')"></span>'+esc(s.name)+'</span><div><p class="srole">'+esc(s.role)+'</p><div class="pkgs">';
-        s.chips.forEach(function(c){sh+='<span class="pkg">'+esc(c)+'</span>';});
-        sh+='</div></div></div>';
-      });
-      svcDiff.innerHTML=sh;
-    }
   })();

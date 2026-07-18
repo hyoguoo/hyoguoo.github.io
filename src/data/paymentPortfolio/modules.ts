@@ -9,13 +9,6 @@ export const LAYER_EX = {
     core:["LogFmt","VT executor 설정"]
   };
 
-export const SVC_DIFF = [
-    {id:"payment",name:"payment-service",role:"결제 오케스트레이션 — 재고 선차감, outbox 발행, EOS 결과 확정의 중심",chips:["OutboxImmediateEventHandler","StockCacheRedisAdapter · Lua","JdbcPaymentEventDedupeStore","checkout 멱등 (Redis 기본)","admin 복구 화면"]},
-    {id:"pg",name:"pg-service",role:"PG 벤더 호출 격리 — inbox/outbox 작업 큐와 재시도 로직 포함",chips:["toss · nicepay Strategy","PgInbox/Outbox 채널","self-loop 재시도 워커","TraceparentExtractor"]},
-    {id:"product",name:"product-service",role:"상품·재고의 기준 장부 — stock-committed를 받아 실제 차감을 확정",chips:["stock-committed consumer","JdbcEventDedupeStore · UNIQUE"]},
-    {id:"user",name:"user-service",role:"구매자 정보 조회 — 가장 얇은 서비스",chips:["repository 조회만"]}
-  ];
-
 export const LAYER_META = [
     {k:"domain",name:"domain",dep:"의존 없음",desc:"순수 도메인 — 외부 의존성 없이 핵심 비즈니스 규칙과 상태를 정의한다."},
     {k:"application",name:"application",dep:"→ domain",desc:"use case + 입력/출력 포트 + 보조 서비스. 흐름의 조율을 담당한다."},

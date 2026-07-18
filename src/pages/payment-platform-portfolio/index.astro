@@ -281,7 +281,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="scenario">
     <div class="sec-head reveal">
       <h2>실패와 복구 시나리오</h2>
-      <p>예외 상황이 어떤 경로로 복구되는지 8가지 시나리오로 정리했다.</p>
+      <p>예외 상황이 어떤 경로로 복구되는지 11가지 시나리오로 정리했다.</p>
     </div>
     <div class="reveal">
       <div class="scn-picker" id="scnPicker"></div>
@@ -385,7 +385,7 @@ import '../../styles/payment-portfolio.css';
       <div class="card-head"><h3>설계 의도</h3></div>
       <div class="card-pad why-rows">
         <div class="why-row"><span class="wk">Self-loop 재시도 구조</span><span>· 재시도 전용 인프라 없이 동일한 Kafka 토픽으로 재발행<br>· 정상 흐름과 재시도 흐름을 같은 파이프라인 공유하여 단순하고 견고한 검증</span></div>
-        <div class="why-row"><span class="wk">재시도 횟수 DB 영속화</span><span>· 횟수를 메시지 헤더에만 두면 유실 시 무한 재시도 루프 위험<br>· 시도 횟수를 DB(pg_inbox)에 영속화해 어떤 장애에도 보장된 한도 내 안전한 격리</span></div>
+        <div class="why-row"><span class="wk">재시도 횟수 관리</span><span>· 시도 횟수를 DB(pg_inbox.attempt)에서 주문 단위로 관리<br>· 한도(4회) 소진 시 DLQ로 보내 자동 격리</span></div>
         <div class="why-row"><span class="wk">동시성 경합 차단</span><span>· 재시도와 중복 수신이 동시에 겹치는 상황 발생 가능<br>· 주문당 1행 제약(UNIQUE)과 행 선점 잠금(SKIP LOCKED)으로 동일 결제건의 PG 중복 호출 원천 차단</span></div>
       </div>
     </div>
@@ -408,10 +408,6 @@ import '../../styles/payment-portfolio.css';
           </div>
         </div>
         <div class="layer-cards" id="layerCards"></div>
-      </div>
-      <div class="card svc-diff">
-        <div class="card-head"><h3>서비스별 예시</h3></div>
-        <div class="card-pad" id="svcDiff" style="padding-top:6px;padding-bottom:8px"></div>
       </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/architecture" target="_blank" rel="noopener">상세 문서 보기 · 아키텍처와 헥사고날 레이어 ↗</a></div>
