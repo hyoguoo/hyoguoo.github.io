@@ -12,7 +12,7 @@ export const ALERTS = [
     ]},
     {label:"DLQ",color:"failed",items:[
       {a:"DlqAppCounterRising",d:"· 자동 재시도를 모두 소진해 관리자 복구가 필요한 결제 발생\n· 두 경로에서 발생 — payment의 EOS 커밋 실패 DLQ 발행, pg의 재시도 소진 격리\n· 각 서비스가 처리 시점에 직접 기록하는 메트릭으로 감지",m:"DLQ 도달·격리 신규 발생 1건 이상 (5분 윈도우) · 1분 지속"},
-      {a:"DlqTopicOffsetRising",d:"· 처리 불가 결제를 서비스 메트릭이 아닌 DLQ 토픽에서 감지\n· 새 메시지 적재(오프셋 증가)를 kafka-exporter가 관측 — 서버 크래시로 서비스 메트릭이 유실돼도 포착",m:".dlq 토픽 신규 메시지 1건 이상 (5분 윈도우) · 1분 지속"},
+      {a:"DlqTopicOffsetRising",d:"· 처리 불가 결제를 서비스 메트릭이 아닌 DLQ 토픽에서 감지\n· 브로커의 토픽 오프셋을 직접 읽어 새 메시지 적재를 관측 — 서버 크래시로 서비스 메트릭이 유실돼도 포착",m:".dlq 토픽 신규 메시지 1건 이상 (5분 윈도우) · 1분 지속"},
       {a:"DlqCommandsConsumerLag",d:"· DLQ로 빠진 확정 명령을 받아 격리 처리하는 소비자가 적체\n· 이 큐는 적체 0이 정상 — 남은 1건도 방치된 미해결 결제",m:"DLQ 컨슈머 미소비 적체 1건 이상 · 1분 지속"}
     ]},
     {label:"가용성",color:"done",items:[
