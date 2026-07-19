@@ -4,6 +4,7 @@ export * from './stages';
 export * from './states';
 export * from './modules';
 export * from './trace';
+export * from './benchmark';
 export * from './scenarios';
 export * from './decisions';
 export * from './races';

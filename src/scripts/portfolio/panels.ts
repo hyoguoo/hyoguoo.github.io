@@ -1,7 +1,7 @@
 // @ts-nocheck
 // payment-platform 포트폴리오 — 설계결정·경합·PG상태머신·알람·요약 렌더 + 상태머신 탭 (이식된 로직).
 import { reduce, esc, escBr, chips, sv, CV } from './util';
-import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SOLVES, LIMITS } from '../../data/paymentPortfolio';
+import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SOLVES, LIMITS, BENCH_META, BENCH_BARS } from '../../data/paymentPortfolio';
 
   /* ================= §06 DESIGN DECISIONS ================= */
   (function(){
@@ -29,6 +29,28 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
       var no=(i+1)<10?("0"+(i+1)):(""+(i+1));
       tr.innerHTML='<td class="t-no">'+no+'</td><td class="t-name">'+esc(r.t)+'</td><td>'+esc(r.haz)+'</td><td>'+esc(r.def)+'</td><td><span class="t-mech">'+esc(r.mech)+'</span></td>';
       tb.appendChild(tr);});
+  })();
+
+  /* ================= §02b BENCHMARK (sync vs async 막대) ================= */
+  (function(){
+    var mount=document.getElementById("benchChart");if(!mount)return;
+    var meta=document.getElementById("benchMeta"),cap=document.getElementById("benchCaption");
+    if(meta)meta.textContent=BENCH_META.when;
+    if(cap)cap.textContent=BENCH_META.note;
+    function fmt(v,u){return v.toLocaleString("en-US")+u;}
+    BENCH_BARS.forEach(function(b){
+      var max=Math.max(b.sync,b.async)||1;
+      var sw=Math.max(b.sync/max*100,1.5);
+      var aw=b.async>0?Math.max(b.async/max*100,1.5):0;
+      var row=document.createElement("div");row.className="bench-row";
+      row.innerHTML=
+        '<div class="bench-k"><span class="bk-t">'+esc(b.k)+'</span><span class="bk-s">'+esc(b.sub)+'</span></div>'
+       +'<div class="bench-bars">'
+       +  '<div class="bench-bar sync"><span class="bench-track"><span class="bb-fill" style="width:'+sw.toFixed(1)+'%"></span></span><span class="bb-lb">Sync '+esc(fmt(b.sync,b.unit))+'</span></div>'
+       +  '<div class="bench-bar async"><span class="bench-track"><span class="bb-fill" style="width:'+aw.toFixed(1)+'%"></span></span><span class="bb-lb">Async '+esc(fmt(b.async,b.unit))+'</span></div>'
+       +'</div>'
+       +'<div class="bench-tag">'+esc(b.tag)+'</div>';
+      mount.appendChild(row);});
   })();
 
   /* ================= §04b PG STATE MACHINE ================= */
@@ -103,7 +125,7 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
   })();
 
   /* ================= SCROLL SPY ================= */
-  var secs=["arch","journey","scenario","states","pgretry","modules","decisions","races","workflow","alerting","tracing","summary"].map(function(id){return document.getElementById(id);});
+  var secs=["arch","journey","benchmark","scenario","states","pgretry","modules","decisions","races","workflow","alerting","tracing","summary"].map(function(id){return document.getElementById(id);});
   var navmap={};document.querySelectorAll("#navlinks a").forEach(function(a){navmap[a.getAttribute("href").slice(1)]=a;});
   var spy=new IntersectionObserver(function(ents){ents.forEach(function(e){if(e.isIntersecting){
     document.querySelectorAll("#navlinks a").forEach(function(a){a.classList.remove("active");a.removeAttribute("aria-current");});

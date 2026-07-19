@@ -79,6 +79,7 @@ import '../../styles/payment-portfolio.css';
       <span class="nav-grp">
         <a href="#arch">아키텍처</a>
         <a href="#journey">결제 흐름</a>
+        <a href="#benchmark">부하 테스트</a>
       </span>
       <span class="nav-grp">
         <a href="#scenario">시나리오</a>
@@ -275,6 +276,33 @@ import '../../styles/payment-portfolio.css';
     <div class="sub-label">단계별 세부 프로세스 · 항목 클릭 시 확장</div>
     <div class="stages" id="stages"></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/async-outbox" target="_blank" rel="noopener">상세 문서 보기 · 비동기 Outbox 결제 플로우 ↗</a></div>
+  </section>
+
+  <!-- §02b BENCHMARK -->
+  <section class="blk" id="benchmark">
+    <div class="sec-head reveal">
+      <h2>부하 테스트 — 비동기 선택 근거</h2>
+      <p>외부 PG 응답이 극단적으로 느려지는 상황을 가정하고,<br>동일한 로직을 동기와 비동기로 띄워 시스템 가용성이 얼마나 방어되는지 k6로 비교했다.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-head"><h3>고지연 환경 · Sync vs Async</h3><span class="term-tag" id="benchMeta"></span></div>
+      <div class="card-pad">
+        <div class="bench-cond">
+          <span><b>테스트 환경</b> 외부 PG 통신 구간에서 2~3.5초의 응답 지연이 발생하는 병목 상황</span>
+        </div>
+        <p class="sr-only">화면 낭독기용 요약: 고지연 환경에서 비동기는 처리량이 동기 초당 54.1건 대비 79.8건으로 47.5% 높고, 결제 승인 응답 시간은 6,157ms에서 5.3ms로 즉시 반환하며, 부하 미수용은 1,945건에서 0건으로, 결제 완료까지 걸린 시간(상위 5%)은 9,343ms에서 3,423ms로 줄었다.</p>
+        <div class="bench-chart" id="benchChart"></div>
+        <div class="bench-legend">
+          <span class="lg"><i style="background:var(--muted);opacity:.5"></i>Sync</span>
+          <span class="lg"><i style="background:var(--accent)"></i>Async</span>
+          <span class="lg sep" aria-hidden="true">·</span>
+          <span class="lg">막대 길이 = 값 크기 · 각 지표별 정규화</span>
+        </div>
+        <p class="bench-caption" id="benchCaption"></p>
+      </div>
+    </div>
+    <div class="meas-note reveal"><b>해석</b><br>· 비동기는 E2E(결제 완료까지)를 줄이는 게 아니라, HTTP 스레드를 빨리 비워 처리량·가용성을 높이는 도구<br>· 외부 의존이 느려질 때 시스템 전체가 마비되지 않게 하는 안전장치</div>
+      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">상세 문서 보기 · 벤치마크 보고서 ↗</a></div>
   </section>
 
   <!-- §03 SCENARIO THEATER -->
