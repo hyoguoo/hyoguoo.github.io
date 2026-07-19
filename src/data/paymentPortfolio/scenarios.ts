@@ -43,7 +43,7 @@ export const SCENARIOS = [
       {edge:"payment>pg",kind:"normal",label:"commands.confirm 발행"},
       {edge:"pg>vendor",kind:"normal",label:"승인 호출"},
       {edge:"vendor>pg",kind:"fail",label:"5xx / timeout (PgGatewayRetryableException)"},
-      {edge:"pg~self",kind:"retry",label:"self-loop 재발행 · 간격 늘림 · 횟수 +1",why:{tag:"왜 self-loop",text:"시도 횟수를 DB(pg_inbox.attempt)에 주문 단위로 기록해 한도(4회)까지 관리한다.",dref:4}},
+      {edge:"pg~self",kind:"retry",label:"self-loop 재발행 · 간격 늘림 · 횟수 +1",why:{tag:"설계 의도",text:"시도 횟수를 DB(pg_inbox.attempt)에 주문 단위로 기록해 한도(4회)까지 관리한다.",dref:4}},
       {edge:"pg>vendor",kind:"retry",label:"재호출 (4회 미만)"},
       {edge:"vendor>pg",kind:"recover",label:"APPROVED"},
       {edge:"pg>payment",kind:"recover",label:"events.confirmed",state:"IN_PROGRESS → DONE"},
@@ -53,48 +53,48 @@ export const SCENARIOS = [
       {edge:"pg>payment",kind:"normal",label:"events.confirmed 수신"},
       {edge:"payment~self",kind:"fail",label:"결과 확정 커밋 실패 (EOS abort)"},
       {edge:"payment~self",kind:"retry",label:"재전송 · FixedBackOff 1s×5"},
-      {edge:"payment>dlq",kind:"fail",label:"events.confirmed.dlq (재시도 소진)",why:{tag:"왜 별도 처리",text:"커밋 실패는 일반 처리 오류와 다른 지점에서 발생하여, 기본 설정으로는 DLQ로 이동하지 않는다. 실패 후처리기를 직접 연결해 DLQ 도달을 보장했다."}},
-      {edge:"admin>payment",kind:"recover",label:"reprocess-dlq (관리자 POST)",why:{tag:"왜 관리자 수동",text:"자동 재주입 워커를 두지 않고 관리자가 복구 화면에서 직접 트리거한다. 브로커 회복 여부와 재주입 시점을 사람이 판단해 무분별한 재처리를 막는다."}},
-      {edge:"dlq>payment",kind:"recover",label:"원 토픽 재발행 · EOS 재처리",why:{tag:"왜 원 토픽",text:"별도 자동 컨슈머 대신 검증된 EOS 파이프라인을 그대로 재사용한다. DONE으로 종결된 지 8일이 지난 건은 멱등 기록이 만료돼 중복 반영 위험이 있어 타임스탬프 게이트로 차단하고 수동 대사로 넘긴다.",dref:3}},
+      {edge:"payment>dlq",kind:"fail",label:"events.confirmed.dlq (재시도 소진)",why:{tag:"설계 의도",text:"커밋 실패는 일반 처리 오류와 다른 지점에서 발생하여, 기본 설정으로는 DLQ로 이동하지 않는다. 실패 후처리기를 직접 연결해 DLQ 도달을 보장했다."}},
+      {edge:"admin>payment",kind:"recover",label:"reprocess-dlq (관리자 POST)",why:{tag:"수동 개입 이유",text:"자동 재주입 워커를 두지 않고 관리자가 복구 화면에서 직접 트리거한다. 브로커 회복 여부와 재주입 시점을 사람이 판단해 무분별한 재처리를 막는다."}},
+      {edge:"dlq>payment",kind:"recover",label:"원 토픽 재발행 · EOS 재처리",why:{tag:"설계 의도",text:"별도 자동 컨슈머 대신 검증된 EOS 파이프라인을 그대로 재사용한다. DONE으로 종결된 지 8일이 지난 건은 멱등 기록이 만료돼 중복 반영 위험이 있어 타임스탬프 게이트로 차단하고 수동 대사로 넘긴다.",dref:3}},
       {edge:"payment>product",kind:"recover",label:"stock-committed · 재고 확정"}
     ]},
     {name:"EOS 재전송 — 재고 확정 보상 재발행",outcome:{status:"DONE",color:"done",props:["상태 재전이 차단","재고 확정만 보상 재발행"]},impact:"\n· 재고 확정 이벤트가 유실된 채 종결되면 결제는 완료인데 재고는 미확정으로 잔류\n· 재전송을 신호 삼아 누락 이벤트만 다시 발행해 결제·재고 정합 회복",hops:[
       {edge:"pg>payment",kind:"normal",label:"events.confirmed APPROVED 수신"},
-      {edge:"payment~self",kind:"normal",label:"DB 커밋: IN_PROGRESS → DONE (선행·별도 TX)",state:"→ DONE",why:{tag:"왜 DB 선행",text:"DB 상태 커밋과 Kafka 커밋(오프셋 + stock-committed 발행)은 한 트랜잭션으로 묶을 수 없다. DB를 먼저 별도로 커밋하고, 재고 확정 발행과 오프셋만 EOS로 원자 커밋한다 — 그 사이 크래시하면 DB만 DONE으로 남는다.",dref:5}},
+      {edge:"payment~self",kind:"normal",label:"DB 커밋: IN_PROGRESS → DONE (선행·별도 TX)",state:"→ DONE",why:{tag:"분리 커밋 이유",text:"DB 상태 커밋과 Kafka 커밋(오프셋 + stock-committed 발행)은 한 트랜잭션으로 묶을 수 없다. DB를 먼저 별도로 커밋하고, 재고 확정 발행과 오프셋만 EOS로 원자 커밋한다 — 그 사이 크래시하면 DB만 DONE으로 남는다.",dref:5}},
       {edge:"payment~self",kind:"fail",label:"Kafka EOS 커밋 유실 (오프셋 미커밋 · stock-committed 미발행)"},
       {edge:"payment~self",kind:"retry",label:"events.confirmed 재전송 (오프셋 미커밋)"},
-      {edge:"payment~self",kind:"recover",label:"종결 가드 · 전이 스킵 (이미 DONE)",state:"DONE 유지",why:{tag:"왜 재발행",text:"종결 가드는 상태 재전이만 막는다. DB는 DONE인데 재고 확정 이벤트만 유실된 재전송이면, 상태는 그대로 두고 그 이벤트만 다시 발행한다.",dref:5}},
+      {edge:"payment~self",kind:"recover",label:"종결 가드 · 전이 스킵 (이미 DONE)",state:"DONE 유지",why:{tag:"처리 방식",text:"종결 가드는 상태 재전이만 막는다. DB는 DONE인데 재고 확정 이벤트만 유실된 재전송이면, 상태는 그대로 두고 그 이벤트만 다시 발행한다.",dref:5}},
       {edge:"payment>product",kind:"recover",label:"stock-committed 재발행 · 멱등 흡수"}
     ]},
     {name:"격리 — 관리자 안전 종결",outcome:{status:"FAILED",color:"failed",props:["안전 종결","유령 재고 0","감사 기록"]},impact:"\n· 격리 건을 임의로 성공 처리하면 입금 없는 유령 매출, 맹목 복원하면 유령 재고 발생\n· 실패 종결 단일 경로와 조건부 복원이 두 손실 모두 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입 · 재고 선차감"},
-      {edge:"payment>redis",kind:"normal",label:"선차감 완료 — decrement:done 키 기록",why:{tag:"왜 남기나",text:"선차감이 성공하면 Redis 재고 캐시에 decrement:done:{orderId} 키를 남긴다(TTL 8일). '실제로 차감했다'는 원본 기록이자 선차감 멱등 키다."}},
+      {edge:"payment>redis",kind:"normal",label:"선차감 완료 — decrement:done 키 기록",why:{tag:"핵심 이유",text:"선차감이 성공하면 Redis 재고 캐시에 decrement:done:{orderId} 키를 남긴다(TTL 8일). '실제로 차감했다'는 원본 기록이자 선차감 멱등 키다."}},
       {edge:"payment>pg",kind:"normal",label:"commands.confirm 발행 (outbox relay)"},
       {edge:"pg>vendor",kind:"normal",label:"PG 승인 호출"},
       {edge:"pg>payment",kind:"warn",label:"events.confirmed QUARANTINED 수신 (PG 재시도 소진 → 자동 격리)",state:"→ QUARANTINED"},
-      {edge:"payment~self",kind:"warn",label:"폴링 PROCESSING에 멈춤 (종결 상태가 아님)",why:{tag:"왜 대기하는가",text:"QUARANTINED는 종결이 아니다 — 자동 처리가 불가능한 상태라 자동으로 끝내지 않고 관리자 확인을 기다린다."}},
+      {edge:"payment~self",kind:"warn",label:"폴링 PROCESSING에 멈춤 (종결 상태가 아님)",why:{tag:"대기 이유",text:"QUARANTINED는 종결이 아니다 — 자동 처리가 불가능한 상태라 자동으로 끝내지 않고 관리자 확인을 기다린다."}},
       {edge:"admin>payment",kind:"recover",label:"resolve-quarantine (관리자 POST)"},
-      {edge:"payment>redis",kind:"recover",label:"차감 표식 있음 → 재고 복원",why:{tag:"왜 조건부",text:"복원 Lua가 decrement:done:{orderId} 존재를 EXISTS로 먼저 확인한다. 이 건은 선차감이 됐으니 복원되지만, 캐시 장애로 선차감 전에 격리된 건은 표식이 없어 보상을 건너뛴다 — 차감한 적 없는 건까지 복원해 유령 재고가 생기는 걸 막는다.",dref:2}},
-      {edge:"payment~self",kind:"recover",label:"조건부 갱신: status=QUARANTINED → FAILED (order 동조)",state:"QUARANTINED → FAILED",why:{tag:"왜 FAILED만",text:"격리 진입은 벤더 승인 전이라 실제 결제가 발생하지 않았다. DONE으로 복구하면 유령 매출 — 안전 실패 종결만 지원한다.",dref:1}}
+      {edge:"payment>redis",kind:"recover",label:"차감 표식 있음 → 재고 복원",why:{tag:"설계 의도",text:"복원 Lua가 decrement:done:{orderId} 존재를 EXISTS로 먼저 확인한다. 이 건은 선차감이 됐으니 복원되지만, 캐시 장애로 선차감 전에 격리된 건은 표식이 없어 보상을 건너뛴다 — 차감한 적 없는 건까지 복원해 유령 재고가 생기는 걸 막는다.",dref:2}},
+      {edge:"payment~self",kind:"recover",label:"조건부 갱신: status=QUARANTINED → FAILED (order 동조)",state:"QUARANTINED → FAILED",why:{tag:"종결 정책",text:"격리 진입은 벤더 승인 전이라 실제 결제가 발생하지 않았다. DONE으로 복구하면 유령 매출 — 안전 실패 종결만 지원한다.",dref:1}}
     ]},
     {name:"재고 부족 — 즉시 실패",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","409 즉시 반환"]},impact:"\n· 재고 없는 결제를 승인하면 배송 불가 주문이 생겨 보상·고객 응대 비용 발생\n· 확정 전에 거절해 그런 주문 자체를 원천 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
-      {edge:"payment>redis",kind:"fail",label:"Lua 원자 차감 REJECTED (재고 부족)",state:"READY → FAILED",why:{tag:"왜 선차감",text:"재고를 선점한 후 확정을 진행한다. 재고를 못 잡으면 그 자리에서 실패 처리한다 — 초과 판매 가능성을 원천 차단한다."}}
+      {edge:"payment>redis",kind:"fail",label:"Lua 원자 차감 REJECTED (재고 부족)",state:"READY → FAILED",why:{tag:"선차감 이유",text:"재고를 선점한 후 확정을 진행한다. 재고를 못 잡으면 그 자리에서 실패 처리한다 — 초과 판매 가능성을 원천 차단한다."}}
     ]},
     {name:"재고 차감 후 저장 실패 — 자동 복구 배제",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","미복구 수량 지표화"]},impact:"\n· 저장 실패 후 자동 롤백을 시도하다 크래시하면 차감만 남고 복구 기록은 유실\n· 자동 복구를 포기하고 미복구 수량을 지표로 노출 — 초과 판매 없이 수동 회수",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
       {edge:"payment>redis",kind:"normal",label:"Lua 원자 차감 성공"},
-      {edge:"payment~self",kind:"fail",label:"DB 확정 저장 실패",why:{tag:"왜 자동 복구 안 함",text:"자동 롤백 도중 크래시하면 차감 기록만 남고 복구 내역은 유실돼 추적 불가한 불일치가 된다. 그래서 차감을 되돌리지 않고 그대로 둔다.",dref:0}},
-      {edge:"payment~self",kind:"warn",label:"미복구 카운터 +1 · 차감 유지 (보상 없음)",why:{tag:"왜 가시화",text:"보상 없이 남은 차감을 미복구 카운터로 올려 Prometheus에 노출한다. 자동으로 되돌리지 않은 손실을 사람이 볼 수 있게 만드는 신호다."}},
-      {edge:"admin>payment",kind:"recover",label:"운영자 지표 확인 → 수동 회수",why:{tag:"왜 수동",text:"미복구 카운터가 오르면 운영자가 원인을 확인하고 재고를 직접 회수한다. 자동 복구를 두지 않은 만큼 마지막 정합은 사람이 맞춘다."}}
+      {edge:"payment~self",kind:"fail",label:"DB 확정 저장 실패",why:{tag:"설계 결정",text:"자동 롤백 도중 크래시하면 차감 기록만 남고 복구 내역은 유실돼 추적 불가한 불일치가 된다. 그래서 차감을 되돌리지 않고 그대로 둔다.",dref:0}},
+      {edge:"payment~self",kind:"warn",label:"미복구 카운터 +1 · 차감 유지 (보상 없음)",why:{tag:"지표 노출 이유",text:"보상 없이 남은 차감을 미복구 카운터로 올려 Prometheus에 노출한다. 자동으로 되돌리지 않은 손실을 사람이 볼 수 있게 만드는 신호다."}},
+      {edge:"admin>payment",kind:"recover",label:"운영자 지표 확인 → 수동 회수",why:{tag:"수동 개입 결정",text:"미복구 카운터가 오르면 운영자가 원인을 확인하고 재고를 직접 회수한다. 자동 복구를 두지 않은 만큼 마지막 정합은 사람이 맞춘다."}}
     ]},
     {name:"재고 캐시 장애 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["보수적 격리","409 반환"]},impact:"\n· 차감 여부를 모른 채 진행하면 초과 판매 혹은 유령 재고 발생\n· 보수적 격리는 어느 쪽도 발생시키지 않음",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
-      {edge:"payment>redis",kind:"warn",label:"CACHE_DOWN — 재고 판단 불가",state:"READY → QUARANTINED",why:{tag:"왜 격리",text:"캐시 장애로 인해 차감 여부를 확정할 수 없다. 임의 진행 대신 격리해 수동 판단을 기다린다 — 보수적 방향."}}
+      {edge:"payment>redis",kind:"warn",label:"CACHE_DOWN — 재고 판단 불가",state:"READY → QUARANTINED",why:{tag:"격리 이유",text:"캐시 장애로 인해 차감 여부를 확정할 수 없다. 임의 진행 대신 격리해 수동 판단을 기다린다 — 보수적 방향."}}
     ]},
     {name:"금액 불일치 — 격리",outcome:{status:"QUARANTINED",color:"quar",props:["양방향 방어","위변조 차단"]},impact:"\n· 승인 금액이 다른 결제 발생 시 차액만큼 손실 발생\n· 주문 금액과의 재검증으로 손실 차단",hops:[
       {edge:"pg>payment",kind:"normal",label:"events.confirmed APPROVED 수신"},
-      {edge:"payment~self",kind:"warn",label:"금액 재검증 불일치",state:"→ QUARANTINED",why:{tag:"왜 격리",text:"PG가 승인 금액을 반드시 채워 보내고, payment가 주문 금액과 다시 대조한다. 어긋나면 즉시 격리 처리한다 — 위변조나 계약 위반의 신호이기 때문이다."}}
+      {edge:"payment~self",kind:"warn",label:"금액 재검증 불일치",state:"→ QUARANTINED",why:{tag:"격리 이유",text:"PG가 승인 금액을 반드시 채워 보내고, payment가 주문 금액과 다시 대조한다. 어긋나면 즉시 격리 처리한다 — 위변조나 계약 위반의 신호이기 때문이다."}}
     ]},
     {name:"PG 한도 소진 — 자동 격리",outcome:{status:"QUARANTINED",color:"quar",props:["무한 재시도 차단","금전 손실 0"]},impact:"\n· 한도 없이 재시도하면 벤더 호출 비용·중복 승인 위험이 장애 시간에 비례해 누적\n· 한도에서 멈춰 격리하면 실패 결제가 유실 없이 추적 가능한 상태로 남아 관리자 판단 대기",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm"},
@@ -102,12 +102,12 @@ export const SCENARIOS = [
       {edge:"pg>vendor",kind:"normal",label:"승인 호출"},
       {edge:"vendor>pg",kind:"fail",label:"5xx / timeout"},
       {edge:"pg~self",kind:"retry",label:"self-loop 재시도 · 횟수 +1"},
-      {edge:"pg>dlq",kind:"fail",label:"attempt ≥ 4 소진 → commands.confirm.dlq",why:{tag:"왜 DLQ",text:"무한 재시도 대신 한도(4)에서 멈춘다. DLQ로 보내 안전하게 자동 격리 — 보수적인 접근이다(금전 손실 0)."}},
+      {edge:"pg>dlq",kind:"fail",label:"attempt ≥ 4 소진 → commands.confirm.dlq",why:{tag:"DLQ 활용 이유",text:"무한 재시도 대신 한도(4)에서 멈춘다. DLQ로 보내 안전하게 자동 격리 — 보수적인 접근이다(금전 손실 0)."}},
       {edge:"pg>payment",kind:"warn",label:"PgDlqService → events.confirmed QUARANTINED",state:"→ QUARANTINED"}
     ]},
     {name:"만료 — READY 방치 종결",outcome:{status:"EXPIRED",color:"expired",props:["미확정 정리","폴링 종결"]},impact:"\n· 확정 없이 READY로 남은 결제는 폴링 응답이 종결되지 못한 채 누적\n· 만료 스케줄러가 임계 시간 뒤 EXPIRED로 종결해 정리",hops:[
       {edge:"browser>payment",kind:"normal",label:"checkout · READY 생성",state:"→ READY"},
-      {edge:"payment~self",kind:"warn",label:"만료 스케줄러 종결 (임계 시간 초과)",state:"READY → EXPIRED",why:{tag:"왜 만료",text:"확정 없이 방치된 READY 결제를 만료 스케줄러가 임계 시간(기본 30분) 뒤 EXPIRED로 종결한다 — 미확정 결제가 종결되지 못한 채 무한정 남지 않게 한다."}}
+      {edge:"payment~self",kind:"warn",label:"만료 스케줄러 종결 (임계 시간 초과)",state:"READY → EXPIRED",why:{tag:"만료 정책",text:"확정 없이 방치된 READY 결제를 만료 스케줄러가 임계 시간(기본 30분) 뒤 EXPIRED로 종결한다 — 미확정 결제가 종결되지 못한 채 무한정 남지 않게 한다."}}
     ]}
   ];
 
