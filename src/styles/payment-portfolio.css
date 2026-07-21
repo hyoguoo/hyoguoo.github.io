@@ -517,6 +517,9 @@
   .meas-note { margin-top: 16px; font-size: 12.5px; color: var(--muted); padding: 13px 16px; background: var(--surface-2); border-radius: 12px; line-height: 1.6; }
   .meas-note b { color: var(--ink-soft); font-size: 12px; font-weight: 700; }
   .meas-note code { font-size: 11px; }
+  .meas-note.res { color: var(--ink); background: color-mix(in srgb, var(--accent) 14%, var(--surface-2)); font-size: 13.5px; }
+  .meas-note.res b { color: var(--accent-text); }
+  .meas-note.res strong { color: var(--ink); font-weight: 650; }
 
   /* ================= §02b BENCHMARK ================= */
   .bench-cond { display: flex; align-items: flex-start; gap: 10px; padding: 14px 18px; background: color-mix(in srgb, var(--accent) 8%, transparent); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; }

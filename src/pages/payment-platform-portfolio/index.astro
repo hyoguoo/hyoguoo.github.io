@@ -243,7 +243,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="arch">
     <div class="sec-head reveal">
       <h2>시스템 아키텍처</h2>
-      <p>서비스 간 직접적인 코드 의존 없이 모든 통신을 HTTP와 Kafka로 통신한다.</p>
+      <p>한 서비스의 변경이 전체 재배포로 번지지 않도록, 서비스 간 직접적인 코드 의존을 없애고 모든 통신을 HTTP와 Kafka로만 제한했다.</p>
     </div>
     <div class="arch-layout reveal">
       <div class="card">
@@ -409,7 +409,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="states">
     <div class="sec-head reveal">
       <h2>상태 머신 · 결제와 PG</h2>
-      <p>내부 결제(Payment)와 외부 통신(PG)의 생명주기를 분리했다.</p>
+      <p>내부 결제(Payment)와 외부 PG 통신은 실패하는 이유도, 회복하는 방식도 다르다.<br>두 상태를 하나로 통일하면 무엇으로 처리할지 가려낼 수 없어, 생명주기를 분리했다.</p>
     </div>
     <div class="svc-switch reveal">
       <button class="svc-btn" id="smTabPay" type="button" aria-pressed="true"><span class="sd" style="background:var(--svc-payment)"></span><span class="sm2">결제 · PaymentEventStatus</span></button>
@@ -446,6 +446,7 @@ import '../../styles/payment-portfolio.css';
       </div>
       <div class="card card-pad" id="pgCfDetail" aria-live="polite"></div>
     </div>
+    <div class="meas-note res reveal"><b>결과</b> · 서버 장애·워커 타임아웃 동시 처리·재시도 한도 소진 같은 엣지케이스에서 <strong>PG와 DB의 상태 정합성을 자동으로 복구한다.</strong></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/state-management" target="_blank" rel="noopener">상세 문서 보기 · 상태 머신과 복구 체계 ↗</a></div>
   </section>
 
@@ -480,7 +481,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="modules">
     <div class="sec-head reveal">
       <h2>서비스 내부 구조</h2>
-      <p>4개 서비스 모두 동일한 헥사고날(Hexagonal) 아키텍처 골격을 공유한다.<br>순수 도메인을 중심에 두고 어댑터가 바깥에서 포트를 구현하며, 의존성은 항상 안쪽을 향한다.</p>
+      <p>PG 명세나 DB 같은 외부의 변경이 핵심 결제 로직까지 번지지 않도록, <br>4개 서비스 모두 동일한 헥사고날(Hexagonal) 골격으로 도메인을 바깥과 격리했다.<br>순수 도메인을 중심에 두고 어댑터가 바깥에서 포트를 구현하며, 의존성은 항상 안쪽을 향한다.</p>
     </div>
     <div class="reveal">
       <div class="mod-layout">
@@ -494,6 +495,7 @@ import '../../styles/payment-portfolio.css';
         <div class="layer-cards" id="layerCards"></div>
       </div>
     </div>
+    <div class="meas-note res reveal"><b>결과</b> · 도메인·애플리케이션 레이어에서 PG 종속 타입을 제거해, <strong>신규 PG는 어댑터 구현만 추가하면 연동된다.</strong></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/architecture" target="_blank" rel="noopener">상세 문서 보기 · 아키텍처와 헥사고날 레이어 ↗</a></div>
   </section>
 
