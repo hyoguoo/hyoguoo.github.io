@@ -243,11 +243,12 @@ import '../../styles/payment-portfolio.css';
   <section class="cap-band-sec" aria-label="핵심 역량 요약">
     <div class="sub-label reveal">핵심 역량 · 클릭하면 해당 섹션으로</div>
     <div class="cap-band reveal">
-      <a class="cap-cell" href="#decisions"><span class="cap-t">분산 트랜잭션 정합성</span><span class="cap-e">초과판매·유령재고 0 · 정확히 1회</span><span class="cap-go">설계 결정 →</span></a>
-      <a class="cap-cell" href="#scenario"><span class="cap-t">장애 격리·자가 복구</span><span class="cap-e">11종 시나리오 · 상태머신 자동 복구</span><span class="cap-go">시나리오 →</span></a>
-      <a class="cap-cell" href="#benchmark"><span class="cap-t">비동기 아키텍처·성능</span><span class="cap-e">Outbox+가상스레드 · 처리량 +47.5%</span><span class="cap-go">부하 테스트 →</span></a>
-      <a class="cap-cell" href="#tracing"><span class="cap-t">분산 추적·관측</span><span class="cap-e">4서비스 단일 traceId · 경보 10종</span><span class="cap-go">트레이싱 →</span></a>
-      <a class="cap-cell" href="#races"><span class="cap-t">동시성·멱등 제어</span><span class="cap-e">SKIP LOCKED·원자 Lua · 이중차감 0</span><span class="cap-go">경합 방어 →</span></a>
+      <a class="cap-cell" href="#decisions"><span class="cap-t">분산 트랜잭션 정합성</span><span class="cap-e">초과판매·유령재고 <b>0</b> · 정확히 <b>1회</b></span><span class="cap-go">설계 결정<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#scenario"><span class="cap-t">장애 격리·자가 복구</span><span class="cap-e"><b>11종</b> 시나리오 · 상태머신 자동 복구</span><span class="cap-go">시나리오<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#benchmark"><span class="cap-t">비동기 아키텍처·성능</span><span class="cap-e">Outbox+가상스레드 · 부하 급증에도 유실 <b>0</b></span><span class="cap-go">부하 테스트<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#tracing"><span class="cap-t">분산 추적·관측</span><span class="cap-e"><b>4서비스</b> 단일 traceId · 경보 <b>10종</b></span><span class="cap-go">트레이싱<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#races"><span class="cap-t">동시성·멱등 제어</span><span class="cap-e">SKIP LOCKED·원자 Lua · 이중차감 <b>0</b></span><span class="cap-go">경합 방어<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#workflow"><span class="cap-t">AI 협업 개발 프로세스</span><span class="cap-e"><b>4단계</b> 라이프사이클 · 리뷰·구현 서브에이전트 격리</span><span class="cap-go">워크플로우<span aria-hidden="true"> →</span></span></a>
     </div>
   </section>
 
@@ -293,7 +294,7 @@ import '../../styles/payment-portfolio.css';
       <div class="card-pad why-rows">
         <div class="why-row"><span class="wk bad">기존 동기 방식의 한계</span><span>· 확정 API가 PG 응답을 동기로 대기하는 구조<br>· 이 대기가 길어지면 구매 이탈로 직결<br>· PG 장애 시 서비스 전체 가용성 저하로 번짐</span></div>
         <div class="why-row"><span class="wk good">비동기 아키텍처 전환</span><span>· 요청 접수 즉시 202 Accepted 반환, 실제 승인은 백그라운드 비동기 처리<br>· 클라이언트는 주문 상태를 폴링으로 확인<br>· PG 응답 지연·장애가 사용자 경험(응답성)에 직접 영향 없음</span></div>
-        <div class="why-row"><span class="wk">성능 개선 지표</span><span>· 동일 로직을 동기·비동기로 구현해 k6 부하 테스트 비교<br>· 외부 PG 지연 환경에서 비동기 TPS 약 47.5% 우수<br>· 사용자 체감 응답 시간 1,150ms → 150ms 단축<br>· 순간 부하 집중에도 유실 없는 요청 처리 입증<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 정리</span></div>
+        <div class="why-row"><span class="wk">성능 개선 지표</span><span>· 동일 로직을 동기·비동기로 구현해 k6 부하 테스트 비교<br>· 외부 PG 지연 환경에서 비동기 TPS 약 47.5% 우수<br>· 사용자 체감 응답 시간 9,343ms → 3,423ms 단축<br>· 순간 부하 집중에도 유실 없는 요청 처리 입증<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 정리</span></div>
         <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
       </div>
     </div>
@@ -414,6 +415,7 @@ import '../../styles/payment-portfolio.css';
       <summary>▸ 8개 시나리오 한눈 비교</summary>
       <div class="mtable-wrap"><table id="scn-matrix"><thead><tr><th>시나리오</th><th>결과</th><th>재고 영향</th><th>복구 · 종결</th><th>관측</th></tr></thead><tbody></tbody></table></div>
     </details>
+    <div class="meas-note res reveal"><b>결과</b> · 11가지 실패·복구 시나리오가 <strong>모두 자동 복구 또는 안전 종결로 수렴</strong>하도록 경로를 검증했다.</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/scenario-test" target="_blank" rel="noopener">상세 문서 보기 · 시나리오 테스트 전략 ↗</a></div>
   </section>
 
@@ -491,17 +493,17 @@ import '../../styles/payment-portfolio.css';
       <div class="card-pad">
         <div class="trials">
           <div class="trial fail">
-            <div class="trial-h"><span class="trial-no">시도 ①</span><span class="trial-mark">✕</span></div>
+            <div class="trial-h"><span class="trial-no">시도 ①</span><span class="trial-mark" role="img" aria-label="실패">✕</span></div>
             <div class="trial-t">가상 스레드 + @Async 무제한 실행</div>
             <div class="trial-d">비동기 핸들러가 제한 없이 DB 커넥션을 점유해 <b>커넥션 풀이 고갈, confirm 메인 트랜잭션까지 실패하며 에러율 80%</b></div>
           </div>
           <div class="trial fail">
-            <div class="trial-h"><span class="trial-no">시도 ②</span><span class="trial-mark">✕</span></div>
+            <div class="trial-h"><span class="trial-no">시도 ②</span><span class="trial-mark" role="img" aria-label="실패">✕</span></div>
             <div class="trial-t">동시성 상한(ConcurrencyThrottle) 적용</div>
             <div class="trial-d">빈 슬롯이 없으면 호출 스레드를 await()로 블로킹해 <b>HTTP 처리 스레드가 묶이고, 동기와 같은 고갈·요청 유실 재발</b></div>
           </div>
           <div class="trial win">
-            <div class="trial-h"><span class="trial-no">최종</span><span class="trial-mark">✓</span></div>
+            <div class="trial-h"><span class="trial-no">최종</span><span class="trial-mark" role="img" aria-label="해결">✓</span></div>
             <div class="trial-t">논블로킹 큐 + 가상 스레드 워커</div>
             <div class="trial-d">offer()로 호출 스레드는 즉시 반환하고 워커가 I/O 대기를 흡수해 <b>고부하에서도 요청 유실 0</b></div>
           </div>
@@ -567,6 +569,7 @@ import '../../styles/payment-portfolio.css';
         <div class="const"><span class="cv">10d</span><span class="ck">DLQ 보관 기간</span><span class="cs">864000000ms &gt; 재주입 가능 기간 8d</span><span class="cw">· DLQ 메시지는 최대 8일(멱등 TTL) 내 재주입으로 복구 가능<br>· 그보다 넉넉한 10일 보관으로 복구 시기를 놓친 영구 유실 사고 방지</span></div>
       </div>
     </details>
+    <div class="meas-note res reveal"><b>결과</b> · 돈·재고가 틀어질 수 있는 경합 지점을 원자 연산으로 좁혀 <strong>이중 차감·중복 승인을 원천 차단</strong>했다.</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/idempotency" target="_blank" rel="noopener">상세 문서 보기 · Checkout 멱등성과 TOCTOU ↗</a></div>
   </section>
 
@@ -640,8 +643,8 @@ import '../../styles/payment-portfolio.css';
   <!-- §12 SUMMARY -->
   <section class="blk" id="summary">
     <div class="sec-head reveal">
-      <h2>주요 해결 과제 및 향후 로드맵</h2>
-      <p>결제 플랫폼을 구축하며 해결한 3가지 핵심 난제와,<br>그 해법이 새로 만든 설계 비용까지 포함해 남은 과제를 정리했다.</p>
+      <h2>주요 해결 과제 및 회고</h2>
+      <p>결제 플랫폼을 구축하며 해결한 3가지 과제와 그 해법이 남긴 과제,<br>그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
     </div>
     <div class="reveal">
       <div class="sub-label">핵심 해결 과제 · 3</div>
