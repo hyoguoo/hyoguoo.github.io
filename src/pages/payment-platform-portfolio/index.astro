@@ -636,6 +636,12 @@ import '../../styles/payment-portfolio.css';
       <div class="solves" id="solves-grid"></div>
       <div class="sub-label" style="margin-top: 26px;">남은 과제</div>
       <div class="limits" id="limits-grid"></div>
+      <div class="sub-label" style="margin-top: 26px;">회고</div>
+      <div class="retro">
+        <div class="retro-item"><b>분산 환경에서의 데이터 정합성과 운영 비용</b><span>DB와 Kafka 간의 분산 트랜잭션을 처리하기 위해 멱등성 처리와 보상 로직을 직접 구현했다.<br>자연스럽게 Outbox 패턴을 도입하게 되었고, 이를 정리하는 워커까지 구성하며 분산 환경에서 정합성을 지키기 위해 필요한 실질적인 운영 비용을 체감했다.</span></div>
+        <div class="retro-item"><b>비동기 처리와 리소스 관리의 중요성</b><span>비동기 도입이 단건의 응답 속도보다는 시스템의 전체적인 처리량과 안정성에 기여한다는 점을 확인했다.<br>무제한적인 비동기 스레드 생성으로 커넥션 풀 고갈을 겪은 후, 동시성 상한(Concurrency Limit)을 설정하고 워커를 통한 큐잉 방식으로 개선하여 안정적인 부하 처리 구조를 구축했다.</span></div>
+        <div class="retro-item"><b>실행 컨텍스트 유실 문제 해결과 로깅</b><span>가상 스레드와 비동기 워커를 넘나드는 과정에서 Trace ID가 유실되는 문제를 겪었다.<br>디버깅이 끊기는 구간을 하나씩 식별하고 실행 컨텍스트(Context)가 명시적으로 전파되도록 개선하여, 전체 결제 흐름을 누락 없이 추적할 수 있는 환경을 마련했다.</span></div>
+      </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">상세 문서 보기 · 벤치마크 보고서 ↗</a></div>
   </section>
