@@ -85,7 +85,7 @@ import '../../styles/payment-portfolio.css';
       <span class="nav-grp">
         <a href="#scenario">시나리오</a>
         <a href="#states">상태 머신</a>
-        <a href="#pgretry">재시도</a>
+        <a href="#pgretry">PG 처리</a>
       </span>
       <span class="nav-grp">
         <a href="#modules">내부 구조</a>
@@ -285,28 +285,6 @@ import '../../styles/payment-portfolio.css';
         <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
       </div>
     </div>
-    <div class="card trials-card reveal">
-      <div class="card-head"><h3>지금 구조에 도달하기까지 막혔던 두 번</h3><span class="term-tag">스레드 고갈 해결 과정</span></div>
-      <div class="card-pad">
-        <div class="trials">
-          <div class="trial fail">
-            <div class="trial-h"><span class="trial-no">시도 ①</span><span class="trial-mark">✕</span></div>
-            <div class="trial-t">가상 스레드 + @Async 무제한 실행</div>
-            <div class="trial-d">비동기 핸들러가 제한 없이 DB 커넥션을 점유해 <b>커넥션 풀이 고갈, confirm 메인 트랜잭션까지 실패하며 에러율 80%</b></div>
-          </div>
-          <div class="trial fail">
-            <div class="trial-h"><span class="trial-no">시도 ②</span><span class="trial-mark">✕</span></div>
-            <div class="trial-t">동시성 상한(ConcurrencyThrottle) 적용</div>
-            <div class="trial-d">빈 슬롯이 없으면 호출 스레드를 await()로 블로킹해 <b>HTTP 처리 스레드가 묶이고, 동기와 같은 고갈·요청 유실 재발</b></div>
-          </div>
-          <div class="trial win">
-            <div class="trial-h"><span class="trial-no">최종</span><span class="trial-mark">✓</span></div>
-            <div class="trial-t">논블로킹 큐 + 가상 스레드 워커</div>
-            <div class="trial-d">offer()로 HTTP 스레드는 즉시 반환하고 워커가 I/O 대기를 흡수해 <b>고부하에서도 요청 유실 0</b></div>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="sub-label">단계별 세부 프로세스 · 항목 클릭 시 확장</div>
     <div class="stages" id="stages"></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/async-outbox" target="_blank" rel="noopener">상세 문서 보기 · 비동기 Outbox 결제 플로우 ↗</a></div>
@@ -475,8 +453,8 @@ import '../../styles/payment-portfolio.css';
   <!-- §05 PG RETRY PIPELINE -->
   <section class="blk" id="pgretry">
     <div class="sec-head reveal">
-      <h2>PG 명령 처리와 재시도</h2>
-      <p>결제 명령을 받아 PG사를 호출하고, 실패 시 재시도하며, 한도 초과 시 격리하는 전체 절차다.<br>지연 큐나 별도 스케줄러 없이 오직 Kafka 재발행만으로 재시도를 구현한 것이 이 설계의 특징이다.<br>PG 재시도는 2→6→18→54초로 간격을 늘리는 지수 백오프(최대 4회)를 적용했다.</p>
+      <h2>PG 명령 비동기 처리와 실패 복구</h2>
+      <p>결제 명령 메시지를 수신하고 PG사를 호출해 승인 결과를 회신하는 전 과정이다.<br>느린 PG 호출은 인메모리 큐에 넘기고, 가상 스레드가 이를 처리해 스레드 고갈을 막는다.<br>실패 건은 Kafka 재발행만으로 지수 백오프(최대 4회) 재시도하고, 한도를 넘기면 격리한다.</p>
     </div>
     <div class="card reveal">
       <div class="card-head"><h3>명령 처리 파이프라인</h3><span class="term-tag">정상 흐름과 장애 복구 경로 통합</span></div>
@@ -491,9 +469,31 @@ import '../../styles/payment-portfolio.css';
     <div class="card why-async reveal">
       <div class="card-head"><h3>설계 의도</h3></div>
       <div class="card-pad why-rows">
-        <div class="why-row"><span class="wk">Self-loop 재시도 구조</span><span>· 재시도 전용 인프라 없이 동일한 Kafka 토픽으로 재발행<br>· 정상 흐름과 재시도 흐름을 같은 파이프라인 공유하여 단순하고 견고한 검증</span></div>
-        <div class="why-row"><span class="wk">재시도 횟수 관리</span><span>· 시도 횟수를 DB(pg_inbox.attempt)에서 주문 단위로 관리<br>· 한도(4회) 소진 시 DLQ로 보내 자동 격리</span></div>
-        <div class="why-row"><span class="wk">동시성 경합 차단</span><span>· 재시도와 중복 수신이 동시에 겹치는 상황 발생 가능<br>· 주문당 1행 제약(UNIQUE)과 행 선점 잠금(SKIP LOCKED)으로 동일 결제건의 PG 중복 호출 원천 차단</span></div>
+        <div class="why-row"><span class="wk">비동기 워커 위임</span><span>· 느린 PG 호출을 인메모리 큐에 넘겨 수신 스레드 즉시 반환<br>· 가상 스레드 워커가 꺼내 처리해 스레드 고갈 없이 처리량 확보</span></div>
+        <div class="why-row"><span class="wk">멱등 · 중복 차단</span><span>· Redis 멱등 키(SETNX)와 주문당 1행 제약(UNIQUE)으로 중복 수신 필터<br>· 행 선점 잠금(SKIP LOCKED)으로 동시 워커의 PG 중복 호출 차단</span></div>
+        <div class="why-row"><span class="wk">Self-loop 재시도 · 격리</span><span>· 재시도 전용 인프라 없이 같은 Kafka 토픽으로 재발행 · 지수 백오프 4회<br>· 시도 횟수(pg_inbox.attempt) 한도 소진 시 DLQ로 자동 격리</span></div>
+      </div>
+    </div>
+    <div class="card trials-card reveal">
+      <div class="card-head"><h3>PG 호출 비동기화 전환 시도 과정</h3><span class="term-tag">스레드·커넥션 고갈</span></div>
+      <div class="card-pad">
+        <div class="trials">
+          <div class="trial fail">
+            <div class="trial-h"><span class="trial-no">시도 ①</span><span class="trial-mark">✕</span></div>
+            <div class="trial-t">가상 스레드 + @Async 무제한 실행</div>
+            <div class="trial-d">비동기 핸들러가 제한 없이 DB 커넥션을 점유해 <b>커넥션 풀이 고갈, confirm 메인 트랜잭션까지 실패하며 에러율 80%</b></div>
+          </div>
+          <div class="trial fail">
+            <div class="trial-h"><span class="trial-no">시도 ②</span><span class="trial-mark">✕</span></div>
+            <div class="trial-t">동시성 상한(ConcurrencyThrottle) 적용</div>
+            <div class="trial-d">빈 슬롯이 없으면 호출 스레드를 await()로 블로킹해 <b>HTTP 처리 스레드가 묶이고, 동기와 같은 고갈·요청 유실 재발</b></div>
+          </div>
+          <div class="trial win">
+            <div class="trial-h"><span class="trial-no">최종</span><span class="trial-mark">✓</span></div>
+            <div class="trial-t">논블로킹 큐 + 가상 스레드 워커</div>
+            <div class="trial-d">offer()로 호출 스레드는 즉시 반환하고 워커가 I/O 대기를 흡수해 <b>고부하에서도 요청 유실 0</b></div>
+          </div>
+        </div>
       </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-confirm-flow" target="_blank" rel="noopener">상세 문서 보기 · PG 결제 확인 처리 흐름 ↗</a></div>

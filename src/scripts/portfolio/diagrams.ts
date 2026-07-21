@@ -96,36 +96,46 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
   /* ================= §05 PG PIPELINE flowchart ================= */
   (function(){
     var mount=document.getElementById("pgFlow");if(!mount)return;
-    var svg=sv("svg",{viewBox:"0 0 880 606",class:"pgflow",role:"img","aria-label":"PG 명령 처리와 재시도 파이프라인"});
+    var svg=sv("svg",{viewBox:"0 0 880 710",class:"pgflow",role:"img","aria-label":"PG 명령 처리와 재시도 파이프라인"});
     var defs=sv("defs",{});
     [["pf0","var(--muted)"],["pfok","var(--st-done)"],["pfretry","var(--st-quar)"],["pffail","var(--st-failed)"]].forEach(function(m){
       var mk=sv("marker",{id:m[0],markerWidth:"8",markerHeight:"8",refX:"6.5",refY:"3",orient:"auto",markerUnits:"userSpaceOnUse"});
       mk.appendChild(sv("path",{d:"M0,0 L6.5,3 L0,6 Z",style:"fill:"+m[1]}));defs.appendChild(mk);
     });
     svg.appendChild(defs);
+    var BANDS=[
+      {x:44,y:16,w:332,h:238,k:"pg",t:"① consumer 스레드 · 큐에 넣고 즉시 반환"},
+      {x:44,y:336,w:332,h:154,k:"wk",t:"② 가상 스레드 워커 · 큐에서 꺼내 처리"}
+    ];
+    BANDS.forEach(function(b){
+      svg.appendChild(sv("rect",{x:b.x,y:b.y,width:b.w,height:b.h,rx:12,class:"pf-band pf-band-"+b.k}));
+      var bt=sv("text",{x:b.x+14,y:b.y+18,class:"pf-band-t"});bt.textContent=b.t;svg.appendChild(bt);
+    });
     var NODES=[
-      {id:"recv",x:160,y:16,w:200,t:"명령 수신",s:"Kafka consumer",c:"--svc-pg"},
-      {id:"dedupe",x:160,y:96,w:200,t:"멱등 키 기록",s:"SETNX · 없으면 기록·있으면 차단",c:"--svc-pg"},
-      {id:"inbox",x:160,y:176,w:200,t:"inbox 저장 · PENDING",s:"주문당 1행 (UNIQUE)",c:"--svc-pg"},
-      {id:"claim",x:160,y:256,w:200,t:"워커 선점 · IN_PROGRESS",s:"행 잠금 (SKIP LOCKED)",c:"--svc-pg"},
-      {id:"call",x:160,y:336,w:200,t:"PG사 호출",s:"Toss / NicePay",c:"--svc-pg"},
-      {id:"record",x:60,y:440,w:200,t:"결과 기록",s:"APPROVED / FAILED · outbox 적재",c:"--st-done"},
-      {id:"publish",x:60,y:532,w:200,t:"결과 발행 → payment",s:"events.confirmed",c:"--st-done"},
-      {id:"inc",x:556,y:440,w:200,t:"시도 횟수 +1",s:"DB(pg_inbox.attempt)에서 관리",c:"--st-quar"},
-      {id:"exhaust",x:540,y:532,w:232,t:"DLQ 이동 + 격리",s:"commands.confirm.dlq · QUARANTINED",c:"--st-failed"},
-      {id:"redisdel",x:456,y:176,w:190,t:"멱등 키 삭제",s:"remove → 재배달 재처리",c:"--st-failed"}
+      {id:"recv",x:160,y:40,w:200,t:"명령 수신",s:"Kafka consumer",c:"--svc-pg"},
+      {id:"dedupe",x:160,y:120,w:200,t:"멱등 키 기록",s:"SETNX · 없으면 기록·있으면 차단",c:"--svc-pg"},
+      {id:"inbox",x:160,y:200,w:200,t:"inbox 저장 · PENDING",s:"주문당 1행 (UNIQUE)",c:"--svc-pg"},
+      {id:"queue",x:160,y:280,w:200,t:"인메모리 큐 · 채널",s:"offer 반환 · 워커 take",c:"--accent",q:true},
+      {id:"claim",x:160,y:360,w:200,t:"행 선점 · IN_PROGRESS",s:"행 잠금 (SKIP LOCKED)",c:"--svc-pg"},
+      {id:"call",x:160,y:440,w:200,t:"PG사 호출",s:"Toss / NicePay",c:"--svc-pg"},
+      {id:"record",x:60,y:544,w:200,t:"결과 기록",s:"APPROVED / FAILED · outbox 적재",c:"--st-done"},
+      {id:"publish",x:60,y:636,w:200,t:"결과 발행 → payment",s:"events.confirmed",c:"--st-done"},
+      {id:"inc",x:556,y:544,w:200,t:"시도 횟수 +1",s:"DB(pg_inbox.attempt)에서 관리",c:"--st-quar"},
+      {id:"exhaust",x:540,y:636,w:232,t:"DLQ 이동 + 격리",s:"commands.confirm.dlq · QUARANTINED",c:"--st-failed"},
+      {id:"redisdel",x:456,y:200,w:190,t:"멱등 키 삭제",s:"remove → 재배달 재처리",c:"--st-failed"}
     ];
     var EDGES=[
-      {d:"M260,62 L260,96",k:"0"},
-      {d:"M260,142 L260,176",k:"0"},
-      {d:"M260,222 L260,256",k:"0"},
-      {d:"M260,302 L260,336",k:"0"},
-      {d:"M232,382 Q170,405 162,438",k:"ok",lab:"승인 · 확정 거절",lx:128,ly:412},
-      {d:"M330,378 Q510,398 640,438",k:"retry",lab:"일시 오류 (5xx·타임아웃)",lx:478,ly:398},
-      {d:"M160,486 L160,532",k:"ok"},
-      {d:"M656,486 L656,530",k:"fail",lab:"4회 도달",lx:668,ly:512,anchor:"start"},
-      {d:"M758,452 C866,380 866,66 364,34",k:"retry",dash:1,lab:"4회 미만 · 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:120},
-      {d:"M360,199 L456,199",k:"fail",lab:"저장 실패",lx:408,ly:190}
+      {d:"M260,86 L260,120",k:"0"},
+      {d:"M260,166 L260,200",k:"0"},
+      {d:"M260,246 L260,280",k:"0",lab:"consumer offer",lx:272,ly:268,anchor:"start"},
+      {d:"M260,326 L260,360",k:"0",lab:"워커 take",lx:272,ly:348,anchor:"start"},
+      {d:"M260,406 L260,440",k:"0"},
+      {d:"M232,486 Q170,512 162,542",k:"ok",lab:"승인 · 확정 거절",lx:126,ly:516},
+      {d:"M330,484 Q510,508 640,542",k:"retry",lab:"일시 오류 (5xx·타임아웃)",lx:478,ly:506},
+      {d:"M160,590 L160,636",k:"ok"},
+      {d:"M656,590 L656,634",k:"fail",lab:"4회 도달",lx:668,ly:616,anchor:"start"},
+      {d:"M758,556 C866,460 866,80 364,58",k:"retry",dash:1,lab:"4회 미만 · 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:140},
+      {d:"M360,224 L456,224",k:"fail",lab:"저장 실패",lx:408,ly:214}
     ];
     EDGES.forEach(function(e){
       var cls="pf-edge"+(e.k!=="0"?" pk-"+e.k:"")+(e.dash?" dash":"");
@@ -133,7 +143,13 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       if(e.lab){var t=sv("text",{x:e.lx,y:e.ly,class:"sw-lab"+(e.k!=="0"?" pl-"+e.k:""),"text-anchor":e.anchor||"middle"});t.textContent=e.lab;svg.appendChild(t);}
     });
     NODES.forEach(function(n){
-      svg.appendChild(sv("rect",{x:n.x,y:n.y,width:n.w,height:46,rx:10,class:"pf-box",style:"--nc:var("+n.c+")"}));
+      if(n.q){
+        // 인메모리 큐 · 채널: 항목이 줄 서 대기하는 버퍼로 보이도록 슬롯 칸막이 박스로 렌더
+        svg.appendChild(sv("rect",{x:n.x,y:n.y,width:n.w,height:46,rx:4,class:"pf-box pf-queue",style:"--nc:var("+n.c+")"}));
+        for(var qi=1;qi<6;qi++){var qx=n.x+n.w*qi/6;svg.appendChild(sv("line",{x1:qx,y1:n.y+1,x2:qx,y2:n.y+13,class:"pf-qslot"}));svg.appendChild(sv("line",{x1:qx,y1:n.y+33,x2:qx,y2:n.y+45,class:"pf-qslot"}));}
+      }else{
+        svg.appendChild(sv("rect",{x:n.x,y:n.y,width:n.w,height:46,rx:10,class:"pf-box",style:"--nc:var("+n.c+")"}));
+      }
       var t=sv("text",{x:n.x+n.w/2,y:n.y+19,"text-anchor":"middle",class:"pf-t"});t.textContent=n.t;svg.appendChild(t);
       var s=sv("text",{x:n.x+n.w/2,y:n.y+34,"text-anchor":"middle",class:"pf-s"});s.textContent=n.s;svg.appendChild(s);
     });
