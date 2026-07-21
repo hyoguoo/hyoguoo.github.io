@@ -285,6 +285,28 @@ import '../../styles/payment-portfolio.css';
         <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
       </div>
     </div>
+    <div class="card trials-card reveal">
+      <div class="card-head"><h3>지금 구조에 도달하기까지 막혔던 두 번</h3><span class="term-tag">스레드 고갈 해결 과정</span></div>
+      <div class="card-pad">
+        <div class="trials">
+          <div class="trial fail">
+            <div class="trial-h"><span class="trial-no">시도 ①</span><span class="trial-mark">✕</span></div>
+            <div class="trial-t">가상 스레드 + @Async 무제한 실행</div>
+            <div class="trial-d">비동기 핸들러가 제한 없이 DB 커넥션을 점유해 <b>커넥션 풀이 고갈, confirm 메인 트랜잭션까지 실패하며 에러율 80%</b></div>
+          </div>
+          <div class="trial fail">
+            <div class="trial-h"><span class="trial-no">시도 ②</span><span class="trial-mark">✕</span></div>
+            <div class="trial-t">동시성 상한(ConcurrencyThrottle) 적용</div>
+            <div class="trial-d">빈 슬롯이 없으면 호출 스레드를 await()로 블로킹해 <b>HTTP 처리 스레드가 묶이고, 동기와 같은 고갈·요청 유실 재발</b></div>
+          </div>
+          <div class="trial win">
+            <div class="trial-h"><span class="trial-no">최종</span><span class="trial-mark">✓</span></div>
+            <div class="trial-t">논블로킹 큐 + 가상 스레드 워커</div>
+            <div class="trial-d">offer()로 HTTP 스레드는 즉시 반환하고 워커가 I/O 대기를 흡수해 <b>고부하에서도 요청 유실 0</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="sub-label">단계별 세부 프로세스 · 항목 클릭 시 확장</div>
     <div class="stages" id="stages"></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/async-outbox" target="_blank" rel="noopener">상세 문서 보기 · 비동기 Outbox 결제 플로우 ↗</a></div>
