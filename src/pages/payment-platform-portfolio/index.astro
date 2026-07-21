@@ -6,7 +6,7 @@ import '../../styles/payment-portfolio.css';
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>결제 플랫폼 — 비동기 아키텍처</title>
+<title>결제 플랫폼 · 비동기 아키텍처</title>
 </head>
 <body>
 
@@ -79,6 +79,7 @@ import '../../styles/payment-portfolio.css';
       <span class="nav-grp">
         <a href="#arch">아키텍처</a>
         <a href="#journey">결제 흐름</a>
+        <a href="#tracing">트레이싱</a>
         <a href="#benchmark">부하 테스트</a>
       </span>
       <span class="nav-grp">
@@ -94,7 +95,6 @@ import '../../styles/payment-portfolio.css';
       <span class="nav-grp">
         <a href="#workflow">워크플로우</a>
         <a href="#alerting">관측·알람</a>
-        <a href="#tracing">트레이싱</a>
         <a href="#summary">정리</a>
       </span>
     </div>
@@ -110,11 +110,11 @@ import '../../styles/payment-portfolio.css';
       <div class="spec-header">
         <h2>프로젝트 명세서</h2>
         <p>Kafka 기반의 4개 마이크로서비스가 협력하는 비동기 결제 플랫폼.</p>
-        
+
         <div style="margin-top:28px; display:flex; flex-direction:column; gap:16px;">
           <div style="font-size:13.5px; color:var(--muted); line-height:1.5;">
             <strong style="color:var(--ink-soft); font-weight:600;">작업 기간</strong><br>
-            2023. 11 — 2026. 07
+            2023. 11 ~ 2026. 07
           </div>
           <div style="font-size:13.5px; color:var(--muted); line-height:1.5;">
             <strong style="color:var(--ink-soft); font-weight:600;">작업 인원</strong><br>
@@ -139,7 +139,7 @@ import '../../styles/payment-portfolio.css';
 
         <p style="margin-top: 24px;"><a class="txt-link" style="color:var(--accent-text); font-weight:600; font-size:13.5px;" href="https://github.com/hyoguoo/payment-platform/wiki/ai-workflow" target="_blank" rel="noopener">GitHub Wiki ↗</a></p>
       </div>
-      
+
       <!-- Right Column: Body Sections -->
       <div class="spec-body">
 
@@ -190,24 +190,36 @@ import '../../styles/payment-portfolio.css';
             </div>
           </div>
         </div>
-        
+
         <div class="spec-section">
           <div class="spec-title">Distributed Observability</div>
           <div class="ov-trace" id="ovTrace">
-            <div class="ot-t">결제 한 건에 대한 추적성 확보</div>
-            <div class="ot-body">
-              <div class="ot-l"><span class="ot-svc" style="color:#9aa5b1">gateway</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">confirm 접수 · payment 라우팅</span></div>
-              <div class="ot-l"><span class="ot-svc" style="color:#5ba3ff">payment</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">READY → IN_PROGRESS · outbox 저장</span></div>
-              <div class="ot-l"><span class="ot-svc" style="color:#a58ef5">PG</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">가상 스레드 워커가 문맥 복원 · 벤더 승인 200</span></div>
-              <div class="ot-l"><span class="ot-svc" style="color:#45cf8b">product</span><span class="ot-id">traceId=4f9a…c2</span><span class="ot-m">Kafka 건너 재고 확정 · 중복 걸러냄</span></div>
-            </div>
-            <p class="ot-note">스레드가 바뀌고 Kafka를 거쳐도 같은 traceId를 유지하여, 결제 한 건의 전체 경로를 추적할 수 있다.</p>
+            <div class="ot-wf-head"><span class="ot-wf-id">traceId 4f9a…c2</span><span class="ot-wf-sub">한 요청이 4개 서비스를 지나간다</span></div>
+            <svg class="ot-wf" viewBox="0 0 620 150" role="img" aria-label="하나의 traceId가 gateway·payment·PG·product 4개 서비스를 지나는 분산 트레이스 워터폴. 각 서비스의 처리 구간이 시간축을 따라 이어진다.">
+              <line x1="80" y1="16" x2="80" y2="140" class="ot-wf-grid"/>
+              <line x1="240" y1="16" x2="240" y2="140" class="ot-wf-grid"/>
+              <line x1="400" y1="16" x2="400" y2="140" class="ot-wf-grid"/>
+              <line x1="560" y1="16" x2="560" y2="140" class="ot-wf-grid"/>
+              <text x="6" y="35" class="ot-wf-lane">gateway</text>
+              <rect x="80" y="24" width="118" height="16" rx="4" style="fill:color-mix(in srgb,var(--svc-infra) 24%,var(--surface));stroke:var(--svc-infra);stroke-width:1"/>
+              <text x="88" y="35.5" class="ot-wf-op">confirm 접수 → 202</text>
+              <text x="6" y="67" class="ot-wf-lane">payment</text>
+              <rect x="150" y="56" width="210" height="16" rx="4" style="fill:color-mix(in srgb,var(--svc-payment) 24%,var(--surface));stroke:var(--svc-payment);stroke-width:1"/>
+              <text x="158" y="67.5" class="ot-wf-op">READY → IN_PROGRESS · outbox 저장</text>
+              <text x="6" y="99" class="ot-wf-lane">PG</text>
+              <rect x="316" y="88" width="188" height="16" rx="4" style="fill:color-mix(in srgb,var(--svc-pg) 26%,var(--surface));stroke:var(--svc-pg);stroke-width:1"/>
+              <text x="324" y="99.5" class="ot-wf-op">가상스레드 복원 · 벤더 승인 200</text>
+              <text x="6" y="131" class="ot-wf-lane">product</text>
+              <rect x="466" y="120" width="132" height="16" rx="4" style="fill:color-mix(in srgb,var(--svc-product) 24%,var(--surface));stroke:var(--svc-product);stroke-width:1"/>
+              <text x="474" y="131.5" class="ot-wf-op">Kafka 재고 확정</text>
+            </svg>
+            <p class="ot-note">스레드가 바뀌고 Kafka를 거쳐도 <b>같은 traceId를 유지</b>하여, 결제 한 건의 전체 경로를 추적할 수 있다.</p>
           </div>
         </div>
-        
+
       </div>
     </div>
-    
+
     <!-- Hints -->
     <div class="ov-hint reveal" style="margin-top:40px;">
       <span class="ov-hk">화면 안내</span>
@@ -278,10 +290,54 @@ import '../../styles/payment-portfolio.css';
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/async-outbox" target="_blank" rel="noopener">상세 문서 보기 · 비동기 Outbox 결제 플로우 ↗</a></div>
   </section>
 
+  <!-- TRACING · 필살기(각인) · 결제 흐름 직후로 상향 -->
+  <section class="blk band" id="tracing">
+    <div class="sec-head reveal">
+      <h2>분산 트레이싱: 끊기지 않는 연속성 보장</h2>
+      <p>모든 로그와 추적 정보는 4개의 마이크로서비스 전반에 걸쳐 단일 traceId로 바인딩된다. <br/> <b>Trace Context가 단절될 수 있는 구간에서도 추적을 보장</b>하기 위해 3가지 설계 장치를 도입했다.</p>
+    </div>
+    <div class="card reveal" style="margin-bottom:18px">
+      <div class="card-head"><h3>하나로 이어진 traceId</h3></div>
+      <p class="sr-only">화면 낭독기용 요약: 하나의 traceId가 확정 요청, outbox 발행, Kafka 소비, PG의 inbox 기록과 워커 처리, 결과 소비까지 이어진다. 스레드가 바뀌어 추적이 끊기는 세 지점에서는 저장해 둔 traceparent 값으로 문맥을 복원한다.</p>
+        <div class="map-wrap" id="traceFlow"></div>
+    </div>
+    <div class="tr3-grid reveal">
+      <div class="tr3">
+        <div class="tr3-h"><span class="tr3-n">1</span><span class="tr3-t">프로세스 경계 (네트워크 통신)</span></div>
+        <p class="tr3-why">HTTP나 Kafka를 타고 다른 마이크로서비스로 넘어갈 때마다 인메모리 추적 문맥이 소실된다.</p>
+        <ul class="tr3-list">
+          <li>추적 식별자인 <code>traceparent</code>(W3C 표준)를 HTTP 및 Kafka 헤더에 적재하여 전송</li>
+          <li>수신 측은 해당 식별자를 부모(Parent Span)로 인식하여 새로운 구간을 이어 붙임</li>
+          <li>HTTP는 Spring Boot의 계측(Instrumentation)이 자동 처리하며, Kafka는 발행 시점에 직접 주입</li>
+        </ul>
+      </div>
+      <div class="tr3">
+        <div class="tr3-h"><span class="tr3-n">2</span><span class="tr3-t">비동기 처리 (아웃박스 패턴)</span></div>
+        <p class="tr3-why">메시지를 즉시 처리하지 않고 Inbox에 저장했다가 백그라운드 워커가 폴링할 때, 요청 당시의 식별자가 유실된다.</p>
+        <ul class="tr3-list">
+          <li>수신 시점에 <code>traceparent</code>를 추출해 DB 레코드와 함께 영속화</li>
+          <li>백그라운드 워커가 해당 레코드를 선점(Poll)하는 순간, 저장된 식별자를 바탕으로 문맥을 복원</li>
+          <li>지수 백오프에 의해 수십 분 뒤에 재시도되더라도 동일한 <code>traceId</code>가 일관되게 유지</li>
+        </ul>
+      </div>
+      <div class="tr3">
+        <div class="tr3-h"><span class="tr3-n">3</span><span class="tr3-t">스레드 컨텍스트 스위칭</span></div>
+        <p class="tr3-why">PG사 API 호출이 가상 스레드(Virtual Thread) 풀로 위임될 때, 기존 OTel Context와 MDC 로깅 식별자가 전파되지 않는다.</p>
+        <ul class="tr3-list">
+          <li>메인 스레드에서 작업을 위임하기 직전, 현재의 추적 문맥과 로깅 식별자를 스냅샷으로 캡처</li>
+          <li>가상 스레드 내에서 문맥을 자동 복원하는 커스텀 래퍼 <code>ContextAwareVirtualThreadExecutors</code>를 도입</li>
+          <li>풀 내부의 어떤 가상 스레드에 할당되더라도 끊김 없는 <code>traceId</code> 추적 보장</li>
+        </ul>
+      </div>
+    </div>
+    <div class="meas-note reveal"><b>검증</b>: 결제 한 건을 흘려보낸 뒤 4개 서비스 로그에서 같은 traceId가 모두 발견되는지 확인하는 스크립트로 연속성 점검</div>
+      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/trace-propagation" target="_blank" rel="noopener">상세 문서 보기 · 트레이싱 컨텍스트 전파 ↗</a></div>
+  </section>
+
   <!-- §02b BENCHMARK -->
   <section class="blk" id="benchmark">
     <div class="sec-head reveal">
-      <h2>부하 테스트 — 비동기 선택 근거</h2>
+      <h2>부하 테스트 · 비동기 선택 근거</h2>
       <p>외부 PG 응답이 극단적으로 느려지는 상황을 가정하고,<br>동일한 로직을 동기와 비동기로 띄워 시스템 가용성이 얼마나 방어되는지 k6로 비교했다.</p>
     </div>
     <div class="card reveal">
@@ -352,7 +408,7 @@ import '../../styles/payment-portfolio.css';
   <!-- §04 STATE MACHINE -->
   <section class="blk" id="states">
     <div class="sec-head reveal">
-      <h2>상태 머신 — 결제와 PG</h2>
+      <h2>상태 머신 · 결제와 PG</h2>
       <p>내부 결제(Payment)와 외부 통신(PG)의 생명주기를 분리했다.</p>
     </div>
     <div class="svc-switch reveal">
@@ -432,7 +488,7 @@ import '../../styles/payment-portfolio.css';
           <div class="card card-pad">
             <div style="text-align:center;margin-bottom:10px"><span class="term-tag" id="hexHint">레이어를 클릭</span></div>
             <div class="hexlayers" id="hexlayers"></div>
-            <div class="depnote">의존 방향 — <b>바깥에서 안으로</b><br>presentation → port.in · infrastructure → port.out<br>application → domain</div>
+            <div class="depnote">의존 방향: <b>바깥에서 안으로</b><br>presentation → port.in · infrastructure → port.out<br>application → domain</div>
           </div>
         </div>
         <div class="layer-cards" id="layerCards"></div>
@@ -465,8 +521,8 @@ import '../../styles/payment-portfolio.css';
         </table>
       </div>
     </div>
-    <div class="const-panel reveal">
-      <div class="sub-label">핵심 운영 상수 · 값과 근거 모두 코드에서 검증</div>
+    <details class="const-panel fold reveal">
+      <summary>핵심 운영 상수 5개 · 값과 근거 모두 코드에서 검증<span class="fold-cue">펼치기</span></summary>
       <div class="consts">
         <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 대부분의 벤더 5xx·타임아웃은 수 초 내 회복<br>· 지수 백오프 4회 시도로 일시 장애 극복<br>· 초과 시 장기 장애로 간주해 중복 승인 위험을 차단하려 즉시 격리</span></div>
         <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">· 메시지 재전송은 컨슈머 재시작·파티션 리밸런싱 직후 단시간에 집중<br>· 1시간 TTL로 위험 구간을 충분히 커버하면서 Redis 메모리도 안정적 통제</span></div>
@@ -474,7 +530,7 @@ import '../../styles/payment-portfolio.css';
         <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">· 재시도가 길어지면 후속 결제까지 밀리는 위험 존재<br>· 1초 간격 5회 시도 후 실패 시 즉시 DLQ 라우팅으로 파이프라인 병목 해소</span></div>
         <div class="const"><span class="cv">10d</span><span class="ck">DLQ 보관 기간</span><span class="cs">864000000ms &gt; 재주입 가능 기간 8d</span><span class="cw">· DLQ 메시지는 최대 8일(멱등 TTL) 내 재주입으로 복구 가능<br>· 그보다 넉넉한 10일 보관으로 복구 시기를 놓친 영구 유실 사고 방지</span></div>
       </div>
-    </div>
+    </details>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/idempotency" target="_blank" rel="noopener">상세 문서 보기 · Checkout 멱등성과 TOCTOU ↗</a></div>
   </section>
 
@@ -484,13 +540,43 @@ import '../../styles/payment-portfolio.css';
       <h2>개발 워크플로우</h2>
       <p>단일 기능 개발은 설계 → 계획 → 구현 → 마무리 4단계 라이프사이클을 따른다.<br>각 단계별로 명확한 산출물을 생성하며,<br>엄격한 리뷰를 통과해야만 다음 단계로 진입할 수 있다.</p>
     </div>
-    <div class="wf-grid reveal">
-      <div class="wf-card"><div class="wf-head"><span class="wn">01</span><span class="we">discuss</span></div><div class="wt">설계</div><div class="wd">· 해결할 문제와 요구사항 범위 정의 후 아키텍처 설계 문서 작성<br>· 결제 도메인 특유의 정합성·리스크 관점 리뷰 통과 필수</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">02</span><span class="we">plan</span></div><div class="wt">계획</div><div class="wd">· 구현 과정을 세분화된 TDD 태스크 단위로 분할<br>· 각 태스크는 '실패 테스트 작성 ➡️ 프로덕션 코드 구현' 순서 준수</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">03</span><span class="we">execute</span></div><div class="wt">구현</div><div class="wd">· 정의된 태스크 단위로 실제 코드 작성<br>· 태스크 완료마다 전체 테스트 스위트 구동으로 기존 기능 회귀 방지</div></div>
-      <div class="wf-card"><div class="wf-head"><span class="wn">04</span><span class="we">ship</span></div><div class="wt">마무리</div><div class="wd">· 코드 리뷰 피드백 반영 후 변경 설명 페이지 자동 생성 — 머지 전 최종 확인<br>· 기술 문서(Wiki) 동기화 · 산출물 아카이빙 · 최종 Pull Request 생성</div></div>
+    <div class="wf-flow-wrap reveal">
+      <div class="wf-flow-legend">
+        <span class="wfl"><i class="wfd main"></i>메인 에이전트 · 생성</span>
+        <span class="wfl"><i class="wfd judge"></i>서브에이전트 · 판정·구현 (격리)</span>
+        <span class="wfl"><i class="wfd gate"></i>개발자 게이트</span>
+      </div>
+      <div class="wf-flow">
+        <div class="wf-stage">
+          <div class="wf-st-h"><span class="wf-st-no">01</span>Discuss</div>
+          <div class="wf-act main">인터뷰 · 설계 문서</div>
+          <div class="wf-act judge">Reviewer<span class="wf-cond"> + Domain Expert</span> 판정<span class="wf-loop">↺ revise 최대 2회</span></div>
+          <div class="wf-detail">문제·범위를 정의하고 설계 문서를 작성한다. 결정마다 근거와 기각한 대안을 함께 기록.</div>
+        </div>
+        <div class="wf-gate">개발자<br>확인</div>
+        <div class="wf-stage">
+          <div class="wf-st-h"><span class="wf-st-no">02</span>Plan</div>
+          <div class="wf-act main">태스크 분해 · PLAN</div>
+          <div class="wf-act judge">Reviewer 판정<span class="wf-loop">↺ revise 최대 2회</span></div>
+          <div class="wf-detail">설계를 TDD 태스크로 분해. 한 태스크 = 한 커밋, 모든 결정이 태스크에 매핑된다.</div>
+        </div>
+        <div class="wf-gate">개발자<br>확인</div>
+        <div class="wf-stage">
+          <div class="wf-st-h"><span class="wf-st-no">03</span>Execute</div>
+          <div class="wf-act judge">Implementer · TDD 구현<span class="wf-loop">↺ 태스크마다 1회</span></div>
+          <div class="wf-act main">메인은 오케스트레이션</div>
+          <div class="wf-detail">태스크당 Implementer 1회. 실패 테스트(RED) → 구현(GREEN) → 정리(REFACTOR).</div>
+        </div>
+        <div class="wf-gate">개발자<br>확인</div>
+        <div class="wf-stage">
+          <div class="wf-st-h"><span class="wf-st-no">04</span>Ship</div>
+          <div class="wf-act judge">Reviewer 교차 리뷰<span class="wf-loop">↺ 재리뷰 최대 1회</span></div>
+          <div class="wf-act main">메인 검증 · PR 생성</div>
+          <div class="wf-detail">전체 diff 교차 리뷰 → 변경 설명 페이지 자동 생성 → 테스트·린트 검증 → PR.</div>
+        </div>
+      </div>
+      <p class="wf-flow-note"><b>생성자 ≠ 판정자.</b> 메인이 만든 산출물을 메인이 판정하지 않도록 리뷰·구현만 서브에이전트로 격리했다. 각 단계는 개발자 확인을 거쳐야 다음으로 넘어가고, 모든 루프에는 반복 상한이 있다.</p>
     </div>
-    <p class="boundary-why reveal"><b>원칙 (Separation of Duties)</b><br>· 생성자가 자신의 결과물을 스스로 판정하지 않는 구조<br>· 구현 에이전트와 리뷰 에이전트의 역할 분리<br>· 각 단계 전환 지점마다 사용자의 최종 확인<br>· 모든 판정·구현 루프에 반복 상한과 종료 조건 내장</p>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/ai-workflow" target="_blank" rel="noopener">상세 문서 보기 · 서브에이전트 기반 워크플로우 ↗</a></div>
   </section>
 
@@ -500,62 +586,20 @@ import '../../styles/payment-portfolio.css';
       <h2>관측과 알람</h2>
       <p>단순 지표 수집을 넘어 4개 영역에 걸친 10개의 핵심 경보 규칙을 도입했다.<br>25종의 회귀 테스트와 인위적 장애 주입으로 예외 징후 감지 능력을 검증했다.</p>
     </div>
-    <div class="card reveal">
+    <details class="card fold reveal">
+      <summary>4개 영역 · 10개 핵심 경보 규칙<span class="fold-cue">펼치기</span></summary>
       <div class="dtable-wrap">
         <table class="dtable" id="alerts-table">
           <thead><tr><th>경보 그룹</th><th>알람 명칭</th><th>장애 징후 및 영향</th><th>트리거 조건</th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
-    </div>
-    <div class="meas-note reveal"><b>알람 검증 테스트</b><br>· 1차 — 울릴 상황과 침묵할 상황(오탐 방지)을 회귀 테스트로 고정<br>· 2차 — 네트워크 절단·지연 + 컨테이너 강제 정지, 라이브 스택에서 실제 발화 확인</div>
+    </details>
+    <div class="meas-note reveal"><b>알람 검증 테스트</b><br>· 1차: 울릴 상황과 침묵할 상황(오탐 방지)을 회귀 테스트로 고정<br>· 2차: 네트워크 절단·지연 + 컨테이너 강제 정지, 라이브 스택에서 실제 발화 확인</div>
     <div class="meas-note reveal"><b>운영 관점</b><br>· 장애 인지의 출발점을 고객 문의·수동 로그가 아닌 알람으로 전환<br>· 장애 지속 시간과 건별 복구 비용을 줄이는 운영 장치 설계</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/metrics" target="_blank" rel="noopener">상세 문서 보기 · 결제 지표 모니터링 ↗</a></div>
   </section>
 
-  <!-- §11 TRACING -->
-  <section class="blk band" id="tracing">
-    <div class="sec-head reveal">
-      <h2>분산 트레이싱 — 추적이 단절되는 3가지 구간</h2>
-      <p>모든 로그와 추적 정보는 4개의 마이크로서비스 전반에 걸쳐 단일 traceId로 바인딩된다.<br>추적 문맥(Trace Context)이 단절될 수 있는 구간에서도 끊김 없는 추적을 보장하기 위해 3가지 설계 장치를 도입했다.</p>
-    </div>
-    <div class="card reveal" style="margin-bottom:18px">
-      <div class="card-head"><h3>traceId 하나, 이어붙임 세 번</h3></div>
-      <p class="sr-only">화면 낭독기용 요약: 하나의 traceId가 확정 요청, outbox 발행, Kafka 소비, PG의 inbox 기록과 워커 처리, 결과 소비까지 이어진다. 스레드가 바뀌어 추적이 끊기는 세 지점에서는 저장해 둔 traceparent 값으로 문맥을 복원한다.</p>
-        <div class="map-wrap" id="traceFlow"></div>
-    </div>
-    <div class="tr3-grid reveal">
-      <div class="tr3">
-        <div class="tr3-h"><span class="tr3-n">1</span><span class="tr3-t">프로세스 경계 (네트워크 통신)</span></div>
-        <p class="tr3-why">HTTP나 Kafka를 타고 다른 마이크로서비스로 넘어갈 때마다 인메모리 추적 문맥이 소실된다.</p>
-        <ul class="tr3-list">
-          <li>추적 식별자인 <code>traceparent</code>(W3C 표준)를 HTTP 및 Kafka 헤더에 적재하여 전송한다.</li>
-          <li>수신 측은 해당 식별자를 부모(Parent Span)로 인식하여 새로운 구간을 이어 붙인다.</li>
-          <li>HTTP는 Spring Boot의 계측(Instrumentation)이 자동 처리하며, Kafka는 발행 시점에 직접 주입한다.</li>
-        </ul>
-      </div>
-      <div class="tr3">
-        <div class="tr3-h"><span class="tr3-n">2</span><span class="tr3-t">비동기 처리 (아웃박스 패턴)</span></div>
-        <p class="tr3-why">메시지를 즉시 처리하지 않고 Inbox에 저장했다가 백그라운드 워커가 폴링할 때, 요청 당시의 식별자가 유실된다.</p>
-        <ul class="tr3-list">
-          <li>수신 시점에 <code>traceparent</code>를 추출해(<code>TraceparentExtractor</code>) DB 레코드와 함께 영속화한다.</li>
-          <li>백그라운드 워커가 해당 레코드를 선점(Poll)하는 순간, 저장된 식별자를 바탕으로 문맥을 복원한다.</li>
-          <li>지수 백오프에 의해 수십 분 뒤에 재시도되더라도 동일한 <code>traceId</code>가 일관되게 유지된다.</li>
-        </ul>
-      </div>
-      <div class="tr3">
-        <div class="tr3-h"><span class="tr3-n">3</span><span class="tr3-t">스레드 컨텍스트 스위칭</span></div>
-        <p class="tr3-why">PG사 API 호출이 가상 스레드(Virtual Thread) 풀로 위임될 때, 기존 OTel Context와 MDC 로깅 식별자가 전파되지 않는다.</p>
-        <ul class="tr3-list">
-          <li>메인 스레드에서 작업을 위임하기 직전, 현재의 추적 문맥과 로깅 식별자를 스냅샷으로 캡처한다.</li>
-          <li>가상 스레드 내에서 문맥을 자동 복원하는 커스텀 래퍼 <code>ContextAwareVirtualThreadExecutors</code>를 도입했다.</li>
-          <li>풀 내부의 어떤 가상 스레드에 할당되더라도 끊김 없는 <code>traceId</code> 추적을 보장한다.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="meas-note reveal"><b>검증</b>: 결제 한 건을 흘려보낸 뒤 4개 서비스 로그에서 같은 traceId가 모두 발견되는지 확인하는 스크립트로 연속성 점검</div>
-      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/trace-propagation" target="_blank" rel="noopener">상세 문서 보기 · 트레이싱 컨텍스트 전파 ↗</a></div>
-  </section>
 
   <!-- §12 SUMMARY -->
   <section class="blk" id="summary">
@@ -573,7 +617,7 @@ import '../../styles/payment-portfolio.css';
   </section>
 
   <footer class="foot">
-    <span>payment-platform — <span class="accent">비동기 결제 아키텍처 문서</span></span>
+    <span>payment-platform · <span class="accent">비동기 결제 아키텍처 문서</span></span>
     <span style="display:inline-flex; align-items:center; gap:12px;">만든 사람 <span class="accent">hyoguoo</span>
       <a class="ico-link txt-link" style="color:var(--accent-text);" href="https://github.com/hyoguoo" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" width="13" height="13" aria-hidden="true"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
       <a class="ico-link txt-link" style="color:var(--faint); font-weight:400;" href="mailto:hyoguoo@gmail.com"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hyoguoo@gmail.com</a>
