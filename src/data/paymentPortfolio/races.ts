@@ -1,4 +1,4 @@
-// payment-platform 포트폴리오 데이터 — 콘텐츠/지오메트리. 렌더 로직과 분리(유지보수·편집 격리).
+// payment-platform 포트폴리오 데이터 · 콘텐츠/지오메트리. 렌더 로직과 분리(유지보수·편집 격리).
 // 정본 페이지: src/pages/payment-platform-portfolio/index.astro
 
 export const RACES = [

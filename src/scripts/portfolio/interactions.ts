@@ -1,10 +1,10 @@
 // @ts-nocheck
-// payment-platform 포트폴리오 — 딥링크·키보드 nav·스크롤 힌트·개요 로그·인쇄·테마 (이식된 로직).
+// payment-platform 포트폴리오 · 딥링크·키보드 nav·스크롤 힌트·개요 로그·인쇄·테마 (이식된 로직).
 import { reduce } from './util';
 
   /* ================= DEEP-LINK + KEYBOARD NAV ================= */
   (function(){
-    /* 위임 핸들러 — 동적 생성 앵커(타임라인 근거 링크 등)까지 커버, details 자동 오픈 + 포커스 이동 */
+    /* 위임 핸들러 · 동적 생성 앵커(타임라인 근거 링크 등)까지 커버, details 자동 오픈 + 포커스 이동 */
     var backScn=document.getElementById("backToScn"),lastScnY=0;
     if(backScn)backScn.addEventListener("click",function(){
       backScn.hidden=true;window.scrollTo({top:lastScnY,behavior:reduce?"auto":"smooth"});
@@ -46,7 +46,7 @@ import { reduce } from './util';
     if(init.s!=null&&init.s!==""){var sb=document.querySelector('.scn-btn[data-i="'+init.s+'"]');if(sb){sb.click();state.s=init.s;}}
   })();
 
-  /* 가로 스크롤 컨테이너 — 잘림 힌트 페이드 토글 */
+  /* 가로 스크롤 컨테이너 · 잘림 힌트 페이드 토글 */
   (function(){
     var sxUpds=[];
     document.querySelectorAll(".map-wrap, .swim-wrap, .dtable-wrap, .mtable-wrap, #nav").forEach(function(el){
@@ -55,11 +55,11 @@ import { reduce } from './util';
       window.addEventListener("resize",upd);
       sxUpds.push(upd);upd();
     });
-    /* 접힌 details 안 표는 펼칠 때 폭이 생긴다 — 펼침 시 재계산 */
+    /* 접힌 details 안 표는 펼칠 때 폭이 생긴다 · 펼침 시 재계산 */
     document.querySelectorAll("details").forEach(function(d){d.addEventListener("toggle",function(){sxUpds.forEach(function(f){f();});});});
   })();
 
-  /* 개요 로그 전시물 — 뷰포트 진입 시 1회 타이핑 재생 */
+  /* 개요 로그 전시물 · 뷰포트 진입 시 1회 타이핑 재생 */
   (function(){
     var t=document.getElementById("ovTrace");
     if(!t||reduce||typeof IntersectionObserver==="undefined")return;
@@ -76,7 +76,7 @@ import { reduce } from './util';
     window.addEventListener("afterprint",function(){opened.forEach(function(d){d.open=false;});opened=[];});
   })();
 
-  /* 히어로 진화 타임라인 — 페이즈 hover/focus 툴팁 (스크롤러 밖 공유 요소로 위치, 세로 클리핑 회피) */
+  /* 히어로 진화 타임라인 · 페이즈 hover/focus 툴팁 (스크롤러 밖 공유 요소로 위치, 세로 클리핑 회피) */
   (function(){
     var tip=document.getElementById("evoTip"),evo=document.querySelector(".evo");
     if(!tip||!evo)return;
@@ -98,7 +98,7 @@ import { reduce } from './util';
     window.addEventListener("resize",hide);
   })();
 
-  /* ================= THEME — 시스템 → 라이트 → 다크 순환 ================= */
+  /* ================= THEME · 시스템 → 라이트 → 다크 순환 ================= */
   var themeBtn=document.getElementById("themeBtn"),themeLabel=document.getElementById("themeLabel"),root=document.documentElement;
   var MODES=["system","light","dark"],mode="system";
   try{var savedTheme=localStorage.getItem("pf-theme");if(savedTheme&&MODES.indexOf(savedTheme)>-1)mode=savedTheme;}catch(e){}

@@ -1,5 +1,5 @@
 // @ts-nocheck
-// payment-platform 포트폴리오 — 설계결정·경합·PG상태머신·알람·요약 렌더 + 상태머신 탭 (이식된 로직).
+// payment-platform 포트폴리오 · 설계결정·경합·PG상태머신·알람·요약 렌더 + 상태머신 탭 (이식된 로직).
 import { reduce, esc, escBr, chips, sv, CV } from './util';
 import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SOLVES, LIMITS, BENCH_META, BENCH_BARS } from '../../data/paymentPortfolio';
 
@@ -7,7 +7,7 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
   (function(){
     var dw=document.getElementById("decisions-grid");
     if(!dw)return;
-    /* 열 2개를 독립 컨테이너로 — 카드 펼침이 옆 열에 빈 공간을 만들지 않게 */
+    /* 열 2개를 독립 컨테이너로 · 카드 펼침이 옆 열에 빈 공간을 만들지 않게 */
     var colL=document.createElement("div"),colR=document.createElement("div");
     colL.className="dec-col";colR.className="dec-col";
     var half=Math.ceil(DECISIONS.length/2);
@@ -81,10 +81,10 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
       h+='<p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">'+esc(st.meaning)+'</p>';
       h+='<dl class="kv"><dt>진입</dt><dd>'+chips([st.entry])+'</dd><dt>종결 여부</dt><dd>'+(st.terminal?"예":"아니오")+'</dd></dl>';
       if(st.out.length){h+='<div class="sub-label">후속 상태 전이</div><div class="transitions">';st.out.forEach(function(o){h+='<div class="trans"><span class="arr">'+(o.self?"↻":"──▶")+'</span><span class="to" style="color:var('+CV[PG_STATES[o.to].color]+')">'+o.to+'</span><span class="tl">'+esc(o.label)+'</span></div>';});h+='</div>';}
-      else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 — 더 이상의 상태 전이 없음.</p>';
+      else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 · 더 이상의 상태 전이 없음.</p>';
       if(id==="QUARANTINED")h+='<div class="mini"><h4>결제 쪽과의 차이</h4><div class="row"><span class="k">PG</span><span>해당 단계에서 처리가 즉각 종결되며, 격리 결과를 결제 서비스로 회신한다.</span></div><div class="row"><span class="k">Payment</span><span>결제 서비스의 QUARANTINED는 종결 상태가 아니며, 관리자가 개입할 때까지 대기한다.</span></div></div>';
       det.innerHTML=h;}
-    det.innerHTML='<div class="dhead"><h3 class="big">PG 벤더 처리 상태</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">명령을 받은 pg-service가 벤더를 호출하며 오가는 5상태. <b>IN_PROGRESS는 self-loop</b>로 attempt를 쌓다 한도(4) 소진 시 QUARANTINED로 자동 격리된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">멱등</span><span>중복 승인 명령은 PENDING을 건너뛰고 벤더 재호출 없이 직접 처리 — 이중 승인 차단.</span></div></div>';
+    det.innerHTML='<div class="dhead"><h3 class="big">PG 벤더 처리 상태</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">명령을 받은 pg-service가 벤더를 호출하며 오가는 5상태. <b>IN_PROGRESS는 self-loop</b>로 attempt를 쌓다 한도(4) 소진 시 QUARANTINED로 자동 격리된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">멱등</span><span>중복 승인 명령은 PENDING을 건너뛰고 벤더 재호출 없이 직접 처리 · 이중 승인 차단.</span></div></div>';
   })();
   (function(){
     var bp=document.getElementById("smTabPay"),bg=document.getElementById("smTabPg"),lp=document.getElementById("sm-payment"),lg=document.getElementById("sm-pg");

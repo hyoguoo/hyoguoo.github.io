@@ -1,5 +1,5 @@
 // @ts-nocheck
-// payment-platform 포트폴리오 — 시나리오 극장 (경로 지도·타임라인·재생) (이식된 로직).
+// payment-platform 포트폴리오 · 시나리오 극장 (경로 지도·타임라인·재생) (이식된 로직).
 import { reduce, esc, escBr, sv, CV } from './util';
 import { SCN_NODES, SCN_EDGES, SCENARIOS, SCN_WHEN, SCN_OBS } from '../../data/paymentPortfolio';
 
@@ -17,7 +17,7 @@ import { SCN_NODES, SCN_EDGES, SCENARIOS, SCN_WHEN, SCN_OBS } from '../../data/p
     function hopForNode(id){var sc=SCENARIOS[curScn];if(!sc)return -1;
       for(var k=0;k<sc.hops.length;k++){if(edgeNodes(sc.hops[k].edge).indexOf(id)>=0)return k;}
       return -1;}
-    Object.keys(SCN_NODES).forEach(function(id){var n=SCN_NODES[id];var g=sv("g",{class:"snode3",tabindex:"0",role:"button","aria-label":n.t+" — 이 지점을 지나는 첫 홉으로 이동"});g.dataset.id=id;
+    Object.keys(SCN_NODES).forEach(function(id){var n=SCN_NODES[id];var g=sv("g",{class:"snode3",tabindex:"0",role:"button","aria-label":n.t+" · 이 지점을 지나는 첫 홉으로 이동"});g.dataset.id=id;
       g.appendChild(sv("rect",{x:n.x,y:n.y,width:n.w,height:n.h,rx:9,class:"box3"}));
       var t=sv("text",{x:n.x+n.w/2,y:n.y+n.h/2-2,"text-anchor":"middle",class:"t3"});t.textContent=n.t;g.appendChild(t);
       var s=sv("text",{x:n.x+n.w/2,y:n.y+n.h/2+11,"text-anchor":"middle",class:"s3"});s.textContent=n.s;g.appendChild(s);

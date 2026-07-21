@@ -1,5 +1,5 @@
 // @ts-nocheck
-// payment-platform 포트폴리오 — 스크롤 모션 (리빌·스태거·카운트업·지도 draw-in) (이식된 로직).
+// payment-platform 포트폴리오 · 스크롤 모션 (리빌·스태거·카운트업·지도 draw-in) (이식된 로직).
 
 /* ================= 스크롤 모션 (리빌 / 스태거 / 카운트업 / 지도 draw-in) ================= */
 (function(){
@@ -17,7 +17,7 @@
   /* 스크롤 리빌 */
   once(".reveal", function(el){ el.classList.add("in"); });
 
-  /* 순서형 리스트 스태거 — 진짜 순서가 있는 것만 (진화 타임라인 / 결제 단계) */
+  /* 순서형 리스트 스태거 · 진짜 순서가 있는 것만 (진화 타임라인 / 결제 단계) */
   ["#stages", ".evo"].forEach(function(sel){
     var g = document.querySelector(sel); if (!g) return;
     g.classList.add("stagger");
@@ -54,7 +54,7 @@
     countUp(node, target, decimals, prefix);
   }, { threshold: 0.6 });
 
-  /* 시스템 아키텍처 draw-in — 엣지가 흐르듯 그려진다 */
+  /* 시스템 아키텍처 draw-in · 엣지가 흐르듯 그려진다 */
   (function(){
     var svg = document.querySelector("#archWrap svg.archmap"); if (!svg) return;
     var solids = Array.prototype.slice.call(svg.querySelectorAll(".aedge:not(.dash)"));

@@ -1,9 +1,9 @@
 // @ts-nocheck
-// payment-platform 포트폴리오 — 아키텍처맵·스윔레인·PG플로우·트레이스·단계카드·상태머신·헥사 (이식된 로직).
+// payment-platform 포트폴리오 · 아키텍처맵·스윔레인·PG플로우·트레이스·단계카드·상태머신·헥사 (이식된 로직).
 import { reduce, esc, chips, sv, CV } from './util';
 import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_META, FLOW_LANES, FLOW_STEPS } from '../../data/paymentPortfolio';
 
-  /* ---------- 히어로 로그 스트림 — 무한 루프용 블록 복제 ---------- */
+  /* ---------- 히어로 로그 스트림 · 무한 루프용 블록 복제 ---------- */
   (function(){
     var b=document.querySelector(".logstream .ls-block");
     if(b&&b.parentNode)b.parentNode.appendChild(b.cloneNode(true));
@@ -19,7 +19,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
   var amap=sv("svg",{viewBox:"0 0 780 370",class:"archmap",role:"group","aria-label":"시스템 아키텍처 맵"});
   var adefs=sv("defs",{});var am=sv("marker",{id:"aarw",markerWidth:"8",markerHeight:"8",refX:"6.5",refY:"3",orient:"auto",markerUnits:"userSpaceOnUse"});am.appendChild(sv("path",{d:"M0,0 L6.5,3 L0,6 Z",class:"arrow-a"}));adefs.appendChild(am);amap.appendChild(adefs);
   var aEdgeEls=[];
-  var albl=sv("g",{}); /* 라벨 레이어 — 노드보다 나중에 붙여 가려지지 않게 */
+  var albl=sv("g",{}); /* 라벨 레이어 · 노드보다 나중에 붙여 가려지지 않게 */
   ARCH_EDGES.forEach(function(e){
     var p=sv("path",{d:e.d,class:"aedge"+(e.dash?" dash":"")+(e.bus?" bus":""),"marker-end":e.dash?"":"url(#aarw)"});p.dataset.f=e.f;p.dataset.t=e.t;amap.appendChild(p);
     var lbl=null;if(e.lab){lbl=sv("text",{x:e.lx,y:e.ly,class:"aedge-label","text-anchor":e.anchor||"middle"});lbl.textContent=e.lab;lbl.dataset.f=e.f;lbl.dataset.t=e.t;albl.appendChild(lbl);}
@@ -47,9 +47,9 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       '<p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">'+esc(n.role)+'</p>'+
       '<dl class="kv"><dt>저장소</dt><dd>'+esc(n.store)+'</dd><dt>채널</dt><dd>'+esc(n.chan)+'</dd></dl>';
   }
-  archDetail.innerHTML='<div class="dhead"><h3 class="big">시스템 아키텍처</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 그 서비스의 역할·저장소·채널이 여기에 표시된다.</p><dl class="kv"><dt>불변식</dt><dd>모듈 간 코드 의존 0 — 통신은 HTTP 또는 Kafka.</dd><dt>토픽</dt><dd><code>commands.confirm</code> · <code>events.confirmed</code> · <code>stock-committed</code> (+2 DLQ)</dd></dl>';
+  archDetail.innerHTML='<div class="dhead"><h3 class="big">시스템 아키텍처</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 그 서비스의 역할·저장소·채널이 여기에 표시된다.</p><dl class="kv"><dt>불변식</dt><dd>모듈 간 코드 의존 0 · 통신은 HTTP 또는 Kafka.</dd><dt>토픽</dt><dd><code>commands.confirm</code> · <code>events.confirmed</code> · <code>stock-committed</code> (+2 DLQ)</dd></dl>';
 
-  /* ================= §02 JOURNEY — swimlane (22스텝 한눈에) ================= */
+  /* ================= §02 JOURNEY · swimlane (22스텝 한눈에) ================= */
   (function(){
     var mount=document.getElementById("swimWrap");if(!mount)return;
     var W=1000,rowH=30,y=58;
@@ -76,7 +76,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     rows.forEach(function(r){
       if(r.cut){
         svg.appendChild(sv("line",{x1:8,y1:r.y,x2:W-8,y2:r.y,class:"sw-cut"}));
-        var ct=sv("text",{x:W-14,y:r.y-6,class:"sw-cut-t","text-anchor":"end"});ct.textContent="202 반환 — 여기부터 사용자 응답과 무관한 비동기";svg.appendChild(ct);
+        var ct=sv("text",{x:W-14,y:r.y-6,class:"sw-cut-t","text-anchor":"end"});ct.textContent="202 반환 · 여기부터 사용자 응답과 무관한 비동기";svg.appendChild(ct);
         return;
       }
       var s=r.s,fx=laneX[s.f];
@@ -105,7 +105,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     svg.appendChild(defs);
     var NODES=[
       {id:"recv",x:160,y:16,w:200,t:"명령 수신",s:"Kafka consumer",c:"--svc-pg"},
-      {id:"dedupe",x:160,y:96,w:200,t:"멱등 키 기록",s:"SETNX — 없으면 기록·있으면 차단",c:"--svc-pg"},
+      {id:"dedupe",x:160,y:96,w:200,t:"멱등 키 기록",s:"SETNX · 없으면 기록·있으면 차단",c:"--svc-pg"},
       {id:"inbox",x:160,y:176,w:200,t:"inbox 저장 · PENDING",s:"주문당 1행 (UNIQUE)",c:"--svc-pg"},
       {id:"claim",x:160,y:256,w:200,t:"워커 선점 · IN_PROGRESS",s:"행 잠금 (SKIP LOCKED)",c:"--svc-pg"},
       {id:"call",x:160,y:336,w:200,t:"PG사 호출",s:"Toss / NicePay",c:"--svc-pg"},
@@ -124,7 +124,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       {d:"M330,378 Q510,398 640,438",k:"retry",lab:"일시 오류 (5xx·타임아웃)",lx:478,ly:398},
       {d:"M160,486 L160,532",k:"ok"},
       {d:"M656,486 L656,530",k:"fail",lab:"4회 도달",lx:668,ly:512,anchor:"start"},
-      {d:"M758,452 C866,380 866,66 364,34",k:"retry",dash:1,lab:"4회 미만 — 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:120},
+      {d:"M758,452 C866,380 866,66 364,34",k:"retry",dash:1,lab:"4회 미만 · 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:120},
       {d:"M360,199 L456,199",k:"fail",lab:"저장 실패",lx:408,ly:190}
     ];
     EDGES.forEach(function(e){
@@ -141,40 +141,47 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     mount.appendChild(svg);
   })();
 
-  /* ================= §11 TRACE FLOW (스팬 워터폴) ================= */
+  /* ================= §11 TRACE FLOW · 하나의 traceId, 3번 이어붙임 ================= */
   (function(){
     var mount=document.getElementById("traceFlow");if(!mount)return;
-    var svg=sv("svg",{viewBox:"0 0 820 212",class:"traceflow",role:"img","aria-label":"traceId 연속성 — 스팬 워터폴"});
-    /* 상단 — 전체를 관통하는 하나의 traceId */
-    svg.appendChild(sv("line",{x1:70,y1:30,x2:780,y2:30,class:"tb-top"}));
-    var tt=sv("text",{x:70,y:20,class:"tb-top-t"});tt.textContent="traceId 4f9a…c2 — 결제 한 건";svg.appendChild(tt);
-    /* 레인 */
-    [["payment",75],["pg",129],["가상 스레드",183]].forEach(function(l){
-      var t=sv("text",{x:8,y:l[1]+4,class:"tb-lane"});t.textContent=l[0];svg.appendChild(t);
+    var yL=120;
+    var svg=sv("svg",{viewBox:"0 0 840 184",class:"traceflow",role:"img","aria-label":"하나의 traceId가 끊길 수 있는 3곳을 넘어 이어지는 과정"});
+    var idt=sv("text",{x:32,y:34,class:"tf-id"});idt.textContent="traceId 4f9a…c2";svg.appendChild(idt);
+    var ids=sv("text",{x:32,y:52,class:"tf-idsub"});ids.textContent="한 요청 = 하나의 id";svg.appendChild(ids);
+    svg.appendChild(sv("line",{x1:42,y1:yL,x2:800,y2:yL,class:"tf-thread"}));
+    var NODES=[
+      {x:104,t:"payment",s:"확정 · outbox"},
+      {x:322,t:"pg",s:"inbox 저장"},
+      {x:540,t:"pg",s:"워커 · PG 호출"},
+      {x:748,t:"product",s:"재고 확정"}
+    ];
+    var GAP=[
+      {x:213,n:"①",brk:"프로세스 경계",fix:"traceparent 헤더"},
+      {x:431,n:"②",brk:"비동기 아웃박스",fix:"저장 → 복원"},
+      {x:644,n:"③",brk:"스레드 스위칭",fix:"스냅샷 복원"}
+    ];
+    var nW=118;
+    NODES.forEach(function(n){
+      svg.appendChild(sv("rect",{x:n.x-nW/2,y:yL-17,width:nW,height:34,rx:8,class:"tf-node"}));
+      var t=sv("text",{x:n.x,y:yL-2,"text-anchor":"middle",class:"tf-node-t"});t.textContent=n.t;svg.appendChild(t);
+      var s=sv("text",{x:n.x,y:yL+12,"text-anchor":"middle",class:"tf-node-s"});s.textContent=n.s;svg.appendChild(s);
     });
-    /* 스팬 바 (x, y중심, w, 라벨) */
-    [[92,75,150,"confirm 접수 → 202"],[268,129,92,"수신 · inbox 저장"],[428,129,124,"워커 처리"],[462,183,104,"PG사 호출"],[624,75,156,"결과 확정 → DONE"]].forEach(function(b){
-      svg.appendChild(sv("rect",{x:b[0],y:b[1]-11,width:b[2],height:22,rx:6,class:"tb-bar"}));
-      var t=sv("text",{x:b[0]+b[2]/2,y:b[1]+3,"text-anchor":"middle",class:"tb-t"});t.textContent=b[3];svg.appendChild(t);
+    GAP.forEach(function(g){
+      svg.appendChild(sv("line",{x1:g.x,y1:yL-46,x2:g.x,y2:yL-24,class:"tf-cut"}));
+      var bt=sv("text",{x:g.x,y:yL-52,"text-anchor":"middle",class:"tf-cut-t"});bt.textContent=g.brk;svg.appendChild(bt);
+      svg.appendChild(sv("circle",{cx:g.x,cy:yL,r:12,class:"tf-stitch"}));
+      var sn=sv("text",{x:g.x,y:yL+4,"text-anchor":"middle",class:"tf-stitch-n"});sn.textContent=g.n;svg.appendChild(sn);
+      var ft=sv("text",{x:g.x,y:yL+42,"text-anchor":"middle",class:"tf-fix-t"});ft.textContent=g.fix;svg.appendChild(ft);
     });
-    /* 이어붙임 ①②③ */
-    svg.appendChild(sv("path",{d:"M242,79 Q255,108 266,124",class:"tb-link"}));
-    var b1=sv("text",{x:214,y:106,class:"tb-b"});b1.textContent="① Kafka 헤더";svg.appendChild(b1);
-    svg.appendChild(sv("path",{d:"M362,129 L426,129",class:"tb-link dash"}));
-    var b2=sv("text",{x:394,y:120,class:"tb-b","text-anchor":"middle"});b2.textContent="② 저장 → 복원";svg.appendChild(b2);
-    svg.appendChild(sv("path",{d:"M470,141 L470,170",class:"tb-link"}));
-    var b3=sv("text",{x:480,y:160,class:"tb-b"});b3.textContent="③ 문맥 이어 전달";svg.appendChild(b3);
-    svg.appendChild(sv("path",{d:"M553,124 Q590,95 622,80",class:"tb-link"}));
-    var b4=sv("text",{x:560,y:96,class:"tb-b"});b4.textContent="① Kafka 헤더";svg.appendChild(b4);
     mount.appendChild(svg);
   })();
 
-  /* ================= §02 JOURNEY — stage cards ================= */
+  /* ================= §02 JOURNEY · stage cards ================= */
   var stagesWrap=document.getElementById("stages");
   PAYMENT.forEach(function(s,i){
     var card=document.createElement("details");card.className="pstage";card.id="ps-"+i;
     var h='<summary class="ps-top"><span class="ps-num">'+s.no+'</span><span class="ps-title">'+esc(s.title)+'</span><span class="ps-actor">'+esc(s.actor)+'</span><span class="ps-more" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></summary>';
-    h+='<p class="ps-sub">'+esc(s.purpose)+'<span class="ps-inv">핵심 — '+esc(s.invariant)+'</span></p>';
+    h+='<p class="ps-sub">'+esc(s.purpose)+'<span class="ps-inv">핵심 · '+esc(s.invariant)+'</span></p>';
     h+='<div class="sub-label">진행</div><ol class="steps">';
     s.steps.forEach(function(st){h+='<li><span>'+esc(st.t)+(st.c&&st.c.length?'<span class="codes">'+chips(st.c)+'</span>':'')+'</span></li>';});
     h+='</ol>';
@@ -210,17 +217,17 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     h+='<p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">'+esc(st.meaning)+'</p>';
     h+='<dl class="kv"><dt>진입</dt><dd>'+chips(st.entry.split(" · "))+'</dd><dt>종결 여부</dt><dd>'+(st.terminal?"예 (폴링 종료)":"아니오 (폴링 계속)")+'</dd><dt>폴링 응답</dt><dd><code>'+esc(st.polling)+'</code></dd></dl>';
     if(st.out.length){h+='<div class="sub-label">후속 상태 전이</div><div class="transitions">';st.out.forEach(function(o){h+='<div class="trans"><span class="arr">──▶</span><span class="to" style="color:var('+CV[STATES[o.to].color]+')">'+o.to+'</span><span class="tl">'+esc(o.label)+(o.recover?' · 신규':'')+'</span></div>';});h+='</div>';}
-    else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 — 더 이상의 상태 전이 없음.</p>';
-    if(id==="QUARANTINED")h+='<div class="mini"><h4>재고 보상 · 격리 안전 종결</h4><div class="row"><span class="k">키 조건</span><span>decrement:done 키가 있을 때만 재고 보상 — 유령 재고 방지.</span></div><div class="row"><span class="k">조건부 갱신</span><span>현재 상태가 QUARANTINED일 때만 FAILED로 갱신 — order 동조, 지연 회신과의 복구 경합 차단.</span></div><div class="row"><span class="k">DLQ</span><span>events.confirmed.dlq 적체분은 원 토픽 재주입으로 EOS 재처리.</span></div></div>';
-    else if(id==="DONE")h+='<div class="mini"><h4>재고 확정 · 승인</h4><div class="row"><span class="k">확정</span><span>stock-committed 발행 — 결정적 키로 product가 멱등 흡수, 차감 1회.</span></div><div class="row"><span class="k">재발행</span><span>RDB DONE 후 브로커 커밋 유실 시 종결 가드가 재발행 복구.</span></div></div>';
+    else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 · 더 이상의 상태 전이 없음.</p>';
+    if(id==="QUARANTINED")h+='<div class="mini"><h4>재고 보상 · 격리 안전 종결</h4><div class="row"><span class="k">키 조건</span><span>decrement:done 키가 있을 때만 재고 보상 · 유령 재고 방지.</span></div><div class="row"><span class="k">조건부 갱신</span><span>현재 상태가 QUARANTINED일 때만 FAILED로 갱신 · order 동조, 지연 회신과의 복구 경합 차단.</span></div><div class="row"><span class="k">DLQ</span><span>events.confirmed.dlq 적체분은 원 토픽 재주입으로 EOS 재처리.</span></div></div>';
+    else if(id==="DONE")h+='<div class="mini"><h4>재고 확정 · 승인</h4><div class="row"><span class="k">확정</span><span>stock-committed 발행 · 결정적 키로 product가 멱등 흡수, 차감 1회.</span></div><div class="row"><span class="k">재발행</span><span>RDB DONE 후 브로커 커밋 유실 시 종결 가드가 재발행 복구.</span></div></div>';
     cfDetail.innerHTML=h;}
-  cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 의미·진입 메서드·폴링 응답·후속 상태 전이가 표시된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE·FAILED·EXPIRED에 도달하면 폴링 종료.</span></div><div class="row"><span class="k">예외</span><span>QUARANTINED는 종결이 아니라 관리자 개입 대기 — 폴링은 PROCESSING에서 멈춘다.</span></div></div>';
+  cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 의미·진입 메서드·폴링 응답·후속 상태 전이가 표시된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE·FAILED·EXPIRED에 도달하면 폴링 종료.</span></div><div class="row"><span class="k">예외</span><span>QUARANTINED는 종결이 아니라 관리자 개입 대기 · 폴링은 PROCESSING에서 멈춘다.</span></div></div>';
 
   /* ================= §05 MODULES (통합 뷰) ================= */
   (function(){
     var hexlayers=document.getElementById("hexlayers"),layerCards=document.getElementById("layerCards");
     if(!hexlayers||!layerCards)return;
-    /* 헥사고날 다이어그램 — 공통 골격 1회 */
+    /* 헥사고날 다이어그램 · 공통 골격 1회 */
     var svg=sv("svg",{viewBox:"0 0 340 300",role:"img","aria-label":"헥사고날 레이어"});
     var rings=[{k:"infrastructure",x:20,y:18,w:300,h:264,label:"infrastructure · presentation",sub:"adapters"},
                {k:"application",x:66,y:70,w:208,h:160,label:"application",sub:"use case · ports"},
@@ -250,7 +257,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     [[170,70,170,110],[170,232,170,182]].forEach(function(a){var p=sv("path",{d:"M"+a[0]+","+a[1]+" L"+a[2]+","+a[3],stroke:"var(--faint)","stroke-width":"1.3","marker-end":"url(#hin)",fill:"none"});svg.appendChild(p);});
     var d=sv("defs",{});var m=sv("marker",{id:"hin",markerWidth:"8",markerHeight:"8",refX:"6",refY:"3",orient:"auto",markerUnits:"userSpaceOnUse"});m.appendChild(sv("path",{d:"M0,0 L6,3 L0,6 Z",fill:"var(--faint)"}));d.appendChild(m);svg.insertBefore(d,svg.firstChild);
     hexlayers.appendChild(svg);
-    /* 레이어 카드 — 공통 설명 + 대표 구성(payment 기준 예시) */
+    /* 레이어 카드 · 공통 설명 + 대표 구성(payment 기준 예시) */
     var h="";
     LAYER_META.forEach(function(lm){
       var ring=CV[lm.k==="infrastructure"||lm.k==="presentation"||lm.k==="core"?"infra":lm.k==="application"?"payment":"product"];
@@ -259,6 +266,6 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       ex.forEach(function(p){h+='<span class="pkg">'+esc(p)+'</span>';});
       h+='</div></div></div>';
     });
-    h+='<p style="margin:4px 2px 0;font-size:11.5px;color:var(--faint)">구성 예시는 payment-service 기준 — 나머지 서비스도 같은 골격이다.</p>';
+    h+='<p style="margin:4px 2px 0;font-size:11.5px;color:var(--faint)">구성 예시는 payment-service 기준 · 나머지 서비스도 같은 골격이다.</p>';
     layerCards.innerHTML=h;
   })();

@@ -1,4 +1,4 @@
-// barrel — 포트폴리오 데이터 통합 진입점
+// barrel · 포트폴리오 데이터 통합 진입점
 export * from './arch';
 export * from './stages';
 export * from './states';
