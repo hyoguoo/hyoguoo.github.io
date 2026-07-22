@@ -34,7 +34,7 @@ export const SCENARIOS = [
       {edge:"payment>redis",kind:"normal",label:"재고 선차감 (Lua atomic)"},
       {edge:"payment>pg",kind:"normal",label:"commands.confirm 발행"},
       {edge:"pg>vendor",kind:"normal",label:"승인 호출 (strategy.confirm)"},
-      {edge:"vendor>pg",kind:"normal",label:"APPROVED (approvedAt · amount)"},
+      {edge:"vendor>pg",kind:"normal",label:"APPROVED (승인 금액·시각)"},
       {edge:"pg>payment",kind:"normal",label:"events.confirmed",state:"IN_PROGRESS → DONE"},
       {edge:"payment>product",kind:"normal",label:"stock-committed · 재고 확정 (결정적 키)"}
     ]},

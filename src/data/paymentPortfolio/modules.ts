@@ -5,7 +5,7 @@ export const LAYER_EX = {
     domain:["PaymentEvent","PaymentOrder","PaymentEventStatus"],
     application:["*UseCase","port/in · port/out","PaymentTransactionCoordinator"],
     presentation:["PaymentController","dto"],
-    infrastructure:["Kafka publisher · consumer","Redis 어댑터","JPA repository","스케줄러 워커"],
+    infrastructure:["Kafka publisher · consumer","JPA repository","스케줄러 워커"],
     core:["LogFmt","VT executor 설정"]
   };
 

@@ -28,7 +28,7 @@ export const FLOW_STEPS = [
     {st:"④ 벤더 호출 · PG",f:"kafka",t:"pg",lab:"명령 수신 · dedupe SETNX 1h"},
     {f:"pg",lab:"inbox 선점 · SKIP LOCKED"},
     {f:"pg",t:"vendor",lab:"승인 호출"},
-    {f:"vendor",t:"pg",lab:"승인 응답 · amount·approvedAt"},
+    {f:"vendor",t:"pg",lab:"승인 응답 · 승인 금액·시각"},
     {f:"pg",t:"kafka",lab:"events.confirmed 발행"},
     {st:"⑤ 결과 확정 · EOS",f:"kafka",t:"payment",lab:"결과 수신"},
     {f:"payment",lab:"멱등 마킹 · IN_PROGRESS→DONE"},

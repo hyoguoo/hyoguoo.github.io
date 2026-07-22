@@ -1,6 +1,6 @@
 // @ts-nocheck
 // payment-platform 포트폴리오 · 설계결정·경합·PG상태머신·알람·요약 렌더 + 상태머신 탭 (이식된 로직).
-import { reduce, esc, escBr, chips, sv, CV } from './util';
+import { reduce, esc, escBr, sv, CV } from './util';
 import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SOLVES, LIMITS, BENCH_META, BENCH_BARS } from '../../data/paymentPortfolio';
 
   /* ================= §06 DESIGN DECISIONS ================= */
@@ -79,7 +79,7 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
     function render(id){var st=PG_STATES[id],cv=CV[st.color];var h="";
       h+='<div class="dhead"><span class="state-badge" style="color:var('+cv+');background:color-mix(in srgb,var('+cv+') 13%,transparent)"><span class="sw" style="background:var('+cv+')"></span>'+id+'</span><span class="term-tag">'+(st.terminal?"종결 상태":"진행 상태")+'</span></div>';
       h+='<p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">'+esc(st.meaning)+'</p>';
-      h+='<dl class="kv"><dt>진입</dt><dd>'+chips([st.entry])+'</dd><dt>종결 여부</dt><dd>'+(st.terminal?"예":"아니오")+'</dd></dl>';
+      h+='<dl class="kv"><dt>진입</dt><dd>'+esc(st.entry)+(st.entryRef?' <code class="ent-ref">'+esc(st.entryRef)+'</code>':'')+'</dd><dt>종결 여부</dt><dd>'+(st.terminal?"예":"아니오")+'</dd></dl>';
       if(st.out.length){h+='<div class="sub-label">후속 상태 전이</div><div class="transitions">';st.out.forEach(function(o){h+='<div class="trans"><span class="arr">'+(o.self?"↻":"──▶")+'</span><span class="to" style="color:var('+CV[PG_STATES[o.to].color]+')">'+o.to+'</span><span class="tl">'+esc(o.label)+'</span></div>';});h+='</div>';}
       else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 · 더 이상의 상태 전이 없음.</p>';
       if(id==="QUARANTINED")h+='<div class="mini"><h4>결제 쪽과의 차이</h4><div class="row"><span class="k">PG</span><span>해당 단계에서 처리가 즉각 종결되며, 격리 결과를 결제 서비스로 회신한다.</span></div><div class="row"><span class="k">Payment</span><span>결제 서비스의 QUARANTINED는 종결 상태가 아니며, 관리자가 개입할 때까지 대기한다.</span></div></div>';

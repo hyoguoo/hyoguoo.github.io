@@ -336,7 +336,7 @@ import '../../styles/payment-portfolio.css';
         <p class="tr3-why">HTTP나 Kafka를 타고 다른 마이크로서비스로 넘어갈 때마다 인메모리 추적 문맥이 소실된다.</p>
         <ul class="tr3-list">
           <li>추적 식별자인 <code>traceparent</code>(W3C 표준)를 HTTP 및 Kafka 헤더에 적재하여 전송</li>
-          <li>수신 측은 해당 식별자를 부모(Parent Span)로 인식하여 새로운 구간을 이어 붙임</li>
+          <li>수신 측은 해당 식별자를 부모 구간(<code>Parent Span</code>)으로 인식하여 새로운 구간을 이어 붙임</li>
           <li>HTTP는 Spring Boot의 계측(Instrumentation)이 자동 처리하며, Kafka는 발행 시점에 직접 주입</li>
         </ul>
       </div>
@@ -351,10 +351,10 @@ import '../../styles/payment-portfolio.css';
       </div>
       <div class="tr3">
         <div class="tr3-h"><span class="tr3-n">3</span><span class="tr3-t">스레드 컨텍스트 스위칭</span></div>
-        <p class="tr3-why">PG사 API 호출이 가상 스레드(Virtual Thread) 풀로 위임될 때, 기존 OTel Context와 MDC 로깅 식별자가 전파되지 않는다.</p>
+        <p class="tr3-why">PG사 API 호출이 가상 스레드(Virtual Thread) 풀로 위임될 때, 기존 추적 문맥(<code>OTel Context</code>)과 로깅 식별자(<code>MDC</code>)가 전파되지 않는다.</p>
         <ul class="tr3-list">
           <li>메인 스레드에서 작업을 위임하기 직전, 현재의 추적 문맥과 로깅 식별자를 스냅샷으로 캡처</li>
-          <li>가상 스레드 내에서 문맥을 자동 복원하는 커스텀 래퍼 <code>ContextAwareVirtualThreadExecutors</code>를 도입</li>
+          <li>가상 스레드 안에서도 문맥을 자동 복원하는 커스텀 실행기(<code>ContextAwareVirtualThreadExecutors</code>)를 만들어 적용</li>
           <li>풀 내부의 어떤 가상 스레드에 할당되더라도 끊김 없는 <code>traceId</code> 추적 보장</li>
         </ul>
       </div>
@@ -442,8 +442,8 @@ import '../../styles/payment-portfolio.css';
       <p>내부 결제(Payment)와 외부 PG 통신은 실패하는 이유도, 회복하는 방식도 다르다.<br>두 상태를 하나로 통일하면 무엇으로 처리할지 가려낼 수 없어, 생명주기를 분리했다.</p>
     </div>
     <div class="svc-switch reveal">
-      <button class="svc-btn" id="smTabPay" type="button" aria-pressed="true"><span class="sd" style="background:var(--svc-payment)"></span><span class="sm2">결제 · PaymentEventStatus</span></button>
-      <button class="svc-btn" id="smTabPg" type="button" aria-pressed="false"><span class="sd" style="background:var(--svc-pg)"></span><span class="sm2">PG · PgInboxStatus</span></button>
+      <button class="svc-btn" id="smTabPay" type="button" aria-pressed="true"><span class="sd" style="background:var(--svc-payment)"></span><span class="sm2">결제 상태</span></button>
+      <button class="svc-btn" id="smTabPg" type="button" aria-pressed="false"><span class="sd" style="background:var(--svc-pg)"></span><span class="sm2">PG 상태</span></button>
     </div>
     <div class="sm-layout reveal" id="sm-payment">
       <div class="card">
