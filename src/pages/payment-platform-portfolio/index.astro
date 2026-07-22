@@ -7,6 +7,12 @@ import '../../styles/payment-portfolio.css';
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>결제 플랫폼 · 비동기 아키텍처</title>
+<meta name="description" content="Kafka 기반 4개 마이크로서비스가 협력하는 비동기 결제 플랫폼. 분산 트랜잭션 정합성·상태 머신 복구·Exactly-Once 결제 처리를 동작하는 코드로 검증한 1인 백엔드 프로젝트.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="결제 플랫폼 · 비동기 아키텍처">
+<meta property="og:description" content="분산 환경에서 결제와 재고의 정합성을 지키는 방법을 동작하는 코드로 검증한 1인 백엔드 프로젝트. 초과 판매 0 · 요청 유실 0 · Exactly-Once.">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary">
 </head>
 <body>
 
@@ -46,9 +52,14 @@ import '../../styles/payment-portfolio.css';
     </div>
   </div>
   <div class="shell hero-inner">
-    <div class="kicker eyebrow">payment platform</div>
+    <div class="kicker eyebrow">Payment Platform - 개인 프로젝트</div>
     <h1><span class="thin">데이터 정합성을 보장하는</span><br>견고한 결제 <span class="em">아키텍처</span></h1>
     <p class="sub">PG 장애, 메시지 유실 등 복잡한 분산 환경의 엣지케이스에서도<br>재고와 결제 상태는 어긋나지 않는다.<br>비동기 처리로 응답성을 높이면서,<br>결제는 단 한 번만 정확히 처리되도록 견고하게 설계했다.</p>
+    <div class="hero-stats">
+      <div class="hstat"><span class="hs-v">Exactly-Once</span><span class="hs-l">결제 처리 보장</span></div>
+      <div class="hstat"><span class="hs-v">+47.5<i>%</i></span><span class="hs-l">비동기 처리량 향상</span></div>
+      <div class="hstat"><span class="hs-v">0</span><span class="hs-l">초과 판매 · 요청 유실</span></div>
+    </div>
     <div class="evo-cap">
       <span class="evo-cap-lb">구축 여정</span>
       <span class="evo-cap-tx">단순한 구조에서 시작해, 끊임없는 개선을 거치며 아키텍처를 점진적으로 고도화했다.</span>
@@ -192,7 +203,7 @@ import '../../styles/payment-portfolio.css';
               <span class="s-metric-biz">· 같은 인프라로 더 큰 순간 부하 감당<br>· 트래픽 급증을 증설 없이 흡수하는 여유 확보</span>
             </div>
             <div class="s-metric">
-              <span class="s-metric-val">920</span>
+              <span class="s-metric-val">900+</span>
               <span class="s-metric-lbl">CI를 통한 <strong>비즈니스 로직 단위·통합 검증</strong></span>
               <span class="s-metric-biz">· 핵심 비즈니스 로직의 회귀를 커밋 단위에서 검증<br>· 코드 변경이 장애로 번지기 전에 차단</span>
             </div>
@@ -428,7 +439,7 @@ import '../../styles/payment-portfolio.css';
       </div>
     </div>
     <details class="matrix reveal">
-      <summary>▸ 8개 시나리오 한눈 비교</summary>
+      <summary>▸ 11개 시나리오 한눈 비교</summary>
       <div class="mtable-wrap"><table id="scn-matrix"><thead><tr><th>시나리오</th><th>결과</th><th>재고 영향</th><th>복구 · 종결</th><th>관측</th></tr></thead><tbody></tbody></table></div>
     </details>
     <div class="meas-note res reveal"><b>결과</b> · 11가지 실패·복구 시나리오가 <strong>모두 자동 복구 또는 안전 종결로 수렴</strong>하도록 경로를 검증했다.</div>
@@ -670,7 +681,7 @@ import '../../styles/payment-portfolio.css';
       <div class="sub-label" style="margin-top: 26px;">회고</div>
       <div class="retro">
         <div class="retro-item"><b>분산 환경에서의 데이터 정합성과 운영 비용</b><span>DB와 Kafka 간의 분산 트랜잭션을 처리하기 위해 멱등성 처리와 보상 로직을 직접 구현했다.<br>자연스럽게 Outbox 패턴을 도입하게 되었고, 이를 정리하는 워커까지 구성하며 분산 환경에서 정합성을 지키기 위해 필요한 실질적인 운영 비용을 체감했다.</span></div>
-        <div class="retro-item"><b>비동기 처리와 리소스 관리의 중요성</b><span>비동기 도입이 단건의 응답 속도보다는 시스템의 전체적인 처리량과 안정성에 기여한다는 점을 확인했다.<br>무제한적인 비동기 스레드 생성으로 커넥션 풀 고갈을 겪은 후, 동시성 상한(Concurrency Limit)을 설정하고 워커를 통한 큐잉 방식으로 개선하여 안정적인 부하 처리 구조를 구축했다.</span></div>
+        <div class="retro-item"><b>비동기 처리와 리소스 관리의 중요성</b><span>비동기 도입이 단건의 응답 속도보다는 시스템의 전체적인 처리량과 안정성에 기여한다는 점을 확인했다.<br>무제한적인 비동기 스레드 생성으로 커넥션 풀 고갈을 겪은 후, 동시성 상한(ConcurrencyThrottle)을 설정하고 워커를 통한 큐잉 방식으로 개선하여 안정적인 부하 처리 구조를 구축했다.</span></div>
         <div class="retro-item"><b>실행 컨텍스트 유실 문제 해결과 로깅</b><span>가상 스레드와 비동기 워커를 넘나드는 과정에서 Trace ID가 유실되는 문제를 겪었다.<br>디버깅이 끊기는 구간을 하나씩 식별하고 실행 컨텍스트(Context)가 명시적으로 전파되도록 개선하여, 전체 결제 흐름을 누락 없이 추적할 수 있는 환경을 마련했다.</span></div>
       </div>
     </div>
