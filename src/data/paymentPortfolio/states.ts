@@ -15,11 +15,11 @@ export const NPOS = {READY:{x:105,y:230},IN_PROGRESS:{x:405,y:230},DONE:{x:735,y
 export const SEDGES = [
     {from:"READY",to:"IN_PROGRESS",d:"M167,230 L338,230",lx:252,ly:219,label:"confirm 커밋"},
     {from:"READY",to:"EXPIRED",d:"M105,256 L105,401",lx:97,ly:335,label:"만료",anchor:"end"},
-    {from:"READY",to:"FAILED",d:"M148,250 Q430,368 668,304",lx:410,ly:350,label:"재고 부족"},
+    {from:"READY",to:"FAILED",d:"M148,250 Q430,368 668,304",lx:322,ly:342,label:"재고 부족"},
     {from:"READY",to:"QUARANTINED",d:"M140,253 Q250,426 338,426",lx:214,ly:388,label:"캐시 장애",anchor:"end"},
     {from:"IN_PROGRESS",to:"DONE",d:"M452,214 Q612,116 668,112",lx:566,ly:146,label:"APPROVED"},
     {from:"IN_PROGRESS",to:"FAILED",d:"M456,247 Q600,296 668,296",lx:566,ly:288,label:"FAILED 수신"},
-    {from:"IN_PROGRESS",to:"QUARANTINED",d:"M405,256 L405,401",lx:414,ly:335,label:"불일치 / 격리",anchor:"start"},
+    {from:"IN_PROGRESS",to:"QUARANTINED",d:"M405,256 L405,401",lx:414,ly:362,label:"불일치 / 격리",anchor:"start"},
     {from:"QUARANTINED",to:"FAILED",d:"M468,420 Q648,394 704,320",lx:604,ly:392,label:"관리자 안전 종결"}
   ];
 

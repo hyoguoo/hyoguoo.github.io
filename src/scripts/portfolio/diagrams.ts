@@ -131,7 +131,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       {d:"M260,326 L260,360",k:"0",lab:"워커 take",lx:272,ly:348,anchor:"start"},
       {d:"M260,406 L260,440",k:"0"},
       {d:"M232,486 Q170,512 162,542",k:"ok",lab:"승인 · 확정 거절",lx:126,ly:516},
-      {d:"M330,484 Q510,508 640,542",k:"retry",lab:"일시 오류 (5xx·타임아웃)",lx:478,ly:506},
+      {d:"M330,484 Q510,508 640,542",k:"retry",lab:"일시 오류 (5xx·타임아웃)",lx:470,ly:490},
       {d:"M160,590 L160,636",k:"ok"},
       {d:"M656,590 L656,634",k:"fail",lab:"4회 도달",lx:668,ly:616,anchor:"start"},
       {d:"M758,556 C866,460 866,80 364,58",k:"retry",dash:1,lab:"4회 미만 · 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:140},
@@ -267,8 +267,8 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       box.addEventListener("keydown",function(ev){if(ev.key==="Enter"||ev.key===" "){ev.preventDefault();pickLayer(r.k,r.label);}});
       svg.appendChild(box);
       var t=sv("text",{x:r.x+r.w/2,y:r.y+(r.k==="domain"?r.h/2:16),"text-anchor":"middle",class:"hlayer-t","font-size":"12"});t.textContent=r.label;svg.appendChild(t);
-      if(r.k!=="domain"){var s=sv("text",{x:r.x+r.w/2,y:r.y+29,"text-anchor":"middle",class:"hlayer-s","font-size":"9.5"});s.textContent=r.sub;svg.appendChild(s);}
-      else{var s2=sv("text",{x:r.x+r.w/2,y:r.y+r.h/2+14,"text-anchor":"middle",class:"hlayer-s","font-size":"9.5"});s2.textContent=r.sub;svg.appendChild(s2);}
+      if(r.k!=="domain"){var s=sv("text",{x:r.x+r.w/2,y:r.y+29,"text-anchor":"middle",class:"hlayer-s","font-size":"10.5"});s.textContent=r.sub;svg.appendChild(s);}
+      else{var s2=sv("text",{x:r.x+r.w/2,y:r.y+r.h/2+14,"text-anchor":"middle",class:"hlayer-s","font-size":"10.5"});s2.textContent=r.sub;svg.appendChild(s2);}
     });
     [[170,70,170,110],[170,232,170,182]].forEach(function(a){var p=sv("path",{d:"M"+a[0]+","+a[1]+" L"+a[2]+","+a[3],stroke:"var(--faint)","stroke-width":"1.3","marker-end":"url(#hin)",fill:"none"});svg.appendChild(p);});
     var d=sv("defs",{});var m=sv("marker",{id:"hin",markerWidth:"8",markerHeight:"8",refX:"6",refY:"3",orient:"auto",markerUnits:"userSpaceOnUse"});m.appendChild(sv("path",{d:"M0,0 L6,3 L0,6 Z",fill:"var(--faint)"}));d.appendChild(m);svg.insertBefore(d,svg.firstChild);

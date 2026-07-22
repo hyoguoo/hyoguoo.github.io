@@ -178,11 +178,11 @@
   .anode:focus-visible { outline: none; }
   .anode:focus-visible .abox { stroke: var(--accent); stroke-width: 2.4; }
   .anode .a-t { font-family: var(--mono); font-size: 12.5px; font-weight: 600; fill: var(--ink); }
-  .anode .a-s { font-family: var(--mono); font-size: 9.5px; fill: var(--faint); letter-spacing: .04em; }
+  .anode .a-s { font-family: var(--mono); font-size: 10.5px; fill: var(--faint); letter-spacing: .04em; }
   .aedge { fill: none; stroke: color-mix(in srgb, var(--faint) 30%, var(--line)); stroke-width: 1.7; transition: stroke .18s, opacity .18s; }
   .aedge.dash { stroke-dasharray: 4 4; }
   .aedge.bus { stroke-width: 2; }
-  .aedge-label { font-family: var(--mono); font-size: 9px; fill: var(--muted); transition: opacity .18s; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
+  .aedge-label { font-family: var(--mono); font-size: 10px; fill: var(--muted); transition: opacity .18s; paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
   .arrow-a { fill: var(--line); transition: fill .18s; }
   svg.archmap.dim .aedge:not(.hot), svg.archmap.dim .aedge-label:not(.hot) { opacity: .1; }
   svg.archmap.dim .anode:not(.sel):not(.adj) .abox { opacity: .38; }
@@ -214,13 +214,13 @@
   .sw-arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; }
   .sw-arh { fill: var(--muted); }
   .sw-num { fill: var(--accent); stroke: var(--surface); stroke-width: 1.5; }
-  .sw-num-t { font-family: var(--mono); font-size: 9px; font-weight: 700; fill: #fff; pointer-events: none; }
+  .sw-num-t { font-family: var(--mono); font-size: 9.5px; font-weight: 700; fill: #fff; pointer-events: none; }
   .sw-lab { font-size: 10.5px; fill: var(--ink-soft); paint-order: stroke; stroke: var(--surface); stroke-width: 3px; stroke-linejoin: round; }
   .sw-lab.self { fill: var(--muted); }
   svg.pgflow { display: block; width: 100%; min-width: 700px; height: auto; }
   .pf-box { fill: color-mix(in srgb, var(--nc, transparent) 9%, var(--surface-2)); stroke: var(--hairline); stroke-width: 1.4; }
   .pf-t { font-family: var(--mono); font-size: 12px; font-weight: 600; fill: var(--ink); }
-  .pf-s { font-family: var(--mono); font-size: 9px; fill: var(--faint); }
+  .pf-s { font-family: var(--mono); font-size: 10px; fill: var(--faint); }
   .pf-edge { stroke: var(--muted); stroke-width: 1.5; fill: none; }
   .pf-edge.dash { stroke-dasharray: 6 5; }
   .pf-edge.pk-ok { stroke: var(--st-done); stroke-width: 1.8; }
@@ -314,7 +314,7 @@
   .snode { cursor: pointer; } .snode:hover .node-box2 { fill: color-mix(in srgb, var(--nc, transparent) 17%, var(--surface-2)); }
   .snode:focus-visible { outline: none; } .snode:focus-visible .node-box2 { stroke: var(--accent); stroke-width: 2.5; }
   .node-label2 { font-family: var(--mono); font-size: 13px; font-weight: 600; fill: var(--ink); }
-  .node-term2 { font-family: var(--mono); font-size: 8.5px; fill: var(--faint); letter-spacing: .1em; }
+  .node-term2 { font-family: var(--mono); font-size: 9.5px; fill: var(--faint); letter-spacing: .1em; }
   .edge2 { fill: none; stroke: color-mix(in srgb, var(--faint) 30%, var(--line)); stroke-width: 1.8; transition: stroke .18s, opacity .18s; }
   .edge2.recover { stroke: var(--st-quar); stroke-dasharray: 5 4; }
   .elabel { font-family: var(--mono); font-size: 10px; fill: var(--muted); transition: opacity .18s; }
@@ -448,7 +448,7 @@
   .snode3:focus-visible .box3 { stroke: var(--accent); stroke-width: 2.4; }
   .snode3 .box3 { fill: var(--surface-2); stroke: var(--hairline); stroke-width: 1.4; transition: opacity .2s, stroke .2s; }
   .snode3 .t3 { font-family: var(--mono); font-size: 11.5px; font-weight: 600; fill: var(--ink); transition: opacity .2s; }
-  .snode3 .s3 { font-family: var(--mono); font-size: 8.5px; fill: var(--faint); transition: opacity .2s; }
+  .snode3 .s3 { font-family: var(--mono); font-size: 9.5px; fill: var(--faint); transition: opacity .2s; }
   .snode3.pulse .box3 { stroke: var(--accent); stroke-width: 2.6; }
   .hb-c { stroke: var(--bg); stroke-width: 1.5; transition: stroke .15s; }
   .hb-c.k-normal { fill: var(--accent); } .hb-c.k-retry { fill: var(--st-quar); } .hb-c.k-fail { fill: var(--st-failed); } .hb-c.k-recover { fill: var(--st-recover); } .hb-c.k-warn { fill: var(--surface); stroke: var(--st-quar); stroke-width: 2; }
@@ -738,7 +738,7 @@
   .tf-thread { stroke: var(--accent); stroke-width: 3; }
   .tf-node { fill: var(--surface-2); stroke: var(--hairline); stroke-width: 1.4; }
   .tf-node-t { font-family: var(--mono); font-size: 12px; font-weight: 700; fill: var(--ink); }
-  .tf-node-s { font-family: var(--mono); font-size: 9px; fill: var(--faint); }
+  .tf-node-s { font-family: var(--mono); font-size: 10px; fill: var(--faint); }
   .tf-cut { stroke: var(--st-failed); stroke-width: 1.6; stroke-dasharray: 3 3; }
   .tf-cut-t { font-size: 10px; fill: var(--st-failed); }
   .tf-stitch { fill: var(--accent); stroke: var(--bg); stroke-width: 2.5; }
