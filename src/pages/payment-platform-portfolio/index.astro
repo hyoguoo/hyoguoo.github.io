@@ -166,6 +166,14 @@ import '../../styles/payment-portfolio.css';
                 <span class="spec-tag">Testcontainers</span>
                 <span class="spec-tag">k6</span>
               </div>
+              <div style="margin-top:12px; display:flex; flex-direction:column; gap:7px; font-size:12.5px; line-height:1.55; color:var(--muted);">
+                <div><b style="color:var(--ink-soft); font-weight:600;">Java 21</b> · 가상 스레드로 PG 블로킹 I/O를 적은 스레드로 대응</div>
+                <div><b style="color:var(--ink-soft); font-weight:600;">Spring Boot 3.4</b> · Micrometer·OTel 관측성 + Spring Cloud(Gateway·Eureka) 생태계</div>
+                <div><b style="color:var(--ink-soft); font-weight:600;">Kafka</b> · 비동기 양방향 confirm · at-least-once · DLQ 재처리</div>
+                <div><b style="color:var(--ink-soft); font-weight:600;">MySQL 8</b> · DB per service · Outbox를 같은 트랜잭션으로 묶어 발행 보장</div>
+                <div><b style="color:var(--ink-soft); font-weight:600;">Redis</b> · 재고 선차감 원자 Lua · checkout 멱등 store</div>
+                <div><b style="color:var(--ink-soft); font-weight:600;">k6 · Testcontainers</b> · 동기 vs 비동기 부하 비교 · 실제 인프라 통합 검증</div>
+              </div>
             </div>
           </div>
         </div>
@@ -274,6 +282,14 @@ import '../../styles/payment-portfolio.css';
         </div>
       </div>
       <div class="card card-pad" id="archDetail" aria-live="polite"></div>
+    </div>
+    <div class="card why-async reveal">
+      <div class="card-head"><h3>서비스 분리 이유</h3></div>
+      <div class="card-pad why-rows">
+        <div class="why-row"><span class="wk bad">모놀리스의 한계</span><span>· PG 벤더 호출은 내부 호출보다 느리고 변동이 큼<br>· 벤더 API 스펙 변경도 우리 배포 주기와 무관하게 발생<br>· 모놀리스엔 이 변동성을 가둘 경계가 없어, PG 지연·장애가 product·user까지 전파</span></div>
+        <div class="why-row"><span class="wk good">분리 후 효과</span><span>· 벤더 호출 자원(스레드·커넥션) 소모를 pg-service 안에 격리<br>· 벤더 스펙 hot-fix가 다른 도메인 배포 단위와 분리<br>· 도메인별 SLO·부하 패턴·스케일을 독립 운영</span></div>
+        <div class="why-row"><span class="wk">정직한 전제</span><span>· 도메인이 적고 한 명이 전체를 인지하는 규모면 모놀리스가 정답<br>· 결제 도메인의 외부 의존 변동성을 격리하는 환경을 시뮬레이션하려는 학습 목적의 선택<br>· 그 과정에서 Outbox·멱등 소비·분산 트레이싱·DLQ를 직접 다룸</span></div>
+      </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/msa-transition" target="_blank" rel="noopener">상세 문서 보기 · 모놀리스에서 4서비스로 ↗</a></div>
   </section>
