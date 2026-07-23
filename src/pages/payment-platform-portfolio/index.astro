@@ -34,6 +34,11 @@ import '../../styles/payment-portfolio.css';
     gtag('config', 'G-KBCBB0D7H8');
   }
 </script>
+<script is:inline>
+  if (!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('js-reveal');
+  }
+</script>
 </head>
 <body>
 
@@ -86,19 +91,19 @@ import '../../styles/payment-portfolio.css';
       <span class="evo-cap-tx">단순한 구조에서 시작해, 끊임없는 개선을 거치며 아키텍처를 점진적으로 고도화했다.</span>
     </div>
     <div class="evo-wrap">
-      <div class="evo">
-        <div class="evo-step" tabindex="0" data-tip="결제 금액·주문·재고를 클라이언트·서버·PG 세 곳에서 교차 검증해, 위변조된 요청이 결제로 넘어가지 못하게 하는 기반을 세웠다."><span class="evo-no">PHASE 1</span><span class="evo-t">데이터 정합성 확립</span><span class="evo-d">클라이언트 · 서버 · PG&nbsp;교차&nbsp;검증</span></div>
-        <div class="evo-step" tabindex="0" data-tip="긴 트랜잭션을 쪼개 잠금 구간을 줄이고, 실패한 작업은 상태를 보고 스스로 재시도하게 만들어 외부 장애가 전체로 번지지 않게 했다."><span class="evo-no">PHASE 2</span><span class="evo-t">결합도 해소 · 자가 복구</span><span class="evo-d">트랜잭션 최소화 · 상태&nbsp;기반&nbsp;재시도</span></div>
-        <div class="evo-step" tabindex="0" data-tip="장애가 나도 원인을 추적할 수 있도록 시나리오 테스트·구조화 로그·지표·알람을 붙였다."><span class="evo-no">PHASE 3</span><span class="evo-t">운영 가시성</span><span class="evo-d">시나리오 테스트 · 구조화&nbsp;로깅&nbsp;· 모니터링</span></div>
-        <div class="evo-step" tabindex="0" data-tip="실패 시 재고를 되돌리는 보상 처리와 checkout 멱등을 더해, 중복 결제와 재고 유실을 막았다."><span class="evo-no">PHASE 4</span><span class="evo-t">정합성 심화 · 중복 제어</span><span class="evo-d">보상&nbsp;트랜잭션 · Checkout&nbsp;멱등성</span></div>
-        <div class="evo-step" tabindex="0" data-tip="상태 저장과 이벤트 발행 기록을 한 DB 트랜잭션으로 묶는 Outbox, 가상 스레드 처리, 상태 머신 복구를 도입해 응답성과 복원력을 함께 높였다."><span class="evo-no">PHASE 5</span><span class="evo-t">비동기 아키텍처 전환</span><span class="evo-d">Outbox + 가상&nbsp;스레드 · 상태&nbsp;머신&nbsp;복구</span></div>
-        <div class="evo-step" tabindex="0" data-tip="단일 앱을 결제·PG·상품·유저 4서비스로 분해하고, payment↔PG를 Kafka 양방향으로 이으면서도 결제는 정확히 한 번만 처리. 요청은 분산 트레이싱으로 끝까지 추적한다."><span class="evo-no">PHASE 6</span><span class="evo-t">MSA + Kafka 양방향</span><span class="evo-d">4서비스 분해 · 단&nbsp;1회&nbsp;결제&nbsp;처리&nbsp;· 분산&nbsp;트레이싱</span></div>
-        <div class="evo-step next" tabindex="0" data-tip="실제 장애를 주입하는 드릴과 k6 부하 시나리오를 다시 설계해, 지금까지의 방어가 정말 버티는지 증명한다 (진행 예정)."><span class="evo-no">PHASE 7 · 다음</span><span class="evo-t">회복성 검증</span><span class="evo-d">장애 주입 드릴 · k6 시나리오&nbsp;재설계</span></div>
+      <div class="evo stagger">
+        <div class="evo-step st-i" style="--i:0;" tabindex="0" data-tip="결제 금액·주문·재고를 클라이언트·서버·PG 세 곳에서 교차 검증해, 위변조된 요청이 결제로 넘어가지 못하게 하는 기반을 세웠다."><span class="evo-no">PHASE 1</span><span class="evo-t">데이터 정합성 확립</span><span class="evo-d">클라이언트 · 서버 · PG&nbsp;교차&nbsp;검증</span></div>
+        <div class="evo-step st-i" style="--i:1;" tabindex="0" data-tip="긴 트랜잭션을 쪼개 잠금 구간을 줄이고, 실패한 작업은 상태를 보고 스스로 재시도하게 만들어 외부 장애가 전체로 번지지 않게 했다."><span class="evo-no">PHASE 2</span><span class="evo-t">결합도 해소 · 자가 복구</span><span class="evo-d">트랜잭션 최소화 · 상태&nbsp;기반&nbsp;재시도</span></div>
+        <div class="evo-step st-i" style="--i:2;" tabindex="0" data-tip="장애가 나도 원인을 추적할 수 있도록 시나리오 테스트·구조화 로그·지표·알람을 붙였다."><span class="evo-no">PHASE 3</span><span class="evo-t">운영 가시성</span><span class="evo-d">시나리오 테스트 · 구조화&nbsp;로깅&nbsp;· 모니터링</span></div>
+        <div class="evo-step st-i" style="--i:3;" tabindex="0" data-tip="실패 시 재고를 되돌리는 보상 처리와 checkout 멱등을 더해, 중복 결제와 재고 유실을 막았다."><span class="evo-no">PHASE 4</span><span class="evo-t">정합성 심화 · 중복 제어</span><span class="evo-d">보상&nbsp;트랜잭션 · Checkout&nbsp;멱등성</span></div>
+        <div class="evo-step st-i" style="--i:4;" tabindex="0" data-tip="상태 저장과 이벤트 발행 기록을 한 DB 트랜잭션으로 묶는 Outbox, 가상 스레드 처리, 상태 머신 복구를 도입해 응답성과 복원력을 함께 높였다."><span class="evo-no">PHASE 5</span><span class="evo-t">비동기 아키텍처 전환</span><span class="evo-d">Outbox + 가상&nbsp;스레드 · 상태&nbsp;머신&nbsp;복구</span></div>
+        <div class="evo-step st-i" style="--i:5;" tabindex="0" data-tip="단일 앱을 결제·PG·상품·유저 4서비스로 분해하고, payment↔PG를 Kafka 양방향으로 이으면서도 결제는 정확히 한 번만 처리. 요청은 분산 트레이싱으로 끝까지 추적한다."><span class="evo-no">PHASE 6</span><span class="evo-t">MSA + Kafka 양방향</span><span class="evo-d">4서비스 분해 · 단&nbsp;1회&nbsp;결제&nbsp;처리&nbsp;· 분산&nbsp;트레이싱</span></div>
+        <div class="evo-step next st-i" style="--i:6;" tabindex="0" data-tip="실제 장애를 주입하는 드릴과 k6 부하 시나리오를 다시 설계해, 지금까지의 방어가 정말 버티는지 증명한다 (진행 예정)."><span class="evo-no">PHASE 7 · 다음</span><span class="evo-t">회복성 검증</span><span class="evo-d">장애 주입 드릴 · k6 시나리오&nbsp;재설계</span></div>
       </div>
     </div>
   </div>
 </header>
-<div class="evo-tip" id="evoTip" role="tooltip" hidden></div>
+<div class="evo-tip" id="evoTip" role="tooltip"></div>
 
 <!-- ================= NAV ================= -->
 <nav class="topnav" id="topnav">
@@ -226,7 +231,7 @@ import '../../styles/payment-portfolio.css';
               <span class="s-metric-biz">· 같은 인프라로 더 큰 순간 부하 감당<br>· 트래픽 급증을 증설 없이 흡수하는 여유 확보</span>
             </div>
             <div class="s-metric">
-              <span class="s-metric-val">900+</span>
+              <span class="s-metric-val">900<i style="font-size:inherit; font-style:normal; color:var(--muted);">+</i></span>
               <span class="s-metric-lbl">CI를 통한 <strong>비즈니스 로직 단위·통합 검증</strong></span>
               <span class="s-metric-biz">· 핵심 비즈니스 로직의 회귀를 커밋 단위에서 검증<br>· 코드 변경이 장애로 번지기 전에 차단</span>
             </div>
