@@ -82,13 +82,13 @@ import { reduce } from './util';
     if(!tip||!evo)return;
     var steps=evo.querySelectorAll(".evo-step[data-tip]");if(!steps.length)return;
     function show(step){
-      tip.textContent=step.getAttribute("data-tip")||"";tip.hidden=false;
+      tip.textContent=step.getAttribute("data-tip")||""; tip.classList.add("show");
       var host=tip.offsetParent||document.body,hr=host.getBoundingClientRect(),r=step.getBoundingClientRect();
       var left=r.left-hr.left,max=host.clientWidth-tip.offsetWidth-4;
       if(left>max)left=max;if(left<0)left=0;
       tip.style.left=left+"px";tip.style.top=(r.bottom-hr.top+10)+"px";
     }
-    function hide(){tip.hidden=true;}
+    function hide(){tip.classList.remove("show");}
     steps.forEach(function(s){
       s.addEventListener("mouseenter",function(){show(s);});
       s.addEventListener("mouseleave",hide);
