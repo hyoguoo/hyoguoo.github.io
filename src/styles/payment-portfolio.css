@@ -119,8 +119,9 @@
     background: var(--surface); border: 1px solid var(--hairline); border-radius: 11px;
     box-shadow: 0 10px 30px rgba(0,0,0,.22);
     font-size: 12.5px; line-height: 1.62; color: var(--ink-soft); pointer-events: none;
+    opacity: 0; transform: translateY(6px); transition: opacity .25s cubic-bezier(0.16, 1, 0.3, 1), transform .25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .evo-tip[hidden] { display: none; }
+  .evo-tip.show { opacity: 1; transform: translateY(0); }
   .hero h1 .thin { color: var(--muted); }
   .hero h1 .em { color: var(--accent); }
   .hero .sub { margin: 26px 0 0; font-size: clamp(15px, 2.2vw, 19px); color: var(--ink-soft); max-width: 56ch; }
@@ -623,8 +624,8 @@
   .cap-band { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
   @media (max-width: 900px) { .cap-band { grid-template-columns: repeat(2, 1fr); } }
   @media (max-width: 560px) { .cap-band { grid-template-columns: 1fr; } }
-  .cap-cell { display: flex; flex-direction: column; gap: 5px; padding: 15px 16px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--hairline); text-decoration: none; transition: border-color .15s, background .15s, transform .15s; }
-  .cap-cell:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--hairline)); background: color-mix(in srgb, var(--accent) 6%, var(--surface-2)); transform: translateY(-2px); }
+  .cap-cell { display: flex; flex-direction: column; gap: 5px; padding: 15px 16px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--hairline); text-decoration: none; transition: border-color .15s, background .15s, transform .25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow .25s cubic-bezier(0.16, 1, 0.3, 1); }
+  .cap-cell:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--hairline)); background: color-mix(in srgb, var(--accent) 6%, var(--surface-2)); transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.12), 0 4px 12px color-mix(in srgb, var(--accent) 15%, transparent); }
   .cap-t { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.35; }
   .cap-e { font-size: 12px; color: var(--muted); line-height: 1.5; }
   .cap-e b { color: var(--accent-text); font-weight: 700; }
@@ -867,7 +868,7 @@
   }
   html.js-reveal .reveal.in { opacity: 1; transform: none; }
 
-  /* 순서형 리스트 스태거 */
+  /* 순서형 리스트 스태거 기본 (아래에서 위로) */
   html.js-reveal .stagger > .st-i {
     opacity: 0; transform: translateY(8px);
     transition: opacity .5s cubic-bezier(.22,1,.36,1), transform .5s cubic-bezier(.22,1,.36,1);
@@ -875,6 +876,30 @@
   html.js-reveal .stagger.in > .st-i {
     opacity: 1; transform: none;
     transition-delay: calc(min(var(--i, 0), 8) * 55ms);
+  }
+
+  /* 진화 타임라인 스태거 전용 (왼쪽에서 오른쪽, 선 드로잉 및 점 팝업) */
+  html.js-reveal .evo.stagger {
+    background-size: 0% 2px;
+  }
+  html.js-reveal .evo.stagger.in {
+    background-size: 100% 2px;
+    transition: background-size 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  html.js-reveal .evo.stagger > .st-i {
+    opacity: 0; transform: translateX(-15px);
+  }
+  html.js-reveal .evo.stagger.in > .st-i {
+    opacity: 1; transform: none;
+    transition-delay: calc(min(var(--i, 0), 8) * 85ms);
+  }
+  html.js-reveal .evo.stagger > .st-i::before {
+    transform: scale(0);
+    transition: transform .4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  html.js-reveal .evo.stagger.in > .st-i::before {
+    transform: scale(1);
+    transition-delay: calc(min(var(--i, 0), 8) * 85ms);
   }
 
   /* 시스템 아키텍처 draw-in */
