@@ -5,10 +5,6 @@
 //   node scripts/export-portfolio-pdf.mjs
 //
 // 환경변수:
-//   FORMAT=print (기본) 각 섹션을 개별 페이지로 분할 및 병합 · 잘림 원천 방지
-//   FORMAT=web         콘텐츠 폭 그대로 세로 분할 · 넓은 레이아웃 보존
-//   FORMAT=long        페이지를 나누지 않는 통짜 1장 (화면 제출용)
-//   FORMAT=a4          A4 가로 (표준 용지지만 세로 긴 요소가 밀려 빈 여백 多)
 //   OUT=<경로>          출력 PDF 경로 (기본 export-portfolio/payment-platform-portfolio.pdf)
 //   SERVER=<url>        이미 떠 있는 dev 서버 재사용 (예: http://localhost:4321) · 미지정 시 자동 기동
 
@@ -21,7 +17,6 @@ import path from 'node:path';
 const ROUTE = process.env.ROUTE || '/payment-platform-portfolio/';
 const SITE = 'https://hyoguoo.github.io/payment-platform-portfolio'; // QR·딥링크가 가리킬 배포 주소
 const OUT = process.env.OUT || 'export-portfolio/payment-platform-portfolio.pdf';
-const FORMAT = (process.env.FORMAT || 'print').toLowerCase();
 const REUSE = process.env.SERVER || '';
 
 const log = (...a) => console.log('[export-pdf]', ...a);
@@ -209,53 +204,36 @@ async function main() {
 
     // ── PDF 출력 ─────────────────────────────────────────────
     await mkdir(path.dirname(OUT), { recursive: true });
-    if (FORMAT === 'print') {
-      // 기존 웹 페이지의 각 섹션을 논리적 페이지로 자른다. 섹션만 보이게 하고 콘텐츠
-      // 높이만큼 개별 PDF 로 뽑아 병합 → 섹션=페이지 1장 · 잘림 0 · 하단 여백 0 · 밀도 그대로.
-      const { PDFDocument } = await import('pdf-lib');
-      const { writeFile } = await import('node:fs/promises');
-      const SEC = '.hero, main > section';
-      const W = 1280; // 웹 레이아웃 폭 고정
-      const count = await page.$$eval(SEC, (els) => els.length);
-      const merged = await PDFDocument.create();
-      for (let i = 0; i < count; i++) {
-        const h = await page.evaluate((a) => {
-          const secs = [...document.querySelectorAll(a.sel)];
-          secs.forEach((s, k) => { s.style.display = k === a.idx ? '' : 'none'; });
-          return Math.ceil(secs[a.idx].getBoundingClientRect().height);
-        }, { sel: SEC, idx: i });
-        const buf = await page.pdf({
-          width: `${W}px`, height: `${h}px`, printBackground: true, pageRanges: '1',
-          margin: { top: '0', bottom: '0', left: '0', right: '0' },
-        });
-        const doc = await PDFDocument.load(buf);
-        const [pg] = await merged.copyPages(doc, [0]);
-        merged.addPage(pg);
-      }
-      await page.evaluate((sel) => document.querySelectorAll(sel).forEach((s) => { s.style.display = ''; }), SEC);
-      await writeFile(OUT, await merged.save());
-      log(`저장 완료 → ${OUT} (FORMAT=print · ${count}섹션 = ${count}페이지)`);
-    } else {
-      const opts = { path: OUT, printBackground: true, timeout: 60000 };
-      if (FORMAT === 'long') {
-        const full = await page.evaluate(() => Math.ceil(document.documentElement.scrollHeight));
-        opts.width = '1280px';
-        opts.height = `${full + 40}px`;
-        opts.pageRanges = '1';
-        opts.margin = { top: '0', bottom: '0', left: '0', right: '0' };
-      } else if (FORMAT === 'web') {
-        opts.width = '1280px';
-        opts.height = '1810px';
-        opts.margin = { top: '0', bottom: '0', left: '0', right: '0' };
-      } else {
-        opts.format = 'A4';
-        opts.landscape = true;
-        opts.scale = 0.86;
-        opts.margin = { top: '10px', bottom: '10px', left: '10px', right: '10px' };
-      }
-      await page.pdf(opts);
-      log('저장 완료 →', OUT, `(FORMAT=${FORMAT})`);
+
+    // 기존 웹 페이지의 각 섹션을 논리적 페이지로 자른다. 섹션만 보이게 하고 콘텐츠
+    // 높이만큼 개별 PDF 로 뽑아 병합 → 섹션=페이지 1장 · 잘림 0 · 하단 여백 0 · 밀도 그대로.
+    const { PDFDocument } = await import('pdf-lib');
+    const { writeFile } = await import('node:fs/promises');
+    const SEC = '.hero, main > section';
+    const W = 1280; // 웹 레이아웃 폭 고정
+    const count = await page.$$eval(SEC, (els) => els.length);
+    const merged = await PDFDocument.create();
+    
+    for (let i = 0; i < count; i++) {
+      const h = await page.evaluate((a) => {
+        const secs = [...document.querySelectorAll(a.sel)];
+        secs.forEach((s, k) => { s.style.display = k === a.idx ? '' : 'none'; });
+        return Math.ceil(secs[a.idx].getBoundingClientRect().height);
+      }, { sel: SEC, idx: i });
+      
+      const buf = await page.pdf({
+        width: `${W}px`, height: `${h}px`, printBackground: true, pageRanges: '1',
+        margin: { top: '0', bottom: '0', left: '0', right: '0' },
+      });
+      
+      const doc = await PDFDocument.load(buf);
+      const [pg] = await merged.copyPages(doc, [0]);
+      merged.addPage(pg);
     }
+    
+    await page.evaluate((sel) => document.querySelectorAll(sel).forEach((s) => { s.style.display = ''; }), SEC);
+    await writeFile(OUT, await merged.save());
+    log(`저장 완료 → ${OUT} (${count}섹션 = ${count}페이지)`);
   } finally {
     await browser.close();
     stopDevServer(server && server.proc);
