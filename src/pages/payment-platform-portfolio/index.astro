@@ -108,10 +108,12 @@ import '../../styles/payment-portfolio.css';
       </span>
       <span class="nav-grp">
         <a href="#modules">내부 구조</a>
+        <a href="#pgstrategy">전략 패턴</a>
         <a href="#decisions">설계 결정</a>
         <a href="#races">경합 방어</a>
       </span>
       <span class="nav-grp">
+        <a href="#testing">테스트</a>
         <a href="#workflow">워크플로우</a>
         <a href="#alerting">관측·알람</a>
         <a href="#summary">정리</a>
@@ -570,6 +572,57 @@ import '../../styles/payment-portfolio.css';
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/architecture" target="_blank" rel="noopener">상세 문서 보기 · 아키텍처와 헥사고날 레이어 ↗</a></div>
   </section>
 
+  <!-- PG STRATEGY · 벤더 확장성 -->
+  <section class="blk" id="pgstrategy">
+    <div class="sec-head reveal">
+      <h2>전략 패턴 · 멀티 PG 연동</h2>
+      <p>PG사마다 API 스펙과 멱등 처리 모델이 서로 다르다.<br>전략 패턴을 활용해 벤더별 차이를 어댑터 내부에 캡슐화하고,<br>애플리케이션은 인터페이스에만 의존하도록 격리했다.</p>
+    </div>
+    <div class="card reveal">
+      <div class="card-head"><h3>포트 계약 → 전략 선택 → 벤더 호출</h3><span class="term-tag">벤더 교체가 도메인에 무영향</span></div>
+      <p class="sr-only">화면 낭독기용 요약: 애플리케이션은 PaymentGatewayPort 인터페이스에만 의존한다. 주문에 실린 gatewayType으로 전략 선택기가 Toss 전략 또는 NicePay 전략을 고른다. 두 벤더는 멱등 모델이 달라, Toss는 멱등키 헤더로 중복 승인을 사전 차단하고 NicePay는 멱등키가 없어 중복 승인 응답(2201)을 감지해 조회 API로 보상한다. 각 전략이 이 차이를 안에서 흡수하고 상위 계층엔 노출하지 않는다.</p>
+      <div class="map-wrap">
+        <svg class="ot-wf" viewBox="0 0 640 244" role="img" aria-label="포트 계약에서 전략 선택을 거쳐 벤더 API 호출로 이어지는 전략 패턴 계층도. gatewayType 라우팅으로 Toss·NicePay 전략 중 하나가 선택되며, 벤더별 멱등 처리 차이(Toss는 멱등키 헤더로 사전 차단, NicePay는 중복 승인 감지 후 조회 보상)를 각 전략이 흡수한다.">
+          <text x="8" y="36" class="ot-wf-lane">포트</text>
+          <text x="8" y="88" class="ot-wf-lane">선택기</text>
+          <text x="8" y="140" class="ot-wf-lane">전략</text>
+          <text x="8" y="212" class="ot-wf-lane">벤더 API</text>
+          <line x1="320" y1="44" x2="320" y2="72" stroke="var(--svc-pg)" stroke-width="1.4" opacity="0.45"/>
+          <line x1="320" y1="96" x2="200" y2="124" stroke="var(--svc-pg)" stroke-width="1.4" opacity="0.45"/>
+          <line x1="320" y1="96" x2="440" y2="124" stroke="var(--svc-pg)" stroke-width="1.4" opacity="0.45"/>
+          <line x1="200" y1="148" x2="200" y2="196" stroke="var(--svc-infra)" stroke-width="1.4" opacity="0.45"/>
+          <line x1="440" y1="148" x2="440" y2="196" stroke="var(--svc-infra)" stroke-width="1.4" opacity="0.45"/>
+          <rect x="215" y="20" width="210" height="24" rx="6" style="fill:color-mix(in srgb,var(--accent) 12%,var(--surface));stroke:var(--accent);stroke-width:1"/>
+          <text x="320" y="36" text-anchor="middle" style="font:600 11px var(--mono);fill:var(--ink-soft)">PaymentGatewayPort</text>
+          <rect x="215" y="72" width="210" height="24" rx="6" style="fill:color-mix(in srgb,var(--svc-pg) 20%,var(--surface));stroke:var(--svc-pg);stroke-width:1"/>
+          <text x="320" y="88" text-anchor="middle" style="font:600 11px var(--font);fill:var(--ink)">전략 선택 · gatewayType 라우팅</text>
+          <rect x="125" y="124" width="150" height="24" rx="6" style="fill:color-mix(in srgb,var(--svc-pg) 12%,var(--surface));stroke:var(--svc-pg);stroke-width:1"/>
+          <text x="200" y="140" text-anchor="middle" style="font:600 11px var(--font);fill:var(--ink)">Toss 전략</text>
+          <rect x="365" y="124" width="150" height="24" rx="6" style="fill:color-mix(in srgb,var(--svc-pg) 12%,var(--surface));stroke:var(--svc-pg);stroke-width:1"/>
+          <text x="440" y="140" text-anchor="middle" style="font:600 11px var(--font);fill:var(--ink)">NicePay 전략</text>
+          <rect x="125" y="196" width="150" height="24" rx="6" style="fill:color-mix(in srgb,var(--svc-infra) 16%,var(--surface));stroke:var(--svc-infra);stroke-width:1"/>
+          <text x="200" y="212" text-anchor="middle" style="font:600 10.5px var(--mono);fill:var(--ink-soft)">Toss API</text>
+          <rect x="365" y="196" width="150" height="24" rx="6" style="fill:color-mix(in srgb,var(--svc-infra) 16%,var(--surface));stroke:var(--svc-infra);stroke-width:1"/>
+          <text x="440" y="212" text-anchor="middle" style="font:600 10.5px var(--mono);fill:var(--ink-soft)">NicePay API</text>
+          <rect x="138" y="155" width="124" height="18" rx="5" style="fill:color-mix(in srgb,var(--st-done) 14%,var(--surface));stroke:var(--st-done);stroke-width:1"/>
+          <text x="200" y="167" text-anchor="middle" style="font:600 8.5px var(--font);fill:var(--ink-soft)">멱등키 헤더로 사전 차단</text>
+          <rect x="369" y="155" width="142" height="18" rx="5" style="fill:color-mix(in srgb,var(--st-quar) 14%,var(--surface));stroke:var(--st-quar);stroke-width:1"/>
+          <text x="440" y="167" text-anchor="middle" style="font:600 8.5px var(--font);fill:var(--ink-soft)">중복 승인 감지 · 조회 보상</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card why-async reveal">
+      <div class="card-head"><h3>설계 의도</h3></div>
+      <div class="card-pad why-rows">
+        <div class="why-row"><span class="wk">포트 의존 격리</span><span>· 도메인·유스케이스는 <code>PaymentGatewayPort</code> 인터페이스에만 의존<br>· 벤더 교체·추가가 애플리케이션 코드에 닿지 않음</span></div>
+        <div class="why-row"><span class="wk">결제건별 라우팅</span><span>· 결제 페이로드의 <code>gatewayType</code>에 따라 라우터가 전략을 선택<br>· 단일 시스템에서 Toss·NicePay 동시 운영</span></div>
+        <div class="why-row"><span class="wk">멱등 차이 흡수</span><span>· Toss는 멱등키 헤더를 통해 벤더 단에서 중복 승인을 사전 차단<br>· NicePay는 멱등키가 없어, 중복 승인 응답(2201)을 감지하고 조회 API로 상태를 회수<br>· 서로 다른 멱등 모델을 각 전략 안에 캡슐화해 상위 계층엔 노출하지 않음</span></div>
+      </div>
+    </div>
+    <div class="meas-note res reveal"><b>결과</b> · 신규 PG사를 추가할 때 코어 로직(도메인·유스케이스)은 건드리지 않으며, <strong>새로운 전략 구현체 하나만 주입하면 된다.</strong></div>
+      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-strategy" target="_blank" rel="noopener">상세 문서 보기 · 전략 패턴 기반 멀티 PG 연동 ↗</a></div>
+  </section>
+
   <!-- §06 DESIGN DECISIONS -->
   <section class="blk" id="decisions">
     <div class="sec-head reveal">
@@ -606,6 +659,64 @@ import '../../styles/payment-portfolio.css';
     </details>
     <div class="meas-note res reveal"><b>결과</b> · 돈·재고가 틀어질 수 있는 경합 지점을 원자 연산으로 좁혀 <strong>이중 차감·중복 승인을 원천 차단</strong>했다.</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/idempotency" target="_blank" rel="noopener">상세 문서 보기 · Checkout 멱등성과 TOCTOU ↗</a></div>
+  </section>
+
+  <!-- TESTING STRATEGY -->
+  <section class="blk band" id="testing">
+    <div class="sec-head reveal">
+      <h2>테스트 전략</h2>
+      <p>결제 도메인은 정상 처리보다 예외 경로가 더 다양하게 발생한다.<br>외부 인프라에 의존하지 않고 주요 예외 상황을 일관되게 재현하며,<br>결제 상태 전이를 안정적으로 검증할 수 있도록 테스트를 구성했다.</p>
+    </div>
+    <div class="card card-pad reveal">
+      <div class="spec-metrics">
+        <div class="s-metric">
+          <span class="s-metric-val">861</span>
+          <span class="s-metric-lbl"><strong>단위 테스트</strong> · 도메인·유스케이스</span>
+          <span class="s-metric-biz">· 상태 전이·금액 검증·멱등 규칙을 커밋마다 회귀 검증</span>
+        </div>
+        <div class="s-metric">
+          <span class="s-metric-val">59</span>
+          <span class="s-metric-lbl"><strong>통합 테스트</strong> · 실환경 수준 인프라</span>
+          <span class="s-metric-biz">· Testcontainers 위에서 어댑터·메시징 경로 점검</span>
+        </div>
+        <div class="s-metric">
+          <span class="s-metric-val">0</span>
+          <span class="s-metric-lbl"><strong>외부 API 호출 건수</strong> · Fake 객체 격리</span>
+          <span class="s-metric-biz">· 외부 연동 없이 승인·지연·중복 시나리오를 코드로 제어</span>
+        </div>
+      </div>
+    </div>
+    <div class="tr3-grid reveal">
+      <div class="tr3">
+        <div class="tr3-h"><span class="tr3-n">1</span><span class="tr3-t">외부 의존성 격리</span></div>
+        <p class="tr3-why">실제 PG나 캐시 인프라 없이 예외 응답과 지연 상황을 코드로 통제한다.</p>
+        <ul class="tr3-list">
+          <li>인메모리 Fake 객체(<code>FakePgGatewayStrategy</code>)로 벤더 응답 주입</li>
+          <li>타임아웃, 중복 승인, 한도 초과 등 엣지 케이스를 일관되게 재현</li>
+          <li>네트워크나 외부 상태에 구애받지 않는 빠르고 안정적인 테스트</li>
+        </ul>
+      </div>
+      <div class="tr3">
+        <div class="tr3-h"><span class="tr3-n">2</span><span class="tr3-t">상태 전이 전수 검증</span></div>
+        <p class="tr3-why">유효한 상태 전이와 불가능한 전이 매트릭스를 구성하여 모든 경우의 수를 교차 검증한다.</p>
+        <ul class="tr3-list">
+          <li>허용된 상태는 전이가 성공하고 무효 상태는 차단되는지 <code>@EnumSource</code>로 전수 대입</li>
+          <li>이미 종결된 결제(DONE·FAILED)에 대한 추가 전이 시도가 예외로 안전하게 방어되는지 점검</li>
+          <li>상태 머신 규칙이 코드와 어긋나는 경우 테스트가 실패하도록 구성 (Fail-fast)</li>
+        </ul>
+      </div>
+      <div class="tr3">
+        <div class="tr3-h"><span class="tr3-n">3</span><span class="tr3-t">실환경 수준의 통합 검증</span></div>
+        <p class="tr3-why">단위 테스트로 잡아내기 힘든 트랜잭션 전파, 비동기 메시징, DB 제약조건을 점검한다.</p>
+        <ul class="tr3-list">
+          <li>MySQL·Redis를 Testcontainers로 띄워 프로덕션과 동일하게 구성</li>
+          <li>Kafka 메시지 발행, Outbox 패턴 동작, 유니크 키 멱등성을 검증</li>
+          <li>서버 크래시나 DB 다운을 주입해도 폴링 워커와 DLQ가 유실 없이 복구해 내는지 점검</li>
+        </ul>
+      </div>
+    </div>
+    <div class="meas-note res reveal"><b>결과</b> · 수많은 실패 경로를 외부 의존 없이 재현하여, <strong>매 커밋마다 CI 환경에서 단위/통합 테스트를 병목 없이 수행한다.</strong></div>
+      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/scenario-test" target="_blank" rel="noopener">상세 문서 보기 · 외부 의존 제어와 시나리오 검증 ↗</a></div>
   </section>
 
   <!-- §08 WORKFLOW -->
