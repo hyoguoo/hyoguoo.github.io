@@ -11,236 +11,297 @@
 import { spawn } from 'node:child_process';
 import { chromium } from 'playwright';
 import QRCode from 'qrcode';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { PDFDocument } from 'pdf-lib';
 
-const ROUTE = process.env.ROUTE || '/payment-platform-portfolio/';
-const SITE = 'https://hyoguoo.github.io/payment-platform-portfolio'; // QR·딥링크가 가리킬 배포 주소
-const OUT = process.env.OUT || 'export-portfolio/payment-platform-portfolio.pdf';
-const REUSE = process.env.SERVER || '';
+// --- 전역 설정 (유지보수를 위해 변경될 수 있는 값들을 상단으로 분리) ---
+const CONFIG = {
+  route: process.env.ROUTE || '/payment-platform-portfolio/',
+  siteUrl: 'https://hyoguoo.github.io/payment-platform-portfolio',
+  outPath: process.env.OUT || 'export-portfolio/payment-platform-portfolio.pdf',
+  reuseServer: process.env.SERVER || '',
+  devServerPort: 4333,
+  
+  pdf: {
+    width: 1280,
+    viewportHeight: 1600,
+    sectionSelector: '.hero, main > section'
+  },
 
-const log = (...a) => console.log('[export-pdf]', ...a);
+  // DOM 조작 시 사용할 셀렉터 모음
+  selectors: {
+    waitFor: ['svg.archmap', 'svg.scnmap'],
+    revealClasses: ['.reveal', '.stagger', '.stagger > .st-i'],
+    archMap: 'svg.archmap',
+    archEdges: 'svg.archmap .aedge',
+    statePanels: ['sm-payment', 'sm-pg'], // ID 기준
+    clickTargets: [
+      '#archWrap .anode[data-id="payment"]',
+      '#smWrap .snode[data-state="IN_PROGRESS"]',
+      '#pgSmWrap .snode[data-state="IN_PROGRESS"]'
+    ],
+    removeIds: ['stages']
+  },
 
-// astro dev 서버를 띄우고 stdout 에서 실제 URL 을 감지한다.
+  // 인쇄 시 잘림 방지 스타일 지정 대상
+  styles: {
+    avoidBreakInside: [
+      'table tr', '.pstage', '.dcard', '.solve', '.limit', '.lcard', '.card', '.const', '.const-item', '.wf-card',
+      '.branch', '.steps > li', '.scn-btn', '.svc-row', '.qr-cta',
+      'svg', '.map-wrap', '.swim-wrap', '.statemachine', '.bench-row',
+      '.arch-layout', '.sm-layout', '.mod-layout', '.scn-theater', '.trace-strip'
+    ],
+    avoidBreakAfter: ['.sub-label', 'summary', '.sec-head', 'h2', 'h3']
+  },
+  
+  qr: {
+    heroSelector: '.hero-inner, .hero',
+    heroMsg: '인터랙티브 다이어그램이 포함된 전체 웹 버전을 확인해 보세요.',
+    heroSubMsg: '웹 포트폴리오 주소 →',
+    
+    midSelector: '.cap-band-sec, #overview',
+    midMsg: '노드·상태·시나리오를 직접 눌러보는 인터랙티브 버전이 있습니다',
+    midSubMsg: '전체 인터랙티브 버전 →'
+  }
+};
+
+const log = (...args) => console.log('[export-pdf]', ...args);
+
+// --- 1. 개발 서버 관리 ---
 function startDevServer() {
   return new Promise((resolve, reject) => {
-    log('astro dev 서버 기동 중…');
-    const proc = spawn('npm', ['run', 'dev', '--', '--port', '4333'], {
+    log(`astro dev 서버 기동 중... (포트: ${CONFIG.devServerPort})`);
+    const proc = spawn('npm', ['run', 'dev', '--', '--port', String(CONFIG.devServerPort)], {
       cwd: process.cwd(),
       env: process.env,
-      detached: true, // 프로세스 그룹 리더 → 종료 시 astro 자식까지 함께 정리
+      detached: true,
     });
+    
     let settled = false;
     const onData = (buf) => {
-      const s = buf.toString();
-      const m = s.match(/https?:\/\/localhost:(\d+)\/?/);
-      if (m && !settled) {
+      const match = buf.toString().match(/https?:\/\/localhost:(\d+)\/?/);
+      if (match && !settled) {
         settled = true;
-        resolve({ proc, base: `http://localhost:${m[1]}` });
+        resolve({ proc, base: `http://localhost:${match[1]}` });
       }
     };
+    
     proc.stdout.on('data', onData);
     proc.stderr.on('data', onData);
-    proc.on('exit', (c) => {
-      if (!settled) { settled = true; reject(new Error(`dev 서버가 코드 ${c} 로 종료됨`)); }
+    proc.on('exit', (code) => {
+      if (!settled) { settled = true; reject(new Error(`dev 서버 종료 (코드: ${code})`)); }
     });
+    
     setTimeout(() => {
-      if (!settled) { settled = true; reject(new Error('dev 서버 기동 시간 초과(60s)')); }
+      if (!settled) { settled = true; reject(new Error('dev 서버 기동 시간 초과 (60s)')); }
     }, 60000);
   });
 }
 
 function stopDevServer(proc) {
   if (!proc) return;
-  try { process.kill(-proc.pid, 'SIGTERM'); } catch { /* 이미 종료됨 */ }
+  try { process.kill(-proc.pid, 'SIGTERM'); } catch { /* 무시 */ }
 }
 
-async function main() {
-  let server = null;
-  let base = REUSE;
-  if (!base) {
-    server = await startDevServer();
-    base = server.base;
+// --- 2. 렌더링 환경 최적화 (DOM 조작) ---
+async function prepareRuntimeEnvironment(page) {
+  // SVG 렌더링 완료 대기
+  for (const sel of CONFIG.selectors.waitFor) {
+    await page.waitForSelector(sel, { timeout: 15000 }).catch(() => {});
   }
-  log('대상 URL:', base + ROUTE);
+  await page.waitForTimeout(1000);
+
+  // 런타임 DOM 조작 (Playwright evaluate 컨텍스트로 환경 변수 주입)
+  const stats = await page.evaluate((sel) => {
+    let detailsCount = 0;
+    
+    // 1. 모든 숨겨진 details 요소 펼침
+    document.querySelectorAll('details:not([open])').forEach((el) => {
+      el.open = true;
+      detailsCount++;
+    });
+
+    // 2. 스크롤 애니메이션 요소 강제 노출
+    sel.revealClasses.forEach(cls => {
+      document.querySelectorAll(cls).forEach((el) => el.classList.add('in'));
+    });
+
+    // 3. SVG 다이어그램 선 긋기 애니메이션 완료 처리
+    const arch = document.querySelector(sel.archMap);
+    if (arch) arch.classList.add('drawn');
+    document.querySelectorAll(sel.archEdges).forEach((el) => {
+      el.style.strokeDashoffset = '0';
+    });
+
+    // 4. 상태 머신 패널 숨김 해제
+    sel.statePanels.forEach(id => {
+      const panel = document.getElementById(id);
+      if (panel) panel.hidden = false;
+    });
+
+    // 5. 대표 사례 데이터 노출을 위한 강제 클릭 트리거
+    sel.clickTargets.forEach(target => {
+      const el = document.querySelector(target);
+      if (el) el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+
+    // 6. PDF 출력을 위해 불필요하게 긴 프로세스(stages) 영역 제거
+    sel.removeIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        const prev = el.previousElementSibling;
+        if (prev && prev.classList.contains('sub-label')) prev.remove();
+        el.remove();
+      }
+    });
+
+    return { detailsCount };
+  }, CONFIG.selectors);
+  
+  log(`런타임 조작 완료: details ${stats.detailsCount}개 펼침`);
+}
+
+// --- 3. QR 코드 및 인터랙티브 안내 유도부 삽입 ---
+async function injectInteractiveQRCodes(page) {
+  const qrDataUrl = await QRCode.toDataURL(CONFIG.siteUrl, {
+    margin: 1, width: 240, color: { dark: '#111111', light: '#ffffff' }
+  });
+  
+  const insertedCount = await page.evaluate(({ qrConf, url, qr }) => {
+    let count = 0;
+    const injectCta = (selector, msg, subMsg, extraClass = '') => {
+      const host = document.querySelector(selector);
+      if (host) {
+        const box = document.createElement('div');
+        box.className = `qr-cta ${extraClass}`.trim();
+        box.innerHTML = `
+          <img src="${qr}" alt="QR" width="84" height="84">
+          <div class="qr-tx">
+            <div class="qr-h">${msg}</div>
+            <div class="qr-s">${subMsg}</div>
+            <a href="${url}">${url}</a>
+          </div>
+        `;
+        host.appendChild(box);
+        count++;
+      }
+    };
+
+    // 상단(Hero) 안내 삽입
+    injectCta(qrConf.heroSelector, qrConf.heroMsg, qrConf.heroSubMsg, 'hero-qr-cta');
+    // 중단(Overview) 안내 삽입
+    injectCta(qrConf.midSelector, qrConf.midMsg, qrConf.midSubMsg);
+
+    return count;
+  }, { qrConf: CONFIG.qr, url: CONFIG.siteUrl, qr: qrDataUrl });
+  
+  log(`안내용 QR 삽입 완료: ${insertedCount}곳`);
+}
+
+// --- 4. PDF 인쇄용 최적화 스타일 (CSS) 적용 ---
+async function injectPrintStyles(page) {
+  const css = `
+    @media print {
+      ${CONFIG.styles.avoidBreakInside.join(', ')} {
+        break-inside: avoid; page-break-inside: avoid;
+      }
+      ${CONFIG.styles.avoidBreakAfter.join(', ')} {
+        break-after: avoid; page-break-after: avoid;
+      }
+    }
+    .qr-cta {
+      margin-top: 16px; display: flex; gap: 16px; align-items: center;
+      padding: 14px 16px; border: 1px solid var(--accent-line);
+      border-radius: 12px; background: var(--accent-soft);
+    }
+    .hero-qr-cta { margin-top: 32px; max-width: 600px; }
+    .qr-cta img { flex: none; border-radius: 6px; background: #fff; padding: 5px; box-shadow: 0 0 0 1px var(--hairline); }
+    .qr-tx { min-width: 0; }
+    .qr-h { font-weight: 650; color: var(--ink); font-size: 14px; line-height: 1.4; }
+    .qr-s { margin-top: 6px; font-size: 12px; color: var(--muted); }
+    .qr-cta a { display: inline-block; font-family: var(--mono, monospace); font-size: 12px; color: var(--accent-text); word-break: break-all; text-decoration: none; }
+  `;
+  
+  await page.addStyleTag({ content: css });
+  await page.emulateMedia({ media: 'print' });
+  await page.waitForTimeout(300);
+}
+
+// --- 5. 최종 PDF 섹션별 추출 및 병합 ---
+async function exportSectionsToPdf(page) {
+  await mkdir(path.dirname(CONFIG.outPath), { recursive: true });
+
+  const sectionSelector = CONFIG.pdf.sectionSelector;
+  const count = await page.$$eval(sectionSelector, (els) => els.length);
+  
+  const mergedPdf = await PDFDocument.create();
+  
+  for (let i = 0; i < count; i++) {
+    // 특정 섹션 높이 계산 및 렌더링 포커스
+    const height = await page.evaluate(({ sel, idx }) => {
+      const sections = [...document.querySelectorAll(sel)];
+      sections.forEach((el, k) => { el.style.display = (k === idx) ? '' : 'none'; });
+      return Math.ceil(sections[idx].getBoundingClientRect().height);
+    }, { sel: sectionSelector, idx: i });
+    
+    const pdfBuffer = await page.pdf({
+      width: `${CONFIG.pdf.width}px`, 
+      height: `${height}px`, 
+      printBackground: true, 
+      pageRanges: '1',
+      margin: { top: '0', bottom: '0', left: '0', right: '0' },
+    });
+    
+    const doc = await PDFDocument.load(pdfBuffer);
+    const [copiedPage] = await mergedPdf.copyPages(doc, [0]);
+    mergedPdf.addPage(copiedPage);
+  }
+  
+  // 페이지 내 요소 상태 원래대로 복구
+  await page.evaluate((sel) => {
+    document.querySelectorAll(sel).forEach((el) => { el.style.display = ''; });
+  }, sectionSelector);
+  
+  await writeFile(CONFIG.outPath, await mergedPdf.save());
+  log(`PDF 추출 완료 → ${CONFIG.outPath} (총 ${count}섹션 = ${count}페이지)`);
+}
+
+// --- 메인 파이프라인 ---
+async function main() {
+  let serverInfo = null;
+  let baseUrl = CONFIG.reuseServer;
+  
+  if (!baseUrl) {
+    serverInfo = await startDevServer();
+    baseUrl = serverInfo.base;
+  }
+  log('타겟 URL:', baseUrl + CONFIG.route);
 
   const browser = await chromium.launch();
   try {
     const context = await browser.newContext({
-      viewport: { width: 1280, height: 1600 },
+      viewport: { width: CONFIG.pdf.width, height: CONFIG.pdf.viewportHeight },
       deviceScaleFactor: 2,
-      reducedMotion: 'reduce', // 핵심: motion.ts 가 js-reveal 을 아예 안 켜 → 리빌 요소가 처음부터 보인다
+      reducedMotion: 'reduce',
       colorScheme: 'light',
     });
     const page = await context.newPage();
 
-    await page.goto(base + ROUTE, { waitUntil: 'networkidle', timeout: 60000 });
+    await page.goto(baseUrl + CONFIG.route, { waitUntil: 'networkidle', timeout: 60000 });
 
-    // 클라이언트 스크립트가 SVG 다이어그램을 다 그릴 때까지 대기
-    await page.waitForSelector('svg.archmap', { timeout: 15000 }).catch(() => {});
-    await page.waitForSelector('svg.scnmap', { timeout: 15000 }).catch(() => {});
-    await page.waitForTimeout(1000);
-
-    // ── 런타임 조작 (소스 무수정) ─────────────────────────────
-    const applied = await page.evaluate(() => {
-      const r = {};
-      // 접힌 details(설계 결정 카드 등) 전부 펼침 — page.pdf() 는 beforeprint 를 안 띄우므로 직접 연다
-      const dets = document.querySelectorAll('details:not([open])');
-      dets.forEach((d) => { d.open = true; });
-      r.details = dets.length;
-
-      // 리빌/스태거 강제 노출 (reducedMotion 로 이미 해제되지만 이중 안전장치)
-      document.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'));
-      document.querySelectorAll('.stagger').forEach((el) => el.classList.add('in'));
-      document.querySelectorAll('.stagger > .st-i').forEach((el) => el.classList.add('in'));
-
-      // 아키텍처 지도 draw-in 완료 상태로
-      const arch = document.querySelector('svg.archmap');
-      if (arch) arch.classList.add('drawn');
-      document.querySelectorAll('svg.archmap .aedge').forEach((p) => { p.style.strokeDashoffset = '0'; });
-
-      // 상태머신 — 결제(Payment)·PG 두 패널 노출
-      const smPay = document.getElementById('sm-payment');
-      const smPg = document.getElementById('sm-pg');
-      if (smPay) smPay.hidden = false;
-      if (smPg) smPg.hidden = false;
-      r.stateShown = !!(smPay && smPg);
-
-      // 대표 사례 선택 — 클릭을 트리거해 상세 패널을 대표 내용으로 채운다 (나머지는 QR 로 유도)
-      const click = (sel) => { const el = document.querySelector(sel); if (el) { el.dispatchEvent(new MouseEvent('click', { bubbles: true })); return true; } return false; };
-      r.repArch = click('#archWrap .anode[data-id="payment"]');       // 아키텍처: 중심 오케스트레이터
-      r.repPay = click('#smWrap .snode[data-state="IN_PROGRESS"]');   // 결제 상태: 진행 중
-      r.repPg = click('#pgSmWrap .snode[data-state="IN_PROGRESS"]');  // PG 상태: self-loop 재시도
-
-      // 단계별 세부 프로세스(#stages) 제거 — 양이 많아 PDF 에선 잘림/여백을 유발.
-      // 22단계 시퀀스 다이어그램은 남기고, 세부 메서드는 QR 인터랙티브로 유도한다.
-      const stages = document.getElementById('stages');
-      if (stages) {
-        const prev = stages.previousElementSibling;
-        if (prev && prev.classList && prev.classList.contains('sub-label')) prev.remove();
-        stages.remove();
-        r.stagesRemoved = true;
-      }
-      return r;
-    });
-    log(`details ${applied.details}개 펼침 · 상태머신 대표 pay/pg: ${applied.repPay}/${applied.repPg}`);
-
-    // ── 인터랙션 유도: 처음(핵심 역량) 한 곳에만 전체 인터랙티브 버전 안내 ──
-    const introQr = await QRCode.toDataURL(SITE, { margin: 1, width: 240, color: { dark: '#111111', light: '#ffffff' } });
-    const ctaInjected = await page.evaluate(({ SITE, qr }) => {
-      let count = 0;
-      
-      // 1. 1페이지 (hero) 영역 하단에 QR 안내 추가
-      const heroHost = document.querySelector('.hero-inner') || document.querySelector('.hero');
-      if (heroHost) {
-        const heroBox = document.createElement('div');
-        heroBox.className = 'qr-cta hero-qr-cta';
-        heroBox.innerHTML =
-          '<img src="' + qr + '" alt="QR" width="84" height="84">' +
-          '<div class="qr-tx">' +
-            '<div class="qr-h">인터랙티브 다이어그램이 포함된 전체 웹 버전을 확인해 보세요.</div>' +
-            '<div class="qr-s">웹 포트폴리오 주소 →</div>' +
-            '<a href="' + SITE + '">' + SITE + '</a>' +
-          '</div>';
-        heroHost.appendChild(heroBox);
-        count++;
-      }
-
-      // 2. 기존 영역(역량 밴드 혹은 overview)에 QR 안내 추가
-      const host = document.querySelector('.cap-band-sec') || document.querySelector('#overview');
-      if (host) {
-        const box = document.createElement('div');
-        box.className = 'qr-cta';
-        box.innerHTML =
-          '<img src="' + qr + '" alt="QR" width="84" height="84">' +
-          '<div class="qr-tx">' +
-            '<div class="qr-h">노드·상태·시나리오를 직접 눌러보는 인터랙티브 버전이 있습니다</div>' +
-            '<div class="qr-s">전체 인터랙티브 버전 →</div>' +
-            '<a href="' + SITE + '">' + SITE + '</a>' +
-          '</div>';
-        host.appendChild(box);
-        count++;
-      }
-      return count;
-    }, { SITE, qr: introQr });
-    log(`인터랙티브 안내(QR) 삽입: ${ctaInjected}곳 완료`);
-
-    // 잘림 방지 CSS 주입 — 잘리면 안 되는 모든 블록에 break-inside:avoid.
-    // (소스 무수정: 브라우저 런타임에만 얹는다. 측정 결과 모든 블록이 한 페이지(1810px)
-    //  보다 작아, avoid 를 걸면 어떤 것도 페이지 경계에서 잘리지 않는다 — 다이어그램 포함)
-    await page.addStyleTag({
-      content: `@media print {
-        table tr,
-        .pstage, .dcard, .solve, .limit, .lcard, .card, .const, .const-item, .wf-card,
-        .branch, .steps > li, .scn-btn, .svc-row, .qr-cta,
-        svg, .map-wrap, .swim-wrap, .statemachine, .bench-row,
-        .arch-layout, .sm-layout, .mod-layout, .scn-theater, .trace-strip {
-          break-inside: avoid; page-break-inside: avoid;
-        }
-        .sub-label, summary, .sec-head, h2, h3 {
-          break-after: avoid; page-break-after: avoid;
-        }
-      }
-      /* QR·URL 유도 박스 (런타임 삽입 요소 · 원본 색 토큰 재사용) */
-      .qr-cta {
-        margin-top: 16px; display: flex; gap: 16px; align-items: center;
-        padding: 14px 16px; border: 1px solid var(--accent-line);
-        border-radius: 12px; background: var(--accent-soft);
-      }
-      .hero-qr-cta {
-        margin-top: 32px;
-        max-width: 600px;
-      }
-      .qr-cta img { flex: none; border-radius: 6px; background: #fff; padding: 5px; box-shadow: 0 0 0 1px var(--hairline); }
-      .qr-tx { min-width: 0; }
-      .qr-h { font-weight: 650; color: var(--ink); font-size: 14px; line-height: 1.4; }
-      .qr-s { margin-top: 6px; font-size: 12px; color: var(--muted); }
-      .qr-cta a { display: inline-block; font-family: var(--mono, monospace); font-size: 12px; color: var(--accent-text); word-break: break-all; text-decoration: none; }`,
-    });
-
-    // print 미디어로 전환 (reducedMotion 설정은 유지된다)
-    await page.emulateMedia({ media: 'print' });
-    await page.waitForTimeout(300);
-
-    // ── PDF 출력 ─────────────────────────────────────────────
-    await mkdir(path.dirname(OUT), { recursive: true });
-
-    // 기존 웹 페이지의 각 섹션을 논리적 페이지로 자른다. 섹션만 보이게 하고 콘텐츠
-    // 높이만큼 개별 PDF 로 뽑아 병합 → 섹션=페이지 1장 · 잘림 0 · 하단 여백 0 · 밀도 그대로.
-    const { PDFDocument } = await import('pdf-lib');
-    const { writeFile } = await import('node:fs/promises');
-    const SEC = '.hero, main > section';
-    const W = 1280; // 웹 레이아웃 폭 고정
-    const count = await page.$$eval(SEC, (els) => els.length);
-    const merged = await PDFDocument.create();
+    await prepareRuntimeEnvironment(page);
+    await injectInteractiveQRCodes(page);
+    await injectPrintStyles(page);
+    await exportSectionsToPdf(page);
     
-    for (let i = 0; i < count; i++) {
-      const h = await page.evaluate((a) => {
-        const secs = [...document.querySelectorAll(a.sel)];
-        secs.forEach((s, k) => { s.style.display = k === a.idx ? '' : 'none'; });
-        return Math.ceil(secs[a.idx].getBoundingClientRect().height);
-      }, { sel: SEC, idx: i });
-      
-      const buf = await page.pdf({
-        width: `${W}px`, height: `${h}px`, printBackground: true, pageRanges: '1',
-        margin: { top: '0', bottom: '0', left: '0', right: '0' },
-      });
-      
-      const doc = await PDFDocument.load(buf);
-      const [pg] = await merged.copyPages(doc, [0]);
-      merged.addPage(pg);
-    }
-    
-    await page.evaluate((sel) => document.querySelectorAll(sel).forEach((s) => { s.style.display = ''; }), SEC);
-    await writeFile(OUT, await merged.save());
-    log(`저장 완료 → ${OUT} (${count}섹션 = ${count}페이지)`);
   } finally {
     await browser.close();
-    stopDevServer(server && server.proc);
+    if (serverInfo) stopDevServer(serverInfo.proc);
   }
 }
 
-main().catch((e) => {
-  console.error('[export-pdf] 실패:', e.message);
+main().catch((err) => {
+  console.error('[export-pdf] 실패:', err.message);
   process.exit(1);
 });
