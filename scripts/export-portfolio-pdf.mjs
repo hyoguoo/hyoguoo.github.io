@@ -13,7 +13,7 @@ import { chromium } from 'playwright';
 import QRCode from 'qrcode';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 // --- 전역 설정 (유지보수를 위해 변경될 수 있는 값들을 상단으로 분리) ---
 const CONFIG = {
@@ -41,7 +41,7 @@ const CONFIG = {
       '#smWrap .snode[data-state="IN_PROGRESS"]',
       '#pgSmWrap .snode[data-state="IN_PROGRESS"]'
     ],
-    removeIds: ['stages']
+    removeSelectors: ['#stages', '.cap-band-sec .sub-label']
   },
 
   // 인쇄 시 잘림 방지 스타일 지정 대상
@@ -58,11 +58,7 @@ const CONFIG = {
   qr: {
     heroSelector: '.hero-inner, .hero',
     heroMsg: '인터랙티브 다이어그램이 포함된 전체 웹 버전을 확인해 보세요.',
-    heroSubMsg: '웹 포트폴리오 주소 →',
-    
-    midSelector: '.cap-band-sec, #overview',
-    midMsg: '노드·상태·시나리오를 직접 눌러보는 인터랙티브 버전이 있습니다',
-    midSubMsg: '전체 인터랙티브 버전 →'
+    heroSubMsg: '웹 포트폴리오 주소 →'
   }
 };
 
@@ -146,15 +142,21 @@ async function prepareRuntimeEnvironment(page) {
       if (el) el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     });
 
-    // 6. PDF 출력을 위해 불필요하게 긴 프로세스(stages) 영역 제거
-    sel.removeIds.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
+    // 6. PDF 출력을 위해 불필요한 영역 제거
+    sel.removeSelectors.forEach(selector => {
+      document.querySelectorAll(selector).forEach(el => {
         const prev = el.previousElementSibling;
         if (prev && prev.classList.contains('sub-label')) prev.remove();
         el.remove();
-      }
+      });
     });
+
+    // 7. 핵심 역량 섹션을 Overview 섹션으로 병합 (한 페이지로 동시 출력)
+    const overview = document.getElementById('overview');
+    const capBand = document.querySelector('.cap-band-sec');
+    if (overview && capBand) {
+      overview.appendChild(capBand);
+    }
 
     return { detailsCount };
   }, CONFIG.selectors);
@@ -190,8 +192,6 @@ async function injectInteractiveQRCodes(page) {
 
     // 상단(Hero) 안내 삽입
     injectCta(qrConf.heroSelector, qrConf.heroMsg, qrConf.heroSubMsg, 'hero-qr-cta');
-    // 중단(Overview) 안내 삽입
-    injectCta(qrConf.midSelector, qrConf.midMsg, qrConf.midSubMsg);
 
     return count;
   }, { qrConf: CONFIG.qr, url: CONFIG.siteUrl, qr: qrDataUrl });
@@ -203,6 +203,20 @@ async function injectInteractiveQRCodes(page) {
 async function injectPrintStyles(page) {
   const css = `
     @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      /* 애니메이션 멈춤에 의한 투명화 및 축소 현상 강제 방지 */
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+      .bb-fill, .bb-lb, .reveal, .stagger > .st-i {
+        transform: none !important;
+        opacity: 1 !important;
+      }
+      
       ${CONFIG.styles.avoidBreakInside.join(', ')} {
         break-inside: avoid; page-break-inside: avoid;
       }
@@ -210,6 +224,7 @@ async function injectPrintStyles(page) {
         break-after: avoid; page-break-after: avoid;
       }
     }
+    
     .qr-cta {
       margin-top: 16px; display: flex; gap: 16px; align-items: center;
       padding: 14px 16px; border: 1px solid var(--accent-line);
@@ -242,7 +257,8 @@ async function exportSectionsToPdf(page) {
     const height = await page.evaluate(({ sel, idx }) => {
       const sections = [...document.querySelectorAll(sel)];
       sections.forEach((el, k) => { el.style.display = (k === idx) ? '' : 'none'; });
-      return Math.ceil(sections[idx].getBoundingClientRect().height);
+      // margin 등에 의해 미세하게 잘리는 현상 방지를 위해 40px 여유 공간 추가
+      return Math.ceil(sections[idx].getBoundingClientRect().height) + 40;
     }, { sel: sectionSelector, idx: i });
     
     const pdfBuffer = await page.pdf({
@@ -257,6 +273,26 @@ async function exportSectionsToPdf(page) {
     const [copiedPage] = await mergedPdf.copyPages(doc, [0]);
     mergedPdf.addPage(copiedPage);
   }
+  
+  // 병합된 PDF에 페이지 번호 삽입 (우측 하단)
+  const font = await mergedPdf.embedFont(StandardFonts.Helvetica);
+  const pages = mergedPdf.getPages();
+  const totalPages = pages.length;
+  
+  pages.forEach((p, idx) => {
+    const { width, height } = p.getSize();
+    const text = `${idx + 1} / ${totalPages}`;
+    const textSize = 13;
+    const textWidth = font.widthOfTextAtSize(text, textSize);
+    
+    p.drawText(text, {
+      x: width - textWidth - 36, // 우측 여백 36px
+      y: height - 36,            // 상단 여백 36px (pdf-lib은 좌측 하단이 0,0 기준점)
+      size: textSize,
+      font: font,
+      color: rgb(0.5, 0.5, 0.5), // 회색
+    });
+  });
   
   // 페이지 내 요소 상태 원래대로 복구
   await page.evaluate((sel) => {
