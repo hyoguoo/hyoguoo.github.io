@@ -115,7 +115,7 @@
   .evo-step[data-tip]:focus-visible { outline: none; }
   .evo-step[data-tip]:focus-visible .evo-t { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
   .evo-tip {
-    position: absolute; z-index: 40; max-width: 320px; padding: 12px 14px;
+    position: absolute; z-index: 60; max-width: 320px; padding: 12px 14px;
     background: var(--surface); border: 1px solid var(--hairline); border-radius: 11px;
     box-shadow: 0 10px 30px rgba(0,0,0,.22);
     font-size: 12.5px; line-height: 1.62; color: var(--ink-soft); pointer-events: none;
