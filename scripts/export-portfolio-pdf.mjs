@@ -35,11 +35,10 @@ const CONFIG = {
     revealClasses: ['.reveal', '.stagger', '.stagger > .st-i'],
     archMap: 'svg.archmap',
     archEdges: 'svg.archmap .aedge',
-    statePanels: ['sm-payment', 'sm-pg'], // ID 기준
+    statePanels: ['sm-payment'], // PDF에서는 결제 상태 머신 하나만 대표로 노출
     clickTargets: [
       '#archWrap .anode[data-id="payment"]',
-      '#smWrap .snode[data-state="IN_PROGRESS"]',
-      '#pgSmWrap .snode[data-state="IN_PROGRESS"]'
+      '#smWrap .snode[data-state="IN_PROGRESS"]'
     ],
     removeSelectors: ['#stages', '.cap-band-sec .sub-label']
   },
@@ -57,8 +56,8 @@ const CONFIG = {
   
   qr: {
     heroSelector: '.hero-inner, .hero',
-    heroMsg: '인터랙티브 다이어그램이 포함된 전체 웹 버전을 확인해 보세요.',
-    heroSubMsg: '웹 포트폴리오 주소 →'
+    heroMsg: 'Interactive Web Version',
+    heroSubMsg: 'PDF 환경에서는 동적 컴포넌트가 동작하지 않습니다.<br>상태 머신 조작 및 시나리오 시뮬레이션은 웹 버전을 이용해 주세요.'
   }
 };
 
@@ -226,16 +225,19 @@ async function injectPrintStyles(page) {
     }
     
     .qr-cta {
-      margin-top: 16px; display: flex; gap: 16px; align-items: center;
-      padding: 14px 16px; border: 1px solid var(--accent-line);
-      border-radius: 12px; background: var(--accent-soft);
+      margin-top: 40px; display: inline-flex; gap: 20px; align-items: center;
+      padding: 16px 20px; border: 1px solid var(--line);
+      border-radius: 6px; background: transparent;
     }
-    .hero-qr-cta { margin-top: 32px; max-width: 600px; }
-    .qr-cta img { flex: none; border-radius: 6px; background: #fff; padding: 5px; box-shadow: 0 0 0 1px var(--hairline); }
-    .qr-tx { min-width: 0; }
-    .qr-h { font-weight: 650; color: var(--ink); font-size: 14px; line-height: 1.4; }
-    .qr-s { margin-top: 6px; font-size: 12px; color: var(--muted); }
-    .qr-cta a { display: inline-block; font-family: var(--mono, monospace); font-size: 12px; color: var(--accent-text); word-break: break-all; text-decoration: none; }
+    .qr-cta img { flex: none; width: 64px; height: 64px; background: #fff; padding: 4px; border: 1px solid var(--line); border-radius: 4px; }
+    .qr-tx { display: flex; flex-direction: column; justify-content: center; max-width: 420px; }
+    .qr-h { font-family: var(--mono, monospace); font-weight: 600; color: var(--ink); font-size: 12.5px; margin-bottom: 6px; letter-spacing: 0.02em; }
+    .qr-s { font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; margin-bottom: 8px; }
+    .qr-cta a { 
+      font-family: var(--mono, monospace); font-size: 11.5px; font-weight: 500; 
+      color: var(--accent); text-decoration: none; 
+    }
+    .qr-cta a:hover { text-decoration: underline; }
   `;
   
   await page.addStyleTag({ content: css });
@@ -245,6 +247,7 @@ async function injectPrintStyles(page) {
 
 // --- 5. 최종 PDF 섹션별 추출 및 병합 ---
 async function exportSectionsToPdf(page) {
+  await page.evaluate(() => document.fonts.ready); // 폰트 렌더링 완전 보장 (텍스트 밀림 방지)
   await mkdir(path.dirname(CONFIG.outPath), { recursive: true });
 
   const sectionSelector = CONFIG.pdf.sectionSelector;
@@ -274,7 +277,7 @@ async function exportSectionsToPdf(page) {
     mergedPdf.addPage(copiedPage);
   }
   
-  // 병합된 PDF에 페이지 번호 삽입 (우측 하단)
+  // 병합된 PDF에 페이지 번호 삽입 (우측 상단)
   const font = await mergedPdf.embedFont(StandardFonts.Helvetica);
   const pages = mergedPdf.getPages();
   const totalPages = pages.length;
