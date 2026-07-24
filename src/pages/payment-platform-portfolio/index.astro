@@ -339,10 +339,27 @@ import '../../styles/payment-portfolio.css';
       <h2>결제 한 건이 처리되는 단계</h2>
       <p>결제 확정 요청 접수(202 Accepted)를 시작으로,<br>PG 승인과 최종 재고 반영이 비동기로 완결되는 전체 파이프라인이다.</p>
     </div>
-    <div class="card reveal">
-      <div class="card-head"><h3>정상 경로 · 22단계</h3><span class="term-tag">실패 분기는 시나리오 섹션 참고</span></div>
+    <div class="card reveal" style="position: relative; overflow: hidden; padding-bottom: 0;">
+      <div class="card-head">
+        <h3>정상 경로 · 22단계</h3>
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div class="ji-glass-hint"><span class="pulse-dot"></span> 각 단계를 클릭하여 상세 과정 보기</div>
+          <span class="term-tag">실패 분기는 시나리오 섹션 참고</span>
+        </div>
+      </div>
       <p class="sr-only">화면 낭독기 안내: 이 그림의 22단계는 바로 아래 단계 카드들에 같은 내용이 텍스트로 실려 있다.</p>
-      <div class="swim-wrap" id="swimWrap"></div>
+      
+      <div class="journey-interactive" id="journeyInteractive">
+        <div class="swim-wrap" id="swimWrap"></div>
+        <div class="side-panel" id="sidePanel">
+          <div class="side-panel-header">
+            <h4>단계 상세</h4>
+            <button id="closeSidePanel" class="close-btn" aria-label="닫기">✕</button>
+          </div>
+          <div id="sidePanelContent" class="side-panel-content"></div>
+        </div>
+      </div>
+      <div id="stageTooltip" class="stage-tooltip hidden"></div>
     </div>
     <div class="card why-async reveal">
       <div class="card-head"><h3>비동기 처리(202 Accepted) 설계 의도</h3></div>
@@ -353,8 +370,6 @@ import '../../styles/payment-portfolio.css';
         <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
       </div>
     </div>
-    <div class="sub-label">단계별 세부 프로세스 · 항목 클릭 시 확장</div>
-    <div class="stages" id="stages"></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/async-outbox" target="_blank" rel="noopener">상세 문서 보기 · 비동기 Outbox 결제 플로우 ↗</a></div>
   </section>
 

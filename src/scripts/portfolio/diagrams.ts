@@ -56,7 +56,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     var laneX={};FLOW_LANES.forEach(function(l){laneX[l.id]=l.x;});
     var bands=[],rows=[],num=0,curBand=null;
     FLOW_STEPS.forEach(function(s){
-      if(s.st){if(curBand)curBand.y2=y+2;y+=10;curBand={t:s.st,y1:y};bands.push(curBand);y+=30;}
+      if(s.st){if(curBand)curBand.y2=y+2;y+=10;curBand={t:s.st,y1:y,stageNo:bands.length+1};bands.push(curBand);y+=30;}
       if(s.cut){rows.push({cut:1,y:y+4});y+=rowH-4;return;}
       num++;rows.push({n:num,s:s,y:y});y+=rowH;
     });
@@ -67,6 +67,9 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     bands.forEach(function(b,i){
       if(i%2===1)svg.appendChild(sv("rect",{x:6,y:b.y1-4,width:W-12,height:b.y2-b.y1,rx:10,class:"sw-band"}));
       var bt=sv("text",{x:14,y:b.y1+10,class:"sw-stage-t"});bt.textContent=b.t;svg.appendChild(bt);
+      
+      // Invisible hit area covering the entire stage
+      svg.appendChild(sv("rect",{x:0,y:b.y1-4,width:W,height:b.y2-b.y1,fill:"transparent",class:"sw-stage-hit","data-stage":b.stageNo}));
     });
     FLOW_LANES.forEach(function(l){svg.appendChild(sv("line",{x1:l.x,y1:42,x2:l.x,y2:H-8,class:"sw-life"}));});
     FLOW_LANES.forEach(function(l){
@@ -80,15 +83,17 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
         return;
       }
       var s=r.s,fx=laneX[s.f];
+      var sg=sv("g",{class:"sw-step-grp","data-n":r.n});
       if(s.t){
         var tx=laneX[s.t],dir=tx>fx?1:-1;
-        svg.appendChild(sv("line",{x1:fx,y1:r.y,x2:tx-8*dir,y2:r.y,class:"sw-arrow","marker-end":"url(#swarw)"}));
-        var lb=sv("text",{x:(fx+tx)/2,y:r.y-7,class:"sw-lab","text-anchor":"middle"});lb.textContent=s.lab;svg.appendChild(lb);
+        sg.appendChild(sv("line",{x1:fx,y1:r.y,x2:tx-8*dir,y2:r.y,class:"sw-arrow","marker-end":"url(#swarw)"}));
+        var lb=sv("text",{x:(fx+tx)/2,y:r.y-7,class:"sw-lab","text-anchor":"middle"});lb.textContent=s.lab;sg.appendChild(lb);
       }else{
-        var lb2=sv("text",{x:fx+15,y:r.y+3,class:"sw-lab self"});lb2.textContent=s.lab;svg.appendChild(lb2);
+        var lb2=sv("text",{x:fx+15,y:r.y+3,class:"sw-lab self"});lb2.textContent=s.lab;sg.appendChild(lb2);
       }
-      svg.appendChild(sv("circle",{cx:fx,cy:r.y,r:8.5,class:"sw-num"}));
-      var nt=sv("text",{x:fx,y:r.y+3,class:"sw-num-t","text-anchor":"middle"});nt.textContent=r.n;svg.appendChild(nt);
+      sg.appendChild(sv("circle",{cx:fx,cy:r.y,r:8.5,class:"sw-num"}));
+      var nt=sv("text",{x:fx,y:r.y+3,class:"sw-num-t","text-anchor":"middle"});nt.textContent=r.n;sg.appendChild(nt);
+      svg.appendChild(sg);
     });
     mount.appendChild(svg);
   })();
@@ -192,20 +197,190 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     mount.appendChild(svg);
   })();
 
-  /* ================= §02 JOURNEY · stage cards ================= */
-  var stagesWrap=document.getElementById("stages");
-  PAYMENT.forEach(function(s,i){
-    var card=document.createElement("details");card.className="pstage";card.id="ps-"+i;
-    var h='<summary class="ps-top"><span class="ps-num">'+s.no+'</span><span class="ps-title">'+esc(s.title)+'</span><span class="ps-actor">'+esc(s.actor)+'</span><span class="ps-more" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 4.5 L6 8 L9.5 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span></summary>';
-    h+='<p class="ps-sub">'+esc(s.purpose)+'<span class="ps-inv">핵심 · '+esc(s.invariant)+'</span></p>';
-    h+='<div class="sub-label">진행</div><ol class="steps">';
-    s.steps.forEach(function(st){h+='<li><span>'+esc(st.t)+(st.c&&st.c.length?'<span class="codes">'+chips(st.c)+'</span>':'')+'</span></li>';});
-    h+='</ol>';
-    if(s.branches&&s.branches.length){h+='<div class="sub-label">분기 · 예외</div><div class="branches">';
-      s.branches.forEach(function(b2){h+='<div class="branch '+b2.type+'"><span class="btag">'+esc(b2.tag)+'</span>'+esc(b2.text)+(b2.code?' <code>'+esc(b2.code)+'</code>':'')+'</div>';});
-      h+='</div>';}
-    card.innerHTML=h;stagesWrap.appendChild(card);
-  });
+  /* ================= §02 JOURNEY · Interactivity (Tooltip & Side Panel) ================= */
+  var jInteractive = document.getElementById("journeyInteractive");
+  var sidePanel = document.getElementById("sidePanel");
+  var sideContent = document.getElementById("sidePanelContent");
+  var btnClose = document.getElementById("closeSidePanel");
+  var tooltip = document.getElementById("stageTooltip");
+
+  // Draggable Side Panel Logic
+  if (sidePanel) {
+    var isDragging = false;
+    var startX, startY, initialX, initialY;
+    var header = sidePanel.querySelector(".side-panel-header");
+    if (header) {
+      header.addEventListener("mousedown", function(e) {
+        if (e.target === btnClose) return;
+        isDragging = true;
+        
+        var rect = sidePanel.getBoundingClientRect();
+        startX = e.clientX;
+        startY = e.clientY;
+        initialX = rect.left;
+        initialY = rect.top;
+        
+        sidePanel.style.transition = "none"; 
+        sidePanel.style.right = "auto";
+        sidePanel.style.transform = "none";
+        sidePanel.style.left = initialX + "px";
+        sidePanel.style.top = initialY + "px";
+      });
+      document.addEventListener("mousemove", function(e) {
+        if (!isDragging) return;
+        var dx = e.clientX - startX;
+        var dy = e.clientY - startY;
+        sidePanel.style.left = (initialX + dx) + "px";
+        sidePanel.style.top = (initialY + dy) + "px";
+      });
+      document.addEventListener("mouseup", function() {
+        if (isDragging) {
+          isDragging = false;
+        }
+      });
+    }
+  }
+
+  if(jInteractive && sideContent && tooltip){
+    var _s2s = {};
+    var _s2info = {};
+    var currentStage = 0;
+    var numIter = 0;
+    
+    // Map Steps -> Stages
+    FLOW_STEPS.forEach(function(s){
+      if(s.st) currentStage++;
+      if(!_s2s[currentStage]) _s2s[currentStage] = [];
+      if(!s.cut) { numIter++; _s2s[currentStage].push(numIter); }
+    });
+
+    // Pre-generate full HTML content for each stage
+    PAYMENT.forEach(function(s) {
+      var h='<div class="pstage" style="border:none;">';
+      h+='<div class="ps-top"><span class="ps-num">'+s.no+'</span><span class="ps-title">'+esc(s.title)+'</span></div>';
+      h+='<p class="ps-sub">'+esc(s.purpose)+'<span class="ps-inv" style="display:block; margin-top:8px;">핵심 · '+esc(s.invariant)+'</span></p>';
+      h+='<div class="sub-label">진행</div><ol class="steps">';
+      s.steps.forEach(function(st){h+='<li><span>'+esc(st.t)+(st.c&&st.c.length?'<span class="codes">'+chips(st.c)+'</span>':'')+'</span></li>';});
+      h+='</ol>';
+      if(s.branches&&s.branches.length){h+='<div class="sub-label">분기 · 예외</div><div class="branches">';
+        s.branches.forEach(function(b2){h+='<div class="branch '+b2.type+'"><span class="btag">'+esc(b2.tag)+'</span>'+esc(b2.text)+(b2.code?' <code>'+esc(b2.code)+'</code>':'')+'</div>';});
+        h+='</div>';}
+      h+='</div>';
+      
+      _s2info[s.no] = { data: s, html: h };
+    });
+
+    var stepElsObj = {};
+    var activeStageNo = null;
+    var swimSvg = jInteractive.querySelector("svg.swimlane");
+    if (swimSvg) {
+      swimSvg.querySelectorAll(".sw-step-grp").forEach(function(g) {
+        var n = parseInt(g.getAttribute("data-n"));
+        if (n) stepElsObj[n] = g;
+      });
+
+      swimSvg.querySelectorAll(".sw-stage-hit").forEach(function(hit) {
+        var myStage = hit.getAttribute("data-stage");
+        if (myStage) {
+          hit.addEventListener("mouseenter", function(e) {
+            if (!swimSvg.classList.contains("has-selection")) {
+              swimSvg.classList.add("has-active");
+            }
+            if (_s2s[myStage]) {
+              _s2s[myStage].forEach(function(stepNo) {
+                if(stepElsObj[stepNo]) stepElsObj[stepNo].classList.add("hovered");
+              });
+            }
+
+            var info = _s2info[myStage];
+            if(info && info.data) {
+              tooltip.innerHTML = '<div class="tt-title"><span class="tt-num">'+info.data.no+'</span> '+esc(info.data.title)+'</div>' +
+                                  '<span class="tt-actor">'+esc(info.data.actor)+'</span>' +
+                                  '<p class="tt-desc">'+esc(info.data.purpose)+'</p>' +
+                                  '<span class="tt-inv">핵심 · '+esc(info.data.invariant)+'</span>';
+              
+              tooltip.classList.remove("hidden");
+            }
+          });
+
+          hit.addEventListener("mousemove", function(e) {
+            var rect = jInteractive.getBoundingClientRect();
+            var left = e.clientX - rect.left + 15;
+            var top = e.clientY - rect.top + 15; 
+            if(left + 280 > rect.width) left = rect.width - 295;
+            tooltip.style.transform = "translate(" + left + "px, " + top + "px)";
+          });
+
+          hit.addEventListener("mouseleave", function(e) {
+            swimSvg.classList.remove("has-active");
+            if (_s2s[myStage]) {
+              _s2s[myStage].forEach(function(stepNo) {
+                if(stepElsObj[stepNo]) stepElsObj[stepNo].classList.remove("hovered");
+              });
+            }
+            tooltip.classList.add("hidden");
+          });
+
+          hit.addEventListener("click", function(e) {
+            if (activeStageNo === myStage) {
+              jInteractive.classList.remove("panel-open");
+              swimSvg.classList.remove("has-selection");
+              Object.keys(stepElsObj).forEach(function(k) { stepElsObj[k].classList.remove("selected"); });
+              activeStageNo = null;
+              if (sidePanel) {
+                sidePanel.style.transition = "";
+                sidePanel.style.right = "";
+                sidePanel.style.transform = "";
+                sidePanel.style.left = "";
+                sidePanel.style.top = "";
+              }
+            } else {
+              var info = _s2info[myStage];
+              if(info && info.html) {
+                // Restart animation
+                sideContent.classList.remove("fade-in-up");
+                void sideContent.offsetWidth; // trigger reflow
+                
+                sideContent.innerHTML = info.html;
+                sideContent.scrollTop = 0;
+                sideContent.classList.add("fade-in-up");
+
+                jInteractive.classList.add("panel-open");
+                swimSvg.classList.add("has-selection");
+                
+                Object.keys(stepElsObj).forEach(function(k) { stepElsObj[k].classList.remove("selected"); });
+                if (_s2s[myStage]) {
+                  _s2s[myStage].forEach(function(stepNo) {
+                    if(stepElsObj[stepNo]) stepElsObj[stepNo].classList.add("selected");
+                  });
+                }
+                activeStageNo = myStage;
+                tooltip.classList.add("hidden"); 
+              }
+            }
+          });
+        }
+      });
+    } // end if (swimSvg)
+
+    if(btnClose) {
+      btnClose.addEventListener("click", function() {
+        jInteractive.classList.remove("panel-open");
+        activeStageNo = null;
+        if (swimSvg) {
+          swimSvg.classList.remove("has-selection");
+          Object.keys(stepElsObj).forEach(function(k) { stepElsObj[k].classList.remove("selected"); });
+        }
+        if (sidePanel) {
+          sidePanel.style.transition = "";
+          sidePanel.style.right = "";
+          sidePanel.style.transform = "";
+          sidePanel.style.left = "";
+          sidePanel.style.top = "";
+        }
+      });
+    }
+  }
 
   /* ================= §03 STATE MACHINE ================= */
   var smWrap=document.getElementById("smWrap"),cfDetail=document.getElementById("cfDetail"),smHint=document.getElementById("smHint");
