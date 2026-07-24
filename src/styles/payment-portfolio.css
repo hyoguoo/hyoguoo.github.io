@@ -74,11 +74,24 @@
   @media (max-width: 800px) { .logstream { display: none; } }
   .ls-inner { animation: lsscroll 46s linear infinite; }
   @keyframes lsscroll { to { transform: translateY(-50%); } }
-  .ls-line { font-family: var(--mono); font-size: 11.5px; line-height: 2.35; color: var(--ink-soft); opacity: .3; white-space: nowrap; }
-  .ls-line.ok { color: var(--accent); opacity: .42; }
-  .ls-line.warn { color: var(--st-quar); opacity: .38; }
-  .ls-line.err { color: var(--st-failed); opacity: .38; }
-  .logstream::after { content: ""; position: absolute; inset: 0; background: linear-gradient(var(--bg), transparent 14%, transparent 50%, var(--bg)); }
+  .ls-line { font-family: var(--mono); font-size: 11.5px; line-height: 2.35; color: var(--ink-soft); opacity: .3; white-space: nowrap; text-shadow: 0 0 2px color-mix(in srgb, var(--ink-soft) 20%, transparent); }
+  .ls-line.ok { color: var(--accent); opacity: .55; text-shadow: 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent); }
+  .ls-line.warn { color: var(--st-quar); opacity: .5; text-shadow: 0 0 4px color-mix(in srgb, var(--st-quar) 30%, transparent); }
+  .ls-line.err { color: var(--st-failed); opacity: .5; text-shadow: 0 0 4px color-mix(in srgb, var(--st-failed) 30%, transparent); }
+  @keyframes crt-scanline { 0% { transform: translateY(-100%); } 100% { transform: translateY(100vh); } }
+  .logstream { animation: crt-flicker 5s infinite; }
+  @keyframes crt-flicker { 0%, 94%, 98%, 100% { opacity: 1; } 95% { opacity: 0.7; } 96% { opacity: 0.9; } 97% { opacity: 0.6; } }
+  .logstream::after { 
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: 
+      linear-gradient(var(--bg), transparent 14%, transparent 50%, var(--bg)), 
+      repeating-linear-gradient(0deg, transparent, transparent 2px, color-mix(in srgb, var(--ink) 5%, transparent) 2px, color-mix(in srgb, var(--ink) 5%, transparent) 4px); 
+  }
+  .logstream::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 10vh; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 6%, transparent) 50%, transparent);
+    animation: crt-scanline 9s linear infinite;
+  }
   .hero-inner { position: relative; z-index: 2; padding: 72px 0 30px; max-width: min(1220px, 100%); } /* flex item이 evo min-width(1060)에 끌려 늘어나면 evo-wrap 스크롤이 죽는다 */
   .hero .kicker { margin-bottom: 24px; }
   .hero h1 {
