@@ -55,7 +55,7 @@ const CONFIG = {
   },
   
   qr: {
-    heroSelector: '.hero-inner, .hero',
+    heroSelector: '.hero-inner',
     heroMsg: 'Interactive Web Version',
     heroSubMsg: 'PDF 환경에서는 동적 컴포넌트가 동작하지 않아 단 하나의 대표 케이스만 보여집니다.<br>상태 머신 조작 및 다양한 시나리오 시뮬레이션은 인터랙티브 웹 버전을 이용해 주세요.'
   }
