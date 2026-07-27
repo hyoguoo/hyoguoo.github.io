@@ -198,6 +198,69 @@ async function injectInteractiveQRCodes(page) {
   log(`안내용 QR 삽입 완료: ${insertedCount}곳`);
 }
 
+// --- 3.5. PDF 전용 동적 목차 생성 ---
+async function injectPdfTOC(page) {
+  await page.evaluate((sel) => {
+    const sections = [...document.querySelectorAll(sel)];
+    const tocSection = document.createElement('section');
+    tocSection.className = 'blk pdf-toc-section';
+    tocSection.style.padding = '80px 0 60px 0';
+    tocSection.style.background = 'var(--bg)';
+    tocSection.style.borderBottom = '1px solid var(--hairline)';
+    
+    let html = `
+      <div class="shell" style="max-width: 1060px; width: 100%;">
+        <div style="margin-bottom: 80px;">
+          <h2 style="font-size: 48px; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 16px 0; color: var(--ink);">Table of Contents</h2>
+          <p style="font-size: 17px; color: var(--muted); margin: 0; font-weight: 500;">포트폴리오 세부 목차</p>
+        </div>
+        <div style="column-count: 2; column-gap: 80px;">
+    `;
+    
+    let displayIndex = 1;
+
+    sections.forEach((sec, idx) => {
+      // 프롤로그(0)와 프로젝트 명세서(1)는 목차 목록에서 제외
+      if (idx < 2) return;
+      
+      let title = '';
+      if (sec.classList.contains('cap-band-sec')) title = '핵심 역량 요약';
+      else {
+        const heading = sec.querySelector('h2');
+        title = heading ? heading.textContent.trim() : sec.id;
+      }
+      
+      const pageNum = idx + 2;
+      const numStr = String(displayIndex++).padStart(2, '0');
+      const pageStr = String(pageNum).padStart(2, '0');
+      
+      html += `
+          <div style="display: flex; align-items: baseline; padding: 18px 0; break-inside: avoid; gap: 4px;">
+            <span style="font-family: var(--mono, monospace); font-size: 13px; font-weight: 600; color: var(--accent); width: 32px; flex: none;">${numStr}</span>
+            <span style="font-size: 16.5px; font-weight: 600; color: var(--ink); flex: none; letter-spacing: -0.01em;">${title}</span>
+            <span style="flex-grow: 1; border-bottom: 2px dotted var(--line); opacity: 0.8; margin: 0 16px; position: relative; top: -4px;"></span>
+            <span style="font-family: var(--mono, monospace); font-size: 14px; font-weight: 600; color: var(--muted); flex: none; letter-spacing: 0.05em;">P.${pageStr}</span>
+          </div>
+      `;
+    });
+    
+    html += `
+        </div>
+      </div>
+    `;
+    
+    tocSection.innerHTML = html;
+    
+    // 명세서(sections[1]) 바로 다음에 목차 삽입
+    const overviewSection = sections[1];
+    if (overviewSection && overviewSection.parentNode) {
+      overviewSection.parentNode.insertBefore(tocSection, overviewSection.nextSibling);
+    }
+  }, CONFIG.pdf.sectionSelector);
+  
+  log('PDF 전용 동적 목차 생성 완료 (프리미엄 에디토리얼 디자인)');
+}
+
 // --- 4. PDF 인쇄용 최적화 스타일 (CSS) 적용 ---
 async function injectPrintStyles(page) {
   const css = `
@@ -331,6 +394,7 @@ async function main() {
 
     await prepareRuntimeEnvironment(page);
     await injectInteractiveQRCodes(page);
+    await injectPdfTOC(page);
     await injectPrintStyles(page);
     await exportSectionsToPdf(page);
     
