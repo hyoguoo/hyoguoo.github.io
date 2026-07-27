@@ -137,7 +137,7 @@
   .evo-tip.show { opacity: 1; transform: translateY(0); }
   .hero h1 .thin { color: var(--muted); }
   .hero h1 .em { color: var(--accent); }
-  .hero .sub { margin: 26px 0 0; font-size: clamp(15px, 2.2vw, 19px); color: var(--ink-soft); max-width: 56ch; }
+  .hero .sub { margin: 26px 0 0; font-size: clamp(15px, 2.2vw, 19px); color: var(--ink-soft); max-width: 80ch; }
   .hero .sub b { color: var(--ink); font-weight: 600; }
   .hero-stats { display: flex; flex-wrap: wrap; gap: 12px 34px; margin-top: 30px; }
   .hstat { display: flex; flex-direction: column; gap: 3px; }
@@ -174,7 +174,7 @@
   section.blk { padding: 92px 0 20px; position: relative; }
   .sec-head { margin-bottom: 34px; }
   .sec-head h2 { font-size: clamp(25px, 4.2vw, 38px); margin: 0; letter-spacing: -0.025em; font-weight: 800; }
-  .sec-head p { color: var(--muted); margin: 12px 0 0; max-width: 62ch; font-size: 15px; }
+  .sec-head p { color: var(--muted); margin: 12px 0 0; max-width: 90ch; font-size: 15px; }
   .reveal { opacity: 1; transform: none; }
 
   .card { background: var(--surface); border-radius: 20px; }

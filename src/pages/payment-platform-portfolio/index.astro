@@ -78,9 +78,9 @@ import '../../styles/payment-portfolio.css';
     </div>
   </div>
   <div class="shell hero-inner">
-    <div class="kicker eyebrow">Payment Platform - 개인 프로젝트</div>
+    <div class="kicker eyebrow">Payment Platform - 개인 프로젝트 포트폴리오</div>
     <h1><span class="thin">데이터 정합성을 보장하는</span><br>견고한 결제 <span class="em">아키텍처</span></h1>
-    <p class="sub">PG 장애, 메시지 유실 등 복잡한 분산 환경의 엣지케이스에서도<br>재고와 결제 상태는 어긋나지 않는다.<br>비동기 처리로 응답성을 높이면서,<br>결제는 단 한 번만 정확히 처리되도록 견고하게 설계했다.</p>
+    <p class="sub">재고와 결제 상태가 어긋나지 않도록 PG 장애, 메시지 유실 등 분산 환경에서의 엣지케이스에 대응하고,<br>비동기 처리로 응답성을 높이면서, 결제는 단 한 번만 정확히 처리되도록 설계했다.</p>
     <div class="hero-stats">
       <div class="hstat"><span class="hs-v">Exactly-Once</span><span class="hs-l">결제 처리 보장</span></div>
       <div class="hstat"><span class="hs-v">+47.5<i>%</i></span><span class="hs-l">비동기 처리량 향상</span></div>
@@ -210,7 +210,7 @@ import '../../styles/payment-portfolio.css';
                 <div><b style="color:var(--ink-soft); font-weight:600;">Spring Boot 3.4</b> · Micrometer·OTel 관측성 + Spring Cloud(Gateway·Eureka) 생태계</div>
                 <div><b style="color:var(--ink-soft); font-weight:600;">Kafka</b> · 비동기 양방향 confirm · at-least-once · DLQ 재처리</div>
                 <div><b style="color:var(--ink-soft); font-weight:600;">MySQL 8</b> · DB per service · Outbox를 같은 트랜잭션으로 묶어 발행 보장</div>
-                <div><b style="color:var(--ink-soft); font-weight:600;">Redis</b> · 재고 선차감 원자 Lua · checkout 멱등 store</div>
+                <div><b style="color:var(--ink-soft); font-weight:600;">Redis</b> · 재고 선차감 원자 Lua · checkout 멱등 저장소</div>
                 <div><b style="color:var(--ink-soft); font-weight:600;">k6 · Testcontainers</b> · 동기 vs 비동기 부하 비교 · 실제 인프라 통합 검증</div>
               </div>
             </div>
@@ -223,7 +223,7 @@ import '../../styles/payment-portfolio.css';
             <div class="s-metric">
               <span class="s-metric-val">Exactly-Once</span>
               <span class="s-metric-lbl">초과 판매 및 <strong>결제 승인 멱등성 보장</strong></span>
-              <span class="s-metric-biz">· 보장이 깨지면 중복 결제 가능성 존재<br>· 전부 운영 비용으로 직결</span>
+              <span class="s-metric-biz">· 보장이 깨지면 중복 결제 가능성 존재<br>· 운영 비용 발생으로 직결 되는 문제 방지</span>
             </div>
             <div class="s-metric">
               <span class="s-metric-val">+47.5<i style="font-size:16px; font-style:normal; color:var(--muted);">%</i></span>
@@ -232,7 +232,7 @@ import '../../styles/payment-portfolio.css';
             </div>
             <div class="s-metric">
               <span class="s-metric-val">900<i style="font-size:inherit; font-style:normal; color:var(--muted);">+</i></span>
-              <span class="s-metric-lbl">CI를 통한 <strong>비즈니스 로직 단위·통합 검증</strong></span>
+              <span class="s-metric-lbl">CI를 통한 <strong>비즈니스 로직 단위·통합 검증 케이스</strong></span>
               <span class="s-metric-biz">· 핵심 비즈니스 로직의 회귀를 커밋 단위에서 검증<br>· 코드 변경이 장애로 번지기 전에 차단</span>
             </div>
           </div>
@@ -241,7 +241,7 @@ import '../../styles/payment-portfolio.css';
         <div class="spec-section">
           <div class="spec-title">Distributed Observability</div>
           <div class="ov-trace" id="ovTrace">
-            <div class="ot-wf-head"><span class="ot-wf-id">traceId 4f9a…c2</span><span class="ot-wf-sub">한 요청이 4개 서비스를 지나간다</span></div>
+            <div class="ot-wf-head"><span class="ot-wf-id">traceId 4f9a…c2</span><span class="ot-wf-sub">하나의 요청이 4개 서비스에 분산</span></div>
             <svg class="ot-wf" viewBox="0 0 620 150" role="img" aria-label="하나의 traceId가 gateway·payment·PG·product 4개 서비스를 지나는 분산 트레이스 워터폴. 각 서비스의 처리 구간이 시간축을 따라 이어진다.">
               <line x1="80" y1="16" x2="80" y2="140" class="ot-wf-grid"/>
               <line x1="240" y1="16" x2="240" y2="140" class="ot-wf-grid"/>
@@ -337,7 +337,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="journey">
     <div class="sec-head reveal">
       <h2>결제 한 건이 처리되는 단계</h2>
-      <p>결제 확정 요청 접수(202 Accepted)를 시작으로,<br>PG 승인과 최종 재고 반영이 비동기로 완결되는 전체 파이프라인이다.</p>
+      <p>결제 확정 요청 접수(202 Accepted)를 시작으로, PG 승인과 최종 재고 반영이 비동기로 처리된다.</p>
     </div>
     <div class="card reveal" style="position: relative; overflow: hidden; padding-bottom: 0;">
       <div class="card-head">
@@ -377,7 +377,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="tracing">
     <div class="sec-head reveal">
       <h2>분산 트레이싱: 끊기지 않는 연속성 보장</h2>
-      <p>모든 로그와 추적 정보는 4개의 마이크로서비스 전반에 걸쳐 단일 traceId로 바인딩된다. <br/> <b>Trace Context가 단절될 수 있는 구간에서도 추적을 보장</b>하기 위해 3가지 설계 장치를 도입했다.</p>
+      <p>모든 로그와 추적 정보는 4개의 마이크로서비스 전반에 걸쳐 단일 traceId로 바인딩된다. <br/> <b>Trace Context가 끊길 수 있는 구간에서도 추적을 보장</b>하기 위해 3가지 설계 장치를 도입했다.</p>
     </div>
     <div class="card reveal" style="margin-bottom:18px">
       <div class="card-head"><h3>하나로 이어진 traceId</h3></div>
@@ -440,7 +440,7 @@ import '../../styles/payment-portfolio.css';
         <p class="bench-caption" id="benchCaption"></p>
       </div>
     </div>
-    <div class="meas-note reveal"><b>해석</b><br>· 비동기는 E2E(결제 완료까지)를 줄이는 게 아니라, HTTP 스레드를 빨리 비워 처리량·가용성을 높이는 도구<br>· 외부 의존이 느려질 때 시스템 전체가 마비되지 않게 하는 안전장치</div>
+    <div class="meas-note reveal"><b>해석</b><br>· 비동기 처리의 목표는 E2E(결제 완료까지)를 줄이는 게 아니라, HTTP 스레드를 빨리 비워 처리량·가용성을 높이는 도구<br>· 외부 의존이 느려질 때 시스템 전체가 마비되지 않게 하는 안전장치</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">상세 문서 보기 · 벤치마크 보고서 ↗</a></div>
   </section>
 
@@ -493,7 +493,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="states">
     <div class="sec-head reveal">
       <h2>상태 머신 · 결제와 PG</h2>
-      <p>내부 결제(Payment)와 외부 PG 통신은 실패하는 이유도, 회복하는 방식도 다르다.<br>두 상태를 하나로 통일하면 무엇으로 처리할지 가려낼 수 없어, 생명주기를 분리했다.</p>
+      <p>내부 결제(Payment)와 외부 PG 통신에 대한 두 상태를 하나로 통일하지 않고,<br>생명주기를 분리하여 각 도메인에 맞는 상태 전이와 복구 경로를 설계했다.</p>
     </div>
     <div class="svc-switch reveal">
       <button class="svc-btn" id="smTabPay" type="button" aria-pressed="true"><span class="sd" style="background:var(--svc-payment)"></span><span class="sm2">결제 상태</span></button>
@@ -587,7 +587,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="modules">
     <div class="sec-head reveal">
       <h2>서비스 내부 구조</h2>
-      <p>PG 명세나 DB 같은 외부의 변경이 핵심 결제 로직까지 번지지 않도록, <br>4개 서비스 모두 동일한 헥사고날(Hexagonal) 골격으로 도메인을 바깥과 격리했다.<br>순수 도메인을 중심에 두고 어댑터가 바깥에서 포트를 구현하며, 의존성은 항상 안쪽을 향한다.</p>
+      <p>PG 명세나 DB 같은 외부의 변경이 핵심 결제 로직까지 번지지 않도록, <br>4개 서비스 모두 동일한 헥사고날(Hexagonal) 골격으로 도메인을 바깥과 격리했다.<br>순수 도메인을 중심에 두고 어댑터가 바깥에서 포트를 구현하며, 의존성은 항상 안쪽을 향하도록 했다.</p>
     </div>
     <div class="reveal">
       <div class="mod-layout">
@@ -609,7 +609,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="pgstrategy">
     <div class="sec-head reveal">
       <h2>전략 패턴 · 멀티 PG 연동</h2>
-      <p>PG사마다 API 스펙과 멱등 처리 모델이 서로 다르다.<br>전략 패턴을 활용해 벤더별 차이를 어댑터 내부에 캡슐화하고,<br>애플리케이션은 인터페이스에만 의존하도록 격리했다.</p>
+      <p>PG사마다 API 스펙과 멱등 처리 모델이 서로 다르다.<br>전략 패턴을 활용해 벤더별 차이를 어댑터 내부에 캡슐화하고, 애플리케이션은 인터페이스에만 의존하도록 격리했다.</p>
     </div>
     <div class="card reveal">
       <div class="card-head"><h3>포트 계약 → 전략 선택 → 벤더 호출</h3><span class="term-tag">벤더 교체가 도메인에 무영향</span></div>
@@ -660,7 +660,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="decisions">
     <div class="sec-head reveal">
       <h2>설계 결정</h2>
-      <p>실제 돈과 재고가 걸린 핵심 분기점마다 내린 기술적 판단들이다.<br>각 결정의 배경이 된 상황과 직면했던 문제점,<br>기각된 대안과 최종 채택된 방안의 근거를 구체적으로 기록했다.</p>
+      <p>실제 돈과 재고가 걸린 핵심 분기점마다 내린 기술적 판단들이다.<br>각 결정의 배경이 된 상황과 직면했던 문제점, 기각된 대안과 최종 채택된 방안의 근거를 구체적으로 기록했다.</p>
     </div>
     <div class="reveal"><div class="decisions" id="decisions-grid"></div></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Home" target="_blank" rel="noopener">상세 문서 보기 · 설계 문서 전체(위키 22페이지) ↗</a></div>
@@ -698,7 +698,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="testing">
     <div class="sec-head reveal">
       <h2>테스트 전략</h2>
-      <p>결제 도메인은 정상 처리보다 예외 경로가 더 다양하게 발생한다.<br>외부 인프라에 의존하지 않고 주요 예외 상황을 일관되게 재현하며,<br>결제 상태 전이를 안정적으로 검증할 수 있도록 테스트를 구성했다.</p>
+      <p>결제 도메인은 정상 처리보다 예외 경로가 더 다양하게 발생한다.<br>외부 인프라에 의존하지 않고 주요 예외 상황을 일관되게 재현하며, 결제 상태 전이를 안정적으로 검증할 수 있도록 테스트를 구성했다.</p>
     </div>
     <div class="card card-pad reveal">
       <div class="spec-metrics">
@@ -756,7 +756,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="workflow">
     <div class="sec-head reveal">
       <h2>개발 워크플로우</h2>
-      <p>단일 기능 개발은 설계 → 계획 → 구현 → 마무리 4단계 라이프사이클을 따른다.<br>각 단계별로 명확한 산출물을 생성하며,<br>엄격한 리뷰를 통과해야만 다음 단계로 진입할 수 있다.</p>
+      <p>단일 기능 개발은 설계 → 계획 → 구현 → 마무리 4단계 라이프사이클을 따른다.<br>각 단계별로 명확한 산출물을 생성하며, 엄격한 리뷰를 통과해야만 다음 단계로 진입할 수 있다.</p>
     </div>
     <div class="wf-flow-wrap reveal">
       <div class="wf-flow-legend">
@@ -823,7 +823,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="summary">
     <div class="sec-head reveal">
       <h2>주요 해결 과제 및 회고</h2>
-      <p>결제 플랫폼을 구축하며 해결한 3가지 과제와 그 해법이 남긴 과제,<br>그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
+      <p>결제 플랫폼을 구축하며 해결한 3가지 과제와 그 해법이 남긴 과제, 그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
     </div>
     <div class="reveal">
       <div class="sub-label">핵심 해결 과제 · 3</div>

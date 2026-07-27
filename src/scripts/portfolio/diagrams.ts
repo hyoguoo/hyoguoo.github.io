@@ -47,7 +47,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       '<p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">'+esc(n.role)+'</p>'+
       '<dl class="kv"><dt>저장소</dt><dd>'+esc(n.store)+'</dd><dt>채널</dt><dd>'+esc(n.chan)+'</dd></dl>';
   }
-  archDetail.innerHTML='<div class="dhead"><h3 class="big">시스템 아키텍처</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 그 서비스의 역할·저장소·채널이 여기에 표시된다.</p><dl class="kv"><dt>불변식</dt><dd>모듈 간 코드 의존 0 · 통신은 HTTP 또는 Kafka.</dd><dt>토픽</dt><dd><code>commands.confirm</code> · <code>events.confirmed</code> · <code>stock-committed</code> (+2 DLQ)</dd></dl>';
+  archDetail.innerHTML='<div class="dhead"><h3 class="big">시스템 아키텍처</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 그 서비스의 역할·저장소·채널이 이곳에 표시</p><dl class="kv"><dt>불변식</dt><dd>모듈 간 코드 의존 0 · 통신은 HTTP 또는 Kafka.</dd><dt>토픽</dt><dd><code>commands.confirm</code> · <code>events.confirmed</code> · <code>stock-committed</code> (+2 DLQ)</dd></dl>';
 
   /* ================= §02 JOURNEY · swimlane (22스텝 한눈에) ================= */
   (function(){
@@ -412,7 +412,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     if(id==="QUARANTINED")h+='<div class="mini"><h4>재고 보상 · 격리 안전 종결</h4><div class="row"><span class="k">키 조건</span><span>decrement:done 키가 있을 때만 재고 보상 · 유령 재고 방지.</span></div><div class="row"><span class="k">조건부 갱신</span><span>현재 상태가 QUARANTINED일 때만 FAILED로 갱신 · order 동조, 지연 회신과의 복구 경합 차단.</span></div><div class="row"><span class="k">DLQ</span><span>events.confirmed.dlq 적체분은 원 토픽 재주입으로 EOS 재처리.</span></div></div>';
     else if(id==="DONE")h+='<div class="mini"><h4>재고 확정 · 승인</h4><div class="row"><span class="k">확정</span><span>stock-committed 발행 · 결정적 키로 product가 멱등 흡수, 차감 1회.</span></div><div class="row"><span class="k">재발행</span><span>RDB DONE 후 브로커 커밋 유실 시 종결 가드가 재발행 복구.</span></div></div>';
     cfDetail.innerHTML=h;}
-  cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 의미·진입 메서드·폴링 응답·후속 상태 전이가 표시된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE·FAILED·EXPIRED에 도달하면 폴링 종료.</span></div><div class="row"><span class="k">예외</span><span>QUARANTINED는 종결이 아니라 관리자 개입 대기 · 폴링은 PROCESSING에서 멈춘다.</span></div></div>';
+  cfDetail.innerHTML='<div class="dhead"><h3 class="big">상태 머신 읽는 법</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 상세 설명 표시</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">종결</span><span>DONE·FAILED·EXPIRED에 도달하면 폴링 종료.</span></div><div class="row"><span class="k">예외</span><span>QUARANTINED는 종결이 아니라 관리자 개입 대기 · 폴링은 PROCESSING에서 멈춘다.</span></div></div>';
 
   /* ================= §05 MODULES (통합 뷰) ================= */
   (function(){
@@ -457,6 +457,6 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
       ex.forEach(function(p){h+='<span class="pkg">'+esc(p)+'</span>';});
       h+='</div></div></div>';
     });
-    h+='<p style="margin:4px 2px 0;font-size:11.5px;color:var(--faint)">구성 예시는 payment-service 기준 · 나머지 서비스도 같은 골격이다.</p>';
+    h+='<p style="margin:4px 2px 0;font-size:11.5px;color:var(--faint)">구성 예시는 payment-service 기준 · 나머지 서비스도 같은 골격</p>';
     layerCards.innerHTML=h;
   })();

@@ -84,7 +84,7 @@ import { PG_STATES, PG_NPOS, PG_SEDGES, SCN_MATRIX, DECISIONS, RACES, ALERTS, SO
       else h+='<div class="sub-label">후속 상태 전이</div><p class="branch-note">종결 상태 · 더 이상의 상태 전이 없음.</p>';
       if(id==="QUARANTINED")h+='<div class="mini"><h4>결제 쪽과의 차이</h4><div class="row"><span class="k">PG</span><span>해당 단계에서 처리가 즉각 종결되며, 격리 결과를 결제 서비스로 회신한다.</span></div><div class="row"><span class="k">Payment</span><span>결제 서비스의 QUARANTINED는 종결 상태가 아니며, 관리자가 개입할 때까지 대기한다.</span></div></div>';
       det.innerHTML=h;}
-    det.innerHTML='<div class="dhead"><h3 class="big">PG 벤더 처리 상태</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">명령을 받은 pg-service가 벤더를 호출하며 오가는 5상태. <b>IN_PROGRESS는 self-loop</b>로 attempt를 쌓다 한도(4) 소진 시 QUARANTINED로 자동 격리된다.</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">멱등</span><span>중복 승인 명령은 PENDING을 건너뛰고 벤더 재호출 없이 직접 처리 · 이중 승인 차단.</span></div></div>';
+    det.innerHTML='<div class="dhead"><h3 class="big">PG 벤더 처리 상태</h3></div><p style="margin:14px 0 0;color:var(--ink-soft);font-size:14px">노드를 클릭하면 상세 설명 표시</p><div class="mini"><h4>핵심 규칙</h4><div class="row"><span class="k">멱등</span><span>중복 승인 명령은 PENDING을 건너뛰고 벤더 재호출 없이 직접 처리 · 이중 승인 차단.</span></div></div>';
   })();
   (function(){
     var bp=document.getElementById("smTabPay"),bg=document.getElementById("smTabPg"),lp=document.getElementById("sm-payment"),lg=document.getElementById("sm-pg");
