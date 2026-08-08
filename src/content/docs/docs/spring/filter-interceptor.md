@@ -1,7 +1,7 @@
 ---
 title: "Filter & Interceptor"
 date: 2024-03-07
-lastUpdated: 2025-08-27
+lastUpdated: 2026-08-09
 tags: [ Spring ]
 description: "서블릿 Filter와 Spring Interceptor의 동작 범위·실행 시점을 비교하고 preHandle·postHandle·afterCompletion의 활용 패턴을 정리한다."
 ---
@@ -19,9 +19,9 @@ flowchart LR
     F <--> DS <--> I <--> CT
 ```
 
-## 필터(Filter)
+## 필터 (Filter)
 
-자바에서 제공하는 스펙으로, 디스패처 서블릿(DispatcherServlet)에 요청이 전달되기 전과 후에 작업을 필터링(Filter) 처리 할 수 있는 기능을 제공한다.
+자바에서 제공하는 스펙으로, 디스패처 서블릿 (DispatcherServlet)에 요청이 전달되기 전과 후에 작업을 필터링 (Filter) 처리 할 수 있는 기능을 제공한다.
 
 ### 동작 순서
 
@@ -30,8 +30,8 @@ flowchart LR
 3. 체인 마지막에서 디스패처 서블릿으로 전달
 4. 서블릿 처리 완료 후 필터 체인의 나머지 구간이 역순으로 실행
 
-- 스프링 영역에 있지 않아, 스프링에 구현 된 예외 처리기를 적용 받지 않아 예외 처리 별도로 해야 함
-- 필터는 체인하여 여러 개를 사용할 수 있으며, 체인된 순서대로 필터 실행
+- 서블릿 계층에서 동작하므로 스프링의 예외 처리기 (`@ControllerAdvice` 등)를 적용받지 못해 별도의 예외 처리가 필요
+- 체인 (Chain) 형태로 여러 개를 구성할 수 있으며, 지정된 순서대로 실행
 
 필터는 `jakarta.servlet.Filter` 인터페이스를 구현하여 사용한다.
 
@@ -68,7 +68,7 @@ public class MyFilter implements Filter {
 }
 ```
 
-파라미터로 넘기는 request / response 는 다음 필터에 전달되며, 아예 다른 객체를 넘길 수 있다.
+파라미터로 넘기는 `request` / `response`는 다음 필터에 전달되며, 아예 다른 객체로 교체할 수 있다.
 
 ### 등록 방법
 
@@ -97,24 +97,24 @@ public class FilterConfig {
 
 - 인코딩 변환
 - 모든 요청에 대한 로깅
-- 공통된 인증/인가 작업(Spring Security)
+- 공통된 인증/인가 작업 (Spring Security)
 - 요청/응답 본문 로깅 시 ContentCachingRequestWrapper/ResponseWrapper 활용
 - OncePerRequestFilter를 상속해 중복 실행을 방지
 
-## 인터셉터(Interceptor)
+## 인터셉터 (Interceptor)
 
-Spring에서 제공하는 스펙으로, 디스패처 서블릿이 컨트롤러를 호출하기 전과 후에 요청과 응답을 가로채(intercept) 처리하는 기능을 제공한다.
+Spring에서 제공하는 스펙으로, 디스패처 서블릿이 컨트롤러를 호출하기 전과 후에 요청과 응답을 가로채 (intercept) 처리하는 기능을 제공한다.
 
-- 필터와 달리 스프링 영역에 있어, 스프링에 구현 된 예외 처리기를 적용 받아 예외 처리 가능
-- 디스패처 서블릿에서 핸들러 매핑을 통해 컨트롤러를 찾아 요청하면 실행 체인을 얻음
-- 얻은 실행 체인에 인터셉터가 등록되어 있다면 컨트롤러를 호출하기 전과 후에 인터셉터가 실행
+- 스프링 영역 내부에서 동작하므로 `@ControllerAdvice` 등 스프링 예외 처리 인프라를 온전히 활용할 수 있음
+- 디스패처 서블릿이 핸들러 매핑을 통해 대상 컨트롤러를 찾은 후, 연결된 실행 체인 (HandlerExecutionChain)을 가져옴
+- 체인에 등록된 인터셉터가 존재하면 컨트롤러 호출 전후로 가로채어 로직을 실행함
 
 ### 동작 순서
 
 1. 디스패처 서블릿이 핸들러 매핑으로부터 HandlerExecutionChain 조회
-2. 체인에 등록된 인터셉터의 preHandle이 순서대로 실행(false를 반환하면 이후 체인을 중단)
-3. 컨트롤러가 실행되고 핸들러 반환 후 postHandle이 실행(예외 발생 시 생략)
-4. 뷰 렌더링 단계가 끝난 뒤 afterCompletion이 역순으로 실행(예외 발생 여부와 무관)
+2. 체인에 등록된 인터셉터의 preHandle이 순서대로 실행 (false를 반환하면 이후 체인을 중단)
+3. 컨트롤러가 실행되고 핸들러 반환 후 postHandle이 실행 (예외 발생 시 생략)
+4. 뷰 렌더링 단계가 끝난 뒤 afterCompletion이 역순으로 실행 (예외 발생 여부와 무관)
 
 인터셉터는 `org.springframework.web.servlet.HandlerInterceptor` 인터페이스를 구현하여 사용한다.
 
@@ -169,23 +169,16 @@ public class WebConfig implements WebMvcConfigurer {
 }
 ```
 
-### 용도
-
-클라이언트의 요청과 관련되어 전역적으로 처리해야 하는 작업들을 처리하는데 사용한다.
-
-- 로그인 사용자의 권한 체크, 세션 검사
-- 공통 헤더 추가, 모델 공통 값 주입
-- 컨트롤러로 넘기기 전 HttpServletRequest/HttpServletResponse 가공
-
 ## 필터 vs 인터셉터 비교
 
-|   구분   | 필터(Filter)                                    | 인터셉터(HandlerInterceptor)                 |
-|:------:|:----------------------------------------------|:-----------------------------------------|
-|   위치   | 서블릿 컨테이너 레벨                                   | 스프링 MVC 디스패처 서블릿 내부                      |
-| 적용 범위  | 컨트롤러 외 정적 리소스, 에러 디스패치까지 포함 가능                | 핸들러 매핑으로 선택된 컨트롤러 실행 흐름                  |
-| 예외 처리  | @ControllerAdvice 적용 대상 아님                    | HandlerExceptionResolver 체계에 포함          |
-| 등록/순서  | FilterRegistrationBean, @WebFilter / setOrder | WebMvcConfigurer#addInterceptors / 등록 순서 |
-| 전형적 용도 | 인코딩, 보안 필터 체인, 요청 전처리                         | 인증/인가 체크, 로깅, 공통 모델 주입                   |
+|   구분    |                             필터(Filter)                              |                 인터셉터(HandlerInterceptor)                  |
+|:---------:|:---------------------------------------------------------------------:|:-------------------------------------------------------------:|
+|   위치    |                         서블릿 컨테이너 레벨                          |                스프링 MVC 디스패처 서블릿 내부                |
+| 적용 범위 |         컨트롤러 외 정적 리소스, 에러 디스패치까지 포함 가능          |           핸들러 매핑으로 선택된 컨트롤러 실행 흐름           |
+| 예외 처리 |                   @ControllerAdvice 적용 대상 아님                    |             HandlerExceptionResolver 체계에 포함              |
+| 객체 교체 |                    Request/Response 래퍼 교체 가능                    |         객체 자체 교체 불가능 (메타데이터 접근 가능)          |
+|   목적    | 스프링 컨텍스트 진입 전, 앞단에서 전역적으로 처리해야하는 로직에 적합 | 애플리케이션 비즈니스 로직과 밀접하게 연관된 공통 처리에 적합 |
+| 주요 사례 |                  인코딩, 보안 필터 체인, 요청 전처리                  |                인증/인가 체크, 공통 모델 주입                 |
 
 ###### 참고자료
 
