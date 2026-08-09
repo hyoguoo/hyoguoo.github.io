@@ -13,6 +13,7 @@ export const BLOG_SERIES = {
       { id: "blog/checkout-idempotency", title: "Checkout API 멱등성 보장 — Caffeine 캐시와 TOCTOU 경쟁 조건 해결" },
       { id: "blog/async-payment-flow", title: "비동기 결제 처리 플로우 구현 — Outbox 패턴부터 LinkedBlockingQueue Worker까지" },
       { id: "blog/payment-recovery-state-design", title: "결제 복구 상태 모델 설계 — 장애 내성을 갖춘 상태 전이" },
+      { id: "blog/msa-transition-decisions", title: "결제 시스템 MSA 전환기 — 분산 환경의 제약조건과 아키텍처 의사결정" },
     ]
   }
 } as const;
