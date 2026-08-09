@@ -6,7 +6,7 @@ export const ARCH_NODES = {
     gateway:{x:90,y:170,w:120,h:40,t:"gateway",s:"ROUTER",color:"infra",role:"Spring Cloud Gateway · 라우팅 진입점",store:"-",chan:"→ payment · product · user"},
     eureka:{x:620,y:302,w:120,h:40,t:"eureka",s:"DISCOVERY",color:"infra",role:"서비스 디스커버리 · 전 서비스 등록/조회",store:"-",chan:"모든 서비스 discovery"},
     payment:{x:300,y:170,w:150,h:52,t:"payment-service",s:"ORCHESTRATOR",color:"payment",role:"결제 오케스트레이션 · 재고 선차감, outbox 발행, EOS로 결과 확정·재고 반영",store:"MySQL · redis-stock(6380) · redis-dedupe",chan:"Kafka ↔ PG · Kafka → product · HTTP → product/user"},
-    pg:{x:560,y:170,w:130,h:52,t:"pg-service",s:"VENDOR GUARD",color:"pg",role:"PG 벤더 호출 격리 · inbox/outbox, self-loop 재시도, 멱등 3종",store:"MySQL (pg_inbox / pg_outbox)",chan:"Kafka ↔ payment · HTTP → vendor"},
+    pg:{x:560,y:170,w:130,h:52,t:"pg-service",s:"VENDOR GUARD",color:"pg",role:"PG 벤더 호출 격리 · inbox/outbox, self-loop 재시도, 주문번호 UNIQUE 멱등",store:"MySQL (pg_inbox / pg_outbox)",chan:"Kafka ↔ payment · HTTP → vendor"},
     vendor:{x:560,y:60,w:130,h:40,t:"Toss / NicePay",s:"EXTERNAL PG",color:"infra",role:"실제 결제 승인/취소/조회 (Strategy 전환)",store:"-",chan:"← pg (HTTP)"},
     product:{x:300,y:300,w:150,h:44,t:"product-service",s:"STOCK LEDGER",color:"product",role:"상품·재고의 기준 장부 · stock-committed를 받아 실제 차감을 확정",store:"MySQL (재고 원장)",chan:"Kafka ← payment (stock-committed) · HTTP ← payment"},
     user:{x:90,y:300,w:120,h:44,t:"user-service",s:"BUYER",color:"user",role:"구매자 정보 조회 제공",store:"MySQL",chan:"HTTP ← payment · gateway"},

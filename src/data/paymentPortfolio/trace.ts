@@ -25,7 +25,7 @@ export const FLOW_STEPS = [
     {f:"payment",t:"browser",lab:"202 Accepted"},
     {cut:1},
     {st:"③ 명령 발행 · outbox relay",f:"payment",t:"kafka",lab:"commands.confirm 발행 · 조건부 선점"},
-    {st:"④ 벤더 호출 · PG",f:"kafka",t:"pg",lab:"명령 수신 · dedupe SETNX 1h"},
+    {st:"④ 벤더 호출 · PG",f:"kafka",t:"pg",lab:"명령 수신 · inbox 등록 (주문번호 UNIQUE)"},
     {f:"pg",lab:"inbox 선점 · SKIP LOCKED"},
     {f:"pg",t:"vendor",lab:"승인 호출"},
     {f:"vendor",t:"pg",lab:"승인 응답 · 승인 금액·시각"},
