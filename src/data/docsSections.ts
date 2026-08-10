@@ -81,6 +81,7 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: [
         'state-persistent-planning-workflow',
         'harness-engineering',
+        'ai-agent-ecosystem-tools',
       ],
     },
     {
