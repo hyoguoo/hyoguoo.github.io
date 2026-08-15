@@ -205,7 +205,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Process & CPU',
-      slugs: ['kernel', 'process', 'thread', 'cpu-scheduling'],
+      slugs: ['kernel', 'process', 'thread', 'cpu-scheduling', 'io-models'],
     },
     {
       label: 'Synchronization',
