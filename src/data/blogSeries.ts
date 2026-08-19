@@ -14,6 +14,7 @@ export const BLOG_SERIES = {
       { id: "blog/async-payment-flow", title: "비동기 결제 처리 플로우 구현 — Outbox 패턴부터 LinkedBlockingQueue Worker까지" },
       { id: "blog/payment-recovery-state-design", title: "결제 복구 상태 모델 설계 — 장애 내성을 갖춘 상태 전이" },
       { id: "blog/msa-transition-decisions", title: "결제 시스템 MSA 전환기 — 분산 환경의 제약조건과 아키텍처 의사결정" },
+      { id: "blog/stock-gate-per-product", title: "재고 선차감 캐시 분해 — Redis 샤딩을 전제로 원자성 경계 조정" },
     ]
   }
 } as const;
