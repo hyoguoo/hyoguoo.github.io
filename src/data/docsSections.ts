@@ -24,7 +24,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Multi-Thread',
-      slugs: ['volatile', 'cas', 'thread', 'monitor', 'synchronization', 'virtual-thread'],
+      slugs: ['volatile', 'cas', 'thread', 'monitor', 'synchronization', 'virtual-thread', 'completable-future'],
     },
     {
       label: 'Advanced',
