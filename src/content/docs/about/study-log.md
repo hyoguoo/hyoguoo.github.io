@@ -1,56 +1,55 @@
 ---
 title: "Study Log"
 date: 2023-12-30
-lastUpdated: 2026-02-09
+lastUpdated: 2026-08-23
 description: "2023년부터 이어온 백엔드 개발자 학습 로그 — Java, Spring, JPA, MySQL, 네트워크, 운영체제 등 분야별 도서·강의 이수 기록을 월별로 정리한다."
 ---
-|    완료일    |                          분야                           |                  학습 항목                   |                                출처                                |
-|:---------:|:-----------------------------------------------------:|:----------------------------------------:|:----------------------------------------------------------------:|
-|  2023.01  |                      🌐 Network                       |      그림으로 배우는 HTTP & Network Basic       | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788931447897) |
-|  2023.01  |                   ☕ Java, 🌱 Spring                   | 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술 |                   [링크](https://inf.run/hivx6)                    |
-|  2023.02  |                         💻 OS                         |          한 권으로 읽는 컴퓨터 구조와 프로그래밍          | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791189909284) |
-|  2023.03  |                   ☕ Java, 🌱 Spring                   |             스프링 핵심 원리 - 기본편              |                   [링크](https://inf.run/kCYMv)                    |
-|  2023.04  |                      🌐 Network                       |         모든 개발자를 위한 HTTP 웹 기본 지식          |                   [링크](https://inf.run/8ZEU8)                    |
-|  2023.04  |                   ☕ Java, 🌱 Spring                   |    실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발     |                   [링크](https://inf.run/hhEvV)                    |
-|  2023.05  |                        ☕ Java                         |                 Java의 정석                 | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788994492032) |
-|  2023.06  |                   ☕ Java, 🌱 Spring                   |       스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술        |                   [링크](https://inf.run/Gmptq)                    |
-|  2023.07  |                   ☕ Java, 🌱 Spring                   |       스프링 MVC 2편 - 백엔드 웹 개발 활용 기술        |                   [링크](https://inf.run/GMo43)                    |
-|  2023.08  |                     🗄️ Database                      |           Real MySQL 8.0 (1권)            | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791158392703) |
-|  2023.08  |            ☕ Java, 🌱 Spring, 🗄️ Database            |         스프링 DB 1편 - 데이터 접근 핵심 원리         |                   [링크](https://inf.run/AomUA)                    |
-|  2023.09  |                      🌐 Network                       |          외워서 끝내는 네트워크 핵심이론 - 기초          |                   [링크](https://inf.run/7B31q)                    |
-|  2023.10  |            ☕ Java, 🌱 Spring, 🗄️ Database            |         스프링 DB 2편 - 데이터 접근 활용 기술         |                   [링크](https://inf.run/wREBZ)                    |
-|  2023.11  |                   ☕ Java, 🌱 Spring                   |             스프링 핵심 원리 - 고급편              |                   [링크](https://inf.run/rQEkx)                    |
-|  2023.11  |                   ☕ Java, 🌱 Spring                   |             스프링 부트 핵심 원리와 활용             |                   [링크](https://inf.run/7VBBx)                    |
-|  2023.12  |                   ☕ Java, 🌱 Spring                   |        자바 ORM 표준 JPA 프로그래밍 - 기본편         |                   [링크](https://inf.run/wH54U)                    |
-|  2024.01  |                   🎨 Design Pattern                   |               객체지향의 사실과 오해               | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788998139766) |
-|  2024.02  |               ☕ Java, 🌱 Spring, 🔗JPA                |   실전! 스프링 부트와 JPA 활용2 - API 개발과 성능 최적화   |                   [링크](https://inf.run/CU9mR)                    |
-|  2024.02  |                   ☕ Java, 🌱 Spring                   |             실전! 스프링 데이터 JPA              |                    [링크](https://inf.run/a25Y)                    |
-|  2024.03  |                   🌱 Spring, 🔗JPA                    |               실전! Querydsl               |                    [링크](https://inf.run/Soef)                    |
-|  2024.04  |                     🗄️ Database                      |           Real MySQL 8.0 (2권)            | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791158392727) |
-|  2024.05  |                         💻 OS                         |           혼자 공부하는 컴퓨터 구조+운영체제            | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791162243091) |
-|  2024.05  |                      🌐 Network                       |         현실 세상의 컴퓨터 공학 지식 - 네트워크          |            [링크](https://fastcampus.co.kr/pages/42245)            |
-|  2024.06  |           🌱 Spring, 🐳 Infra, 🗄️ Database           |         재고시스템으로 알아보는 동시성이슈 해결방법          |                    [링크](https://inf.run/FrsT)                    |
-|  2024.07  |                      🌐 Network                       |               HTTP 완벽 가이드                | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966261208) |
-|  2024.08  |                   🎨 Design Pattern                   |                   오브젝트                   | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791158391409) |
-|  2024.08  |                       🐳 Infra                        |       가상 면접 사례로 배우는 대규모 시스템 설계 기초        | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966263158) |
-|  2024.09  |                     🗄️ Database                      |           대용량 처리를 위한 MySQL 이해            |            [링크](https://fastcampus.co.kr/pages/31523)            |
-|  2024.10  |                       🐳 Infra                        |      가상 면접 사례로 배우는 대규모 시스템 설계 기초 2       | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966264254) |
-|  2024.11  |           🌱 Spring, 🐳 Infra, 🗄️ Database           |           실습으로 배우는 선착순 이벤트 시스템           |                   [링크](https://inf.run/KGF4b)                    |
-|  2024.11  |                🐳 Infra, 🗄️ Database                 |       고성능 서비스를 위한 Redis의 활용과 아키텍처        |            [링크](https://fastcampus.co.kr/pages/31523)            |
-|  2024.12  |                   ☕ Java, 🐳 Infra                    |            궁극의 성능 튜닝과 트러블 슈팅             |            [링크](https://fastcampus.co.kr/dev_red_lsm)            |
-|  2025.01  |                       🐳 Infra                        |        대용량 비동기 프로세스를 위한 Kafka 활용         |            [링크](https://fastcampus.co.kr/pages/31523)            |
-|  2025.02  | 🌱 Spring, 🎨 Design Pattern, 🔧 Software Engineering |   Java/Spring 테스트를 추가하고 싶은 개발자들의 오답노트    |                    [링크](https://inf.run/EYKf)                    |
-|  2025.02  |         ☕ Java, 🌐 Network, 💻 OS, 🔐 Secure          |   면접 전에 알고 가면 좋을 것들 - 신입 Java 백엔드 개발자편   |                   [링크](https://inf.run/Zo9Yt)                    |
-|  2025.03  |                   🎨 Design Pattern                   |              도메인 주도 개발 시작하기              | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791162245385) |
-|  2025.04  |                        ☕ Java                         |                 이펙티브 자바                  | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966262281) |
-|  2025.05  |     🌱 Spring, 🐳 Infra, 🔧 Software Engineering      |  Spring Cloud로 개발하는 마이크로서비스 애플리케이션(MSA)  |                   [링크](https://inf.run/GHeRm)                    |
-|  2025.06  |                     🗄️ Database                      |               개발자를 위한 레디스                | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791161757926) |
-|  2025.07  |                        ☕ Java                         |          자바 - 고급 1편, 멀티스레드와 동시성          |                   [링크](https://inf.run/6oSgn)                    |
-| 2025.08 - |                  🧠 Self-Improvement                  |         생성형 AI 기반 학습 및 기존 문서 보강          |                                -                                 |
 
----
+## 📚 도서 및 강의 학습 내역
 
-## 상세 학습 기록
+|  완료일   |                         분야                          |                           학습 항목                           |                                출처                                |
+|:---------:|:-----------------------------------------------------:|:-------------------------------------------------------------:|:------------------------------------------------------------------:|
+|  2023.01  |                      🌐 Network                       |             그림으로 배우는 HTTP & Network Basic              | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788931447897) |
+|  2023.01  |                  ☕ Java, 🌱 Spring                   | 스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술 |                   [링크](https://inf.run/hivx6)                    |
+|  2023.02  |                         💻 OS                         |            한 권으로 읽는 컴퓨터 구조와 프로그래밍            | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791189909284) |
+|  2023.03  |                  ☕ Java, 🌱 Spring                   |                   스프링 핵심 원리 - 기본편                   |                   [링크](https://inf.run/kCYMv)                    |
+|  2023.04  |                      🌐 Network                       |             모든 개발자를 위한 HTTP 웹 기본 지식              |                   [링크](https://inf.run/8ZEU8)                    |
+|  2023.04  |                  ☕ Java, 🌱 Spring                   |     실전! 스프링 부트와 JPA 활용1 - 웹 애플리케이션 개발      |                   [링크](https://inf.run/hhEvV)                    |
+|  2023.05  |                        ☕ Java                        |                          Java의 정석                          | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788994492032) |
+|  2023.06  |                  ☕ Java, 🌱 Spring                   |           스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술           |                   [링크](https://inf.run/Gmptq)                    |
+|  2023.07  |                  ☕ Java, 🌱 Spring                   |           스프링 MVC 2편 - 백엔드 웹 개발 활용 기술           |                   [링크](https://inf.run/GMo43)                    |
+|  2023.08  |                      🗄️ Database                      |                     Real MySQL 8.0 (1권)                      | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791158392703) |
+|  2023.08  |            ☕ Java, 🌱 Spring, 🗄️ Database            |             스프링 DB 1편 - 데이터 접근 핵심 원리             |                   [링크](https://inf.run/AomUA)                    |
+|  2023.09  |                      🌐 Network                       |            외워서 끝내는 네트워크 핵심이론 - 기초             |                   [링크](https://inf.run/7B31q)                    |
+|  2023.10  |            ☕ Java, 🌱 Spring, 🗄️ Database            |             스프링 DB 2편 - 데이터 접근 활용 기술             |                   [링크](https://inf.run/wREBZ)                    |
+|  2023.11  |                  ☕ Java, 🌱 Spring                   |                   스프링 핵심 원리 - 고급편                   |                   [링크](https://inf.run/rQEkx)                    |
+|  2023.11  |                  ☕ Java, 🌱 Spring                   |                 스프링 부트 핵심 원리와 활용                  |                   [링크](https://inf.run/7VBBx)                    |
+|  2023.12  |                  ☕ Java, 🌱 Spring                   |             자바 ORM 표준 JPA 프로그래밍 - 기본편             |                   [링크](https://inf.run/wH54U)                    |
+|  2024.01  |                   🎨 Design Pattern                   |                    객체지향의 사실과 오해                     | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788998139766) |
+|  2024.02  |               ☕ Java, 🌱 Spring, 🔗JPA               |    실전! 스프링 부트와 JPA 활용2 - API 개발과 성능 최적화     |                   [링크](https://inf.run/CU9mR)                    |
+|  2024.02  |                  ☕ Java, 🌱 Spring                   |                    실전! 스프링 데이터 JPA                    |                    [링크](https://inf.run/a25Y)                    |
+|  2024.03  |                   🌱 Spring, 🔗JPA                    |                        실전! Querydsl                         |                    [링크](https://inf.run/Soef)                    |
+|  2024.04  |                      🗄️ Database                      |                     Real MySQL 8.0 (2권)                      | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791158392727) |
+|  2024.05  |                         💻 OS                         |              혼자 공부하는 컴퓨터 구조+운영체제               | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791162243091) |
+|  2024.05  |                      🌐 Network                       |            현실 세상의 컴퓨터 공학 지식 - 네트워크            |            [링크](https://fastcampus.co.kr/pages/42245)            |
+|  2024.06  |           🌱 Spring, 🐳 Infra, 🗄️ Database            |          재고시스템으로 알아보는 동시성이슈 해결방법          |                    [링크](https://inf.run/FrsT)                    |
+|  2024.07  |                      🌐 Network                       |                       HTTP 완벽 가이드                        | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966261208) |
+|  2024.08  |                   🎨 Design Pattern                   |                           오브젝트                            | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791158391409) |
+|  2024.08  |                       🐳 Infra                        |        가상 면접 사례로 배우는 대규모 시스템 설계 기초        | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966263158) |
+|  2024.09  |                      🗄️ Database                      |                 대용량 처리를 위한 MySQL 이해                 |            [링크](https://fastcampus.co.kr/pages/31523)            |
+|  2024.10  |                       🐳 Infra                        |       가상 면접 사례로 배우는 대규모 시스템 설계 기초 2       | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966264254) |
+|  2024.11  |           🌱 Spring, 🐳 Infra, 🗄️ Database            |             실습으로 배우는 선착순 이벤트 시스템              |                   [링크](https://inf.run/KGF4b)                    |
+|  2024.11  |                 🐳 Infra, 🗄️ Database                 |         고성능 서비스를 위한 Redis의 활용과 아키텍처          |            [링크](https://fastcampus.co.kr/pages/31523)            |
+|  2024.12  |                   ☕ Java, 🐳 Infra                   |                궁극의 성능 튜닝과 트러블 슈팅                 |            [링크](https://fastcampus.co.kr/dev_red_lsm)            |
+|  2025.01  |                       🐳 Infra                        |           대용량 비동기 프로세스를 위한 Kafka 활용            |            [링크](https://fastcampus.co.kr/pages/31523)            |
+|  2025.02  | 🌱 Spring, 🎨 Design Pattern, 🔧 Software Engineering |    Java/Spring 테스트를 추가하고 싶은 개발자들의 오답노트     |                    [링크](https://inf.run/EYKf)                    |
+|  2025.02  |         ☕ Java, 🌐 Network, 💻 OS, 🔐 Secure         |   면접 전에 알고 가면 좋을 것들 - 신입 Java 백엔드 개발자편   |                   [링크](https://inf.run/Zo9Yt)                    |
+|  2025.03  |                   🎨 Design Pattern                   |                   도메인 주도 개발 시작하기                   | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791162245385) |
+|  2025.04  |                        ☕ Java                        |                         이펙티브 자바                         | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9788966262281) |
+|  2025.05  |     🌱 Spring, 🐳 Infra, 🔧 Software Engineering      |   Spring Cloud로 개발하는 마이크로서비스 애플리케이션(MSA)    |                   [링크](https://inf.run/GHeRm)                    |
+|  2025.06  |                      🗄️ Database                      |                     개발자를 위한 레디스                      | [링크](https://kobic.net/book/bookInfo/view.do?isbn=9791161757926) |
+|  2025.07  |                        ☕ Java                        |             자바 - 고급 1편, 멀티스레드와 동시성              |                   [링크](https://inf.run/6oSgn)                    |
+| 2025.08 - |                  🧠 Self-Improvement                  |             생성형 AI 기반 학습 및 기존 문서 보강             |                                 -                                  |
 
 ### 그림으로 배우는 HTTP & Network Basic
 
@@ -147,7 +146,7 @@ description: "2023년부터 이어온 백엔드 개발자 학습 로그 — Java
 
 ### 면접 전에 알고 가면 좋을 것들 (신입 Java 백엔드)
 
-- 운영체제(OS), 네트워크(Network), 데이터베이스(DB) 등 CS 이론이 백엔드 시스템에 처리에 어떻게 응용되는지 실무적 관점에서 재해석
+- 운영체제 (OS), 네트워크 (Network), 데이터베이스 (DB) 등 CS 이론이 백엔드 시스템에 처리에 어떻게 응용되는지 실무적 관점에서 재해석
 - 프로세스와 스레드의 차이, TCP/IP의 연결 지향성, 트랜잭션의 ACID 성질 등 실제 애플리케이션에 적용되는 전반적인 이해
 
 ### 도메인 주도 개발 시작하기
@@ -157,10 +156,10 @@ description: "2023년부터 이어온 백엔드 개발자 학습 로그 — Java
 
 ### 이펙티브 자바 (Effective Java)
 
-- 정적 팩토리 메서드(Static Factory Method)와 빌더 패턴(Builder Pattern)을 통해 객체 생성의 유연성과 가독성을 높이는 설계 원칙 학습
-- 변경 가능성을 최소화한 불변 객체(Immutable Object)와 상속보다는 컴포지션(Composition)을 선호하여 유지보수하기 쉬운 클래스 설계 방법 습득
-- `equals`, `hashCode`, `toString` 등 모든 객체의 공통 메서드를 규약에 맞게 재정의(Overriding)해야 하는 이유와 올바른 구현 방법 파악
-- 제네릭(Generics), 열거 타입(Enum), 람다(Lambda)와 스트림(Stream) 등 자바 언어의 핵심 기능을 활용하여 타입 안전하고 간결한 코드를 작성하는 기법 이해
+- 정적 팩토리 메서드 (Static Factory Method)와 빌더 패턴 (Builder Pattern)을 통해 객체 생성의 유연성과 가독성을 높이는 설계 원칙 학습
+- 변경 가능성을 최소화한 불변 객체 (Immutable Object)와 상속보다는 컴포지션 (Composition)을 선호하여 유지보수하기 쉬운 클래스 설계 방법 습득
+- `equals`, `hashCode`, `toString` 등 모든 객체의 공통 메서드를 규약에 맞게 재정의 (Overriding)해야 하는 이유와 올바른 구현 방법 파악
+- 제네릭 (Generics), 열거 타입 (Enum), 람다 (Lambda)와 스트림 (Stream) 등 자바 언어의 핵심 기능을 활용하여 타입 안전하고 간결한 코드를 작성하는 기법 이해
 
 ### Spring Cloud로 개발하는 마이크로서비스 (MSA)
 
@@ -169,7 +168,7 @@ description: "2023년부터 이어온 백엔드 개발자 학습 로그 — Java
 
 ### 개발자를 위한 레디스
 
-- Redis의 싱글 스레드 아키텍처에 대한 이해와, 높은 시간복잡도를 가진 O(N) 명령어 사용에 대한 위험성 학습
+- Redis의 싱글 스레드 아키텍처에 대한 이해와, 높은 시간복잡도를 가진 O (N) 명령어 사용에 대한 위험성 학습
 - 비즈니스 요구사항에 맞는 String, List, Set, Sorted Set, Hash 등 다양한 자료구조 활용 방법 학습
 - RDB와 AOF 방식의 차이점과, 데이터 유실 허용 범위에 따른 최적의 백업 방법 학습
 
@@ -185,3 +184,195 @@ description: "2023년부터 이어온 백엔드 개발자 학습 로그 — Java
 - AI와의 심층적인 질의응답을 통해 단편적인 지식 습득과 원리까지 파고들며, 꼬리에 꼬리를 무는 질문으로 지식의 깊이 확장
 - AI의 답변을 공식 문서 및 신뢰할 수 있는 기술 서적과 교차 검증하고 실제 코드로 동작 확인
 - 효율적인 AI 활용법과 전반적인 동작 원리 이해
+
+---
+
+## 🚀 토이 프로젝트 경험
+
+### Spring 프레임워크 초기 학습 프로젝트
+
+`2023.08 - 2023.09`
+
+- Spring으로 기본적인 백엔드 서버를 직접 만들어보며 프레임워크 생태계 학습
+- IoC/DI, MVC 패턴 등 Spring이 제공하는 핵심 개념과 동작 방식을 체득
+
+### 데브코스 도서 관리 시스템
+
+`2023.09 - 2023.10`
+
+- 단순한 Command Line 기반에서 시작해 점진적으로 MVC 구조까지의 객체지향적인 코드 학습
+- 현업 개발자의 코드 리뷰를 통해 객체지향 원칙 (SOLID)을 체득하고 유지보수성 높은 코드 작성법 학습
+
+### URL 단축 (Short-url) 서비스 개발
+
+`2023.10 - 2023.10`
+
+- 긴 URL을 짧게 줄여주는 인코딩 알고리즘 적용 및 관련 API를 구현
+- 해싱과 인덱싱 기법을 적용하며 데이터를 얼마나 효율적으로 탐색하고 처리할 수 있을지 고민
+
+### 대용량 결제 플랫폼 기초 구현 (Phase 1)
+
+`2023.11 - 2023.11`
+
+- 결제/정산 시스템의 도메인을 분석하여 단일 서버 환경에서 완전 기초 파이프라인 구현
+- 결제 데이터 위변조 방어를 위해 클라이언트-서버-PG사 세 곳에서의 교차 검증 연동
+
+### JPA 활용 페어 프로그래밍 실습
+
+`2023.12 - 2023.12`
+
+- 2명이 짝을 지어 페어 프로그래밍을 진행하고, 코드를 주고받으며 JPA 기반의 서버를 개발
+- 연관관계 매핑, N+1 문제 해결 등 JPA 영속성 컨텍스트의 핵심 동작 원리 학습
+
+### 텀블벅 클론 코딩 프로젝트
+
+`2024.01 - 2024.01`
+
+- 펀딩 플랫폼의 도메인을 분석하고 핵심 백엔드 비즈니스 로직 및 API 구현
+- 순수 비즈니스 로직 구현 자체에 집중하여 복잡한 요구사항을 코드로 풀어내는 구현 능력 향상
+
+### 알고리즘 풀이 사이트 기획 및 개발
+
+`2024.02 - 2024.05`
+
+
+- 다수의 사용자가 함께 알고리즘을 푸는 웹 서비스를 프론트엔드와 협업하여 기획/배포하고 3개월 이상 운영함
+- 효율적인 협업 달성을 위한 문서화 및 시각화하여 이해 차이에 따른 혼선 최소화
+- 운영하며 예외 상황을 추적하고 해결하는 트러블 슈팅 경험
+
+### 커플 기념일 및 약속 관리 서비스
+
+`2024.06 - 2024.07`
+
+- 서비스 기획 단계부터 참여하여, 프론트엔드와의 원활한 데이터 연동을 고려해 API 명세서를 작성 및 배포
+- 요구사항을 명확히 정의하고 API 설계 및 문서화 커뮤니케이션 역량 강화
+
+### 결제 플랫폼 결합도 해소 및 자동 복구 (Phase 2)
+
+`2024.09 - 2024.10`
+
+- 시스템 간 결합도를 해소하기 위해 트랜잭션 범위를 최소화하는 아키텍처로 개편 및 테스트 코드 작성
+- 결제 실패 엣지 케이스에 대응하기 위해 예외 처리 블록을 분리하고, 상태 기반 복구 모델 및 재시도 로직 구현
+
+### MSA 아키텍처 학습 프로젝트
+
+`2024.10 - 2024.11`
+
+- 마이크로서비스 아키텍처(MSA) 구조를 학습하기 위해 직접 서비스를 분리해 보고 간단히 구현해 보는 실습 진행
+- 모놀리식 구조와 비교해 아키텍처의 차이와 장단점을 분석하며, 비즈니스 상황에 맞는 트레이드오프 판단의 중요성 인지
+
+### 소개팅 앱 서비스
+
+`2024.10 - 2025.01`
+
+- 초기 기획 단계부터 참여하여 백엔드 비즈니스 로직 개발 및 배포 환경 세팅
+- 서비스의 A부터 Z까지 전체 라이프사이클을 경험하며 도메인 모델링 역량 강화
+
+### 주식 종목 토론방 커뮤니티 서비스
+
+`2025.01 - 2025.03`
+
+- 프론트엔드와 협업하여, 종목 토론방에서 필요로 하는 외부 주식 데이터를 수집하고 정제하는 백엔드 파이프라인 구축 담당
+- 외부 데이터를 서비스 요구사항에 맞게 가공해서 클라이언트에 넘겨주는 데이터 처리 로직을 설계
+
+### 결제 플랫폼 운영 안정화 및 정합성 강화 (Phase 3-4)
+
+`2025.08 - 2025.11`
+
+- 재고 유실과 중복 요청을 방지하기 위해 보상 트랜잭션 실패 대응 로직 및 Checkout 멱등성 보장 방안 마련
+- 확장성을 고려한 전략 패턴 기반 멀티 PG 연동 및 꼼꼼한 시나리오 테스트 작성
+
+### 결제 플랫폼 비동기 결제 아키텍처 도입 (Phase 5)
+
+`2026.03 - 2026.04`
+
+- Transactional Outbox 패턴을 구현해 비동기 결제 플로우(채널 기반)로 전환하고 가상 스레드를 도입
+- 복잡한 도메인 상태 머신을 설계하고, 비동기 환경에서도 안정적인 결제 흐름을 보장하는 장애 내성 복구 체계 확립
+
+### MSA 협업 기반 프로젝트
+
+`2026.05 - 2026.06`
+
+- 각 팀원이 각자 모듈을 맡아 MSA 구조로 협업하는 프로젝트 진행하여 그중 AI 기능 연동과 알림 발송 파트 담당
+- 모듈 간의 의존성을 낮추기 위해 비동기 통신을 적용
+
+### 결제 플랫폼 MSA 전환 및 분산 환경 고도화 (Phase 6)
+
+`2026.04 - 2026.07`
+
+- 단일 모놀리스 서버를 4개의 마이크로서비스로 전면 분리(MSA 전환)하고 이벤트 드리븐 코레오그래피 구현
+- Lua 스크립트를 활용한 재고 캐시 보상 회복, 메시지 전달 보장(dedupe) 및 Outbox 기반 PG 결제 확인 흐름 고도화 및 분산 트레이싱 도입
+
+---
+
+## 👥 팀 스터디
+
+### 네트워크 스터디
+
+`2023.11 - 2023.12`
+
+- HTTP 완벽 가이드 책을 함께 읽으며, HTTP 프로토콜의 상세 구조, 캐시 전략, TCP 커넥션 관리 방식 등 학습
+- 매주 학습한 분량을 바탕으로 각자 예상 문제를 만들어와 함께 풀어보는 방식으로 진행
+
+### 알고리즘 스터디
+
+`2023.12 - 2024.09`
+
+- 코딩 테스트 대비를 위해 스터디 룰과 진행 방식을 직접 기획하고 리드하며 꾸준히 알고리즘 풀이 진행
+- 깃허브 (GitHub) PR을 활용한 상호 코드 리뷰를 통해 다양한 문제 접근 방식을 공유
+
+### 객체지향 설계 스터디
+
+`2024.01 - 2024.02`
+
+- 오브젝트 책을 강독하며, 데이터를 담는 클래스가 아닌 '역할과 책임' 위주로 객체지향을 바라보는 시각 학습
+- 배운 내용을 각자의 프로젝트 코드에 직접 적용해 보고, 다형성을 활용해 결합도가 낮고 유지보수하기 편한 코드로 개선한 사례를 팀원들과 공유
+
+### MySQL 딥다이브 스터디
+
+`2024.02 - 2024.04`
+
+- Real MySQL 8.0 책을 바탕으로 인덱스, 트랜잭션 격리 수준, 락(Lock) 메커니즘 등 동시성 제어와 쿼리 튜닝을 위한 심화 개념 학습
+- 분량을 요약 및 준비하여 팀원들에게 발표하고, 질의응답을 나누는 방식으로 스터디를 진행
+
+### CS 스터디
+
+`2024.04 - 2024.06`
+
+- 운영체제, 자료구조 등 CS 기초 지식들을 모의 면접 형식으로 서로 묻고 답하며 면접 실전 감각을 키움
+- 어려운 개념을 내 말로 풀어서 설명하는 연습을 통해 기초 지식을 탄탄히 하고 커뮤니케이션 능력을 기름
+
+### 기술면접 스터디
+
+`2024.08 - 2024.10`
+
+- 알고 있는 기술적 내용들을 면접관과 지원자 역할을 나누어 논리적으로 설명해보는 모의 면접 진행
+- 내가 아는 것과 남에게 설명할 수 있는 것을 구분하고, 질문 의도에 맞게 깔끔하게 답변하는 연습을 함
+
+### Redis 스터디
+
+`2024.09 - 2024.10`
+
+- 개발자를 위한 레디스 책을 읽으며 싱글 스레드 특성, 자료구조 선택, 데이터 백업 방식에 대해 각자 공부하며 느낀 점을 나눔
+- 캐싱 전략(Look-aside 등)을 실제 프로젝트에 적용해 보고, 응답 속도를 개선하거나 세션을 효율적으로 관리한 사례를 팀원들과 공유함
+
+### 발표 및 스피치 스터디
+
+`2024.11 - 2024.12`
+
+- 특정 기술 주제를 선정해 슬라이드 자료를 만들고 사람들 앞에서 발표하는 연습을 함
+- 어려운 기술 개념을 청중이 이해하기 설명하고 전달력을 높이는 방법을 연습함
+
+### 알고리즘 스터디
+
+`2025.01 - 2025.03`
+
+- 코딩 테스트 대비를 위해 꾸준히 알고리즘 문제를 풀고 논리적 사고력을 기름
+- 각자 푼 코드의 시간/공간 복잡도와 접근 방식을 서로에게 설명하고 토론하는 방식으로 진행
+
+### CS 스터디
+
+`2026.05 - 2026.07`
+
+- 아키텍처, 메모리 구조 등 CS 지식과 관련된 정해진 질문 리스트를 바탕으로 각자 발표 후 질문 받는 방식으로 진행
+- 책에 나오는 이론이 실제 백엔드 서버나 실무 코드에서는 어떻게 적용되고 장애를 유발할 수 있는지 고민하고 토론함
