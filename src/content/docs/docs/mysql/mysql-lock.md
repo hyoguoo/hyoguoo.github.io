@@ -2,7 +2,7 @@
 title: "MySQL Engine Lock"
 date: 2023-03-22
 lastUpdated: 2025-10-07
-tags: [MySQL]
+tags: [ MySQL ]
 description: "MySQL 엔진 레벨의 글로벌 락·테이블 락·메타데이터 락·네임드 락의 종류와 사용 목적을 설명한다."
 ---
 
@@ -11,13 +11,13 @@ MySQL 엔진 레벨의 잠금은 MySQL 서버의 상위 레벨에서 동작한�
 - 사용되는 스토리지 엔진의 종류와 관계 없이 적용
 - 테이블이나 데이터베이스 전체와 같이 상대적으로 넓은 범위에 영향을 미침
 
-## 글로벌 락(Global Lock)
+## 글로벌 락 (Global Lock)
 
 - 범위: MySQL 서버 전체에 영향
 - 동작: 한 세션에서 글로벌 락을 획득하면, 해당 세션을 제외한 다른 모든 세션에서 `SELECT`를 제외한 대부분의 DDL, DML 대기
 - 획득 및 해제: `FLUSH TABLES WITH READ LOCK` 명령으로 획득하고, `UNLOCK TABLES` 명령으로 해제
 
-## 백업 락(Backup Lock)
+## 백업 락 (Backup Lock)
 
 스토리지 엔진 환경에서 온라인 백업을 위해 도입된 더 가벼운 형태의 락으로, 아래의 작업만 제한되고 일반적인 데이터 변경은 허용된다.
 
@@ -25,9 +25,9 @@ MySQL 엔진 레벨의 잠금은 MySQL 서버의 상위 레벨에서 동작한�
 - REPAIR TABLE / OPTIMIZE TABLE 명령
 - 사용자 관리 및 비밀번호 변경
 
-주로 복제(Replication) 환경의 레플리카 서버에서 백업을 수행할 때, 서비스 중단 없이 안전한 백업을 위해 사용된다.
+주로 복제 (Replication) 환경의 레플리카 서버에서 백업을 수행할 때, 서비스 중단 없이 안전한 백업을 위해 사용된다.
 
-## 테이블 락(Table Lock)
+## 테이블 락 (Table Lock)
 
 개별 테이블 단위로 설정되는 잠금으로, 명시적 또는 묵시적으로 특정 테이블의 락을 획득할 수 있다.
 
@@ -38,11 +38,11 @@ MySQL 엔진 레벨의 잠금은 MySQL 서버의 상위 레벨에서 동작한�
     - 명시적으로 테이블을 잠그는 작업은 글로벌 락과 동일하게 다른 작업에 큰 영향을 미침
 - 묵시적 락
     - `ALTER TABLE`과 같은 DDL 문장을 실행하면 모든 스토리지 엔진에서 MySQL 서버가 내부적으로 테이블에 잠금 설정
-    - InnoDB 엔진에서는 스토리지 엔진 차원에서 레코드 기반의 잠금을 제공하기 때문에 DML 쿼리로 묵시적 락이 설정되지 않음(MyISAM에선 발생)
+    - InnoDB 엔진에서는 스토리지 엔진 차원에서 레코드 기반의 잠금을 제공하기 때문에 DML 쿼리로 묵시적 락이 설정되지 않음 (MyISAM에선 발생)
 
-## 네임드 락(Named Lock)
+## 네임드 락 (Named Lock)
 
-테이블이나 레코드 같은 데이터베이스 객체가 아닌, 사용자가 지정한 임의의 문자열(String)에 대해 잠금을 획득하고 해제하는 기능이다.
+테이블이나 레코드 같은 데이터베이스 객체가 아닌, 사용자가 지정한 임의의 문자열 (String)에 대해 잠금을 획득하고 해제하는 기능이다.
 
 ```sql
 -- lock_name 문자열을 10초 동안 락을 획득
@@ -55,8 +55,8 @@ SELECT IS_FREE_LOCK('lock_name');
 SELECT RELEASE_LOCK('lock_name');
 ```
 
-- 네임드 락은 트랜잭션과 무관하게 동작하여, 트랜잭션이 커밋되거나 롤백되어도 자동으로 해제되지 않음(명시적으로 `RELEASE_LOCK`을 호출 필요)
-- 여러 서버 인스턴스가 동일한 데이터에 접근하는 분산 환경에서 특정 작업을 하나의 인스턴스만 수행하도록 보장하기 위한 분산 락(Distributed Lock)을 구현하는 데 유용하게 사용
+- 네임드 락은 트랜잭션과 무관하게 동작하여, 트랜잭션이 커밋되거나 롤백되어도 자동으로 해제되지 않음 (명시적으로 `RELEASE_LOCK`을 호출 필요)
+- 여러 서버 인스턴스가 동일한 데이터에 접근하는 분산 환경에서 특정 작업을 하나의 인스턴스만 수행하도록 보장하기 위한 분산 락 (Distributed Lock)을 구현하는 데 유용하게 사용
 
 ### 응용 - 분산 락
 
@@ -72,7 +72,9 @@ public interface LockRepository extends JpaRepository<Stock, Long> {
     @Query(value = "SELECT RELEASE_LOCK(:key)", nativeQuery = true)
     void releaseLock(String key);
 }
+```
 
+```java
 // NamedLockService.java
 public class NamedLockService {
 
@@ -94,9 +96,9 @@ public class NamedLockService {
 }
 ```
 
-## 메타데이터 락(Metadata Lock)
+## 메타데이터 락 (Metadata Lock)
 
-데이터베이스 객체(테이블, 뷰 등)의 구조나 이름을 변경하는 작업을 할 때, 해당 객체의 정의 정보를 보호하기 위해 내부적으로 획득하는 잠금이다.
+데이터베이스 객체 (테이블, 뷰 등)의 구조나 이름을 변경하는 작업을 할 때, 해당 객체의 정의 정보를 보호하기 위해 내부적으로 획득하는 잠금이다.
 
 ```sql
 -- Case 1: 테이블 이름 두 번에 걸쳐 변경
@@ -175,10 +177,10 @@ DROP TABLE access_log_old;
 
 ### MDL 주의사항
 
-메타데이터 락(MDL)은 트랜잭션과 밀접하게 연관되어 있어, 트랜잭션이 활성화된 상태에서는 의도치 않게 MDL로 인해 대기 상황이 발생할 수 있다.
+메타데이터 락 (MDL)은 트랜잭션과 밀접하게 연관되어 있어, 트랜잭션이 활성화된 상태에서는 의도치 않게 MDL로 인해 대기 상황이 발생할 수 있다.
 
-1. 테이블에 대한 쿼리(SELECT 포함)가 실행되면, 해당 쿼리가 속한 트랜잭션이 끝날 때까지 테이블에 대한 공유 메타데이터 락 획득
-2. `RENAME TABLE`이나 `ALTER TABLE`과 같은 DDL은 배타적 메타데이터 락(`EXCLUSIVE`)을 필요
+1. 테이블에 대한 쿼리 (SELECT 포함)가 실행되면, 해당 쿼리가 속한 트랜잭션이 끝날 때까지 테이블에 대한 공유 메타데이터 락 획득
+2. `RENAME TABLE`이나 `ALTER TABLE`과 같은 DDL은 배타적 메타데이터 락 (`EXCLUSIVE`)을 필요
 3. 때문에 해당 테이블을 사용하는 어떠한 활성 트랜잭션도 없을 때만 획득 가능
 
 ```sql
