@@ -202,6 +202,11 @@ export default defineConfig({
 					autogenerate: { directory: 'docs/java', collapsed: true },
 				},
 				{
+					label: 'Node.js',
+					collapsed: true,
+					autogenerate: { directory: 'docs/nodejs', collapsed: true },
+				},
+				{
 					label: 'Spring',
 					collapsed: true,
 					autogenerate: { directory: 'docs/spring', collapsed: true },

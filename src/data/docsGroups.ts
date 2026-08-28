@@ -21,6 +21,7 @@ export const DOCS_GROUPS: DocsGroup[] = [
   ]},
   { label: 'Language', items: [
     { key: 'java', label: 'Java' },
+    { key: 'nodejs', label: 'Node.js' },
   ]},
   { label: 'Framework', items: [
     { key: 'spring', label: 'Spring' },

@@ -382,4 +382,10 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: ['introduction', 'cluster-and-node-architecture', 'index-and-document-model'],
     },
   ],
+  nodejs: [
+    {
+      label: 'Architecture & Engine',
+      slugs: ['thread-model'],
+    }
+  ],
 };
