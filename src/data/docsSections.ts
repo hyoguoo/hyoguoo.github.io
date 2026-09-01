@@ -385,7 +385,7 @@ export const docsSections: Record<string, SectionConfig> = {
   nodejs: [
     {
       label: 'Architecture & Engine',
-      slugs: ['thread-model'],
+      slugs: ['event-loop', 'thread-model'],
     }
   ],
 };
