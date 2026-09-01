@@ -19,7 +19,7 @@ export const DOCS_GROUPS: DocsGroup[] = [
     { key: 'mysql', label: 'MySQL' },
     { key: 'redis', label: 'Redis' },
   ]},
-  { label: 'Language', items: [
+  { label: 'Language & Runtime', items: [
     { key: 'java', label: 'Java' },
     { key: 'nodejs', label: 'Node.js' },
   ]},
