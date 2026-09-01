@@ -1,7 +1,7 @@
 ---
 title: "Transport Layer - TCP/IP Layer 3"
 date: 2024-03-07
-lastUpdated: 2026-08-09
+lastUpdated: 2026-09-01
 tags: [ Network ]
 description: "TCP의 3-Way/4-Way Handshake, 흐름 제어, 혼잡 제어, ARQ 오류 제어 메커니즘과 UDP와의 차이를 분석한다."
 ---
@@ -237,36 +237,109 @@ stateDiagram-v2
 
 ### 1. 오류 제어 (Error Control) - ARQ (Automatic Repeat Request)
 
-TCP는 중복된 ACK 세그먼트를 수신했을 때나 타임아웃이 발생했을 때 잘못 전송되었음을 감지하고, 재전송을 하게 된다.
+TCP는 중복된 ACK 수신이나 타임아웃 발생 시 패킷 유실 (Packet Loss)이나 순서 뒤바뀜 (Out of Order)으로 판단하여 재전송 (Retransmission)을 수행한다.
+
+- 인프라 요인: 수십 개의 라우터 중 단 하나라도 오작동하면 유실이나 순서 바뀜 발생
+- 보안 요인: 패킷 필터링 방화벽 등 보안 장비의 개입으로 유실 발생
+
+현대 네트워크와 대부분의 운영체제에서 사용하는 방식은 Selective Repeat ARQ 및 SACK (Selective Acknowledgment)이다.
 
 - Stop-and-Wait ARQ
     - 송신자가 데이터를 전송하고, 수신자가 ACK를 전송할 때까지 기다리는 방식
-    - 제대로 보냈음을 확인하면 다음 데이터를 전송
-    - 전송 -> ACK -> 전송 -> ACK -> 전송 -> ACK -> ...
+    - 제대로 보냈음을 확인하면 다음 데이터를 전송 (전송 -> ACK -> 전송 -> ACK -> ...)
     - 네트워크 효율이 낮아져 사용하지 않음
-- Go-Back-N ARQ
+- Go-Back-N ARQ (누적 확인 응답, Cumulative Acknowledgment)
     - 파이프라이닝 방식으로 여러 개의 세그먼트를 전송하고, 수신자가 올바른 세그먼트에 대해서 ACK를 전송하는 방식
-    - 올바르지 않은 세그먼트가 수신되면 그 이후의 세그먼트를 폐기하고, 해당 세그먼트 이후의 세그먼트를 재전송 (N번째에서 오류 시 N번째 이후에 대해 폐기 및 재전송)
-- Selective Repeat ARQ
-    - 파이프라이닝 방식으로 여러 개의 세그먼트를 전송하고, 수신자가 올바른 세그먼트에 대해서 ACK를 전송하는 방식
-    - 올바르지 않은 세그먼트가 수신되면 그 세그먼트만 재전송
-    - Go-Back-N ARQ에 비해 복잡하지만, 네트워크 효율이 높아 사용
+    - N번째 패킷 오류 시 N번째 이후의 모든 세그먼트를 폐기 및 재전송하므로 비효율적
+- Selective Repeat ARQ 및 SACK (Selective Acknowledgment)
+    - 오류가 발생한 (유실된) 세그먼트만 콕 집어 재전송하는 방식
+    - 기존 누적 확인 응답의 한계를 극복하기 위해 SACK 옵션을 도입하여 유실된 특정 패킷만 재전송 요청
+    - 순서 뒤바뀜 (Out of Order) 발생 시, 즉시 재전송을 요청하기보다 잠시 기다려 불필요한 중복 재전송 방지
 
 ### 2. 흐름 제어 (Flow Control) - Sliding Window
 
-수신자는 버퍼가 가득 차서 데이터를 처리하지 못하게 되는 것을 방지하기 위해, 수신 측의 처리 속도에 맞춰 송신 속도를 조절하는 기술이다.
+수신 버퍼가 가득 차서 데이터를 처리하지 못하는 상황을 방지하기 위해, 수신 측의 처리 속도에 맞춰 송신 속도를 조절하는 흐름 제어 기술이다.
 
-- 수신 측은 ACK를 보낼 때 자신의 남은 버퍼 크기 (Window Size)를 헤더에 담아 전송
-- 송신 측은 이 윈도우 크기 내에서 ACK 없이 연속적으로 데이터를 전송 가능
-- 윈도우 크기가 0이 되면 전송을 중단하고 주기적으로 윈도우 갱신 패킷 (Probe)을 전송
+- 슬라이딩 윈도우: 한 번에 관찰하고 관리하는 데이터의 범위로, 전송량에 따라 크기가 변하고 미끄러지듯이 이동
+- 독립적 관리: 윈도우는 클라이언트와 서버 간에 공유되지 않고 각 개체가 독립적으로 관리
+
+슬라이딩 윈도우가 전송의 논리적 범위를 관리한다면, 한 번에 보낼 수 있는 실제 데이터 송신량을 결정하는 핵심 기준은 수신 측의 윈도우 사이즈다.
+
+```mermaid
+sequenceDiagram
+    participant Sender as 송신 측 (Sliding Window)
+    participant Receiver as 수신 측 (Window Size)
+    
+    Note over Receiver: 1. 수신 버퍼 여유 공간 파악<br/>(Window Size = 3)
+    Receiver-->>Sender: ACK 응답 + [Window Size = 3 전달]
+    
+    Note over Sender: 2. 수신 측이 알려준 크기만큼<br/>송신 측 슬라이딩 윈도우 설정
+    
+    rect rgb(240, 248, 255)
+        Sender->>Receiver: 패킷 1 전송
+        Sender->>Receiver: 패킷 2 전송
+        Sender->>Receiver: 패킷 3 전송
+    end
+    Note left of Sender: 3. 윈도우 한도(3) 도달<br/>ACK 없이 연속 전송 완료 후 대기
+    
+    Receiver-->>Sender: 패킷 1에 대한 수신 완료 ACK
+    
+    Note over Sender: 4. 슬라이딩 윈도우 1칸 이동(Sliding)<br/>새로운 전송 가능 공간 확보
+    
+    Sender->>Receiver: 패킷 4 전송
+```
+
+- 윈도우 사이즈 (Window Size): 수신 측 TCP 버퍼의 여유 공간
+- 수신 측은 ACK를 보낼 때 이 윈도우 크기를 헤더에 담아 전송하여 송신 측이 수신 버퍼 상태 파악
+- 송신 측은 이 윈도우 크기 내에서 ACK 없이 연속적으로 데이터 전송 가능
+
+#### 제로 윈도우 (Zero Window) 장애와 애플리케이션 설계
+
+윈도우 사이즈가 0이 되어 송신 측이 더 이상 데이터를 보낼 수 없는 상태를 제로 윈도우 (Zero Window) 장애라고 한다.
+
+```mermaid
+sequenceDiagram
+    participant Sender as 송신 측
+    participant OS as 수신 측 OS 버퍼
+    participant App as 애플리케이션
+    
+    Sender->>OS: 데이터 전송
+    Note over OS, App: App의 처리 지연으로 버퍼 공간 감소
+    OS-->>Sender: ACK (Window Size 감소)
+    Sender->>OS: 추가 데이터 전송
+    Note over OS: 버퍼 가득 참
+    OS-->>Sender: ACK (Window Size = 0)
+    Note over Sender: 제로 윈도우 발생 (전송 대기)
+    Sender->>OS: 윈도우 갱신 패킷(Probe) 주기적 전송
+    App->>OS: 뒤늦게 receive 호출
+    Note over OS: 버퍼 공간 확보
+    OS-->>Sender: ACK (Window Size 복구)
+    Note over Sender: 데이터 전송 재개
+```
+
+- 발생 원인: 네트워크나 OS 문제가 아닌 애플리케이션 프로세스의 처리 지연
+- 설계 결함: 애플리케이션이 `receive` 함수 등을 통해 OS 수신 버퍼에서 데이터를 제때 가져가지 못해 버퍼가 가득 참
+- 해결 방안: 데이터 수신 로직과 데이터 처리 로직의 분리
+- 아키텍처 개선: 단일 수신 스레드가 데이터를 받아 큐 (Queue)에 넣고, 여러 개의 워커 (Worker) 스레드가 병렬로 처리하여 대규모 트래픽 대응
 
 ### 3. 혼잡 제어 (Congestion Control)
 
 네트워크 자체의 혼잡 상태를 파악하여 송신 속도를 조절하는 기술로, 라우터에 데이터가 몰려 패킷 유실이 발생하는 것을 방지한다.
 
-- Slow Start: 연결 초기에는 패킷을 하나만 보내고, ACK를 받을 때마다 윈도우 크기 (Congestion Window)를 2배씩 지수적으로 증가시킴
-- Congestion Avoidance: 특정 임계치 (Threshold)에 도달하면 선형적으로 증가시킴
-- Fast Retransmit/Recovery: 타임아웃 전이라도 중복된 ACK가 3번 연속 오면 즉시 재전송하고 윈도우 크기를 줄여 혼잡 상황에 대처
+- Slow Start: 연결 초기에는 패킷을 하나만 보내고, ACK를 받을 때마다 윈도우 크기 (Congestion Window)를 2배씩 지수적으로 증가
+- Congestion Avoidance: 특정 임계치 (Threshold)에 도달하면 선형적으로 증가
+- Fast Retransmit/Recovery: 타임아웃 전이라도 중복된 ACK가 3번 연속 오면 즉시 재전송하고 윈도우 크기를 줄여 혼잡 상황 대처
+
+결국엔 점진적으로 전송량을 증가 시키고, 최적 안정점까지 도달하면 선형적으로 증가시키며, 혼잡이 발생하면 전송량을 줄이는 방식으로 안정적인 전송률을 유지한다.
+
+## TCP 이상 징후와 시스템 장애 (Troubleshooting)
+
+TCP 통신 중 발생하는 재전송 (Retransmission)이나 제로 윈도우 등은 단순한 네트워크 혼잡을 넘어 시스템의 치명적 결함을 알리는 이상 징후로 작용한다.
+
+- 인프라 장애 및 보안 이슈 구분: 수십 개의 라우터 오작동이나 패킷 필터링 방화벽에 의해 순서 뒤바뀜 (Out of Order) 또는 패킷 유실 (Packet Loss) 발생
+- 현상 파악: 유실 발생 시 수신 측은 중복 확인 응답 (Duplicate ACK)을 보내 재전송 유도
+- 소프트웨어 결함 감지: 윈도우 사이즈가 0이 되는 제로 윈도우는 OS 문제가 아닌 애플리케이션의 receive 함수 호출 지연으로 인한 명백한 설계 오류
+- 설계 개선: 대규모 트래픽에 대응하려면 네트워크 수신 스레드와 데이터 처리 워커 스레드를 분리 (큐 사용)하는 아키텍처 도입
 
 ## TCP와 성능 이슈
 
