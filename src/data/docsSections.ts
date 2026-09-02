@@ -384,6 +384,10 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   nodejs: [
     {
+      label: 'JavaScript Core',
+      slugs: ['asynchronous-programming'],
+    },
+    {
       label: 'Architecture & Engine',
       slugs: ['event-loop', 'thread-model'],
     }
