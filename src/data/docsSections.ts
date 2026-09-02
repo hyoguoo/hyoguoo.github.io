@@ -389,7 +389,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Architecture & Engine',
-      slugs: ['event-loop', 'thread-model'],
+      slugs: ['event-loop', 'v8-memory-management', 'thread-model'],
     }
   ],
 };
