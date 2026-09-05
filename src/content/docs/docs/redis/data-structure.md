@@ -1,7 +1,7 @@
 ---
 title: "Data Structure"
 date: 2024-09-28
-lastUpdated: 2026-08-07
+lastUpdated: 2026-09-05
 tags: [ Redis ]
 description: "Redis가 지원하는 String, List, Hash, Set, Sorted Set, Bitmaps, HyperLogLog, Geospatial, Stream 자료구조의 내부 동작 방식과 주요 명령어를 정리한다."
 ---
@@ -25,6 +25,9 @@ Redis에서 가장 기본적인 자료구조로, key 하나에 value 하나가 �
 - 문자열뿐만 아니라 이미지, JSON, 직렬화된 객체 등 다양한 데이터 저장 가능
 - 메모리 제한: 최대 512MB까지의 문자열 저장 가능
 - 활용 사례: 간단한 캐시 / 세션 관리 / 카운터 (예: 방문자 수, 좋아요 수 등) 등
+- SDS (Simple Dynamic String) 구조: C 언어의 기본 문자열 (`\0`로 끝나는 char 배열) 대신 자체 구조체인 SDS를 사용하여 성능과 안정성 확보
+    - O (1) 길이 조회: 구조체 헤더에 문자열의 길이 (len)를 미리 저장해 두어, 길이를 구하기 위해 문자열 끝까지 순회할 필요가 없음
+    - Binary-safe 보장: 길이를 명시적으로 관리하므로 데이터 중간에 Null (`\0`) 바이트가 포함되어도 문자열의 끝으로 오인하지 않아 이미지나 직렬화 데이터 저장이 가능
 - 내부 인코딩
     - `int`: 값이 long 범위의 정수로 표현 가능할 때 (포인터 자리에 정수를 그대로 저장)
     - `embstr`: 44바이트 이하 짧은 문자열. 문자열 헤더와 데이터를 한 번의 메모리 할당으로 연속 배치
