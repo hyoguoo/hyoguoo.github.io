@@ -68,13 +68,13 @@ export const SCENARIOS = [
     ]},
     {name:"격리 · 관리자 안전 종결",outcome:{status:"FAILED",color:"failed",props:["안전 종결","유령 재고 0","감사 기록"]},impact:"\n· 격리 건을 임의로 성공 처리하면 입금 없는 유령 매출, 맹목 복원하면 유령 재고 발생\n· 실패 종결 단일 경로와 조건부 복원이 두 손실 모두 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입 · 재고 선차감"},
-      {edge:"payment>redis",kind:"normal",label:"선차감 완료 · decrement:done 키 기록",why:{tag:"핵심 이유",text:"선차감이 성공하면 Redis 재고 캐시에 decrement:done:{orderId} 키를 남긴다(TTL 8일). '실제로 차감했다'는 원본 기록이자 선차감 멱등 키다."}},
+      {edge:"payment>redis",kind:"normal",label:"선차감 완료 · 상품별 차감 표식 기록",why:{tag:"핵심 이유",text:"선차감이 성공하면 Redis 재고 캐시에 차감 표식을 남긴다(TTL 8일). 키는 주문이 아니라 상품마다 따로 찍힌다(decrement:done:{productId}:orderId) · '이 주문이 이 상품을 차감했다'는 원본 기록이자 멱등 키다."}},
       {edge:"payment>pg",kind:"normal",label:"commands.confirm 발행 (outbox relay)"},
       {edge:"pg>vendor",kind:"normal",label:"PG 승인 호출"},
       {edge:"pg>payment",kind:"warn",label:"events.confirmed QUARANTINED 수신 (PG 재시도 소진 → 자동 격리)",state:"→ QUARANTINED"},
       {edge:"payment~self",kind:"warn",label:"폴링 PROCESSING에 멈춤 (종결 상태가 아님)",why:{tag:"대기 이유",text:"QUARANTINED는 종결이 아니다 · 자동 처리가 불가능한 상태라 자동으로 끝내지 않고 관리자 확인을 기다린다."}},
       {edge:"admin>payment",kind:"recover",label:"resolve-quarantine (관리자 POST)"},
-      {edge:"payment>redis",kind:"recover",label:"차감 표식 있음 → 재고 복원",why:{tag:"설계 의도",text:"복원 Lua가 decrement:done:{orderId} 존재를 EXISTS로 먼저 확인한다. 이 건은 선차감이 됐으니 복원되지만, 캐시 장애로 선차감 전에 격리된 건은 표식이 없어 보상을 건너뛴다 · 차감한 적 없는 건까지 복원해 유령 재고가 생기는 걸 막는다.",dref:2}},
+      {edge:"payment>redis",kind:"recover",label:"차감 표식 있음 → 재고 복원",why:{tag:"설계 의도",text:"복원 Lua가 그 상품의 차감 표식 존재를 먼저 확인하고, 주문에 담긴 상품마다 한 번씩 수행된다. 이 건은 선차감이 됐으니 복원되지만, 캐시 장애로 선차감 전에 격리된 건은 표식이 없어 보상을 건너뛴다 · 차감한 적 없는 건까지 복원해 유령 재고가 생기는 걸 막는다.",dref:2}},
       {edge:"payment~self",kind:"recover",label:"조건부 갱신: status=QUARANTINED → FAILED (order 동조)",state:"QUARANTINED → FAILED",why:{tag:"종결 정책",text:"격리 진입은 벤더 승인 전이라 실제 결제가 발생하지 않았다. DONE으로 복구하면 유령 매출 · 안전 실패 종결만 지원한다.",dref:1}}
     ]},
     {name:"재고 부족 · 즉시 실패",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","409 즉시 반환"]},impact:"\n· 재고 없는 결제를 승인하면 배송 불가 주문이 생겨 보상·고객 응대 비용 발생\n· 확정 전에 거절해 그런 주문 자체를 원천 차단",hops:[
