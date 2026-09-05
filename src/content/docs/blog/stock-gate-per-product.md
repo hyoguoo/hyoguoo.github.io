@@ -1,7 +1,7 @@
 ---
 title: "재고 선차감 캐시 분해 — Redis 샤딩을 전제로 원자성 경계 조정"
 date: 2026-08-22
-lastUpdated: 2026-08-22
+lastUpdated: 2026-09-05
 tags: [ Payment Platform Project ]
 description: "주문 단위로 실행하던 재고 차감 스크립트를 상품 단위로 분리한 과정을 정리한다. 분산 환경에서 발생하는 원자성 상실과 동시성 문제를 애플리케이션 레벨에서 어떻게 보완했는지 다룬다."
 ---
@@ -285,6 +285,32 @@ sequenceDiagram
 
 동시다발적으로 반복문이 순회되면서 동시성 문제가 발생하는 것을 원천 차단하기 위해 발급받은 고유 토큰 (UUID) 대조 방어 로직을 스크립트에 반드시 포함했다.
 
+### 2중 방어 체계: 중복 및 재시도 요청 차단
+
+재시도 요청이 유입되어 새로운 UUID를 발급받더라도, 2중 방어 체계를 통해 중복 차감을 차단한다.
+
+#### 1단계: 주문 락 (동시 진입 차단)
+
+락의 키 (Key)는 주문 번호이며, UUID는 값 (Value)으로 할당한다.
+
+- 진입 차단: 같은 주문에 대한 재시도 요청이 와도 키가 이미 점유되어 있어 락 획득 실패
+- UUID 역할: 락을 풀 때 본인의 락만 해제할 수 있도록 검증하는 서명
+
+#### 2단계: Dedup 마커 (완료 후 재진입 차단)
+
+선행 요청이 완료되어 락이 풀린 뒤 재시도 요청이 들어오면 락을 통과하지만, 차감 스크립트 내부의 멱등성 검증에 가로막힌다.
+
+```lua
+local dedup_key = KEYS[1]  -- decrement:done:{productId}:{orderId}
+
+if redis.call('SETNX', dedup_key, '1') == 0 then
+    return 'ALREADY_DONE'
+end
+```
+
+- 선행 요청 처리 시 남긴 완료 마커 (Dedup)로 인해 후행 요청의 `SETNX` 검사 실패
+- 재고 차감 없이 안전하게 종료
+
 ## 사후 복구: 서버 다운 및 네트워크 단절 대비
 
 애플리케이션이 직접 롤백을 수행하는 구조는 프로세스 강제 종료나 네트워크 단절 발생 시 심각한 상태 불일치를 유발한다.
@@ -300,24 +326,24 @@ sequenceDiagram
 
 ```mermaid
 sequenceDiagram
-    participant O as 오케스트레이터
+    participant O as 결제 오케스트레이터
     participant DB as 결제 데이터베이스
     participant Redis as Redis 캐시
-    Note over O,Redis: 1. 분산 락 획득 (트랜잭션 없음)
-    O ->> Redis: 주문 단위 제어권 선점 (1차 방어선)
+    Note over O,Redis: 1. 분산 락 획득 (데이터베이스 커넥션 미사용)
+    O ->> Redis: 결제 요청(주문 단위) 제어권 획득 (동시 요청 방어)
 
-    loop 상품 개수만큼 반복
-        Note over O,DB: 2. TX 1: 독립된 트랜잭션
-        O ->> DB: 차감 시도 레코드(NOISE) 선행 기록 (2차 방어선)
-        DB -->> O: 즉시 커밋 및 커넥션 반납
-        Note over O,Redis: 3. 커넥션 반납 상태의 네트워크 I/O
-        O ->> Redis: 상품 단위 재고 차감
+    loop 주문에 포함된 각 상품마다 반복
+        Note over O,DB: 2. 단기 트랜잭션 (TX 1)
+        O ->> DB: 차감 이력 사전 기록 (상태: 미결/차감 중)
+        DB -->> O: 즉시 커밋 후 DB 커넥션 반납
+        Note over O,Redis: 3. 네트워크 통신 (DB 커넥션 반납 상태)
+        O ->> Redis: 상품 단위 캐시 재고 차감 시도
     end
 
     O ->> Redis: 분산 락 해제
-    Note over O,DB: 4. TX 2: 결제 진입 트랜잭션
-    O ->> DB: 결제 상태 갱신(IN_PROGRESS) 및 Outbox 발행
-    DB -->> O: 커밋 및 커넥션 반납
+    Note over O,DB: 4. 메인 트랜잭션 (TX 2)
+    O ->> DB: 결제 진행 상태(IN_PROGRESS) 갱신 및 차감 이력 확정 처리
+    DB -->> O: 최종 커밋 후 DB 커넥션 반납
 ```
 
 트랜잭션 구간을 분리한 구조는 다음 아키텍처 이점을 제공한다.
@@ -337,12 +363,11 @@ sequenceDiagram
 ```sql
 CREATE TABLE stock_hold_record
 (
-    id          BIGINT       NOT NULL AUTO_INCREMENT,
-    order_id    VARCHAR(100) NOT NULL,
-    product_id  BIGINT       NOT NULL,
-    quantity    INT          NOT NULL,
-    status      VARCHAR(20)  NOT NULL,
-    cycle_token VARCHAR(36)  NOT NULL, -- 현재 차감 사이클의 식별 값
+    id         BIGINT       NOT NULL AUTO_INCREMENT,
+    order_id   VARCHAR(100) NOT NULL,
+    product_id BIGINT       NOT NULL,
+    quantity   INT          NOT NULL,
+    status     VARCHAR(20)  NOT NULL,
     UNIQUE INDEX uk_stock_hold_record_order_product (order_id, product_id),
     INDEX idx_stock_hold_record_status (status)
 );
@@ -377,11 +402,10 @@ CREATE TABLE stock_hold_record
 ```mermaid
 stateDiagram-v2
     direction TB
-    [*] --> 미결: 차감 시도 전 기록
-    미결 --> 확정: 결제 성공 시 갱신 (복구 제외)
-    미결 --> 복구: 서버 다운 방치 건 배치가 원복 후 마감
-    복구 --> 미결: 동일 주문 재시도 시 새 사이클 시작
-    확정 --> 확정: 무시 (이미 판매된 재고)
+    [*] --> NOISE: 차감 시도 전 기록
+    NOISE --> COMMITTED: 결제 성공 시 갱신 (복구 제외)
+    NOISE --> REVERTED: 서버 다운 방치 건 배치가 원복 후 마감
+    COMMITTED --> COMMITTED: 무시 (이미 판매된 재고)
 ```
 
 ### 사후 복구 정합성을 지키는 세부 제어 기법
@@ -530,7 +554,21 @@ sequenceDiagram
 
 견고한 방어선을 구축하기 위해 단일 스크립트에 의존하던 로직을 여러 단계로 쪼개면서, 애플리케이션과 Redis 간의 통신 횟수가 구조적으로 증가하는 단점이 발생했다.
 
-- 잦은 네트워크 왕복: 재고 차감, 마커 생성, 상태 검증 등이 개별적인 요청으로 분리되어 주문당 발생하는 Redis 통신 (Round-Trip) 비용 크게 증가
-- 레이턴시 (Latency) 누적: 여러 번의 네트워크 I/O가 동기적으로 실행되며 전체적인 결제 처리 지연 시간에 영향
+- 잦은 네트워크 왕복: 재고 차감, 마커 생성, 상태 검증 등이 개별적인 요청으로 분리되어 주문당 발생하는 Redis 통신 (Round-Trip) 비용 크게 증가함
+- 레이턴시 (Latency) 누적: 여러 번의 네트워크 I/O가 동기적으로 실행되며 전체적인 결제 처리 지연 시간에 영향을 미침
 
 현재 아키텍처에서는 이러한 오버헤드 증가를 시스템의 장애 복원력을 얻기 위한 합리적인 트레이드오프로 수용했으며, 부하 테스트를 거쳐 구조적인 최적화 필요 여부를 점검할 예정이다.
+
+### 개선 방향
+
+이후 부하 테스트 등을 거쳐 병목이 확인된다면 다음과 같은 튜닝 기법을 Next Step으로 고려해 볼 수 있다.
+
+- 미결 장부 Bulk Insert 및 트랜잭션 병합 적용
+    - 현재는 루프 내에서 상품마다 DB 커넥션을 맺고 단건 INSERT (TX 1)를 수행함
+    - 이를 개선하여, 루프 진입 전 주문에 담긴 모든 상품의 미결 레코드 (NOISE)를 1번의 Bulk Insert로 밀어 넣는 방식으로 흐름을 개편함
+- 개선된 프로세스 흐름
+    - Redis 분산 락 획득 (주문 단위)
+    - 단기 트랜잭션 (TX 1): 전체 상품 차감 이력을 미결 상태로 한 번에 Bulk Insert 후 커넥션 반납
+    - Redis 네트워크 통신: 개별 상품 캐시 차감 (실패 시 기차감분 롤백 및 에러 반환)
+    - 메인 트랜잭션 (TX 2): 결제 상태 확정 및 커넥션 반납
+    - Redis 분산 락 해제
