@@ -15,6 +15,7 @@ export const BLOG_SERIES = {
       { id: "blog/payment-recovery-state-design", title: "결제 복구 상태 모델 설계 — 장애 내성을 갖춘 상태 전이" },
       { id: "blog/msa-transition-decisions", title: "결제 시스템 MSA 전환기 — 분산 환경의 제약조건과 아키텍처 의사결정" },
       { id: "blog/stock-gate-per-product", title: "재고 선차감 캐시 분해 — Redis 샤딩을 전제로 원자성 경계 조정" },
+      { id: "blog/payment-recovery-awaiting-result", title: "결제 복구 상태 분리 — 부하 구간에서 안전장치가 만든 처리 정지 해소" },
     ]
   }
 } as const;
