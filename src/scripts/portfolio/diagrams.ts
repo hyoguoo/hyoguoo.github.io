@@ -391,7 +391,7 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     var l=sv("text",{x:e.lx,y:e.ly,class:"elabel"+(e.recover?" recover":""),"text-anchor":e.anchor||"middle"});l.textContent=e.label;l.dataset.from=e.from;smv.appendChild(l);
     sEdgeEls.push({p:p,l:l,from:e.from});});
   var sNodeEls={};
-  Object.keys(NPOS).forEach(function(id){var p=NPOS[id],st=STATES[id],w=124,h=46;var g=sv("g",{class:"snode",tabindex:"0",role:"button","aria-label":id+" 상태"});g.dataset.state=id;
+  Object.keys(NPOS).forEach(function(id){var p=NPOS[id],st=STATES[id],w=p.w||124,h=46;var g=sv("g",{class:"snode",tabindex:"0",role:"button","aria-label":id+" 상태"});g.dataset.state=id;
     var r=sv("rect",{x:p.x-w/2,y:p.y-h/2,width:w,height:h,rx:10,class:"node-box2",style:"--nc:var("+CV[st.color]+")"+(st.terminal?";stroke-width:2.2;--tstroke:var("+CV[st.color]+")":"")});
     g.appendChild(r);
     var t=sv("text",{x:p.x,y:p.y+(st.terminal?1:5),"text-anchor":"middle",class:"node-label2"});t.textContent=id;g.appendChild(t);

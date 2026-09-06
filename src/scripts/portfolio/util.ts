@@ -6,5 +6,5 @@ export function escBr(s){return esc(s).replace(/\n/g,"<br>");}  /* 줄바꿈(\n)
 export function chips(a){return (a||[]).map(function(c){return '<span class="chip">'+esc(c)+"</span>";}).join("");}
 const SVGNS="http://www.w3.org/2000/svg";
 export function sv(t,a){var e=document.createElementNS(SVGNS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
-export const CV={ready:"--st-ready",inprog:"--st-inprog",done:"--st-done",failed:"--st-failed",quar:"--st-quar",expired:"--st-expired",
+export const CV={ready:"--st-ready",inprog:"--st-inprog",done:"--st-done",failed:"--st-failed",quar:"--st-quar",expired:"--st-expired",recover:"--st-recover",
           payment:"--svc-payment",pg:"--svc-pg",product:"--svc-product",user:"--svc-user",infra:"--svc-infra"};
