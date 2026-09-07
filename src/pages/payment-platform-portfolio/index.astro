@@ -798,6 +798,38 @@ import '../../styles/payment-portfolio.css';
       </div>
       <p class="wf-flow-note"><b>생성자 ≠ 판정자.</b> 메인이 만든 산출물을 메인이 판정하지 않도록 리뷰·구현만 서브에이전트로 격리했다. 각 단계는 개발자 확인을 거쳐야 다음으로 넘어가고, 모든 루프에는 반복 상한이 있다.</p>
     </div>
+    <div class="wf-guard reveal">
+      <div class="wf-guard-h">규칙 강제 · 자동 검사</div>
+      <p class="wf-guard-lead">코딩 규칙을 지침 문서에만 적어 두면 AI가 기억할 때만 지켜지고, 어겨도 빌드는 그대로 통과한다. 자동으로 검사할 수 있는 규칙은 모두 실제 검사로 옮겼다. 편집·작업 종료·빌드·CI 네 곳에서 자동으로 확인한다.</p>
+      <div class="wf-guard-grid">
+        <div class="wf-guard-cell">
+          <span class="wf-guard-when">편집 직후</span>
+          <span class="wf-guard-what">저장한 파일 1개만 스타일 검사</span>
+          <span class="wf-guard-effect">위반 시 즉시 알림</span>
+        </div>
+        <div class="wf-guard-cell">
+          <span class="wf-guard-when">작업 종료</span>
+          <span class="wf-guard-what">변경된 모듈 테스트 전체</span>
+          <span class="wf-guard-effect">실패 시 작업 종료 불가</span>
+        </div>
+        <div class="wf-guard-cell">
+          <span class="wf-guard-when">빌드</span>
+          <span class="wf-guard-what">레이어 의존 방향 + 정적 분석</span>
+          <span class="wf-guard-effect">위반 시 빌드 실패</span>
+        </div>
+        <div class="wf-guard-cell">
+          <span class="wf-guard-when">CI</span>
+          <span class="wf-guard-what">서비스별 전체 재검사</span>
+          <span class="wf-guard-effect">실패 시 머지 불가</span>
+        </div>
+      </div>
+      <p class="wf-flow-note"><b>같은 실수가 반복되면 지침이 아니라 검사를 추가한다.</b> AI에게 '이렇게 하지 마라'를 한 줄 더 적어 두는 것으로는 다음 작업에서 또 같은 실수가 나온다.</p>
+      <ul class="tr3-list">
+        <li>자동으로 검사할 수 있는 규칙은 전부 검사로 옮기고, 문서에는 사람이 판단할 항목만 남김</li>
+        <li>새 검사는 기존 위반을 먼저 확인하고, 남아 있으면 코드를 고쳐 없앤 뒤 적용</li>
+        <li>정상 코드를 잘못 지적하는 규칙이 하나만 섞여도 나머지 규칙까지 함께 무시되므로, 잘못 잡지 않는 규칙만 사용</li>
+      </ul>
+    </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/ai-workflow" target="_blank" rel="noopener">상세 문서 보기 · 서브에이전트 기반 워크플로우 ↗</a></div>
   </section>
 

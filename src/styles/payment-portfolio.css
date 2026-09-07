@@ -881,6 +881,16 @@
   .wf-loop { display: block; margin-top: 5px; font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--st-quar); }
   .wf-detail { font-size: 11px; color: var(--muted); line-height: 1.5; margin-top: auto; padding-top: 9px; border-top: 1px solid var(--line); }
 
+  /* 워크플로우 — 절차 위에 걸리는 기계 강제 층 */
+  .wf-guard { margin-top: 18px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-2, var(--panel)); }
+  .wf-guard-h { font-size: 12px; font-weight: 700; letter-spacing: .04em; color: var(--accent-text); text-transform: uppercase; }
+  .wf-guard-lead { font-size: 13px; color: var(--muted); line-height: 1.65; margin: 8px 0 14px; }
+  .wf-guard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .wf-guard-cell { display: flex; flex-direction: column; gap: 5px; padding: 11px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+  .wf-guard-when { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--accent); }
+  .wf-guard-what { font-size: 12px; color: var(--text); line-height: 1.5; }
+  .wf-guard-effect { font-size: 11px; color: var(--muted); line-height: 1.45; margin-top: auto; padding-top: 7px; border-top: 1px solid var(--line); }
+
   /* 도입부 카드 — 미니 트레이스 워터폴 (APM 스타일) */
   .ot-wf-head { display: flex; align-items: baseline; gap: 10px; margin: 14px 0 8px; flex-wrap: wrap; }
   .ot-wf-id { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); }
