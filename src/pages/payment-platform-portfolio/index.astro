@@ -294,7 +294,7 @@ import '../../styles/payment-portfolio.css';
     <div class="sub-label reveal">핵심 역량 · 클릭하면 해당 섹션으로</div>
     <div class="cap-band reveal">
       <a class="cap-cell" href="#decisions"><span class="cap-t">분산 트랜잭션 정합성</span><span class="cap-e">초과판매·유령재고 <b>0</b> · 정확히 <b>1회</b></span><span class="cap-go">설계 결정<span aria-hidden="true"> →</span></span></a>
-      <a class="cap-cell" href="#scenario"><span class="cap-t">장애 격리·자가 복구</span><span class="cap-e"><b>11종</b> 시나리오 · 상태머신 자동 복구</span><span class="cap-go">시나리오<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#scenario"><span class="cap-t">장애 격리·자가 복구</span><span class="cap-e"><b>16종</b> 시나리오 · 상태머신 자동 복구</span><span class="cap-go">시나리오<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#benchmark"><span class="cap-t">비동기 아키텍처·성능</span><span class="cap-e">Outbox+가상스레드 · 부하 급증에도 유실 <b>0</b></span><span class="cap-go">부하 테스트<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#tracing"><span class="cap-t">분산 추적·관측</span><span class="cap-e"><b>4서비스</b> 단일 traceId · 경보 <b>10종</b></span><span class="cap-go">트레이싱<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#races"><span class="cap-t">동시성·멱등 제어</span><span class="cap-e">SKIP LOCKED·원자 Lua · 이중차감 <b>0</b></span><span class="cap-go">경합 방어<span aria-hidden="true"> →</span></span></a>
@@ -451,7 +451,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk band" id="scenario">
     <div class="sec-head reveal">
       <h2>실패와 복구 시나리오</h2>
-      <p>예외 상황이 어떤 경로로 복구되는지 11가지 시나리오로 정리했다.</p>
+      <p>예외 상황이 어떤 경로로 복구되는지 16가지 시나리오로 정리했다.</p>
     </div>
     <div class="reveal">
       <div class="scn-picker" id="scnPicker"></div>
@@ -485,10 +485,10 @@ import '../../styles/payment-portfolio.css';
       </div>
     </div>
     <details class="matrix reveal">
-      <summary>▸ 11개 시나리오 한눈 비교</summary>
+      <summary>▸ 16개 시나리오 한눈 비교</summary>
       <div class="mtable-wrap"><table id="scn-matrix"><thead><tr><th>시나리오</th><th>결과</th><th>재고 영향</th><th>복구 · 종결</th><th>관측</th></tr></thead><tbody></tbody></table></div>
     </details>
-    <div class="meas-note res reveal"><b>결과</b> · 11가지 실패·복구 시나리오가 <strong>모두 자동 복구 또는 안전 종결로 수렴</strong>하도록 경로를 검증했다.</div>
+    <div class="meas-note res reveal"><b>결과</b> · 16가지 실패·복구 시나리오가 <strong>모두 자동 복구 또는 안전 종결로 수렴</strong>하도록 경로를 검증했다.</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/scenario-test" target="_blank" rel="noopener">상세 문서 보기 · 시나리오 테스트 전략 ↗</a></div>
   </section>
 

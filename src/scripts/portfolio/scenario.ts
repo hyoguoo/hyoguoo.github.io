@@ -37,9 +37,10 @@ import { SCN_NODES, SCN_EDGES, SCENARIOS, SCN_WHEN, SCN_OBS } from '../../data/p
     var GRP_LB={done:"성공",failed:"실패",quar:"격리로 멈춤",expired:"만료"};
     var curGrpKind=null,grpBody=null;
     SCENARIOS.forEach(function(sc,i){
-      if(sc.outcome.color!==curGrpKind){curGrpKind=sc.outcome.color;
+      var grpLabel=sc.grp||GRP_LB[sc.outcome.color]||"";
+      if(grpLabel!==curGrpKind){curGrpKind=grpLabel;
         var g=document.createElement("div");g.className="scn-grp";
-        var gt=document.createElement("div");gt.className="scn-grp-t";gt.textContent=GRP_LB[curGrpKind]||"";g.appendChild(gt);
+        var gt=document.createElement("div");gt.className="scn-grp-t";gt.textContent=grpLabel;g.appendChild(gt);
         grpBody=document.createElement("div");grpBody.className="scn-grp-b";g.appendChild(grpBody);scnPicker.appendChild(g);}
       var b=document.createElement("button");b.className="scn-btn";b.type="button";b.setAttribute("aria-pressed",i===0?"true":"false");b.dataset.i=i;
       b.innerHTML='<span class="kd" style="background:var('+CV[sc.outcome.color]+')"></span>'+esc(sc.name);
