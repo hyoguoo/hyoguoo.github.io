@@ -149,6 +149,7 @@ export const docsSections: Record<string, SectionConfig> = {
         'timeout-and-retry-pattern',
         'rate-limiting-pattern',
         'deployment-strategies',
+        'relational-vs-nosql',
       ],
     },
     {
