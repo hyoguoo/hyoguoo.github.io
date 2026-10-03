@@ -1,5 +1,10 @@
 # Blog 프로젝트 컨텍스트
 
+## Overview
+
+개인 개발 블로그·기술 학습 문서·포트폴리오를 제공하는 Astro + Starlight 기반 정적 사이트.
+이 저장소의 공통 지침은 `AGENTS.md`에서 관리한다.
+
 ## 문서 참조
 - 제품 스펙: `SPEC.md`
 
@@ -113,7 +118,9 @@ description: ""           # SEO용. 작성 시 한 문장 요약 권장
 상대 경로(`.md`, `../`) 및 구 Gitbook URL(`hyoguoo.gitbook.io`) 사용 금지.
 
 ## Skills
-프로젝트 전용 skills: `.claude/skills/`
+프로젝트 전용 skills: `.agents/skills/`
+
+자동 탐색을 지원하지 않는 도구는 작업에 해당하는 `.agents/skills/<name>/SKILL.md`를 직접 읽는다.
 
 | Skill | 자동 호출 조건 |
 |-------|-------------|

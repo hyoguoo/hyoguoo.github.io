@@ -28,6 +28,10 @@
 - **Analytics**:: Google Analytics
 - **Deployment**:: GitHub Pages via GitHub Actions
 
+## AI 에이전트 지침
+
+공통 지침은 [`AGENTS.md`](AGENTS.md), 프로젝트 스킬은 `.agents/skills/`에서 관리합니다.
+
 ## 커밋 컨벤션 (Commit Convention)
 
 이 프로젝트는 다음과 같은 커밋 스코프 (Scope) 분류 체계를 따릅니다.
@@ -35,7 +39,7 @@
 - `(portfolio)`: 포트폴리오 내용 작성 및 수정
 - `(note)`: CS 지식, 스터디, 면접 대비 등 개인 학습 노트 작성
 - `(post)`: 일반적인 블로그 포스팅 내용 작성
-- `(inst)`: 개발 지침, 규칙, 명세서 등 가이드라인 문서 수정 (`CLAUDE.md`, `SPEC.md` 등)
+- `(inst)`: 개발 지침, 규칙, 명세서 등 가이드라인 문서 수정 (`AGENTS.md`, `SPEC.md` 등)
 - `(config)`: 프로젝트 환경 설정 및 패키지 변경 (`package.json`, `astro.config.mjs` 등)
 - `(blog)`: 블로그 자체의 기능 개발, UI 추가, 전체적인 디자인 (CSS) 수정 등 시스템 변경
 - `(etc)`: 위의 분류에 속하지 않는 자잘한 수정이나 기타 작업

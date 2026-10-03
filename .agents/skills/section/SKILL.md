@@ -50,7 +50,7 @@ description: "새 docs 서브카테고리(섹션) 추가. DOCS_GROUPS 그룹 배
 ### key vs label vs tag 구분
 
 - **key**: 디렉토리명·docsGroups의 key·sidebar autogenerate 경로용. 영문 소문자·하이픈만.
-- **label**: 사용자에게 보이는 표시명. 대문자·공백 허용. CLAUDE.md 제목 컨벤션 준수 (약어는 풀네임 괄호).
+- **label**: 사용자에게 보이는 표시명. 대문자·공백 허용. AGENTS.md 제목 컨벤션 준수 (약어는 풀네임 괄호).
 - **tag**: 문서 frontmatter `tags` 배열 값. 일반적으로 label과 동일.
 
 ---

@@ -109,7 +109,7 @@ ELK처럼 토픽이 두 갈래(검색 엔진 + 로그 파이프라인)면 한 �
 #### 규칙
 
 - 파일명: kebab-case 영문 `.md` (예: `analyzer-and-inverted-index.md`)
-- 제목: 영문 — CLAUDE.md 제목 컨벤션 준수, 약어는 풀네임 괄호 (`AOP (Aspect-Oriented Programming)`)
+- 제목: 영문 — AGENTS.md 제목 컨벤션 준수, 약어는 풀네임 괄호 (`AOP (Aspect-Oriented Programming)`)
 - 내용·핵심 모두 명사형 종결 ('~함', '~임')
 - 마침표 사용
 
