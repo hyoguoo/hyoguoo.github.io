@@ -1,0 +1,43 @@
+---
+const entries = [{ pk: '201', time: '10:03' }, { pk: '202', time: '10:01' }, { pk: '203', time: '10:02' }];
+const byTime = [entries[1], entries[2], entries[0]];
+---
+<figure class="pg-order-figure" aria-labelledby="pg-order-heading">
+  <div class="figure-heading" id="pg-order-heading">정렬 예시 · IN_PROGRESS를 고정한 뒤의 순서</div>
+  <div class="panels">
+    <section class="panel" aria-label="상태 단일 인덱스의 PK 순서">
+      <div class="panel-heading">기존 (status)</div>
+      <p class="key">상태 → <span>PK</span></p>
+      <ol class="entries">
+        {entries.map(({ pk }) => <li><span class="pk">PK {pk}</span></li>)}
+      </ol>
+      <p class="note">PK 순서 유지<br />201 → 202 → 203</p>
+    </section>
+    <section class="panel" aria-label="상태·시간 복합 인덱스의 변경 시각 순서">
+      <div class="panel-heading">변경 (status, updated_at)</div>
+      <p class="key">상태 → <span>변경 시각</span> → PK</p>
+      <ol class="entries">
+        {byTime.map(({ pk, time }) => <li><span class="time">{time}</span><span class="pk">PK {pk}</span></li>)}
+      </ol>
+      <p class="note">PK 순서 불일치<br />202 → 203 → 201</p>
+    </section>
+  </div>
+</figure>
+<style>
+  .pg-order-figure { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-order-figure :is(p, div, section, ol, li) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem; margin-top: 1.15rem !important; }
+  .panel { min-width: 0; }
+  .panel-heading { font-size: 0.85rem; font-weight: 600; color: var(--sl-color-white); }
+  .key { margin: 0.4rem 0 0 !important; font-size: 0.8rem; }
+  .key span { color: var(--sl-color-text-accent); }
+  .entries { display: grid; gap: 0; list-style: none; padding: 0; margin: 0.7rem 0 !important; border: 1px solid var(--sl-color-hairline); border-radius: 4px; overflow: hidden; }
+  .entries li { display: flex; align-items: center; gap: 1.5rem; margin: 0; padding: 0.5rem 0.8rem; font-size: 0.85rem; background: var(--sl-color-bg-nav); }
+  .entries li + li { border-top: 1px solid var(--sl-color-hairline); }
+  .time { font-variant-numeric: tabular-nums; color: var(--sl-color-text-accent); }
+  .pk { font-variant-numeric: tabular-nums; }
+  .note { margin: 0; font-size: 0.8rem; line-height: 1.65; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 36rem) { .panels { gap: 1rem; } .panel-heading { min-height: 3.5em; overflow-wrap: anywhere; } .key { min-height: 3.4em; } .entries li { flex-wrap: wrap; gap: 0.1rem 0.5rem; padding: 0.5rem; min-height: 3.7rem; } }
+</style>

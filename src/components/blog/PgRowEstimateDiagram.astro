@@ -1,0 +1,97 @@
+---
+const exampleRows = Array.from({ length: 100 }, (_, index) => index);
+---
+
+<figure class="pg-row-estimate-figure" aria-labelledby="pg-row-estimate-title">
+  <div class="figure-heading" id="pg-row-estimate-title">한 행에 상태 비율을 적용하면 예상 행 수는 소수가 된다</div>
+
+  <section class="example" aria-label="개념 예시: 100행 중 IN_PROGRESS가 1행">
+    <div class="section-heading"><span class="example-label">개념 예시</span><span>100행 중 처리 중인 행은 1행</span></div>
+    <div class="row-grid" aria-hidden="true">
+      {exampleRows.map(index => <span class:list={['row-cell', { active: index === 0 }]}></span>)}
+    </div>
+    <div class="legend">
+      <span><i class="legend-cell active" aria-hidden="true"></i>IN_PROGRESS 1행</span>
+      <span><i class="legend-cell" aria-hidden="true"></i>다른 상태 99행</span>
+      <span class="grid-note">한 칸 = 한 행</span>
+    </div>
+
+    <div class="calculation" aria-label="주문 번호로 예상한 1행에 상태 비율 1퍼센트를 곱하면 예상 행 수는 0.01행">
+      <div class="term"><span class="term-label">주문 번호 조건</span><span class="number">1행</span></div>
+      <span class="operator" aria-hidden="true">×</span>
+      <div class="term"><span class="term-label">상태 비율</span><span class="number">1%</span><span class="term-note">1 / 100</span></div>
+      <span class="operator" aria-hidden="true">=</span>
+      <div class="term result"><span class="term-label">예상 행 수</span><span class="number">0.01행</span></div>
+    </div>
+    <p class="meaning">전체의 1%가 처리 중이므로, 주문 번호로 찾을 한 행에도 그 비율을 적용해 추정한다.</p>
+  </section>
+
+  <section class="trace" aria-label="실제 trace: 1행에 10 나누기 469899를 곱하면 약 0.000021행">
+    <div class="section-heading"><span class="trace-label">실제 trace</span><span>같은 계산에 실험의 추정값 적용</span></div>
+    <div class="calculation">
+      <div class="term"><span class="term-label">주문 번호 조건</span><span class="number">1행</span></div>
+      <span class="operator" aria-hidden="true">×</span>
+      <div class="term"><span class="term-label">상태 비율</span><span class="fraction"><span>10</span><span>469,899</span></span></div>
+      <span class="operator" aria-hidden="true">≈</span>
+      <div class="term result"><span class="term-label">비용 계산의 중간 추정</span><span class="number precise">0.000021행</span></div>
+    </div>
+    <div class="actual-row">
+      <div><span class="actual-label">실제 수정 대상</span><span class="actual-number">1행</span></div>
+      <p>해당 주문은 실제로 존재하고, 상태도 IN_PROGRESS다.</p>
+    </div>
+  </section>
+
+</figure>
+
+<style>
+  .pg-row-estimate-figure {
+    margin: 1.75rem 0;
+    padding: 1.25rem 0;
+    border-block: 1px solid var(--sl-color-hairline);
+    color: var(--sl-color-text);
+  }
+  .pg-row-estimate-figure :is(div, p, section) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .example, .trace { max-width: 760px; margin-inline: auto; }
+  .example { margin-top: 1.1rem !important; }
+  .section-heading { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem 0.75rem; font-size: 0.85rem; color: var(--sl-color-white); }
+  .example-label, .trace-label { font-size: 0.75rem; font-weight: 600; }
+  .trace-label { color: var(--sl-color-text-accent); }
+  .row-grid { display: grid; grid-template-columns: repeat(20, minmax(0, 1fr)); gap: 4px; max-width: 480px; margin: 0.85rem auto 0 !important; }
+  .row-cell, .legend-cell { background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-gray-4); border-radius: 2px; }
+  .row-cell { aspect-ratio: 1; }
+  .active { background: var(--sl-color-text-accent); border-color: var(--sl-color-text-accent); }
+  .legend { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.6rem !important; font-size: 0.75rem; }
+  .legend > span { display: inline-flex; align-items: center; gap: 0.35rem; }
+  .legend-cell { display: inline-block; width: 0.7rem; height: 0.7rem; }
+  .grid-note { color: var(--sl-color-gray-2); }
+  .calculation { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1.3fr); align-items: center; gap: 0.5rem; margin-top: 1.1rem !important; padding: 1rem 0; background: var(--sl-color-bg-nav); border-radius: 4px; }
+  .term { display: grid; justify-items: center; align-content: center; gap: 0.3rem; min-width: 0; padding: 0 0.35rem; text-align: center; }
+  .term-label { font-size: 0.75rem; line-height: 1.6; }
+  .number { font-size: 1.35rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .result .number { color: var(--sl-color-text-accent); }
+  .term-note { font-size: 0.75rem; }
+  .operator { font-size: 1.2rem; color: var(--sl-color-white); }
+  .meaning { margin-top: 0.6rem !important; font-size: 0.8rem; line-height: 1.8; }
+  .trace { margin-top: 1.25rem !important; padding-top: 1.25rem; border-top: 1px solid var(--sl-color-hairline); }
+  .fraction { display: grid; font-size: 1.05rem; font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .fraction span:first-child { padding-bottom: 0.15rem; border-bottom: 1px solid var(--sl-color-gray-3); }
+  .fraction span:last-child { padding-top: 0.15rem; }
+  .precise { font-size: 1.1rem; }
+  .actual-row { margin-top: 0.85rem !important; padding: 0.75rem 1rem; border: 1px solid var(--sl-color-gray-4); border-radius: 4px; }
+  .actual-row > div { display: flex; align-items: baseline; gap: 0.75rem; }
+  .actual-label { font-size: 0.8rem; }
+  .actual-number { font-size: 1.2rem; font-weight: 600; color: var(--sl-color-white); }
+  .actual-row p { margin-top: 0.25rem !important; font-size: 0.8rem; line-height: 1.8; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 36rem) {
+    .row-grid { grid-template-columns: repeat(10, minmax(0, 1fr)); max-width: 280px; }
+    .calculation { gap: 0.2rem; }
+    .term { padding: 0 0.15rem; }
+    .term-label { font-size: 0.75rem; }
+    .number { font-size: 1.2rem; }
+    .precise { font-size: 0.9rem; }
+    .fraction { font-size: 0.9rem; }
+    .operator { font-size: 1rem; }
+  }
+</style>

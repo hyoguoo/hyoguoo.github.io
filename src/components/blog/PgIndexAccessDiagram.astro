@@ -1,0 +1,56 @@
+<figure class="pg-access-figure" aria-labelledby="pg-access-title">
+  <div class="figure-heading" id="pg-access-title">주문 A를 수정할 때의 검색 범위</div>
+  <div class="plans">
+    <section class="plan" aria-label="Index Merge의 두 검색과 교차">
+      <div class="plan-heading">두 인덱스 병합</div>
+      <div class="scan">
+        <span class="scan-name">주문 번호 인덱스 · UNIQUE</span>
+        <div class="records"><span class="target">A</span></div>
+      </div>
+      <span class="operation">∩ 공통 PK 찾기</span>
+      <div class="scan status-scan">
+        <span class="scan-name">상태 인덱스 · IN_PROGRESS</span>
+        <div class="records"><span class="target">A</span><span>B</span><span>다른 주문…</span></div>
+      </div>
+      <div class="result"><span aria-hidden="true">↓</span><span>최종 대상 A</span></div>
+      <p class="note">상태 검색 범위에는 다른 주문도 포함</p>
+    </section>
+    <section class="plan" aria-label="주문 번호 인덱스 단독 검색과 상태 확인">
+      <div class="plan-heading">주문 번호 단독 검색</div>
+      <div class="scan">
+        <span class="scan-name">주문 번호 인덱스 · UNIQUE</span>
+        <div class="records"><span class="target">A</span></div>
+      </div>
+      <div class="result"><span aria-hidden="true">↓</span><span>A의 상태 확인</span></div>
+      <div class="check"><code>status = IN_PROGRESS</code></div>
+      <div class="result"><span aria-hidden="true">↓</span><span>최종 대상 A</span></div>
+      <p class="note">별도의 상태 인덱스 범위 검색 없음</p>
+    </section>
+  </div>
+  <figcaption>검색 범위를 설명하기 위한 예시다. 실제 읽은 행의 수·순서나 모든 잠금을 표시한 그림은 아니며, 단독 검색도 결과 갱신에 필요한 잠금과 보조 인덱스 수정을 수행한다.</figcaption>
+</figure>
+<style>
+  .pg-access-figure { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-access-figure :is(p, div, section) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 1.1rem !important; }
+  .plan { min-width: 0; padding-right: 1.25rem; }
+  .plan + .plan { border-left: 1px solid var(--sl-color-gray-4); padding-right: 0; padding-left: 1.25rem; }
+  .plan-heading { font-size: 0.88rem; font-weight: 600; color: var(--sl-color-white); margin-bottom: 0.8rem !important; }
+  .scan { border: 1px solid var(--sl-color-hairline); border-radius: 4px; padding: 0.7rem; }
+  .scan-name { display: block; font-size: 0.8rem; margin-bottom: 0.5rem; }
+  .records { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .records span { display: inline-block; padding: 0.2rem 0.65rem; background: var(--sl-color-bg-nav); border: 1px solid var(--sl-color-hairline); border-radius: 3px; font-size: 0.82rem; }
+  .records .target { border-color: var(--sl-color-text-accent); color: var(--sl-color-text-accent); }
+  .operation { display: block; margin: 0.5rem 0; font-size: 0.8rem; }
+  .result { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.5rem !important; font-size: 0.85rem; }
+  .check { margin-top: 0.5rem !important; padding: 0.65rem 0.7rem; background: var(--sl-color-bg-nav); border-radius: 4px; }
+  code { font-size: 0.8rem; overflow-wrap: anywhere; }
+  .note { margin-top: 0.75rem !important; font-size: 0.8rem; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 40rem) {
+    .plans { grid-template-columns: 1fr; gap: 1.25rem; }
+    .plan { padding: 0; }
+    .plan + .plan { border-left: 0; border-top: 1px solid var(--sl-color-gray-4); padding: 1.25rem 0 0; }
+  }
+</style>

@@ -1,0 +1,29 @@
+<div class="cost-comparison" role="region" aria-label="주문 번호 단독 검색과 두 인덱스 병합 검색의 비용 비교" tabindex="0">
+  <table>
+    <thead>
+      <tr><th scope="col">항목</th><th scope="col">주문 번호 단독</th><th scope="col">두 인덱스 병합</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">검색 과정</th>
+        <td>주문 번호 인덱스로 1행을 찾고, 그 행의 데이터를 읽는다.</td>
+        <td>두 인덱스에서 읽은 PK를 대조해 공통 행을 찾고, 그 행의 데이터를 읽는다.</td>
+      </tr>
+      <tr><th scope="row">총비용</th><td><strong>1.64349</strong></td><td><strong>1.23301</strong></td></tr>
+      <tr>
+        <th scope="row">값의 근거</th>
+        <td><a href="https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/pg-inbox-index-merge/artifacts/trace-probe-current.json">원본 trace</a>의 단독 검색 후보에 기록된 예상 총비용이다.</td>
+        <td>두 인덱스 읽기 비용 <code>1.23301</code>에 공통 행의 데이터 읽기 비용 <code>0</code>을 더한 값이다.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .cost-comparison { margin-block: 1rem; overflow-x: auto; }
+  table { display: table; width: 100%; min-width: 30rem; margin: 0; }
+  th, td { vertical-align: top; }
+  th:first-child { width: 5.5rem; white-space: nowrap; text-align: center; }
+  td, thead th:not(:first-child) { width: calc((100% - 5.5rem) / 2); text-align: left; }
+  tbody th { font-weight: 400; }
+</style>

@@ -1,0 +1,75 @@
+<figure class="pg-approval-figure" aria-labelledby="pg-approval-title">
+  <div class="figure-heading" id="pg-approval-title">승인 처리와 저장 실패 후의 복구 경로</div>
+  <div class="entry">승인 요청을 pg_inbox에 저장 · <code>PENDING</code> (대기)</div>
+  <ol class="steps">
+    <li>
+      <span class="step-name">워커 선점</span>
+      <span class="boundary">선점 트랜잭션</span>
+      <p><code>PENDING → IN_PROGRESS</code></p>
+      <p class="meaning">처리할 요청을 맡고 커밋</p>
+      <span class="commit">COMMIT · 잠금 해제</span>
+    </li>
+    <li>
+      <span class="step-name">외부 PG 호출</span>
+      <span class="boundary outside">DB 트랜잭션 없음</span>
+      <p>외부 결제 업체에 승인 요청</p>
+      <p class="meaning">응답을 기다리는 동안 처리 중 상태 유지</p>
+    </li>
+    <li>
+      <span class="step-name">승인 결과 저장</span>
+      <span class="boundary">결과 트랜잭션</span>
+      <p><code>IN_PROGRESS → APPROVED</code></p>
+      <p class="meaning">승인 결과와 변경 시각 저장</p>
+      <span class="commit">COMMIT</span>
+    </li>
+  </ol>
+  <div class="outcomes">
+    <div class="outcome success">
+      <span class="outcome-label">결과 저장 성공</span>
+      <p>결과 회신 → 결제 서비스가 최종 상태 반영 → 브라우저에서 완료 확인</p>
+    </div>
+    <div class="outcome recovery">
+      <span class="outcome-label">결과 저장 실패</span>
+      <ol class="recovery-path">
+        <li><span class="recovery-name">처리 중 상태로 남음</span><span><code>IN_PROGRESS</code> 유지</span></li>
+        <li class="recovery-worker"><span class="recovery-name">복구 워커가 주기 조회</span><span>마지막 변경 후 60초가 지난 요청 회수</span></li>
+        <li><span class="recovery-name">같은 요청 재처리</span><span>결과 저장·회신이 완료되면 결제에도 반영</span></li>
+      </ol>
+    </div>
+  </div>
+  <figcaption>외부 승인이 성공해도 별도 트랜잭션인 결과 저장은 실패할 수 있다. 복구 워커는 오래 남은 요청을 찾아 재처리를 맡기며, 60초는 조회 주기가 아닌 복구 대상 판정 기준이다. 이 그림은 결과 저장 실패로 IN_PROGRESS가 남은 경우를 표시한다.</figcaption>
+</figure>
+<style>
+  .pg-approval-figure { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-approval-figure :is(div, p, ol, li) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .entry { font-size: 0.85rem; line-height: 1.75; }
+  .entry { margin-top: 0.7rem !important; }
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; list-style: none; padding: 0; margin-top: 1rem !important; }
+  .steps li { position: relative; min-width: 0; padding: 0.85rem; border: 1px solid var(--sl-color-hairline); border-radius: 4px; background: var(--sl-color-bg-nav); }
+  .steps li:not(:last-child)::after { content: '→'; position: absolute; top: 50%; right: -1.3rem; color: var(--sl-color-gray-2); }
+  .step-name { display: block; font-size: 0.9rem; font-weight: 600; color: var(--sl-color-white); }
+  .boundary { display: block; margin: 0.4rem 0 0.9rem; font-size: 0.78rem; color: var(--sl-color-gray-2); }
+  .outside { color: var(--sl-color-text-accent); }
+  p { font-size: 0.83rem; line-height: 1.7; }
+  .meaning { margin-top: 0.4rem !important; }
+  .commit { display: block; margin-top: 0.7rem; font-size: 0.78rem; font-weight: 600; }
+  .outcomes { display: grid; gap: 0.9rem; margin-top: 1.2rem !important; }
+  .outcome { padding-left: 0.85rem; border-left: 2px solid var(--sl-color-hairline); }
+  .outcome-label { display: block; margin-bottom: 0.35rem; font-size: 0.82rem; font-weight: 600; color: var(--sl-color-white); }
+  .recovery { border-left-color: var(--sl-color-text-accent); }
+  .recovery-path { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; list-style: none; padding: 0; }
+  .recovery-path li { position: relative; min-width: 0; font-size: 0.78rem; line-height: 1.7; }
+  .recovery-path li > span { display: block; }
+  .recovery-name { margin-bottom: 0.2rem; color: var(--sl-color-white); }
+  .recovery-worker .recovery-name { color: var(--sl-color-text-accent); font-weight: 600; }
+  .recovery-path li:not(:last-child)::after { content: '→'; position: absolute; right: -1.2rem; top: 0.2rem; color: var(--sl-color-gray-2); }
+  code { font-size: 0.8rem; overflow-wrap: anywhere; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 40rem) {
+    .steps { grid-template-columns: 1fr; }
+    .steps li:not(:last-child)::after { content: '↓'; top: auto; right: 50%; bottom: -1.4rem; }
+    .recovery-path { grid-template-columns: 1fr; gap: 1.1rem; }
+    .recovery-path li:not(:last-child)::after { content: '↓'; top: auto; right: auto; left: 0; bottom: -1.1rem; }
+  }
+</style>

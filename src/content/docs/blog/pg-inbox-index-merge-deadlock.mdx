@@ -1,0 +1,433 @@
+---
+title: "서로 다른 주문의 UPDATE가 충돌한 이유 — MySQL Index Merge 데드락"
+date: 2026-10-05
+lastUpdated: 2026-10-05
+tags: [Payment Platform Project]
+description: "결제를 1분 넘게 지연시킨 Index Merge 데드락을 실행 계획과 잠금 덤프로 추적하고, 복합 인덱스 교체의 원리와 측정 결과를 분석한다."
+---
+
+import PgDeadlockDiagram from '../../../components/blog/PgDeadlockDiagram.astro';
+import PgIndexOrderDiagram from '../../../components/blog/PgIndexOrderDiagram.astro';
+import PgRecoveryTimeline from '../../../components/blog/PgRecoveryTimeline.astro';
+import PgIndexAccessDiagram from '../../../components/blog/PgIndexAccessDiagram.astro';
+import PgApprovalFlow from '../../../components/blog/PgApprovalFlow.astro';
+import PgOptimizerCostDiagram from '../../../components/blog/PgOptimizerCostDiagram.astro';
+import PgCompletionComparison from '../../../components/blog/PgCompletionComparison.astro';
+import PgPaymentOverview from '../../../components/blog/PgPaymentOverview.astro';
+import PgRecordLockDiagram from '../../../components/blog/PgRecordLockDiagram.astro';
+import PgRowEstimateDiagram from '../../../components/blog/PgRowEstimateDiagram.astro';
+import PgTraceCalculationDiagram from '../../../components/blog/PgTraceCalculationDiagram.astro';
+import PgSearchCostComparison from '../../../components/blog/PgSearchCostComparison.astro';
+
+결제 도메인 학습 프로젝트인 [Payment Platform](https://github.com/hyoguoo/payment-platform)은 요청을 접수한 뒤 승인 처리를 비동기로 진행하고, 브라우저에서 최종 상태를 조회해 완료를 확인하는 구조다.
+
+<PgPaymentOverview />
+
+이 구조의 처리량을 측정하던 중 일부 결제가 완료되기까지 1분 넘게 걸렸다. 요청이 밀려 생기는 대기 시간을 줄이려고 부하를 낮췄지만, 완료 시간은 여전히 큰 차이를 보였다.
+
+| 구분 | 표본 요청의 완료 시간 |
+| :---: | :---: |
+| 중앙값(p50) | 약 0.5초 |
+| 지연된 일부 요청 | **62~77초** |
+
+테스트 종료 후 최종 결제 상태 검사는 통과했다. 하지만 최종 상태만으로는 일부 요청이 겪은 긴 대기를 알 수 없었다. 지연된 요청을 추적하며 다음 사실을 확인했다.
+
+1. **승인 결과 저장 실패**: 승인 결과를 저장하는 `UPDATE`에서 데드락이 발생했다. 해당 결제는 결과를 다시 반영할 때까지 대기하고 있었다.
+2. **두 인덱스를 읽는 실행 계획**: 이 `UPDATE`는 UNIQUE 주문 번호로 한 행을 지정했지만, 실행 계획에는 주문 번호 인덱스와 상태 인덱스를 함께 읽는 Index Merge가 선택돼 있었다.
+3. **서로 다른 주문 간 잠금 충돌**: 재현 실험에서도 서로 다른 주문을 수정하는 두 트랜잭션이 같은 주문의 레코드에서 충돌했다.
+
+## 저장 실패가 1분의 지연으로 이어진 과정
+
+이 프로젝트에서 결제에 관여하는 두 서비스의 역할은 다음과 같다.
+
+- **결제 서비스**: 사용자 요청을 접수하고 최종 결제 상태를 관리한다.
+- **PG 서비스**: 외부 결제 업체인 PG(Payment Gateway)에 승인을 요청한다.
+
+두 서비스는 메시지로 명령과 결과를 주고받는다. 따라서 브라우저가 받는 접수 응답과 실제 결제 완료 사이에는 시간 차이가 있다.
+
+PG 서비스는 받은 승인 요청을 수신함 테이블인 `pg_inbox`에 저장하고, 백그라운드 워커가 한 건씩 맡아 처리한다. 요청의 상태는 처리 대기인 `PENDING`에서 처리 중인 `IN_PROGRESS`를 거쳐, 승인 결과가 저장되면 `APPROVED`로 바뀐다.
+
+처리가 중단된 요청을 다시 실행하기 위해, PG 서비스에는 `pg_inbox`를 주기적으로 조회하는 복구 워커도 있다. 오래도록 처리가 끝나지 않은 요청을 찾아 같은 요청의 처리 로직을 다시 호출하는 백그라운드 작업이다.
+
+<PgApprovalFlow />
+
+외부 응답을 기다리는 동안 DB 잠금을 유지하지 않도록, 워커는 다음 순서로 트랜잭션을 분리해 처리한다.
+
+1. **요청 선점**: 요청을 맡고 `IN_PROGRESS`를 커밋한다.
+2. **외부 PG 호출**: 선점 트랜잭션이 끝난 뒤 승인을 요청한다.
+3. **승인 결과 저장**: 외부 호출이 끝나면 새 트랜잭션에서 결과를 저장한다.
+
+마지막 결과 저장이 데드락으로 롤백되면, 앞서 커밋한 `IN_PROGRESS`와 외부의 승인 결과는 남아 있다. 이때 결제가 완료되기까지의 흐름은 다음과 같다.
+
+1. **복구 대상 조회**: 복구 워커가 마지막 변경 시각에서 60초가 지난 `IN_PROGRESS`를 찾는다.
+2. **재처리**: 해당 요청의 처리 로직을 다시 실행해 PG 서비스가 승인 결과를 저장하고 회신한다.
+3. **결제 완료 반영**: 결제 서비스가 회신을 받아 최종 상태를 갱신한다.
+
+지연된 요청 하나의 로그를 확인하니, 결과 저장에 실패한 뒤 약 63.7초가 지나서야 복구 워커에 의해 다시 실행됐다.
+
+<PgRecoveryTimeline />
+
+## 한 행을 찾는 데 두 인덱스를 사용한 UPDATE
+
+데드락이 발생한 쿼리는 다음과 같다.
+
+```sql
+UPDATE pg_inbox
+SET status = 'APPROVED',
+    stored_status_result = :result,
+    updated_at = :now
+WHERE order_id = :order_id
+  AND status = 'IN_PROGRESS';
+```
+
+두 WHERE 조건의 역할은 다음과 같다.
+
+- `order_id = :order_id`: 결과를 저장할 주문을 지정한다.
+- `status = 'IN_PROGRESS'`: 아직 처리 중인 요청만 수정한다. 이미 다른 상태로 끝난 요청을 뒤늦게 도착한 승인 결과로 덮어쓰지 않기 위한 조건이다.
+
+두 조건을 만족하는 행에 승인 결과와 변경 시각을 저장한다.
+
+테이블에는 기본 키(Primary Key, PK)인 `id`, 주문 번호의 UNIQUE 인덱스, 상태 단일 인덱스가 있었다.
+
+```sql
+PRIMARY KEY (id)
+UNIQUE KEY ux_pg_inbox_order_id (order_id)
+KEY idx_pg_inbox_status (status)
+```
+
+주문 번호가 UNIQUE이므로 그 인덱스로 최대 한 행을 찾은 뒤 상태를 확인하면 되지만, MySQL이 실제로 선택한 접근 방식을 보여주는 EXPLAIN에는 주문 번호와 상태 인덱스를 모두 사용하는 계획이 나왔다.
+
+```text
+type:  index_merge
+key:   ux_pg_inbox_order_id, idx_pg_inbox_status
+Extra: Using intersect(...); Using where
+```
+
+Index Merge는 여러 인덱스의 검색 결과를 합쳐 대상을 찾는 방식이며, 여기서 선택된 `intersection`은 각 검색에 공통으로 포함된 행을 찾는다. 이 UPDATE에서는 주문 번호로 찾은 행과 `IN_PROGRESS` 상태로 찾은 행들의 교집합이 최종 수정 대상이다.
+
+<PgIndexAccessDiagram />
+
+두 방식 모두 최종 대상은 한 행이지만, **병합 계획의 상태 검색 범위에는 다른 주문도 포함된다.** 이 차이가 실제 잠금 충돌로 이어지는지 확인하려면 실행 계획에 더해, 데드락이 발생한 순간의 잠금 기록이 필요했다.
+
+## 주문 B를 수정하면서 주문 A의 잠금을 기다린 이유
+
+잠금 기록을 확보하려고 별도 DB에서 재현을 시도했지만, 초기 테스트에서는 문제의 Index Merge부터 나오지 않았다. 이때는 `IN_PROGRESS` 비율을 10%로 두는 등 상태 분포와 컬럼 정의를 단순화했고, 정적인 10만·80만 행 실험에서는 주문 번호 단독 검색만 선택됐다.
+
+프로젝트에서는 승인이 끝난 `APPROVED` 이력이 쌓이고, 외부 응답을 기다리거나 결과를 저장하는 일부 요청만 `IN_PROGRESS`로 남는다. 이 분포와 원래 스키마를 반영해 재현 조건을 구성했다.
+
+- **DB 버전**: MySQL 8.0.46의 별도 DB
+- **스키마**: 프로젝트의 원래 마이그레이션 V1~V7 적용
+- **초기 데이터**: `APPROVED` 이력 50만 건 적재
+- **동시 처리**: 10개 연결이 서로 다른 주문을 500건씩 처리
+
+각 주문은 실제 흐름처럼 선점과 결과 저장의 트랜잭션을 분리했다.
+
+1. **선점 트랜잭션**: `PENDING → IN_PROGRESS`로 변경하고 커밋해 잠금을 해제한다.
+2. **외부 호출 모사**: 트랜잭션 밖에서 100~300ms 기다린다.
+3. **결과 저장 트랜잭션**: 승인 결과를 UPDATE하고 커밋한다.
+
+워커가 맡은 주문은 중복되지 않았고, 인덱스 힌트나 별도로 유지한 PK 잠금 없이도 결과 저장 중 데드락이 발생했다.
+
+### 인덱스별 레코드와 잠금
+
+상태 인덱스에는 실제 행을 찾아갈 PK가 들어 있다. 주문 A(PK 502596)의 상태 항목과 실제 행은 다음처럼 연결된다.
+
+<PgRecordLockDiagram />
+
+B의 UPDATE가 상태 인덱스에서 A의 항목을 잠그면, A의 실제 행(PRIMARY)에도 배타 잠금을 요청한다. A의 실제 행을 다른 트랜잭션이 이미 잠그고 있다면, B의 UPDATE는 **A의 상태 항목을 잠근 채 실제 행의 잠금이 풀리기를 기다린다.** [UPDATE의 잠금 규칙][locks-doc]
+
+검색부터 대기까지의 과정은 다음과 같다.
+
+1. **검색 중 A를 만난다.** Index Merge가 `IN_PROGRESS` 범위를 읽는 동안, B와 같은 상태인 A의 레코드도 읽는다.
+2. **A의 두 잠금을 요청한다.** A의 상태 인덱스 레코드에 배타 잠금을 얻고, 해당 PK로 A의 PRIMARY 레코드에도 잠금을 요청한다.
+3. **A의 PRIMARY에서 기다린다.** 다른 트랜잭션이 이 잠금을 가지고 있으면, B의 UPDATE는 그 잠금이 풀릴 때까지 멈춘다.
+
+이때 B의 UPDATE는 **A의 상태 인덱스 잠금은 보유하고, A의 PRIMARY 잠금은 기다리는 상태**다.
+
+### 덤프에 남은 순환 대기
+
+재현 덤프의 T1은 주문 A(PK 502596)를, T2는 다른 주문 B(PK 502601)를 수정하고 있었다. 그런데 T2가 기다리는 PRIMARY 레코드의 주문 번호를 확인하니 B가 아닌 A였다. 충돌에 관여한 잠금의 보유·대기 관계는 다음과 같았다. [데드락 덤프][deadlock]
+
+<PgDeadlockDiagram />
+
+| 수정 대상 | 보유한 잠금 | 기다리는 잠금 |
+| :---: | :---: | :---: |
+| T1 · 주문 A | A의 PRIMARY | A의 상태 인덱스 항목 |
+| T2 · 주문 B | A의 상태 인덱스 항목 | A의 PRIMARY |
+
+**T1은 A의 PRIMARY 잠금을, T2는 A의 상태 인덱스 잠금을 보유한 채 상대의 잠금을 기다렸다.** InnoDB는 이 순환 대기를 감지해 T1을 롤백했다.
+
+서로 다른 주문의 UPDATE가 검색 도중 A의 레코드에서 충돌한 것이다. 두 UPDATE는 모두 결과 저장 트랜잭션에서 행을 검색 중이었다(`Searching rows for update`).
+
+## UNIQUE 검색보다 Index Merge가 저렴하다고 판단한 이유
+
+잠금 기록은 서로 다른 주문이 충돌한 지점을 보여줬다. UNIQUE 인덱스만으로 한 행을 찾을 수 있는데도 상태 인덱스까지 읽은 이유를 확인하기 위해, 데이터 분포에 따른 실행 계획과 후보별 예상 비용이 남는 `optimizer trace`를 살펴봤다.
+
+### 상태 분포에 따른 실행 계획
+
+같은 승인 UPDATE라도 `IN_PROGRESS` 건수에 따라 실행 계획이 달라지는지 확인했다. 프로젝트 스키마와 전체 50만 행을 유지하고, `APPROVED` 상태의 행 일부를 `IN_PROGRESS`로 바꿨다. 각 상태 변경을 마친 뒤, 동시 승인 UPDATE를 실행하지 않는 상태에서 EXPLAIN으로 계획을 확인했다.
+
+| IN_PROGRESS 건수 | 승인 UPDATE의 검색 방식 |
+| :---: | :---: |
+| 1 · 2 · 10 · 100 | 주문 번호·상태 인덱스 병합 (`index_merge`) |
+| 1,000 · 10,000 · 100,000 · 500,000 | 주문 번호 인덱스 단독 검색 (`range`) |
+
+여기서 EXPLAIN에 `range`로 표시된 계획은 UNIQUE 주문 번호로 최대 한 행을 찾는다. 처리 중인 행이 소수인 조건에서는, **동시 승인 UPDATE를 실행하기 전에도 Index Merge가 선택됐다.** [분포별 EXPLAIN][matrix]
+
+다만 이 결과를 “100건까지는 병합, 1,000건부터는 단독 검색”이라는 일반적인 기준으로 사용할 수는 없다.
+
+실제로 전체 50만 행을 `IN_PROGRESS`로 바꾼 뒤 다시 10건으로 줄였을 때는, 처음에 `range`가 나왔다가 이후 다시 `index_merge`가 관측됐다. 같은 상태별 건수에서도 계획이 달라질 수 있었다.
+
+병합이 선택된 10건 조건의 `optimizer trace`에서, MySQL이 두 검색의 비용을 어떻게 비교했는지 확인했다.
+
+### 옵티마이저의 예상 행 수 계산
+
+MySQL 옵티마이저는 쿼리를 실행하기 전에 검색 방법별 비용을 비교한다. 이때 **주문 번호와 상태 조건을 모두 만족할 행이 얼마나 있을지** 추정하고, 그 예상 행 수를 비용 계산에 사용한다. `optimizer trace`는 이 판단 과정을 기록한 것으로, 실제 UPDATE의 실행 시간을 측정한 결과가 아니다.
+
+먼저 100행 중 1행이 `IN_PROGRESS`인 설명용 예시로 계산의 의미를 살펴보자. 전체의 1%가 이 상태이므로, 무작위로 고른 한 행이 같은 상태일 가능성도 1%다. 이 비율을 주문 번호의 예상 1행에 적용하면 `0.01행`이 된다.
+
+<PgRowEstimateDiagram />
+
+실제 실험에서는 전체 50만 행 중 `IN_PROGRESS`가 10건이었다. 계산에는 InnoDB 통계의 근사값인 469,899행과 상태 조건의 예상 10행이 사용됐다. 주문 번호 조건은 UNIQUE 인덱스로 최대 한 행을 찾으므로 1행으로 추정했다. [비용 trace 원본][cost-trace]
+
+이번 병합 후보의 계산에서는 주문 번호 조건과 상태 조건을 서로 독립적으로 취급한다. 특정 주문이 실제로 어떤 상태인지 확인하는 대신, 전체에서 `IN_PROGRESS`가 차지하는 비율을 주문 번호의 예상 1행에 적용한다. [교집합 행 수·비용 계산 구현][ror-cost-source]
+
+**약 0.000021행은 비용 계산에 사용한 중간 추정치이며, 실제 수정 대상은 1행이다.** 다음 비용 계산에서는 이 작은 추정값이 병합 검색을 저렴하게 평가하는 데 영향을 준다.
+
+### 검색 비용의 합산과 병합 계획 선택
+
+옵티마이저는 예상 행 수를 바탕으로 읽을 양을 계산하고, 여기에 스토리지 엔진의 비용 상수 등을 적용해 후보를 비교한다. 비용은 밀리초 단위의 실행 시간이 아닌 내부 비교 단위다.
+
+예를 들어 인덱스 읽기 비용은 읽어야 할 페이지 수를 추정하고, 여기에 페이지당 읽기 비용을 적용해 구한다. 페이지는 DB가 데이터를 읽는 단위이며, 메모리에 있는 부분과 디스크에서 읽어야 할 부분의 비용도 구분한다.
+
+이번 trace의 후보별 비용과 병합 계획의 계산은 다음과 같다.
+
+<PgOptimizerCostDiagram />
+
+trace 필드와 세부 계산은 [본문 뒤의 상세 기록](/blog/pg-inbox-index-merge-deadlock/#비용-trace의-계산-단계)에 정리했다.
+
+선택된 병합 계획에서는 B를 찾다가 같은 `IN_PROGRESS` 상태인 A도 읽을 수 있다. UPDATE는 검색 중에도 잠금을 요청하므로, **B만 수정하는 쿼리가 A의 잠금을 기다릴 수 있다.** 실제 덤프에서도 이 대기가 확인됐다.
+
+## 복구 조회를 고려한 상태 인덱스 교체
+
+이미 끝난 요청을 다시 수정하지 않도록 승인 UPDATE의 `status = 'IN_PROGRESS'` 조건은 유지해야 했다. 상태 인덱스도 아래 복구 조회를 지원하므로, 삭제하는 대신 교체하기로 했다. 복구 조회를 SQL로 나타내면 다음과 같다.
+
+```sql
+SELECT id
+FROM pg_inbox
+WHERE status = 'IN_PROGRESS'
+  AND updated_at < :before
+ORDER BY updated_at ASC
+LIMIT :batch_size;
+```
+
+복구 조회는 상태가 같은 요청 중 변경 시각이 오래된 순서로 읽기 때문에, 이 조건에 맞춰 V8 마이그레이션에서는 기존 `(status)` 인덱스를 `(status, updated_at)`으로 교체했다.
+
+```sql
+ALTER TABLE pg_inbox DROP INDEX idx_pg_inbox_status;
+
+ALTER TABLE pg_inbox
+ADD INDEX idx_pg_inbox_status_updated_at (status, updated_at);
+```
+
+교체 후 승인 UPDATE는 주문 번호 인덱스만 사용했다. 기존 병합 계획이 제외된 이유는 상태 인덱스의 정렬 순서가 달라졌기 때문이다.
+
+### 인덱스 정렬 순서와 교집합 병합의 조건
+
+`index_roworder_intersect`는 두 검색의 PK를 대조해 공통 행을 찾는다. PK가 같으면 공통 행이고, 다르면 작은 쪽에서 다음 PK를 읽는다. 뒤에서 더 작은 PK가 나오면 공통 행을 놓칠 수 있으므로, **각 검색 결과는 PK가 작은 순서로 나와야 한다.** [PK 순서 병합 구현][ror-read-source]
+
+기존 `(status)` 인덱스는 같은 상태 안에서 PK 순서로 읽힌다. 새 `(status, updated_at)` 인덱스는 변경 시각이 먼저 정렬되므로, **같은 상태 안에서도 PK 순서가 보장되지 않는다.**
+
+<PgIndexOrderDiagram />
+
+인덱스 교체가 실행 계획에 영향을 주는 과정은 다음과 같다.
+
+1. **기존 인덱스의 PK 순서**: `(status)`에서 `IN_PROGRESS`를 찾으면 PK가 `201 → 202 → 203` 순서로 나온다. 주문 번호로 찾은 PK가 202라면, 상태 검색에서 201을 지나 202와 일치하는 것을 확인할 수 있다.
+2. **새 인덱스의 변경 시각 순서**: `(status, updated_at)`에서는 변경 시각이 빠른 순서인 `202 → 203 → 201`로 나온다. 상태만 고정해서는 PK가 작은 순서로 나온다는 보장이 없다.
+3. **병합 후보 제외**: 옵티마이저는 새 인덱스의 상태 검색을 PK 순서 병합에 사용할 수 없다고 판단한다. 기존 intersection이 후보에서 빠지고, 이 UPDATE에는 주문 번호 단독 검색이 선택된다.
+
+변경 후 trace에서도 상태·시간 인덱스의 `rowid_ordered`가 `false`로 바뀌었다. 이는 해당 검색에서 PK 순서가 보장되지 않는다는 옵티마이저의 판정이다. [변경 후 trace][after-trace]
+
+```json
+{
+  "index": "idx_pg_inbox_status_updated_at",
+  "ranges": ["status = 'IN_PROGRESS'"],
+  "rowid_ordered": false
+}
+```
+
+### 두 쿼리에 미친 영향
+
+인덱스 하나를 교체했지만 두 쿼리에서 얻은 효과는 달랐다. 복구 SELECT에는 상태와 시간 조건에 맞는 검색 경로를 제공했고, 승인 UPDATE에서는 충돌에 관여한 병합 경로가 제외됐다.
+
+| 쿼리 | 유지한 조건 | 교체 후 검색 방식 |
+| :---: | :---: | :---: |
+| 승인 UPDATE | 주문 번호 일치 · IN_PROGRESS | UNIQUE 주문 번호로 한 행을 찾은 뒤 상태 확인 |
+| 복구 SELECT | IN_PROGRESS · 기준 시각 이전 | 상태를 고정한 뒤 변경 시각 범위 검색 지원 |
+
+### 대안의 적용 범위
+
+이 문제에는 특정 인덱스를 사용하도록 힌트를 주거나 intersection을 비활성화하는 방법도 고려할 수 있다. 이번에는 복구 조회에도 필요한 구성을 선택했다.
+
+| 방법 | 적용할 때 고려할 점 |
+| :---: | :---: |
+| 상태·시간 인덱스로 교체 | 복구 조회 지원, 기존 intersection 제외를 trace로 확인 |
+| 쿼리별 인덱스 힌트 | 데이터·버전 변화 후 지정한 계획의 적합성 점검 필요 |
+| 전역 intersection 비활성화 | 해당 UPDATE 외의 쿼리에도 영향 |
+| PK 기준 갱신·다른 복합 인덱스 | 이번 비교 실험에서 검증하지 않은 대안 |
+
+## 변경 전후의 데드락과 장기 지연 비교
+
+실행 계획이 바뀐 뒤에는 실제 충돌과 결제 지연도 줄었는지 확인하기 위해 전체 결제 부하 테스트와 별도 DB 재현으로 범위를 나눠 변경 전후를 비교했다.
+
+| 실험 | 처리 범위 | 지표 |
+| :---: | :---: | :---: |
+| 전체 결제 | 메시지 · PG 처리 · 복구 | 완료 시간 · 저장 데드락 |
+| DB 재현 | 선점 · 대기 모사 · 결과 저장 | UPDATE 첫 시도의 성공·데드락 |
+
+### 전체 결제 흐름의 지연 감소
+
+큐에 요청이 계속 쌓이는 상황을 피하려고 주 부하의 도착률을 **초당 40건**으로 설정했고, 결제 서비스 2대·PG 서비스 2대 구성에서 인덱스 변경 전후를 각 1회 비교했다. 외부 PG 응답은 100~300ms 지연을 주는 테스트용 구현으로 모사했다.
+
+완료 시간은 별도로 보낸 표본 요청에서 측정했다. **접수 응답(HTTP 202)을 받은 시점부터 상태 조회로 완료를 확인할 때까지**의 시간이며, 폴링 간격에 따른 대기도 포함한다. [측정 스크립트][benchmark-script]
+
+<PgCompletionComparison />
+
+| 항목 | 변경 전 | 변경 후 |
+| :---: | :---: | :---: |
+| 결제 완료 시간 p99 | 73.10초 | **9.28초** |
+| 승인 결과 저장 데드락 | 163건 | 0건 |
+
+변경 후 실행에서는 결과 저장 데드락이 관측되지 않았고, 저장 실패 뒤 복구를 기다리던 장기 지연이 줄면서, **p99는 약 73초에서 9초로 감소했다.** [전체 결제 부하 테스트 보고서][payment-benchmark]
+
+### 별도 DB에서의 결과 저장 충돌 비교
+
+이 실험은 결제 애플리케이션을 거치지 않고 **스크립트가 MySQL에 직접 SQL을 실행한 비교**다.
+
+| 조건 | DB 재현 환경 |
+| :---: | :--- |
+| DB | Docker의 MySQL 8.0.46 · InnoDB · REPEATABLE READ |
+| 준비 | 별도 DB에 프로젝트 V1~V7 적용 · 완료 이력 50만 건 적재 |
+| 도구 | `reproduce.py`가 컨테이너의 `mysql` 클라이언트로 SQL 실행 |
+| 동시 실행 | DB 연결 10개 · 연결별 서로 다른 주문 500건 · 총 5,000건 |
+| 비교 | 같은 스크립트로 각 1회 실행 · 변경 후에는 V8 인덱스 교체 적용 |
+
+스크립트는 주문마다 다음 순서를 실행했다.
+
+1. **요청 선점**: `PENDING`으로 넣은 주문을 PK로 잠그고, `IN_PROGRESS`로 바꾼 뒤 커밋한다.
+2. **외부 호출 대기 모사**: 트랜잭션 밖에서 100~300ms를 기다린다. 실제 PG에는 요청하지 않는다.
+3. **승인 결과 저장**: 새 트랜잭션에서 원래 UPDATE를 실행하고, 첫 시도의 성공 여부를 집계한다.
+
+Java 서비스·메시지 전달·60초 복구 워커는 실행하지 않았다. 데드락이 나면 롤백 후 같은 UPDATE를 바로 재시도했다. 스크립트와 원본 결과는 [DB 재현 보고서][reproduction]에서 확인할 수 있다.
+
+| 항목 | 상태 단일 인덱스 | 상태·시간 복합 인덱스 |
+| :---: | :---: | :---: |
+| 결과 UPDATE 첫 시도 | 5,000건 | 5,000건 |
+| 첫 시도 성공 | 4,972건 | 5,000건 |
+| 첫 시도 데드락 | 28건 (0.56%) | 0건 |
+| 준비·재시도 단계 데드락 | 0건 | 0건 |
+| 다른 오류·워커 중도 종료 | 0건 | 0건 |
+| 실행 중 확인한 계획 | index_merge | 주문 번호 range |
+
+변경 전 실패한 28건은 재시도해 모두 완료됐다. 인덱스 교체 후에는 5,000건 모두 첫 시도에 성공했고, 실행 중 확인한 계획도 주문 번호 단독 검색이었다.
+
+## 마치며
+
+**UNIQUE 주문 번호로 한 행을 지정해도, 검색 중에는 다른 주문의 레코드에 잠금을 요청할 수 있었다.** 상태 인덱스를 함께 읽는 병합 경로가 서로 다른 주문의 UPDATE를 충돌시켰다.
+
+`(status)`를 `(status, updated_at)`으로 교체하자 승인 UPDATE는 주문 번호 인덱스만 사용했다. 상태 조건과 복구 조회를 유지하면서 병합 경로를 제외한 결과다.
+
+| 확인 범위 | 전 | 후 |
+| :--- | :---: | :---: |
+| 전체 결제 · 완료 시간 p99(초) | 73.10 | **9.28** |
+| 전체 결제 · 결과 저장 데드락(건) | 163 | **0** |
+| DB 재현 · 결과 UPDATE 첫 시도 데드락(건) | 28 | **0** |
+
+각 조건을 한 번씩 측정해 확인한 결과다.
+
+처음에는 `IN_PROGRESS`를 10%로 두고 스키마를 단순화해 병합 계획을 재현하지 못했다. 완료 이력이 대부분인 분포와 원래 스키마를 반영한 뒤에야 재현됐다.
+
+앞으로는 행 수와 동시 요청 수에 더해 다음 조건도 함께 맞춰 재현하려 한다.
+
+- **스키마**: 컬럼의 자료형·길이·정렬 규칙
+- **상태 분포**: 누적된 완료 이력과 처리 중인 행의 비율
+- **트랜잭션 경계**: 선점·외부 호출·결과 저장의 분리 방식
+
+복구 기능은 변경 전에도 최종 결제 상태를 올바르게 만들고 있었다. 비동기 처리를 검증할 때는 최종 상태와 함께 저장 실패·복구 대기·완료 시간의 분포까지 확인하려 한다.
+
+## 재현 환경과 참고 자료
+
+- **프로젝트 환경**: Java 21, Spring Boot 3.4.4, MySQL 8.0
+- **DB 재현 환경**: MySQL 8.0.46, InnoDB, REPEATABLE READ
+
+### 스키마와 분포 실험의 조건
+
+재현은 프로젝트 V1~V7 마이그레이션을 적용한 별도 DB에서 수행했다. UNIQUE와 원래 WHERE를 유지했으며, 인덱스 힌트·비용 상수·인위적인 통계값 변경은 사용하지 않았다.
+
+| 항목 | 프로젝트 스키마 재현 | 초기 정적 테스트 |
+| :---: | :---: | :---: |
+| 주문 번호 | VARCHAR(100) | VARCHAR(64) |
+| 상태 | 프로젝트의 5개 값 ENUM | VARCHAR(20) |
+| 결과 | VARCHAR(1024), 이력마다 약 400바이트 | VARCHAR(255) |
+| 정렬 규칙 | utf8mb4_unicode_ci | utf8mb4_0900_ai_ci |
+
+### 비용 trace의 계산 단계
+
+`optimizer trace`는 쿼리를 실행하기 전에 옵티마이저가 남긴 **검색 방법별 예상 비용의 계산 기록**이다. 아래에서는 행 수를 추정하고, 읽기 비용을 더해 병합 후보를 선택하는 과정을 살펴본다.
+
+#### 예상 행 수의 근거
+
+옵티마이저가 계산에 사용한 행 수는 다음과 같다.
+
+| 대상과 예상 행 수 | 추정 근거 |
+| :---: | :--- |
+| 전체 **469,899행** | 실제 50만 행에 대한 InnoDB 통계의 근사값이다. |
+| 주문 번호 조건 **1행** | UNIQUE 인덱스이므로, 지정한 주문 번호에 해당하는 행은 최대 1건이다. |
+| 상태 조건 **10행** | 상태 인덱스에서 `IN_PROGRESS` 범위를 살펴보고 추정한 값이다. |
+
+[`index dive`][index-dive-doc]는 인덱스에서 조건에 해당하는 범위의 양 끝을 찾아, **그 사이의 행 수를 추정**하는 방식이다. 이번 trace의 `index_dives_for_eq_ranges: true`는 이 방식을 사용했다는 기록이다.
+
+공통 행 수는 **주문 번호와 상태 조건이 서로 독립적이라는 가정**으로 계산한다.
+
+1. **상태 비율 계산**: 전체 중 `IN_PROGRESS`의 비율은 `10 ÷ 469,899`다.
+2. **공통 행 수 추정**: 주문 번호로 찾을 1행에 이 비율을 곱하면 `1 × (10 ÷ 469,899) ≈ 0.000021행`이 된다.
+
+#### 병합 비용과 단독 검색 비용
+
+병합 후보의 총비용은 **두 인덱스를 읽는 비용 + 두 검색에 공통으로 남을 행의 데이터를 읽는 비용**이다.
+
+<PgTraceCalculationDiagram />
+
+그림의 공통 행 수와 비용 계산 결과는 [원본 trace][cost-trace]에 다음과 같이 기록돼 있다.
+
+```json
+{
+  "index": "idx_pg_inbox_status",
+  "matching_rows_now": 0.0000212812,
+  "cumulated_index_scan_cost": 1.23301,
+  "disk_sweep_cost": 0,
+  "cumulated_total_cost": 1.23301,
+  "chosen": true
+}
+```
+
+옵티마이저가 비교한 것은 다음 두 검색 방법의 **예상 총비용**이다.
+
+<PgSearchCostComparison />
+
+**비용 계산에서는 공통 행을 0행으로 처리했지만, 실제 수정 대상은 1행이었다.** 그 행의 데이터를 읽는 작업이 필요한데도, 이번 추정에서 추가 읽기 비용인 `disk_sweep_cost`는 `0`으로 계산됐다.
+
+그 결과 병합의 예상 총비용에는 두 인덱스 읽기 비용인 `1.23301`만 남았다. 이 값이 주문 번호 단독 검색의 `1.64349`보다 낮아, 최종 계획에는 병합 검색인 `index_roworder_intersect`가 선택됐다.
+
+[payment-benchmark]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/shared-resource-scaleout/SHARED-RESOURCE-SCALEOUT-INVESTIGATION.md
+[benchmark-script]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/scripts/k6/async-payment.js
+[reproduction]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/pg-inbox-index-merge/README.md
+[matrix]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/pg-inbox-index-merge/artifacts/matrix-summary.json
+[cost-trace]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/pg-inbox-index-merge/artifacts/trace-probe-current.json
+[deadlock]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/pg-inbox-index-merge/artifacts/deadlock-1790782129-5-48.txt
+[after-trace]: https://github.com/hyoguoo/payment-platform/blob/041b753f714c6c89522a477dff01fcc77478e1b9/docs/archive/pg-inbox-index-merge/artifacts/trace-concurrent-1790782335-100.json
+[locks-doc]: https://dev.mysql.com/doc/refman/8.0/en/innodb-locks-set.html
+[index-dive-doc]: https://dev.mysql.com/doc/refman/8.0/en/range-optimization.html#equality-range-optimization
+[ror-cost-source]: https://github.com/mysql/mysql-server/blob/mysql-8.0.46/sql/range_optimizer/rowid_ordered_retrieval_plan.cc
+[row-conversion-source]: https://github.com/mysql/mysql-server/blob/mysql-8.0.46/sql/range_optimizer/internal.h
+[ror-read-source]: https://github.com/mysql/mysql-server/blob/mysql-8.0.46/sql/range_optimizer/rowid_ordered_retrieval.cc

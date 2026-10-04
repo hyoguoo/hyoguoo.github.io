@@ -1,0 +1,53 @@
+<figure class="pg-recovery-figure" aria-labelledby="pg-recovery-title">
+  <div class="figure-heading" id="pg-recovery-title">같은 요청의 결과 저장 실패와 복구</div>
+  <ol class="events">
+    <li class="event failure">
+      <span class="phase">결과 저장 실패</span>
+      <time>23:11:23.293</time>
+      <p>워커 시작</p>
+      <time>23:11:23.601</time>
+      <p>데드락으로 UPDATE 롤백</p>
+    </li>
+    <li class="event waiting">
+      <span class="phase">복구 기준을 넘길 때까지 대기</span>
+      <span class="interval">약 63.7초</span>
+      <p>먼저 커밋한 <code>IN_PROGRESS</code> 유지</p>
+      <p class="policy">복구 조회 기준: 마지막 변경 후 60초</p>
+    </li>
+    <li class="event recovered">
+      <span class="phase">같은 요청 재처리</span>
+      <time>23:12:27.314</time>
+      <p>복구 워커 시작</p>
+      <time>23:12:27.318</time>
+      <p>복구 확인 로그</p>
+    </li>
+  </ol>
+</figure>
+<style>
+  .pg-recovery-figure { --failure: #a44235; --recovered: #286596; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pg-recovery-figure { --failure: #eea397; --recovered: #8abde7; }
+  .pg-recovery-figure :is(p, ol, li, div) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .events { display: grid; grid-template-columns: 1fr 1.3fr 1fr; list-style: none; padding: 0; margin-top: 1.1rem !important; }
+  .event { min-width: 0; padding: 1rem 1.1rem 0 0; border-top: 2px solid var(--sl-color-gray-4); position: relative; }
+  .event::before { content: ''; position: absolute; width: 0.6rem; height: 0.6rem; top: -0.36rem; left: 0; border-radius: 50%; background: var(--sl-color-gray-3); }
+  .failure::before { background: var(--failure); }
+  .recovered::before { background: var(--recovered); }
+  .waiting { border-top-style: dashed; }
+  .phase { display: block; font-size: 0.85rem; font-weight: 600; color: var(--sl-color-white); margin-bottom: 0.7rem; }
+  time { display: block; font-size: 0.85rem; font-variant-numeric: tabular-nums; }
+  p { font-size: 0.82rem; line-height: 1.7; }
+  time + p { margin-bottom: 0.55rem !important; }
+  .interval { display: block; font-size: 1.55rem; font-weight: 600; line-height: 1.4; color: var(--failure); margin-bottom: 0.35rem; }
+  .policy { margin-top: 0.5rem !important; color: var(--sl-color-gray-2); }
+  code { font-size: 0.8rem; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 40rem) {
+    .events { grid-template-columns: 1fr; }
+    .event { padding: 0 0 1.25rem 1.25rem; border-top: 0; border-left: 2px solid var(--sl-color-gray-4); }
+    .event::before { top: 0.3rem; left: -0.36rem; }
+    .waiting { border-left-style: dashed; }
+    .event:last-child { padding-bottom: 0; }
+    .interval { font-size: 1.4rem; }
+  }
+</style>

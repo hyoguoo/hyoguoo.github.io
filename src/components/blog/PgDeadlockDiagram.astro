@@ -1,0 +1,99 @@
+<figure class="pg-lock-figure">
+  <div class="figure-heading">수정 대상은 A·B, 충돌 지점은 A</div>
+  <div class="legend"><span class="held-key">실선: 잠금 보유</span><span class="waiting-key">점선: 잠금 대기</span></div>
+  <svg class="desktop" viewBox="0 0 760 300" role="img" aria-labelledby="pg-lock-title pg-lock-desc">
+    <title id="pg-lock-title">T1과 T2가 주문 A의 두 잠금을 엇갈려 보유하고 기다리는 관계</title>
+    <desc id="pg-lock-desc">실제 데드락 덤프의 충돌 순간이다. T1은 주문 A를 수정하며 A의 PK 잠금을 보유하고 A의 상태 항목 잠금을 기다린다. T2는 주문 B를 수정하지만 A의 상태 항목 잠금을 보유하고 A의 PK 잠금을 기다린다. 서로 상대가 보유한 잠금이 필요해 순환 대기가 된다.</desc>
+    <defs>
+      <marker id="pg-held-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" class="held-arrow" /></marker>
+      <marker id="pg-wait-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" class="wait-arrow" /></marker>
+    </defs>
+    <path d="M214 108L270 58" class="held-path" marker-end="url(#pg-held-arrow)" />
+    <path d="M214 152L270 230" class="wait-path" marker-end="url(#pg-wait-arrow)" />
+    <path d="M546 108L490 58" class="wait-path" marker-end="url(#pg-wait-arrow)" />
+    <path d="M546 152L490 230" class="held-path" marker-end="url(#pg-held-arrow)" />
+    <text x="226" y="52" class="held-label" text-anchor="middle">보유</text>
+    <text x="223" y="252" class="wait-label" text-anchor="middle">대기</text>
+    <text x="534" y="52" class="wait-label" text-anchor="middle">대기</text>
+    <text x="537" y="252" class="held-label" text-anchor="middle">보유</text>
+    <g class="transaction">
+      <rect x="14" y="86" width="200" height="90" rx="6" />
+      <text x="114" y="122" class="label" text-anchor="middle">T1 · 주문 A 수정</text>
+      <text x="114" y="151" class="detail" text-anchor="middle">대상 PK 502596</text>
+      <rect x="546" y="86" width="200" height="90" rx="6" />
+      <text x="646" y="122" class="label" text-anchor="middle">T2 · 주문 B 수정</text>
+      <text x="646" y="151" class="detail" text-anchor="middle">대상 PK 502601</text>
+    </g>
+    <g class="resource">
+      <rect x="270" y="20" width="220" height="72" rx="6" />
+      <text x="380" y="49" class="label" text-anchor="middle">A의 PK 잠금</text>
+      <text x="380" y="74" class="detail" text-anchor="middle">PRIMARY · 502596</text>
+      <rect x="270" y="198" width="220" height="72" rx="6" />
+      <text x="380" y="228" class="label" text-anchor="middle">A의 상태 항목 잠금</text>
+      <text x="380" y="252" class="detail" text-anchor="middle">IN_PROGRESS · 502596</text>
+    </g>
+    <text x="380" y="136" class="detail" text-anchor="middle">두 잠금 모두</text>
+    <text x="380" y="158" class="detail" text-anchor="middle">같은 주문 A의 항목</text>
+  </svg>
+  <svg class="mobile" viewBox="0 0 400 390" role="img" aria-labelledby="pg-lock-mobile-title pg-lock-mobile-desc">
+    <title id="pg-lock-mobile-title">주문 A와 B를 수정하는 두 트랜잭션의 잠금 충돌</title>
+    <desc id="pg-lock-mobile-desc">T1은 A의 PK 잠금을 보유하고 상태 항목을 기다린다. T2는 B를 수정하지만 A의 상태 항목을 보유하고 PK 잠금을 기다린다. 실선은 보유, 점선은 대기 관계다.</desc>
+    <defs>
+      <marker id="pg-held-mobile-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" class="held-arrow" /></marker>
+      <marker id="pg-wait-mobile-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" class="wait-arrow" /></marker>
+    </defs>
+    <path d="M100 84V124Q100 140 116 140H160V160" class="held-path" marker-end="url(#pg-held-mobile-arrow)" />
+    <path d="M36 84V328H100" class="wait-path" marker-end="url(#pg-wait-mobile-arrow)" />
+    <path d="M364 84V192H300" class="wait-path" marker-end="url(#pg-wait-mobile-arrow)" />
+    <path d="M300 84V116Q300 132 316 132H332V272Q332 288 316 288H250V296" class="held-path" marker-end="url(#pg-held-mobile-arrow)" />
+    <text x="130" y="125" class="held-label" text-anchor="middle">보유</text>
+    <text x="48" y="285" class="wait-label">대기</text>
+    <text x="374" y="159" class="wait-label" text-anchor="middle">대기</text>
+    <text x="280" y="270" class="held-label">보유</text>
+    <g class="transaction">
+      <rect x="12" y="12" width="176" height="72" rx="6" />
+      <text x="100" y="40" class="label" text-anchor="middle">T1 · 주문 A 수정</text>
+      <text x="100" y="64" class="detail" text-anchor="middle">대상 PK 502596</text>
+      <rect x="212" y="12" width="176" height="72" rx="6" />
+      <text x="300" y="40" class="label" text-anchor="middle">T2 · 주문 B 수정</text>
+      <text x="300" y="64" class="detail" text-anchor="middle">대상 PK 502601</text>
+    </g>
+    <g class="resource">
+      <rect x="100" y="160" width="200" height="64" rx="6" />
+      <text x="200" y="187" class="label" text-anchor="middle">A의 PK 잠금</text>
+      <text x="200" y="211" class="detail" text-anchor="middle">PRIMARY · 502596</text>
+      <rect x="100" y="296" width="200" height="64" rx="6" />
+      <text x="200" y="323" class="label" text-anchor="middle">A의 상태 항목 잠금</text>
+      <text x="200" y="347" class="detail" text-anchor="middle">IN_PROGRESS · 502596</text>
+    </g>
+    <text x="200" y="257" class="detail" text-anchor="middle">두 잠금 모두 주문 A의 항목</text>
+  </svg>
+  <p class="result">T1 → T2 → T1 순환 대기 · InnoDB가 T1 롤백</p>
+</figure>
+<style>
+  .pg-lock-figure { --held: #286596; --wait: #a44235; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pg-lock-figure { --held: #8abde7; --wait: #eea397; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .legend { display: flex; gap: 1.5rem; margin-top: 0.4rem; font-size: 0.8rem; }
+  .held-key { color: var(--held); }
+  .waiting-key { color: var(--wait); }
+  svg { display: block; width: 100%; max-width: 760px; margin: 0.75rem auto 0; overflow: visible; }
+  .mobile { display: none; }
+  rect { fill: var(--sl-color-bg); stroke: var(--sl-color-gray-4); stroke-width: 1; }
+  .resource rect { fill: var(--sl-color-bg-nav); }
+  text { fill: var(--sl-color-text); font-family: var(--sl-font); }
+  .label { font-size: 16px; font-weight: 600; fill: var(--sl-color-white); }
+  .detail { font-size: 14px; }
+  .held-path, .wait-path { fill: none; stroke-width: 2; }
+  .held-path { stroke: var(--held); }
+  .wait-path { stroke: var(--wait); stroke-dasharray: 5 4; }
+  .held-arrow, .held-label { fill: var(--held); }
+  .wait-arrow, .wait-label { fill: var(--wait); }
+  .held-label, .wait-label { font-size: 15px; }
+  .mobile .label { font-size: 17px; }
+  .mobile .detail { font-size: 15px; }
+  .mobile .held-label, .mobile .wait-label { font-size: 16px; }
+  .result { margin: 0.25rem 0 0; text-align: center; font-size: 0.85rem; }
+  figcaption { margin-top: 0.75rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 36rem) { .desktop { display: none; } .mobile { display: block; max-width: 400px; } }
+</style>

@@ -1,0 +1,50 @@
+---
+const maximum = 80000;
+const metrics = [
+  { name: 'p99', meaning: '표본 요청 중 약 99%가 완료되는 시간', change: '감소', before: 73101, after: 9281 },
+];
+const seconds = (value: number) => (value / 1000).toFixed(2);
+---
+<figure class="pg-completion-figure" aria-labelledby="pg-completion-title" aria-describedby="pg-completion-caption">
+  <div class="figure-heading" id="pg-completion-title">인덱스 교체 전후의 결제 완료 시간 p99</div>
+  <p class="scale-note">완료 시간(초) · 모든 막대에 같은 0~80초 축 적용</p>
+  <div class="axis" aria-hidden="true">
+    {[0, 20000, 40000, 60000, 80000].map(value => <span style={`left: ${value / maximum * 100}%`}>{value / 1000}</span>)}
+  </div>
+  <div class="metrics">
+    {metrics.map(metric => (
+      <section class="metric" aria-label={`${metric.name} ${metric.change}`}>
+        <div class="metric-heading"><span class="percentile">{metric.name}</span><span>{metric.meaning}</span><span class="direction">{metric.change}</span></div>
+        {[{ label: '변경 전', value: metric.before, kind: 'before' }, { label: '변경 후', value: metric.after, kind: 'after' }].map(row => (
+          <div class={`measurement ${row.kind}`}>
+            <div class="measurement-label"><span>{row.label}</span><span class="number">{seconds(row.value)}초</span></div>
+            <div class="track" aria-hidden="true"><div class="bar" style={`width: ${row.value / maximum * 100}%`}></div></div>
+          </div>
+        ))}
+      </section>
+    ))}
+  </div>
+  <figcaption id="pg-completion-caption">표본 요청의 접수 응답(HTTP 202) 수신부터 완료 상태를 폴링으로 확인할 때까지의 시간이다. 폴링 간격에 따른 대기도 포함한다.</figcaption>
+</figure>
+<style>
+  .pg-completion-figure { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-completion-figure :is(div, p, section) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .scale-note { margin-top: 0.45rem !important; font-size: 0.78rem; line-height: 1.7; }
+  .axis { position: relative; height: 1.6rem; margin-top: 0.6rem !important; border-bottom: 1px solid var(--sl-color-hairline); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+  .axis span { position: absolute; bottom: 0.3rem; transform: translateX(-50%); }
+  .axis span:first-child { transform: none; }
+  .axis span:last-child { transform: translateX(-100%); }
+  .metrics { display: grid; gap: 1.4rem; margin-top: 1rem !important; }
+  .metric { min-width: 0; }
+  .metric-heading { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; font-size: 0.78rem; line-height: 1.7; }
+  .percentile { font-weight: 600; font-size: 0.95rem; color: var(--sl-color-white); }
+  .direction { margin-left: auto; font-size: 0.78rem; color: var(--sl-color-white); }
+  .measurement { margin-top: 0.5rem !important; }
+  .measurement-label { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.8rem; }
+  .number { font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .track { height: 0.65rem; margin-top: 0.25rem !important; background: var(--sl-color-bg-nav); border-inline: 1px solid var(--sl-color-hairline); }
+  .bar { height: 100%; background: var(--sl-color-gray-3); }
+  .after .bar { background: var(--sl-color-text-accent); }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+</style>

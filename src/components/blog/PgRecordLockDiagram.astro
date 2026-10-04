@@ -1,0 +1,77 @@
+<figure class="pg-record-lock-figure" aria-labelledby="pg-record-lock-title">
+  <div class="figure-heading" id="pg-record-lock-title">같은 주문 A, 서로 다른 잠금 대상</div>
+  <div class="record-link">
+    <section class="record" aria-label="주문 A의 상태 인덱스 레코드">
+      <div class="record-heading">상태 인덱스</div>
+      <div class="record-description">주문 A의 상태 항목</div>
+      <div class="record-data">
+        <div class="field"><span>상태</span><code>IN_PROGRESS</code></div>
+        <div class="field"><span>PK</span><code class="shared-pk">502596</code></div>
+      </div>
+      <div class="lock-target">상태 인덱스 잠금</div>
+    </section>
+    <div class="connection" aria-label="PK 502596으로 실제 행을 찾는다">
+      <span class="connection-label">PK로 실제 행 찾기</span>
+      <span class="connection-arrow" aria-hidden="true">→</span>
+    </div>
+    <section class="record" aria-label="주문 A의 PRIMARY 레코드">
+      <div class="record-heading">PRIMARY</div>
+      <div class="record-description">주문 A의 실제 행</div>
+      <div class="record-data">
+        <div class="field"><span>PK</span><code class="shared-pk">502596</code></div>
+        <div class="row-data">실제 행 데이터</div>
+      </div>
+      <div class="lock-target">PRIMARY 잠금</div>
+    </section>
+  </div>
+</figure>
+
+<style>
+  .pg-record-lock-figure {
+    margin: 1.75rem 0;
+    padding: 1.25rem 0;
+    border-block: 1px solid var(--sl-color-hairline);
+    color: var(--sl-color-text);
+  }
+  .pg-record-lock-figure :is(div, section) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .record-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    max-width: 760px;
+    margin: 1rem auto 0 !important;
+  }
+  .record {
+    min-width: 0;
+    padding: 1rem;
+    border: 1px solid var(--sl-color-gray-4);
+    border-radius: 6px;
+    background: var(--sl-color-bg);
+  }
+  .record-heading { font-size: 0.9rem; font-weight: 600; color: var(--sl-color-white); }
+  .record-description { margin-top: 0.25rem !important; font-size: 0.8rem; }
+  .record-data { display: grid; gap: 0.5rem; margin-top: 0.85rem !important; font-size: 0.8rem; }
+  .field { display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem; }
+  code { font-size: 0.8rem; }
+  .shared-pk { color: var(--sl-color-text-accent); font-weight: 600; }
+  .row-data { line-height: 1.75; }
+  .lock-target {
+    margin-top: 0.85rem !important;
+    padding-top: 0.7rem;
+    border-top: 1px solid var(--sl-color-hairline);
+    color: var(--sl-color-white);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .connection { display: grid; justify-items: center; gap: 0.2rem; }
+  .connection-label { font-size: 0.75rem; }
+  .connection-arrow { color: var(--sl-color-text-accent); font-size: 2rem; line-height: 1; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 40rem) {
+    .record-link { grid-template-columns: minmax(0, 1fr); gap: 0.65rem; max-width: 360px; }
+    .connection { grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 0.75rem; }
+    .connection-arrow { transform: rotate(90deg); }
+  }
+</style>

@@ -1,0 +1,79 @@
+<figure class="pg-trace-calculation" aria-labelledby="pg-trace-calculation-title" aria-describedby="pg-trace-calculation-caption">
+  <div class="figure-heading" id="pg-trace-calculation-title">병합 총비용 1.23301의 계산</div>
+  <div class="cost-parts">
+    <section class="cost-part" aria-label="두 인덱스 읽기 비용 계산">
+      <h4>인덱스 읽기</h4>
+      <div class="index-costs">
+        <div><span>주문 번호 인덱스</span><strong>0.980542</strong></div>
+        <div><span>상태 인덱스</span><strong>+ 0.252470</strong></div>
+      </div>
+      <div class="subtotal">
+        <span class="result-label">두 인덱스 읽기 비용의 합</span>
+        <strong class="value">약 1.23301</strong>
+        <code>cumulated_index_scan_cost</code>
+      </div>
+    </section>
+    <span class="plus" aria-hidden="true">+</span>
+    <section class="cost-part" aria-label="공통 행의 예상 행 수를 정수로 바꿔 데이터 읽기 비용을 계산">
+      <h4>공통 행의 데이터 읽기</h4>
+      <div class="read-description">인덱스에서 얻은 PK로<br />PRIMARY 레코드를 찾아 읽음</div>
+      <div class="row-estimate">
+        <span>옵티마이저가 추정한 공통 행 수</span>
+        <span class="formula">1 × (10 ÷ 469,899)</span>
+        <strong>≈ 0.000021행</strong>
+        <code>matching_rows_now</code>
+      </div>
+      <div class="conversion"><span aria-hidden="true">↓</span><span>비용 함수에 정수로 전달<br />소수점 이하를 버리면 <strong>0행</strong></span></div>
+      <div class="subtotal">
+        <span class="result-label">추가 행 읽기 비용</span>
+        <strong class="value">0</strong>
+        <code>disk_sweep_cost</code>
+      </div>
+    </section>
+  </div>
+  <div class="sum-arrow" aria-hidden="true">↓ 두 비용을 더함</div>
+  <section class="total" aria-label="총비용 1.23301 더하기 0은 1.23301">
+    <span class="result-label">병합 후보의 총비용</span>
+    <div class="total-equation"><span>1.23301</span><span>+</span><span>0</span><span>=</span><strong>1.23301</strong></div>
+    <code>cumulated_total_cost</code>
+  </section>
+  <figcaption id="pg-trace-calculation-caption">
+    옵티마이저가 trace에 기록한 계산값. 비용은 실행 시간이 아닌 내부 비교 단위다.
+    <span class="implementation-links">구현: <a href="https://github.com/mysql/mysql-server/blob/mysql-8.0.46/sql/range_optimizer/rowid_ordered_retrieval_plan.cc">병합 비용 계산</a> · <a href="https://github.com/mysql/mysql-server/blob/mysql-8.0.46/sql/range_optimizer/internal.h">행 수의 정수 변환</a></span>
+  </figcaption>
+</figure>
+
+<style>
+  .pg-trace-calculation { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-trace-calculation :is(div, section, h4) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .cost-parts { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: stretch; gap: 0.75rem; max-width: 760px; margin: 1.1rem auto 0 !important; }
+  .cost-part { display: flex; flex-direction: column; min-width: 0; padding: 1rem; border: 1px solid var(--sl-color-hairline); border-radius: 4px; }
+  h4 { font-size: 0.88rem; font-weight: 600; color: var(--sl-color-white); }
+  .index-costs { display: grid; gap: 0.5rem; padding-block: 1rem; }
+  .index-costs > div { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.3rem 0.75rem; font-size: 0.8rem; }
+  strong { font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .index-costs strong { font-size: 0.95rem; }
+  .read-description { padding-top: 0.5rem; font-size: 0.78rem; line-height: 1.7; }
+  .row-estimate { display: grid; justify-items: start; gap: 0.3rem; padding-top: 0.8rem; font-size: 0.78rem; line-height: 1.7; }
+  .formula { font-variant-numeric: tabular-nums; }
+  .row-estimate strong { font-size: 1rem; }
+  .conversion { display: flex; align-items: center; gap: 0.65rem; padding-block: 0.75rem; font-size: 0.78rem; line-height: 1.7; }
+  .conversion > span:first-child { font-size: 1.4rem; color: var(--sl-color-gray-2); }
+  .subtotal { display: grid; gap: 0.35rem; margin-top: auto !important; padding-top: 0.8rem; border-top: 1px solid var(--sl-color-hairline); }
+  .result-label { font-size: 0.78rem; line-height: 1.7; }
+  .value { font-size: 1.4rem; }
+  code { display: block; width: fit-content; max-width: 100%; font-size: 0.7rem; overflow-wrap: anywhere; }
+  .plus { align-self: center; font-size: 1.5rem; color: var(--sl-color-gray-2); }
+  .sum-arrow { margin-top: 0.75rem !important; text-align: center; font-size: 0.78rem; }
+  .total { display: grid; justify-items: center; gap: 0.4rem; max-width: 760px; margin: 0.75rem auto 0 !important; padding: 1rem; border: 1px solid var(--sl-color-text-accent); border-radius: 4px; }
+  .total-equation { display: flex; align-items: baseline; justify-content: center; flex-wrap: wrap; gap: 0.4rem 0.6rem; font-size: 1.15rem; font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .total-equation strong { color: var(--sl-color-text-accent); }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  .implementation-links { display: block; margin-top: 0.35rem; }
+  @media (max-width: 36rem) {
+    .cost-parts { grid-template-columns: minmax(0, 1fr); gap: 0.6rem; }
+    .plus { justify-self: center; }
+    .total-equation { font-size: 1rem; gap: 0.4rem; }
+  }
+</style>

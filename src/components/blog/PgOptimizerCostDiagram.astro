@@ -1,0 +1,70 @@
+<figure class="pg-cost-figure" aria-labelledby="pg-cost-title" aria-describedby="pg-cost-caption">
+  <div class="figure-heading" id="pg-cost-title">MySQL 옵티마이저가 계산한 후보별 예상 비용</div>
+  <div class="candidates">
+    <section class="candidate" aria-label="주문 번호 단독 검색 후보">
+      <div class="candidate-heading">주문 번호 단독 검색</div>
+      <div class="estimate">
+        <span class="label">UNIQUE 동등 조건의 예상 행 수</span>
+        <span class="quantity">1행</span>
+        <p>주문 번호로 찾은 행에서 상태 확인</p>
+      </div>
+      <div class="cost">
+        <span class="label">단독 검색의 총비용</span>
+        <span class="value">1.64349</span>
+      </div>
+    </section>
+    <section class="candidate selected" aria-label="선택된 주문 번호와 상태 병합 후보">
+      <div class="candidate-heading">주문 번호 + 상태 병합</div>
+      <div class="estimate">
+        <div class="index-costs">
+          <span class="label">두 인덱스를 읽는 비용</span>
+          <div><span>주문 번호 인덱스</span><span class="cost-number">0.980542</span></div>
+          <div><span>상태 인덱스</span><span class="cost-number">+ 0.252470</span></div>
+          <div class="index-subtotal"><span>합계</span><span class="cost-number">약 1.23301</span></div>
+        </div>
+        <span class="label">옵티마이저가 추정한 공통 행 수</span>
+        <span class="quantity">약 0.000021행</span>
+        <p><span aria-hidden="true">↓ </span>소수점 이하를 버려 0행으로 비용 계산</p>
+        <p>행 데이터 읽기 비용: <code>0</code></p>
+      </div>
+      <div class="cost">
+        <span class="label">병합 검색의 총비용</span>
+        <p class="cost-equation">인덱스 읽기 1.23301 + 행 데이터 읽기 0</p>
+        <span class="value">1.23301</span>
+      </div>
+    </section>
+  </div>
+  <div class="selection" aria-label="병합 총비용 1.23301이 단독 검색 총비용 1.64349보다 낮아 병합 계획 선택">
+    <span class="comparison">1.23301 &lt; 1.64349</span>
+    <span class="chosen">→ 병합 계획 선택</span>
+    <code>index_roworder_intersect</code>
+  </div>
+  <figcaption id="pg-cost-caption">전체 50만 행 중 IN_PROGRESS가 10건일 때의 trace. 행 수와 비용은 옵티마이저의 예상값이며, 비용은 실행 시간이 아닌 내부 비교 단위다.</figcaption>
+</figure>
+<style>
+  .pg-cost-figure { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-cost-figure :is(div, p, section) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .candidates { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 1rem !important; }
+  .candidate { display: grid; grid-template-rows: auto 1fr auto; min-width: 0; padding: 1rem; border: 1px solid var(--sl-color-hairline); border-radius: 4px; }
+  .selected { border-color: var(--sl-color-text-accent); }
+  .candidate-heading { font-size: 0.88rem; font-weight: 600; color: var(--sl-color-white); }
+  .estimate { padding-block: 1.1rem; }
+  .label { display: block; font-size: 0.78rem; line-height: 1.7; }
+  .quantity { display: block; margin-block: 0.35rem; font-size: 1.05rem; font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .estimate p { font-size: 0.8rem; line-height: 1.8; }
+  .index-costs { display: grid; gap: 0.35rem; padding-bottom: 0.85rem; margin-bottom: 0.85rem !important; border-bottom: 1px solid var(--sl-color-hairline); }
+  .index-costs > div { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.25rem 0.6rem; font-size: 0.78rem; line-height: 1.7; }
+  .cost-number { font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .index-subtotal { padding-top: 0.35rem; border-top: 1px solid var(--sl-color-hairline); }
+  .cost { padding-top: 0.75rem; border-top: 1px solid var(--sl-color-hairline); }
+  .cost-equation { margin-top: 0.3rem !important; font-size: 0.75rem; line-height: 1.7; }
+  .value { display: block; font-size: 1.45rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .selected .value, .chosen { color: var(--sl-color-text-accent); }
+  .selection { display: flex; justify-content: center; align-items: baseline; flex-wrap: wrap; gap: 0.5rem 0.75rem; margin-top: 1rem !important; font-size: 0.85rem; }
+  .comparison { font-variant-numeric: tabular-nums; color: var(--sl-color-white); }
+  .chosen { font-weight: 600; }
+  .selection code { max-width: 100%; font-size: 0.75rem; overflow-wrap: anywhere; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 36rem) { .candidates { grid-template-columns: 1fr; } }
+</style>

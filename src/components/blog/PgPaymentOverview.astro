@@ -1,0 +1,48 @@
+---
+const steps = [
+  { owner: '결제 서비스', action: '요청 접수', detail: '브라우저에 접수 응답' },
+  { owner: 'PG 서비스', action: '승인 처리', detail: '외부 결제 업체 호출·결과 저장' },
+  { owner: '결제 서비스', action: '완료 반영', detail: '결과 메시지를 받아 상태 변경' },
+  { owner: '브라우저', action: '완료 확인', detail: '조회한 최종 상태를 화면에 표시' },
+];
+---
+<figure class="pg-overview-figure" aria-labelledby="pg-overview-title">
+  <div class="figure-heading" id="pg-overview-title">결제 요청부터 완료 확인까지</div>
+  <ol class="flow">
+    {steps.map((step, index) => (
+      <li>
+        <span class="number" aria-hidden="true">{index + 1}</span>
+        <div class="step">
+          <span class="owner">{step.owner}</span>
+          <span class="action">{step.action}</span>
+          <span class="detail">{step.detail}</span>
+        </div>
+      </li>
+    ))}
+  </ol>
+</figure>
+<style>
+  .pg-overview-figure { margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  .pg-overview-figure :is(div, ol, li) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .flow { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem; list-style: none; padding: 0; margin-top: 1rem !important; }
+  .flow li { position: relative; display: flex; align-items: flex-start; gap: 0.5rem; min-width: 0; }
+  .flow li:not(:last-child)::after { content: '→'; position: absolute; right: -1.2rem; top: 1.6rem; color: var(--sl-color-gray-2); }
+  .number { display: flex; justify-content: center; align-items: center; flex-shrink: 0; width: 1.3rem; height: 1.3rem; border: 1px solid var(--sl-color-hairline); border-radius: 50%; font-size: 0.7rem; }
+  .step { min-width: 0; }
+  .owner, .action, .detail { display: block; }
+  .owner { font-size: 0.75rem; line-height: 1.7; }
+  .action { font-size: 0.9rem; font-weight: 600; color: var(--sl-color-white); margin-block: 0.3rem; }
+  .detail { font-size: 0.78rem; line-height: 1.7; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 50rem) {
+    .flow { grid-template-columns: 1fr; gap: 0; }
+    .flow li { gap: 0.8rem; padding-bottom: 0.9rem; }
+    .flow li:last-child { padding-bottom: 0; }
+    .flow li:not(:last-child)::after { content: ''; top: 1.6rem; bottom: 0.3rem; left: 0.65rem; right: auto; border-left: 1px solid var(--sl-color-hairline); }
+    .step { display: grid; grid-template-columns: auto 1fr; gap: 0.1rem 0.6rem; align-items: baseline; }
+    .action { grid-column: 1; grid-row: 1; margin: 0; }
+    .owner { grid-column: 2; grid-row: 1; }
+    .detail { grid-column: 1 / -1; }
+  }
+</style>
