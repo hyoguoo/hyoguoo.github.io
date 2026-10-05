@@ -83,7 +83,7 @@ import '../../styles/payment-portfolio.css';
     <p class="sub">재고와 결제 상태가 어긋나지 않도록 PG 장애, 메시지 유실 등 분산 환경에서의 엣지케이스에 대응하고,<br>비동기 처리로 응답성을 높이면서, 결제는 단 한 번만 정확히 처리되도록 설계했다.</p>
     <div class="hero-stats">
       <div class="hstat"><span class="hs-v">Exactly-Once</span><span class="hs-l">결제 처리 보장</span></div>
-      <div class="hstat"><span class="hs-v">+47.5<i>%</i></span><span class="hs-l">비동기 처리량 향상</span></div>
+      <div class="hstat"><span class="hs-v">+47.5<i>%</i></span><span class="hs-l">비동기 처리량 향상 · Phase 5</span></div>
       <div class="hstat"><span class="hs-v">0</span><span class="hs-l">초과 판매 · 요청 유실</span></div>
     </div>
     <div class="evo-cap">
@@ -445,6 +445,40 @@ import '../../styles/payment-portfolio.css';
     </div>
     <div class="meas-note reveal"><b>해석</b><br>· 비동기 처리의 목표는 E2E(결제 완료까지)를 줄이는 게 아니라, HTTP 스레드를 빨리 비워 처리량·가용성을 높이는 도구<br>· 외부 의존이 느려질 때 시스템 전체가 마비되지 않게 하는 안전장치</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">상세 문서 보기 · 벤치마크 보고서 ↗</a></div>
+    <div class="card reveal" style="margin-top: 24px;">
+      <div class="card-head"><h3>MSA · pg_inbox 결과 저장 데드락 개선</h3><span class="term-tag">인덱스 변경 전후 · 각 1회</span></div>
+      <div class="card-pad">
+        <div class="bench-cond"><span><b>전체 결제 측정</b> 결제 서비스 2대 · PG 서비스 2대 · 초당 40건 · Fake PG 응답 100~300ms. 완료 시간은 HTTP 202 접수부터 상태 조회로 완료를 확인할 때까지이며, 폴링 대기도 포함한다.</span></div>
+      </div>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th scope="col">전체 결제 지표</th><th scope="col">기존 (status)</th><th scope="col">변경 후 (status, updated_at)</th></tr></thead>
+          <tbody>
+            <tr><td class="t-name">결제 완료 시간 p99</td><td>73.10초</td><td>9.28초</td></tr>
+            <tr><td class="t-name">승인 결과 저장 데드락</td><td>163건</td><td>0건</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-pad">
+        <ul class="bench-findings" role="list">
+          <li>
+            <span class="bench-findings-label">실행 계획</span>
+            <p>UNIQUE 주문 번호 조건이 있어도 옵티마이저가 상태 인덱스까지 합치는 <strong>Index Merge</strong>를 선택</p>
+          </li>
+          <li>
+            <span class="bench-findings-label">락 충돌</span>
+            <p>서로 다른 주문의 UPDATE가 같은 레코드의 PRIMARY·상태 인덱스 락을 엇갈려 기다린 기록을 확인</p>
+          </li>
+          <li>
+            <span class="bench-findings-label">인덱스 교체</span>
+            <p>복구 조회에 필요한 시간순 검색을 위해 상태 인덱스 교체</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="meas-note reveal"><b>별도 DB 재현</b> · MySQL에 직접 SQL을 실행한 5,000건 비교에서 결과 UPDATE 첫 시도 데드락 28 → 0건. 전체 결제와 다른 실험이며 각 조건 1회,</div>
+    <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-inbox-index-merge-deadlock" target="_blank" rel="noopener">상세 분석 · GitHub Wiki ↗</a></div>
+    <div class="wiki-more reveal"><a href="/blog/pg-inbox-index-merge-deadlock/">원인 추적과 실험 · 기술 글 ↗</a></div>
   </section>
 
   <!-- §03 SCENARIO THEATER -->
@@ -667,7 +701,7 @@ import '../../styles/payment-portfolio.css';
       <p>실제 돈과 재고가 걸린 핵심 분기점마다 내린 기술적 판단들이다.<br>각 결정의 배경이 된 상황과 직면했던 문제점, 기각된 대안과 최종 채택된 방안의 근거를 구체적으로 기록했다.</p>
     </div>
     <div class="reveal"><div class="decisions" id="decisions-grid"></div></div>
-      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Home" target="_blank" rel="noopener">상세 문서 보기 · 설계 문서 전체(위키 22페이지) ↗</a></div>
+      <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Home" target="_blank" rel="noopener">상세 문서 보기 · 설계 문서 전체 ↗</a></div>
   </section>
 
   <!-- §07 RACE WINDOWS -->
@@ -858,10 +892,10 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="summary">
     <div class="sec-head reveal">
       <h2>주요 해결 과제 및 회고</h2>
-      <p>결제 플랫폼을 구축하며 해결한 3가지 과제와 그 해법이 남긴 과제, 그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
+      <p>결제 플랫폼을 구축하며 해결한 4가지 과제와 그 해법이 남긴 과제, 그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
     </div>
     <div class="reveal">
-      <div class="sub-label">핵심 해결 과제 · 3</div>
+      <div class="sub-label">핵심 해결 과제 · 4</div>
       <div class="solves" id="solves-grid"></div>
       <div class="sub-label" style="margin-top: 26px;">남은 과제</div>
       <div class="limits" id="limits-grid"></div>
