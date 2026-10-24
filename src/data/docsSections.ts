@@ -240,6 +240,7 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Secure Coding',
       slugs: [
         'input-validation-and-injection',
+        'authentication-and-access-control',
       ],
     },
     {
