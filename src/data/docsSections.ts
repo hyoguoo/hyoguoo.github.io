@@ -234,7 +234,13 @@ export const docsSections: Record<string, SectionConfig> = {
   secure: [
     {
       label: 'Fundamentals',
-      slugs: ['digital-cryptography-basic', 'secure-coding'],
+      slugs: ['digital-cryptography-basic'],
+    },
+    {
+      label: 'Secure Coding',
+      slugs: [
+        'input-validation-and-injection',
+      ],
     },
     {
       label: 'Authentication',
