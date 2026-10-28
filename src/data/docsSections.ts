@@ -241,6 +241,7 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: [
         'input-validation-and-injection',
         'authentication-and-access-control',
+        'sensitive-data-and-error-handling',
       ],
     },
     {
