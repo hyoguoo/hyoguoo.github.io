@@ -138,17 +138,37 @@ export const docsSections: Record<string, SectionConfig> = {
   ],
   'large-scale-system': [
     {
-      label: 'Architecture Patterns',
+      label: 'Architecture & Deployment',
       slugs: [
         'monolithic-vs-microservices-architecture',
+        'deployment-strategies',
+      ],
+    },
+    {
+      label: 'Service Communication',
+      slugs: [
         'synchronous-vs-asynchronous-communication',
         'inter-service-communication-protocols',
+      ],
+    },
+    {
+      label: 'Distributed Transactions',
+      slugs: [
         'saga-pattern',
         'transactional-outbox-pattern',
-        'circuit-breaker-pattern',
+      ],
+    },
+    {
+      label: 'Resilience & Traffic Control',
+      slugs: [
         'timeout-and-retry-pattern',
+        'circuit-breaker-pattern',
         'rate-limiting-pattern',
-        'deployment-strategies',
+      ],
+    },
+    {
+      label: 'Data Storage & Analytics',
+      slugs: [
         'relational-vs-nosql',
         'replication-lag-and-read-consistency',
       ],
