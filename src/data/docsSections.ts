@@ -171,6 +171,7 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: [
         'relational-vs-nosql',
         'replication-lag-and-read-consistency',
+        'oltp-vs-olap',
       ],
     },
     {
