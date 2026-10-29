@@ -1,5 +1,5 @@
 ---
-title: Build Lifecycle and Core (빌드 생명주기)
+title: Build Lifecycle and Core
 date: 2026-04-07
 lastUpdated: 2026-04-10
 tags: [ Gradle ]

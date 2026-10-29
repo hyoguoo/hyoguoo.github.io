@@ -1,5 +1,5 @@
 ---
-title: Task Graph and DAG (Task 그래프와 실행 모델)
+title: Task Graph and DAG
 date: 2026-04-07
 lastUpdated: 2026-04-07
 tags: [ Gradle ]
