@@ -150,6 +150,7 @@ export const docsSections: Record<string, SectionConfig> = {
         'rate-limiting-pattern',
         'deployment-strategies',
         'relational-vs-nosql',
+        'replication-lag-and-read-consistency',
       ],
     },
     {
