@@ -19,10 +19,8 @@ for (const post of allPosts) {
     categories.set(category, []);
   }
 
-  const date =
-    post.data.lastUpdated instanceof Date
-      ? post.data.lastUpdated
-      : (post.data.date ?? new Date(0));
+  // Keep the list ordered by its displayed date: the original publication date.
+  const date = post.data.date ?? new Date(0);
 
   categories.get(category)!.push({
     id: post.id,
