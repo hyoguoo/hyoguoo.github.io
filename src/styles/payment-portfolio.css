@@ -397,6 +397,54 @@
   .pf-edge.pk-retry { stroke: var(--st-quar); stroke-width: 1.8; }
   .pf-edge.pk-fail { stroke: var(--st-failed); stroke-width: 1.8; }
   .sw-lab.pl-ok { fill: var(--st-done); } .sw-lab.pl-retry { fill: var(--st-quar); } .sw-lab.pl-fail { fill: var(--st-failed); }
+  .pf-edge.pk-fb { stroke: var(--faint); stroke-width: 1.4; }
+  .sw-lab.pl-fb { fill: var(--faint); }
+  .pf-box.pf-fb { stroke-dasharray: 4 3; }
+  .pf-zone { stroke-width: 1.6; }
+  .pf-zone-pay { fill: color-mix(in srgb, var(--svc-payment) 4%, transparent); stroke: color-mix(in srgb, var(--svc-payment) 55%, var(--hairline)); }
+  .pf-zone-pg { fill: color-mix(in srgb, var(--svc-pg) 4%, transparent); stroke: color-mix(in srgb, var(--svc-pg) 55%, var(--hairline)); }
+  .pf-zone-t { font-family: var(--mono); font-size: 12px; font-weight: 700; }
+  .pf-zone-t-pay { fill: var(--svc-payment); } .pf-zone-t-pg { fill: var(--svc-pg); }
+  .pf-kafka { fill: color-mix(in srgb, var(--svc-infra) 12%, transparent); stroke: color-mix(in srgb, var(--svc-infra) 45%, transparent); stroke-width: 1; stroke-dasharray: 2 3; }
+  .pf-kafka-t { font-family: var(--mono); font-size: 11px; font-weight: 700; fill: var(--muted); }
+  /* 상세 보기 전환: 상세 전용 칸은 작게 접혀 있다가 튀어나오듯 펼쳐진다 */
+  .pf-node-in { transform-box: fill-box; transform-origin: center; transition: opacity .28s ease, transform .38s cubic-bezier(.34,1.56,.64,1); }
+  .pf-node-in.pf-off { opacity: 0; transform: scale(.6); pointer-events: none; }
+  /* 상세 보기 버튼: 그림 카드가 화면에 있는 동안 화면 아래 가운데에 붙어 따라오고, 그림 끝에서는 그림 바로 아래에 멈춘다 */
+  .pf-dock { position: sticky; bottom: max(18px, env(safe-area-inset-bottom, 0px)); z-index: 6; display: flex; justify-content: center; padding: 6px 0 10px; pointer-events: none; }
+  .pf-fab {
+    --fab-bg: color-mix(in srgb, var(--svc-pg) 82%, #000);
+    pointer-events: auto; appearance: none; cursor: pointer; font: inherit; text-align: left;
+    display: inline-flex; align-items: center; gap: 10px; padding: 10px 22px 10px 16px; border-radius: 999px;
+    color: #fff; background: var(--fab-bg); border: 1px solid transparent;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--svc-pg) 35%, rgba(0,0,0,.25));
+    transition: background .2s, color .2s, border-color .2s, box-shadow .2s, transform .15s;
+  }
+  .pf-fab-tx { display: flex; flex-direction: column; line-height: 1.25; }
+  .pf-fab-t { font-size: 14px; font-weight: 700; }
+  .pf-fab-sub { font-size: 11px; font-weight: 500; opacity: .85; }
+  .pf-fab:hover { background: color-mix(in srgb, var(--svc-pg) 70%, #000); transform: translateY(-1px); }
+  .pf-fab:active { transform: scale(.97); }
+  .pf-fab:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+  .pf-fab-ic { display: inline-block; font-size: 15px; transition: transform .3s ease; }
+  /* 펼친 뒤에는 그림을 덜 가리도록 테두리 버튼으로 물러난다 */
+  .pf-fab[aria-pressed="true"] {
+    color: var(--ink); background: color-mix(in srgb, var(--surface-2) 88%, transparent); border-color: color-mix(in srgb, var(--svc-pg) 50%, var(--hairline));
+    box-shadow: 0 6px 18px rgba(0,0,0,.18); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding: 8px 18px 8px 14px;
+  }
+  .pf-fab[aria-pressed="true"] .pf-fab-ic { transform: rotate(180deg); color: var(--svc-pg); }
+  .pf-fab[aria-pressed="true"] .pf-fab-sub { display: none; }
+  /* 그림이 처음 화면에 들어올 때 한 번만 버튼 둘레에 물결을 퍼뜨린다 */
+  .pf-fab.pf-fab-hint { animation: pfFabPulse 1.3s ease-out 2; }
+  @keyframes pfFabPulse {
+    0% { box-shadow: 0 8px 24px color-mix(in srgb, var(--svc-pg) 35%, rgba(0,0,0,.25)), 0 0 0 0 color-mix(in srgb, var(--svc-pg) 55%, transparent); }
+    100% { box-shadow: 0 8px 24px color-mix(in srgb, var(--svc-pg) 35%, rgba(0,0,0,.25)), 0 0 0 16px color-mix(in srgb, var(--svc-pg) 0%, transparent); }
+  }
+  @media (prefers-reduced-motion: reduce) { .pf-fab.pf-fab-hint { animation: none; } }
+  .arch-legend .lg[hidden] { display: none; }
+  .pf-txbox { fill: color-mix(in srgb, var(--ink) 3%, transparent); stroke: var(--muted); stroke-width: 1.2; stroke-dasharray: 3 3; }
+  .pf-tx-t { fill: var(--ink-soft); }
+  @media (prefers-reduced-motion: reduce) { .pf-node-in { transition: none; } }
   .pf-band { stroke-width: 1.2; stroke-dasharray: 5 4; }
   .pf-band-pg { fill: color-mix(in srgb, var(--svc-pg) 5%, transparent); stroke: color-mix(in srgb, var(--svc-pg) 30%, var(--hairline)); }
   .pf-band-wk { fill: color-mix(in srgb, var(--accent) 7%, transparent); stroke: color-mix(in srgb, var(--accent) 34%, var(--hairline)); }

@@ -580,20 +580,25 @@ import '../../styles/payment-portfolio.css';
     </div>
     <div class="card reveal">
       <div class="card-head"><h3>명령 처리 파이프라인</h3><span class="term-tag">정상 흐름과 장애 복구 경로 통합</span></div>
-      <p class="sr-only">화면 낭독기용 요약: 명령을 받으면 중복부터 필터링한다(1시간 동안 기억). 새 명령이면 inbox에 기록하고, 워커가 행을 선점해 PG사를 호출한다. 성공하면 결과를 발행하고, 일시 오류면 간격을 늘려 다시 시도하며(최대 4회), 한도를 소진하면 격리 상태로 회신한다.</p>
+      <p class="sr-only">화면 낭독기용 요약: payment-service는 결제 승인 요청을 받으면 결제 상태와 outbox 행을 한 트랜잭션에 기록하고, 커밋 직후 비동기 스레드가 명령을 Kafka로 발행한다. 놓친 행은 5초 폴링 워커가 발행한다. pg-service의 consumer 스레드는 주문당 1행인 inbox를 조회해 중복을 거른다. 이미 종결된 주문이면 저장한 결과를 다시 회신하고, 진행 중이면 큐에만 다시 넣는다. 처음 받은 주문이면 inbox에 기록하고 커밋되면 큐에 넣은 뒤 바로 반환한다. inbox 워커는 큐에 항목이 들어오면 깨어나 짧은 트랜잭션으로 행을 선점하고, 트랜잭션 밖에서 PG사를 호출한다. 그다음 inbox 상태 변경과 보낼 메시지의 outbox 저장을 한 트랜잭션으로 처리하고, 커밋되면 outbox 큐에 넣는다. outbox 워커가 이를 꺼내 Kafka로 발행한다. 승인과 확정 거절은 payment로 회신하고, 일시 오류는 발행 시각을 늦춘 재시도 명령으로 같은 토픽에 다시 보내며(최대 4회), 한도를 소진하면 DLQ로 보내 격리한다. 큐는 메모리에만 있어 서버 크래시 때 사라지므로, inbox 폴링 워커(5초)와 outbox 폴링 워커(2초)가 DB에 남은 미처리 행을 다시 처리한다. payment-service는 결과를 받아 중복을 확인한 뒤 결제 상태를 확정하고 재고를 확정하거나 복구한다. 기본 그림은 이 흐름의 뼈대만 보여 주고, 상세 보기 버튼을 누르면 트랜잭션 경계, outbox 단계, 폴링 워커가 함께 표시된다.</p>
         <div class="map-wrap" id="pgFlow"></div>
+      <div class="pf-dock"><button class="pf-fab" id="pgFlowToggle" type="button" aria-pressed="false" aria-controls="pgFlow"><span class="pf-fab-ic" aria-hidden="true">▾</span><span class="pf-fab-tx"><span class="pf-fab-t">상세 보기</span><span class="pf-fab-sub">트랜잭션 경계 · outbox · 폴링 워커</span></span></button></div>
       <div class="arch-legend">
         <span class="lg"><span class="el" style="border-top-color:var(--st-done)"></span>승인 · 확정 거절</span>
         <span class="lg"><span class="el" style="border-top-color:var(--st-quar)"></span>일시 오류 시 지수 백오프 재시도</span>
         <span class="lg"><span class="el" style="border-top-color:var(--st-failed)"></span>재시도 한도 소진 시 자동 격리</span>
+        <span class="lg" id="pgFlowLegendFb" hidden><span class="el" style="border-top-color:var(--faint);border-top-style:dashed"></span>큐를 놓친 행은 DB 폴링으로 회수</span>
       </div>
     </div>
     <div class="card why-async reveal">
       <div class="card-head"><h3>설계 의도</h3></div>
       <div class="card-pad why-rows">
         <div class="why-row"><span class="wk">비동기 워커 위임</span><span>· 느린 PG 호출을 인메모리 큐에 넘겨 수신 스레드 즉시 반환<br>· 가상 스레드 워커가 꺼내 처리해 스레드 고갈 없이 처리량 확보</span></div>
-        <div class="why-row"><span class="wk">멱등 · 중복 차단</span><span>· Redis 멱등 키(SETNX)와 주문당 1행 제약(UNIQUE)으로 중복 수신 필터<br>· 행 선점 잠금(SKIP LOCKED)으로 동시 워커의 PG 중복 호출 차단</span></div>
-        <div class="why-row"><span class="wk">Self-loop 재시도 · 격리</span><span>· 재시도 전용 인프라 없이 같은 Kafka 토픽으로 재발행 · 지수 백오프 4회<br>· 시도 횟수(pg_inbox.attempt) 한도 소진 시 DLQ로 자동 격리</span></div>
+        <div class="why-row"><span class="wk">커밋 후 큐 적재</span><span>· inbox 저장이 커밋된 뒤에만 큐에 적재 · 저장에 실패한 명령은 큐에 들어가지 않음<br>· 워커는 빈 큐에서 잠든 채 대기하다 적재 즉시 깨어남 · 큐를 반복 조회하지 않음</span></div>
+        <div class="why-row"><span class="wk">DB 폴링 안전망</span><span>· 큐는 메모리에만 있어 서버 크래시 시 대기 중인 항목이 사라짐<br>· inbox(5초)·outbox(2초) 폴링 워커가 DB에 남은 미처리 행을 찾아 다시 처리</span></div>
+        <div class="why-row"><span class="wk">트랜잭션 경계 분리</span><span>· 행 선점(짧은 TX) → PG 호출(트랜잭션 밖) → 결과·outbox 기록(한 TX)<br>· PG 응답을 기다리는 동안 DB 커넥션을 쥐지 않고, 결과와 보낼 메시지는 함께 커밋</span></div>
+        <div class="why-row"><span class="wk">멱등 · 중복 차단</span><span>· 주문당 1행 제약(UNIQUE)으로 중복 수신 필터 · 종결된 주문은 저장한 결과를 다시 회신<br>· 행 선점 잠금(SKIP LOCKED)으로 동시 워커의 PG 중복 호출 차단</span></div>
+        <div class="why-row"><span class="wk">Self-loop 재시도 · 격리</span><span>· 재시도 전용 인프라 없이 발행 시각을 늦춘 outbox 행으로 같은 Kafka 토픽에 재발행 · 지수 백오프 4회<br>· 시도 횟수(pg_inbox.attempt) 한도 소진 시 DLQ로 자동 격리</span></div>
       </div>
     </div>
     <div class="card trials-card reveal">

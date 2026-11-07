@@ -98,67 +98,231 @@ import { ARCH_NODES, ARCH_EDGES, PAYMENT, STATES, NPOS, SEDGES, LAYER_EX, LAYER_
     mount.appendChild(svg);
   })();
 
-  /* ================= §05 PG PIPELINE flowchart ================= */
+  /* ================= §05 PG PIPELINE flowchart =================
+     기본은 간단히 보기다. "상세 보기"를 누르면 같은 칸이 자리를 옮기고, outbox 단계·폴링 안전망·트랜잭션 경계가 차례로 나타난다.
+     요소마다 간단(b)·상세(c) 좌표를 두고 전환 때 그 사이를 보간한다. b가 null이면 상세에서만 보이고, c가 없으면 두 모드 좌표가 같다. */
   (function(){
     var mount=document.getElementById("pgFlow");if(!mount)return;
-    var svg=sv("svg",{viewBox:"0 0 880 710",class:"pgflow",role:"img","aria-label":"PG 명령 처리와 재시도 파이프라인"});
+    var toggle=document.getElementById("pgFlowToggle"),legendFb=document.getElementById("pgFlowLegendFb");
+    var H={b:586,c:1200};
+    var LABEL={
+      b:"결제 승인 명령 처리 흐름: payment-service가 보낸 명령을 pg-service가 inbox에 기록하고 워커가 PG사를 호출해 결과를 돌려보내는 과정",
+      c:"결제 승인 명령 처리 흐름 상세: 트랜잭션 경계, inbox 워커와 outbox 워커, DB 폴링 안전망을 포함한 과정"
+    };
+    var svg=sv("svg",{viewBox:"0 0 880 "+H.b,class:"pgflow",role:"img","aria-label":LABEL.b});
     var defs=sv("defs",{});
-    [["pf0","var(--muted)"],["pfok","var(--st-done)"],["pfretry","var(--st-quar)"],["pffail","var(--st-failed)"]].forEach(function(m){
+    [["pf0","var(--muted)"],["pfok","var(--st-done)"],["pfretry","var(--st-quar)"],["pffail","var(--st-failed)"],["pffb","var(--faint)"]].forEach(function(m){
       var mk=sv("marker",{id:m[0],markerWidth:"8",markerHeight:"8",refX:"6.5",refY:"3",orient:"auto",markerUnits:"userSpaceOnUse"});
       mk.appendChild(sv("path",{d:"M0,0 L6.5,3 L0,6 Z",style:"fill:"+m[1]}));defs.appendChild(mk);
     });
     svg.appendChild(defs);
-    var BANDS=[
-      {x:44,y:16,w:332,h:238,k:"pg",t:"① consumer 스레드 · 큐에 넣고 즉시 반환"},
-      {x:44,y:336,w:332,h:154,k:"wk",t:"② 가상 스레드 워커 · 큐에서 꺼내 처리"}
+    var gBg=sv("g",{}),gEdge=sv("g",{}),gNode=sv("g",{});
+    svg.appendChild(gBg);svg.appendChild(gEdge);svg.appendChild(gNode);
+
+    // 서버 구간 · Kafka 띠 · 스레드 구역. 띠를 넘는 화살표가 곧 서버 간 메시지다.
+    var RECTS=[
+      {k:"zone",z:"pay",t:"payment-service",b:[16,10,848,88],c:[16,10,848,96]},
+      {k:"kafka",b:[16,104,848,36],c:[16,114,848,40]},
+      {k:"zone",z:"pg",t:"pg-service",b:[16,148,848,274],c:[16,162,848,854]},
+      {k:"band",t:"① consumer 스레드",b:null,c:[44,184,332,238]},
+      {k:"band",t:"② inbox 워커 · 가상 스레드",b:null,c:[44,498,792,334]},
+      {k:"tx",t:"TX_B · 한 트랜잭션",b:null,c:[52,682,776,138]},
+      {k:"band",t:"③ outbox 워커 · 가상 스레드",b:null,c:[44,912,792,92]},
+      {k:"kafka",b:[16,430,848,64],c:[16,1024,848,76]},
+      {k:"zone",z:"pay",t:"payment-service",b:[16,502,848,76],c:[16,1108,848,84]}
     ];
-    BANDS.forEach(function(b){
-      svg.appendChild(sv("rect",{x:b.x,y:b.y,width:b.w,height:b.h,rx:12,class:"pf-band pf-band-"+b.k}));
-      var bt=sv("text",{x:b.x+14,y:b.y+18,class:"pf-band-t"});bt.textContent=b.t;svg.appendChild(bt);
-    });
+    // 간략 그림에도 있는 칸은 b·c 좌표 사이를 이동하며 문구가 바뀐다(t,s → tc,sc). b:null 칸은 상세에서만 튀어나온다.
+    // 상세 전용 칸은 이 배열 순서대로 나타난다.
     var NODES=[
-      {id:"recv",x:160,y:40,w:200,t:"명령 수신",s:"Kafka consumer",c:"--svc-pg"},
-      {id:"dedupe",x:160,y:120,w:200,t:"멱등 키 기록",s:"SETNX · 없으면 기록·있으면 차단",c:"--svc-pg"},
-      {id:"inbox",x:160,y:200,w:200,t:"inbox 저장 · PENDING",s:"주문당 1행 (UNIQUE)",c:"--svc-pg"},
-      {id:"queue",x:160,y:280,w:200,t:"인메모리 큐 · 채널",s:"offer 반환 · 워커 take",c:"--accent",q:true},
-      {id:"claim",x:160,y:360,w:200,t:"행 선점 · IN_PROGRESS",s:"행 잠금 (SKIP LOCKED)",c:"--svc-pg"},
-      {id:"call",x:160,y:440,w:200,t:"PG사 호출",s:"Toss / NicePay",c:"--svc-pg"},
-      {id:"record",x:60,y:544,w:200,t:"결과 기록",s:"APPROVED / FAILED · outbox 적재",c:"--st-done"},
-      {id:"publish",x:60,y:636,w:200,t:"결과 발행 → payment",s:"events.confirmed",c:"--st-done"},
-      {id:"inc",x:556,y:544,w:200,t:"시도 횟수 +1",s:"DB(pg_inbox.attempt)에서 관리",c:"--st-quar"},
-      {id:"exhaust",x:540,y:636,w:232,t:"DLQ 이동 + 격리",s:"commands.confirm.dlq · QUARANTINED",c:"--st-failed"},
-      {id:"redisdel",x:456,y:200,w:190,t:"멱등 키 삭제",s:"remove → 재배달 재처리",c:"--st-failed"}
+      {b:[160,40,200],c:[40,44,220],t:"결제 승인 요청",s:"outbox 기록 후 비동기 발행",tc:"결제 승인 요청 TX",sc:"IN_PROGRESS 전이 · outbox PENDING",col:"--svc-payment"},
+      {b:[160,176,200],c:[160,214,200],t:"명령 수신 · inbox 기록",s:"주문당 1행 (UNIQUE)",tc:"명령 수신",sc:"Kafka consumer",col:"--svc-pg"},
+      {b:[160,252,200],c:[160,440,200],t:"인메모리 큐",tc:"inbox 큐",s:"커밋 후 적재 · 워커 take",col:"--svc-pg",q:1},
+      {b:[160,328,200],c:[160,602,200],t:"워커 · PG사 호출",s:"Toss / NicePay",tc:"PG사 호출",sc:"트랜잭션 밖 · 커넥션 미점유",col:"--svc-pg"},
+      {b:[60,440,200],c:[60,1044,200],t:"events.confirmed",s:"승인 · 거절 · 격리 결과",col:"--st-done"},
+      {b:[330,440,220],c:[330,1044,220],t:"commands.confirm.dlq",s:"pg DLQ consumer가 격리 후 회신",col:"--st-failed"},
+      {b:[600,440,220],c:[600,1044,220],t:"commands.confirm",s:"재시도 명령",sc:"재시도 명령 · 발행 시각 지연",col:"--st-quar"},
+      {b:[60,518,340],c:[60,1128,340],t:"결과 수신 · 결제 상태 확정",s:"중복 검사 후 DONE / FAILED · 재고 확정 또는 복구",col:"--svc-payment"},
+      {b:null,c:[300,44,220],t:"커밋 직후 비동기 발행",s:"@Async 가상 스레드 · 발행 후 DONE",col:"--svc-payment"},
+      {b:null,c:[580,44,250],t:"outbox 폴링 워커 · 5초",s:"놓친 PENDING 행 발행",col:"--faint",fb:1},
+      {b:null,c:[160,290,200],t:"inbox 조회 · 상태 분기",s:"주문당 1행 (UNIQUE)",col:"--svc-pg"},
+      {b:null,c:[160,366,200],t:"inbox 저장 · PENDING",s:"같은 TX에서 적재 이벤트 발행",col:"--svc-pg"},
+      {b:null,c:[160,526,200],t:"TX_A · 행 선점",s:"IN_PROGRESS 전이 · SKIP LOCKED",col:"--svc-pg"},
+      {b:null,c:[560,562,256],t:"inbox 폴링 워커 · 5초",s:"60초 넘게 멈춘 PENDING / IN_PROGRESS",col:"--faint",fb:1},
+      {b:null,c:[60,694,200],t:"결과 기록",s:"inbox → APPROVED / FAILED",col:"--st-done"},
+      {b:null,c:[330,694,220],t:"시도 소진",s:"inbox는 IN_PROGRESS 유지",col:"--st-failed"},
+      {b:null,c:[600,694,220],t:"재시도 예약",s:"inbox 시도 횟수 +1",col:"--st-quar"},
+      {b:null,c:[330,762,220],t:"pg_outbox 행 저장",s:"inbox 변경과 함께 커밋",col:"--svc-pg"},
+      {b:null,c:[330,850,220],t:"outbox 큐",s:"커밋 후 적재 · 워커 take",col:"--svc-pg",q:1},
+      {b:null,c:[330,942,220],t:"Kafka 발행",s:"발행 후 processed_at 기록",col:"--svc-pg"},
+      {b:null,c:[60,942,230],t:"outbox 폴링 워커 · 2초",s:"미발행 행 · 지연 재시도 발행",col:"--faint",fb:1}
     ];
+    // m: b=간략 그림 전용, c=상세 그림 전용. 칸 위치가 모드마다 달라 화살표는 모드별로 따로 두고, 배열 순서대로 그린다.
     var EDGES=[
-      {d:"M260,86 L260,120",k:"0"},
-      {d:"M260,166 L260,200",k:"0"},
-      {d:"M260,246 L260,280",k:"0",lab:"consumer offer",lx:272,ly:268,anchor:"start"},
-      {d:"M260,326 L260,360",k:"0",lab:"워커 take",lx:272,ly:348,anchor:"start"},
-      {d:"M260,406 L260,440",k:"0"},
-      {d:"M232,486 Q170,512 162,542",k:"ok",lab:"승인 · 확정 거절",lx:126,ly:516},
-      {d:"M330,484 Q510,508 640,542",k:"retry",lab:"일시 오류 (5xx·타임아웃)",lx:470,ly:490},
-      {d:"M160,590 L160,636",k:"ok"},
-      {d:"M656,590 L656,634",k:"fail",lab:"4회 도달",lx:668,ly:616,anchor:"start"},
-      {d:"M758,556 C866,460 866,80 364,58",k:"retry",dash:1,lab:"4회 미만 · 같은 토픽으로 재발행 (간격 늘림)",lx:702,ly:140},
-      {d:"M360,224 L456,224",k:"fail",lab:"저장 실패",lx:408,ly:214}
+      {m:"b",d:"M260,86 L260,174",k:"0",lab:"commands.confirm",lx:272,ly:126,anchor:"start"},
+      {m:"b",d:"M260,222 L260,250",k:"0",lab:"커밋 후 적재",lx:272,ly:240,anchor:"start"},
+      {m:"b",d:"M260,298 L260,326",k:"0"},
+      {m:"b",d:"M220,374 Q170,404 162,438",k:"ok",lab:"승인 · 거절",lx:126,ly:410},
+      {m:"b",d:"M290,374 Q430,392 440,438",k:"fail",lab:"4회 소진",lx:448,ly:410,anchor:"start"},
+      {m:"b",d:"M360,358 Q690,358 710,438",k:"retry",lab:"일시 오류",lx:600,ly:352},
+      {m:"b",d:"M820,463 L872,463 L872,186 L364,186",k:"retry",dash:1,lab:"같은 토픽으로 재수신 · 최대 4회",lx:850,ly:202,anchor:"end"},
+      {m:"b",d:"M160,486 L160,516",k:"ok"},
+      {m:"c",d:"M260,67 L296,67",k:"0"},
+      {m:"c",d:"M580,67 L524,67",k:"fb",dash:1},
+      {m:"c",d:"M410,90 C410,180 260,160 260,212",k:"0",lab:"commands.confirm",lx:400,ly:140,anchor:"start"},
+      {m:"c",d:"M260,260 L260,288",k:"0"},
+      {m:"c",d:"M260,336 L260,364",k:"0",lab:"처음 받은 주문",lx:272,ly:354,anchor:"start"},
+      {m:"c",d:"M360,320 L400,320 L400,463 L362,463",k:"0",dash:1,lab:"진행 중이면 큐에만 다시 적재",lx:410,ly:396,anchor:"start"},
+      {m:"c",d:"M260,412 L260,438",k:"0",lab:"inbox 커밋 후 적재",lx:272,ly:430,anchor:"start"},
+      {m:"c",d:"M260,486 L260,524",k:"0",lab:"적재 즉시 깨어남",lx:272,ly:510,anchor:"start"},
+      {m:"c",d:"M260,572 L260,600",k:"0"},
+      {m:"c",d:"M560,585 L364,551",k:"fb",dash:1,lab:"큐를 놓친 행 회수",lx:470,ly:558},
+      {m:"c",d:"M220,648 Q170,668 162,692",k:"ok",lab:"승인 · 확정 거절",lx:120,ly:674},
+      {m:"c",d:"M290,648 Q430,662 440,692",k:"fail",lab:"일시 오류 · 4회 도달",lx:448,ly:668,anchor:"start"},
+      {m:"c",d:"M360,634 Q690,634 710,692",k:"retry",lab:"일시 오류 · 4회 미만",lx:600,ly:626},
+      {m:"c",d:"M160,740 Q170,772 326,786",k:"0"},
+      {m:"c",d:"M440,740 L440,760",k:"0"},
+      {m:"c",d:"M710,740 Q700,772 554,786",k:"0"},
+      {m:"c",d:"M440,808 L440,848",k:"0",lab:"커밋 후 적재",lx:452,ly:843,anchor:"start"},
+      {m:"c",d:"M440,896 L440,940",k:"0",lab:"적재 즉시 깨어남",lx:452,ly:922,anchor:"start"},
+      {m:"c",d:"M290,965 L326,965",k:"fb",dash:1},
+      {m:"c",d:"M380,988 Q220,1016 166,1042",k:"ok"},
+      {m:"c",d:"M440,988 L440,1042",k:"fail"},
+      {m:"c",d:"M500,988 Q690,1016 710,1042",k:"retry"},
+      {m:"c",d:"M820,1067 L872,1067 L872,237 L364,237",k:"retry",dash:1,lab:"같은 토픽으로 재수신 · 간격을 늘려 최대 4회",lx:850,ly:229,anchor:"end"},
+      {m:"c",d:"M160,1090 L160,1126",k:"ok"}
     ];
+    var NOTES=[
+      {m:"b",x:375,y:212,t:"이미 받은 주문이면 저장한 결과로 회신",cls:"sw-lab self"},
+      {m:"c",x:375,y:304,t:"종결된 주문이면 저장한 결과를 다시 회신",cls:"sw-lab self"}
+    ];
+
+    function geo(o,m){var g=(m==="c"?(o.c||o.b):(o.b||o.c)).slice();if(g.length===3)g.push(46);return g;}
+    function lerp(a,b,p){return a.map(function(v,i){return v+(b[i]-v)*p;});}
+    function ease(p){return p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+    function tween(dur,fn){
+      if(reduce||!dur){fn(1);return;}
+      var t0=performance.now();
+      function step(ts){var p=Math.max(0,Math.min(1,(ts-t0)/dur));fn(ease(p));if(p<1)requestAnimationFrame(step);}
+      requestAnimationFrame(step);
+    }
+    function fade(el,on,delay,dur){
+      if(reduce){el.style.transition="none";el.style.opacity=on?1:0;return;}
+      el.style.transition="opacity "+(dur||220)+"ms ease "+(delay||0)+"ms";el.style.opacity=on?1:0;
+    }
+
+    RECTS.forEach(function(r){
+      r.rect=sv("rect",{rx:r.k==="kafka"?8:r.k==="zone"?14:12,class:r.k==="zone"?"pf-zone pf-zone-"+r.z:r.k==="kafka"?"pf-kafka":r.k==="tx"?"pf-txbox":"pf-band pf-band-pg"});
+      r.lab=sv("text",{class:r.k==="zone"?"pf-zone-t pf-zone-t-"+r.z:r.k==="kafka"?"pf-kafka-t":r.k==="tx"?"pf-band-t pf-tx-t":"pf-band-t","text-anchor":r.k==="zone"?"end":"start"});
+      r.lab.textContent=r.t||"Kafka";
+      gBg.appendChild(r.rect);gBg.appendChild(r.lab);
+      if(!r.b){r.rect.style.opacity=0;r.lab.style.opacity=0;}
+    });
+    function setRect(r,g){
+      r.rect.setAttribute("x",g[0]);r.rect.setAttribute("y",g[1]);r.rect.setAttribute("width",g[2]);r.rect.setAttribute("height",g[3]);
+      if(r.k==="zone"){r.lab.setAttribute("x",g[0]+g[2]-12);r.lab.setAttribute("y",g[1]+18);}
+      else if(r.k==="kafka"){r.lab.setAttribute("x",22);r.lab.setAttribute("y",g[1]+(g[3]>50?14:24));}
+      else if(r.k==="tx"){r.lab.setAttribute("x",g[0]+14);r.lab.setAttribute("y",g[1]+g[3]-10);}
+      else{r.lab.setAttribute("x",g[0]+14);r.lab.setAttribute("y",g[1]+18);}
+    }
+
     EDGES.forEach(function(e){
-      var cls="pf-edge"+(e.k!=="0"?" pk-"+e.k:"")+(e.dash?" dash":"");
-      svg.appendChild(sv("path",{d:e.d,class:cls,"marker-end":"url(#pf"+(e.k==="0"?"0":e.k)+")"}));
-      if(e.lab){var t=sv("text",{x:e.lx,y:e.ly,class:"sw-lab"+(e.k!=="0"?" pl-"+e.k:""),"text-anchor":e.anchor||"middle"});t.textContent=e.lab;svg.appendChild(t);}
+      e.marker="url(#pf"+(e.k==="0"?"0":e.k)+")";
+      e.path=sv("path",{d:e.d,class:"pf-edge"+(e.k!=="0"?" pk-"+e.k:"")+(e.dash?" dash":""),"marker-end":e.marker});
+      gEdge.appendChild(e.path);
+      if(e.lab){e.labEl=sv("text",{x:e.lx,y:e.ly,class:"sw-lab"+(e.k!=="0"?" pl-"+e.k:""),"text-anchor":e.anchor||"middle"});e.labEl.textContent=e.lab;gEdge.appendChild(e.labEl);}
+      if(e.m==="c"){e.path.style.opacity=0;if(e.labEl)e.labEl.style.opacity=0;}
     });
+    NOTES.forEach(function(n){n.el=sv("text",{x:n.x,y:n.y,class:n.cls,"text-anchor":n.anchor||"start"});n.el.textContent=n.t;if(n.m==="c")n.el.style.opacity=0;gEdge.appendChild(n.el);});
+
     NODES.forEach(function(n){
+      n.outer=sv("g",{});n.inner=sv("g",{class:"pf-node-in"+(n.b?"":" pf-off")});
+      n.rect=sv("rect",{x:0,y:0,rx:n.q?4:10,class:"pf-box"+(n.q?" pf-queue":"")+(n.fb?" pf-fb":""),style:"--nc:var("+n.col+")"});
+      n.inner.appendChild(n.rect);
       if(n.q){
-        // 인메모리 큐 · 채널: 항목이 줄 서 대기하는 버퍼로 보이도록 슬롯 칸막이 박스로 렌더
-        svg.appendChild(sv("rect",{x:n.x,y:n.y,width:n.w,height:46,rx:4,class:"pf-box pf-queue",style:"--nc:var("+n.c+")"}));
-        for(var qi=1;qi<6;qi++){var qx=n.x+n.w*qi/6;svg.appendChild(sv("line",{x1:qx,y1:n.y+1,x2:qx,y2:n.y+13,class:"pf-qslot"}));svg.appendChild(sv("line",{x1:qx,y1:n.y+33,x2:qx,y2:n.y+45,class:"pf-qslot"}));}
-      }else{
-        svg.appendChild(sv("rect",{x:n.x,y:n.y,width:n.w,height:46,rx:10,class:"pf-box",style:"--nc:var("+n.c+")"}));
+        // 큐: 항목이 줄 서 대기하는 버퍼로 보이도록 슬롯 칸막이를 그린다
+        var w=geo(n,"c")[2];
+        for(var qi=1;qi<6;qi++){var qx=w*qi/6;n.inner.appendChild(sv("line",{x1:qx,y1:1,x2:qx,y2:13,class:"pf-qslot"}));n.inner.appendChild(sv("line",{x1:qx,y1:33,x2:qx,y2:45,class:"pf-qslot"}));}
       }
-      var t=sv("text",{x:n.x+n.w/2,y:n.y+19,"text-anchor":"middle",class:"pf-t"});t.textContent=n.t;svg.appendChild(t);
-      var s=sv("text",{x:n.x+n.w/2,y:n.y+34,"text-anchor":"middle",class:"pf-s"});s.textContent=n.s;svg.appendChild(s);
+      n.tEl=sv("text",{y:19,"text-anchor":"middle",class:"pf-t"});n.tEl.textContent=n.t;
+      n.sEl=sv("text",{y:34,"text-anchor":"middle",class:"pf-s"});n.sEl.textContent=n.s;
+      n.inner.appendChild(n.tEl);n.inner.appendChild(n.sEl);
+      n.outer.appendChild(n.inner);gNode.appendChild(n.outer);
     });
-    var dn=sv("text",{x:375,y:122,class:"sw-lab self"});dn.textContent="이미 처리한 메시지면 여기서 종료";svg.appendChild(dn);
+    function setNode(n,g){
+      n.outer.setAttribute("transform","translate("+g[0]+","+g[1]+")");
+      n.rect.setAttribute("width",g[2]);n.rect.setAttribute("height",g[3]);
+      n.tEl.setAttribute("x",g[2]/2);n.sEl.setAttribute("x",g[2]/2);
+    }
+    function swapText(el,want){
+      if(!el||el.textContent===want)return;
+      if(reduce){el.textContent=want;return;}
+      el.style.transition="opacity 120ms ease";el.style.opacity=0;
+      setTimeout(function(){el.textContent=want;el.style.opacity=1;},130);
+    }
+    function drawIn(e,delay){
+      if(e.dash||reduce){fade(e.path,1,delay,260);}
+      else{
+        // 선을 시작점부터 그려 나간다. 다 그린 뒤에 화살촉을 붙여 끝점에 화살촉만 먼저 보이지 않게 한다.
+        var p=e.path,L=p.getTotalLength();
+        p.removeAttribute("marker-end");
+        p.style.transition="none";p.style.strokeDasharray=L;p.style.strokeDashoffset=L;p.style.opacity=1;
+        p.getBoundingClientRect();
+        p.style.transition="stroke-dashoffset 420ms ease "+delay+"ms";p.style.strokeDashoffset=0;
+        setTimeout(function(){p.style.transition="";p.style.strokeDasharray="";p.style.strokeDashoffset="";p.setAttribute("marker-end",e.marker);},delay+440);
+      }
+      if(e.labEl)fade(e.labEl,1,delay+200,240);
+    }
+    function drawOut(e){fade(e.path,0,0,150);if(e.labEl)fade(e.labEl,0,0,150);}
+
+    var mode="b",busy=false;
+    RECTS.forEach(function(r){setRect(r,geo(r,"b"));});
+    NODES.forEach(function(n){setNode(n,geo(n,"b"));});
+
+    function go(to){
+      if(busy||to===mode)return;
+      busy=true;var from=mode;mode=to;var open=to==="c",k=reduce?0:1;
+      if(toggle){toggle.setAttribute("aria-pressed",open?"true":"false");(toggle.querySelector(".pf-fab-t")||toggle).textContent=open?"간단히 보기":"상세 보기";}
+      if(legendFb)legendFb.hidden=!open;
+      svg.setAttribute("aria-label",LABEL[to]);
+      var cOnly=NODES.filter(function(n){return !n.b;}),cRects=RECTS.filter(function(r){return !r.b;});
+      // 1) 지금 모드에만 있던 선과 메모를 걷어 낸다. 접을 때는 상세 전용 칸과 구역도 먼저 들어간다.
+      EDGES.filter(function(e){return e.m===from;}).forEach(drawOut);
+      NOTES.forEach(function(n){if(n.m===from)fade(n.el,0,0,150);});
+      if(!open){
+        cOnly.forEach(function(n){n.inner.style.transitionDelay="0ms";n.inner.classList.add("pf-off");});
+        cRects.forEach(function(r){fade(r.rect,0,0,180);fade(r.lab,0,0,180);});
+      }
+      NODES.forEach(function(n){swapText(n.tEl,open&&n.tc?n.tc:n.t);swapText(n.sEl,open&&n.sc?n.sc:n.s);});
+      // 2) 칸과 구간이 새 좌표로 미끄러진다. 그림 높이도 함께 바뀐다.
+      var tMove=(open?120:220)*k,moveDur=560;
+      setTimeout(function(){
+        tween(moveDur,function(p){
+          RECTS.forEach(function(r){setRect(r,lerp(geo(r,from),geo(r,to),p));});
+          NODES.forEach(function(n){setNode(n,lerp(geo(n,from),geo(n,to),p));});
+          svg.setAttribute("viewBox","0 0 880 "+(H[from]+(H[to]-H[from])*p));
+        });
+      },tMove);
+      // 3) 펼칠 때는 상세 전용 칸이 하나씩 튀어나온다.
+      var tPop=tMove+(open?300:moveDur)*k;
+      if(open){
+        cRects.forEach(function(r){fade(r.rect,1,tPop,260);fade(r.lab,1,tPop,260);});
+        cOnly.forEach(function(n,i){n.inner.style.transitionDelay=(reduce?0:tPop+i*45)+"ms";n.inner.classList.remove("pf-off");});
+      }
+      // 4) 새 모드의 선과 메모를 차례로 그린다.
+      var tDraw=open?tPop+(cOnly.length*45+160)*k:tPop;
+      var entering=EDGES.filter(function(e){return e.m===to;});
+      entering.forEach(function(e,i){drawIn(e,reduce?0:tDraw+i*28);});
+      NOTES.forEach(function(n){if(n.m===to)fade(n.el,1,reduce?0:tDraw+200,260);});
+      setTimeout(function(){busy=false;},reduce?0:tDraw+entering.length*28+520);
+    }
+    if(toggle)toggle.addEventListener("click",function(){toggle.classList.remove("pf-fab-hint");go(mode==="b"?"c":"b");});
+    // 그림이 처음 절반쯤 보일 때 버튼에 한 번 물결 효과를 준다. 이미 눌렀거나 동작 줄이기 설정이면 건너뛴다.
+    if(toggle&&!reduce&&"IntersectionObserver" in window){
+      var io=new IntersectionObserver(function(ents){
+        if(ents.some(function(en){return en.isIntersecting;})){io.disconnect();if(mode==="b")toggle.classList.add("pf-fab-hint");}
+      },{threshold:0.35});
+      io.observe(mount);
+    }
     mount.appendChild(svg);
   })();
 
