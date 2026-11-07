@@ -13,7 +13,8 @@ export const ALERTS = [
     {label:"DLQ",color:"failed",items:[
       {a:"DlqAppCounterRising",d:"· 자동 재시도를 모두 소진해 관리자 복구가 필요한 결제 발생\n· 두 경로에서 발생 · payment의 EOS 커밋 실패 DLQ 발행, pg의 재시도 소진 격리\n· 각 서비스가 처리 시점에 직접 기록하는 메트릭으로 감지",m:"DLQ 도달·격리 신규 발생 1건 이상 (5분 윈도우) · 1분 지속"},
       {a:"DlqTopicOffsetRising",d:"· 처리 불가 결제를 서비스 메트릭이 아닌 DLQ 토픽에서 감지\n· 브로커의 토픽 오프셋을 직접 읽어 새 메시지 적재를 관측 · 서버 크래시로 서비스 메트릭이 유실돼도 포착",m:".dlq 토픽 신규 메시지 1건 이상 (5분 윈도우) · 1분 지속"},
-      {a:"DlqCommandsConsumerLag",d:"· DLQ로 빠진 확정 명령을 받아 격리 처리하는 소비자가 적체\n· 이 큐는 적체 0이 정상 · 남은 1건도 방치된 미해결 결제",m:"DLQ 컨슈머 미소비 적체 1건 이상 · 1분 지속"}
+      {a:"DlqCommandsConsumerLag",d:"· DLQ로 빠진 확정 명령을 받아 격리 처리하는 소비자가 적체\n· 이 큐는 적체 0이 정상 · 남은 1건도 방치된 미해결 결제",m:"DLQ 컨슈머 미소비 적체 1건 이상 · 1분 지속"},
+      {a:"ProductStockQuarantineBacklog",d:"· 이미 승인된 결제의 재고 확정이 상품 서비스의 음수 재고 방지 검사에 막혀 격리 토픽으로 빠진 상태\n· 자동 복구 대상이 아니라 사람이 환불 또는 입고를 판단해야 하는 사고\n· 다른 DLQ 경보보다 높은 심각도(critical)로 구분",m:"재고 확정 격리 토픽(stock-committed.dlq) 신규 메시지 1건 이상 (5분 윈도우) · 1분 지속"}
     ]},
     {label:"가용성",color:"done",items:[
       {a:"ServiceDown",d:"· 4개 서비스 중 하나가 지표 수집에 무응답\n· 프로세스 비정상 종료(OOM·크래시)로 해당 구간 결제 흐름 전체 정지",m:"지표 수집(scrape) 실패 (up == 0) · 1분 지속"},

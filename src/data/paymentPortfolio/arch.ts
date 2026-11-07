@@ -10,7 +10,7 @@ export const ARCH_NODES = {
     vendor:{x:560,y:60,w:130,h:40,t:"Toss / NicePay",s:"EXTERNAL PG",color:"infra",role:"실제 결제 승인/취소/조회 (Strategy 전환)",store:"-",chan:"← pg (HTTP)"},
     product:{x:300,y:300,w:150,h:44,t:"product-service",s:"STOCK LEDGER",color:"product",role:"상품·재고의 기준 장부 · stock-committed를 받아 실제 차감을 확정",store:"MySQL (재고 원장)",chan:"Kafka ← payment (stock-committed) · HTTP ← payment"},
     user:{x:90,y:300,w:120,h:44,t:"user-service",s:"BUYER",color:"user",role:"구매자 정보 조회 제공",store:"MySQL",chan:"HTTP ← payment · gateway"},
-    kafka:{x:430,y:250,w:110,h:38,t:"Kafka",s:"5 TOPICS",color:"infra",role:"비동기 메시지 버스 · 운영 3 + DLQ 2 토픽. payment↔PG confirm 통신, payment→product 재고 확정",store:"-",chan:"commands.confirm · events.confirmed · stock-committed (+2 DLQ)"}
+    kafka:{x:430,y:250,w:110,h:38,t:"Kafka",s:"6 TOPICS",color:"infra",role:"비동기 메시지 버스 · 운영 3 + DLQ 3 토픽. payment↔PG confirm 통신, payment→product 재고 확정",store:"-",chan:"commands.confirm · events.confirmed · stock-committed (+3 DLQ)"}
   };
 
 export const ARCH_EDGES = [

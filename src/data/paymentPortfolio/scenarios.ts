@@ -92,7 +92,7 @@ export const SCENARIOS = [
       {edge:"payment~self",kind:"recover",label:"종결 가드 · 전이 스킵 (이미 DONE)",state:"DONE 유지",why:{tag:"처리 방식",text:"종결 가드는 상태 재전이만 막는다. DB는 DONE인데 재고 확정 이벤트만 유실된 재전송이면, 상태는 그대로 두고 그 이벤트만 다시 발행한다.",dref:5}},
       {edge:"payment>product",kind:"recover",label:"stock-committed 재발행 · 멱등 흡수"}
     ]},
-    {name:"재고 부족 · 즉시 실패",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","409 즉시 반환"]},impact:"\n· 재고 없는 결제를 승인하면 배송 불가 주문이 생겨 보상·고객 응대 비용 발생\n· 확정 전에 거절해 그런 주문 자체를 원천 차단",hops:[
+    {name:"재고 부족 · 즉시 실패",outcome:{status:"FAILED",color:"failed",props:["초과 판매 0","400 즉시 반환"]},impact:"\n· 재고 없는 결제를 승인하면 배송 불가 주문이 생겨 보상·고객 응대 비용 발생\n· 확정 전에 거절해 그런 주문 자체를 원천 차단",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
       {edge:"payment>redis",kind:"fail",label:"Lua 원자 차감 REJECTED (재고 부족)",state:"READY → FAILED",why:{tag:"선차감 이유",text:"재고를 선점한 후 확정을 진행한다. 재고를 못 잡으면 그 자리에서 실패 처리한다 · 초과 판매 가능성을 원천 차단한다."}}
     ]},
@@ -115,7 +115,7 @@ export const SCENARIOS = [
       {edge:"payment>redis",kind:"recover",label:"차감 표식 있음 → 재고 복원",why:{tag:"설계 의도",text:"복원 Lua가 그 상품의 차감 표식 존재를 먼저 확인하고, 주문에 담긴 상품마다 한 번씩 수행된다. 이 건은 선차감이 됐으니 복원되지만, 캐시 장애로 선차감 전에 격리된 건은 표식이 없어 보상을 건너뛴다 · 차감한 적 없는 건까지 복원해 유령 재고가 생기는 걸 막는다.",dref:3}},
       {edge:"payment~self",kind:"recover",label:"조건부 갱신: status=QUARANTINED → FAILED (order 동조)",state:"QUARANTINED → FAILED",why:{tag:"종결 정책",text:"푸는 방향은 실패 종결 하나뿐이다 · DONE으로 되살리는 경로는 두지 않았다. 승인이 확인된 건은 앞 단계에서 이미 거부되고, 실패·확인 불가만 여기까지 온다."}}
     ]},
-    {name:"재고 캐시 장애 · 격리",outcome:{status:"QUARANTINED",color:"quar",props:["보수적 격리","409 반환"]},impact:"\n· 차감 여부를 모른 채 진행하면 초과 판매 혹은 유령 재고 발생\n· 보수적 격리는 어느 쪽도 발생시키지 않음",hops:[
+    {name:"재고 캐시 장애 · 격리",outcome:{status:"QUARANTINED",color:"quar",props:["보수적 격리","503 반환"]},impact:"\n· 차감 여부를 모른 채 진행하면 초과 판매 혹은 유령 재고 발생\n· 보수적 격리는 어느 쪽도 발생시키지 않음",hops:[
       {edge:"browser>payment",kind:"normal",label:"confirm 진입"},
       {edge:"payment>redis",kind:"warn",label:"CACHE_DOWN · 재고 판단 불가",state:"READY → QUARANTINED",why:{tag:"격리 이유",text:"캐시 장애로 인해 차감 여부를 확정할 수 없다. 임의 진행 대신 격리해 수동 판단을 기다린다 · 보수적 방향."}}
     ]},
@@ -200,7 +200,7 @@ export const SCN_MATRIX = [
     ["PG 승인 중 서버 다운","done","확정","좀비 회수 재진입 · 중복 승인 방어","pg_inbox_zombie_recovered"],
     ["EOS abort DLQ 재주입","done","확정 (재처리)","DLQ 원 토픽 재주입","eos_commit_failure · dlq_reprocess"],
     ["EOS 재전송 보상 재발행","done","재고 확정 보상","이벤트만 재발행 (상태 유지)","confirm_terminal_resend"],
-    ["재고 부족","failed","미차감","즉시 실패 (409)","transition to=FAILED"],
+    ["재고 부족","failed","미차감","즉시 실패 (400)","transition to=FAILED"],
     ["재고 차감 후 저장 실패","failed","미복구 (지표화)","즉시 복구 배제 · 종결 후 회수","stock_retention_unrecovered"],
     ["격리 관리자 종결","failed","키 조건부 보상","관리자 안전 종결 (조건부 갱신)","transition QUARANTINED→FAILED"],
     ["캐시 장애","quar","판단 불가 (보류)","수동 확인 대기","quarantined"],

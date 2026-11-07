@@ -9,11 +9,11 @@ import '../../styles/payment-portfolio.css';
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💳%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css">
 <title>결제 플랫폼 · 비동기 아키텍처</title>
-<meta name="description" content="Kafka 기반 4개 마이크로서비스가 협력하는 비동기 결제 플랫폼. 분산 트랜잭션 정합성·상태 머신 복구·Exactly-Once 결제 처리를 동작하는 코드로 검증한 1인 백엔드 프로젝트.">
+<meta name="description" content="Kafka 기반 4개 마이크로서비스가 협력하는 비동기 결제 플랫폼. 분산 트랜잭션 정합성·상태 머신 복구·중복 없는 결제 처리를 동작하는 코드로 검증한 1인 백엔드 프로젝트.">
 <link rel="canonical" href="https://hyoguoo.github.io/payment-platform-portfolio/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="결제 플랫폼 · 비동기 아키텍처">
-<meta property="og:description" content="분산 환경에서 결제와 재고의 정합성을 지키는 방법을 동작하는 코드로 검증한 1인 백엔드 프로젝트. 초과 판매 0 · 요청 유실 0 · Exactly-Once.">
+<meta property="og:description" content="분산 환경에서 결제와 재고의 정합성을 지키는 방법을 동작하는 코드로 검증한 1인 백엔드 프로젝트. 초과 판매 0 · 요청 유실 0 · 중복 처리 0.">
 <meta property="og:url" content="https://hyoguoo.github.io/payment-platform-portfolio/">
 <meta property="og:image" content="https://hyoguoo.github.io/og-payment.png">
 <meta property="og:image:width" content="1200">
@@ -58,7 +58,7 @@ import '../../styles/payment-portfolio.css';
         <div class="ls-line">state READY → IN_PROGRESS order=ord_4f9a</div>
         <div class="ls-line">outbox claim PENDING → IN_FLIGHT rows=1</div>
         <div class="ls-line">send topic=payment.commands.confirm key=ord_4f9a</div>
-        <div class="ls-line">dedupe SET NX evt_c21b ttl=1h → OK</div>
+        <div class="ls-line">pg_inbox lookup order=ord_4f9a → absent</div>
         <div class="ls-line">pg_inbox insert status=PENDING</div>
         <div class="ls-line">claim FOR UPDATE SKIP LOCKED → 1 row</div>
         <div class="ls-line">vendor confirm → 200 amount=48000</div>
@@ -69,7 +69,7 @@ import '../../styles/payment-portfolio.css';
         <div class="ls-line">send topic=payment.events.stock-committed</div>
         <div class="ls-line ok">eos commit offset=1287</div>
         <div class="ls-line ok">GET /payments/status → DONE</div>
-        <div class="ls-line warn">level=warn vendor 503 attempt=2/4 backoff=4s</div>
+        <div class="ls-line warn">level=warn vendor 503 attempt=2/4 backoff=6s</div>
         <div class="ls-line">retry publish topic=payment.commands.confirm attempt=3</div>
         <div class="ls-line err">level=error attempt=4/4 → commands.confirm.dlq</div>
         <div class="ls-line err">state → QUARANTINED reason=RETRY_EXHAUSTED</div>
@@ -82,7 +82,7 @@ import '../../styles/payment-portfolio.css';
     <h1><span class="thin">데이터 정합성을 보장하는</span><br>견고한 결제 <span class="em">아키텍처</span></h1>
     <p class="sub">재고와 결제 상태가 어긋나지 않도록 PG 장애, 메시지 유실 등 분산 환경에서의 엣지케이스에 대응하고,<br>비동기 처리로 응답성을 높이면서, 결제는 단 한 번만 정확히 처리되도록 설계했다.</p>
     <div class="hero-stats">
-      <div class="hstat"><span class="hs-v">Exactly-Once</span><span class="hs-l">결제 처리 보장</span></div>
+      <div class="hstat"><span class="hs-v">0</span><span class="hs-l">중복 결제 처리</span></div>
       <div class="hstat"><span class="hs-v">+47.5<i>%</i></span><span class="hs-l">비동기 처리량 향상 · Phase 5</span></div>
       <div class="hstat"><span class="hs-v">0</span><span class="hs-l">초과 판매 · 요청 유실</span></div>
     </div>
@@ -153,7 +153,7 @@ import '../../styles/payment-portfolio.css';
         <div style="margin-top:28px; display:flex; flex-direction:column; gap:16px;">
           <div style="font-size:13.5px; color:var(--muted); line-height:1.5;">
             <strong style="color:var(--ink-soft); font-weight:600;">작업 기간</strong><br>
-            2023. 11 ~ 2026. 07
+            2023. 11 ~ 현재
           </div>
           <div style="font-size:13.5px; color:var(--muted); line-height:1.5;">
             <strong style="color:var(--ink-soft); font-weight:600;">작업 인원</strong><br>
@@ -224,9 +224,9 @@ import '../../styles/payment-portfolio.css';
           <div class="spec-title">Key Guarantees & Metrics</div>
           <div class="spec-metrics">
             <div class="s-metric">
-              <span class="s-metric-val">Exactly-Once</span>
-              <span class="s-metric-lbl">초과 판매 및 <strong>결제 승인 멱등성 보장</strong></span>
-              <span class="s-metric-biz">· 보장이 깨지면 중복 결제 가능성 존재<br>· 운영 비용 발생으로 직결 되는 문제 방지</span>
+              <span class="s-metric-val">중복 처리 0</span>
+              <span class="s-metric-lbl">초과 판매 방지와 <strong>결제 승인 멱등 처리</strong></span>
+              <span class="s-metric-biz">· 재전송·중복 요청이 와도 결제 승인과 재고 차감은 한 번만 반영<br>· 중복 결제와 그 뒤처리 비용을 막음</span>
             </div>
             <div class="s-metric">
               <span class="s-metric-val">+47.5<i style="font-size:16px; font-style:normal; color:var(--muted);">%</i></span>
@@ -296,7 +296,7 @@ import '../../styles/payment-portfolio.css';
       <a class="cap-cell" href="#decisions"><span class="cap-t">분산 트랜잭션 정합성</span><span class="cap-e">초과판매·유령재고 <b>0</b> · 정확히 <b>1회</b></span><span class="cap-go">설계 결정<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#scenario"><span class="cap-t">장애 격리·자가 복구</span><span class="cap-e"><b>16종</b> 시나리오 · 상태머신 자동 복구</span><span class="cap-go">시나리오<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#benchmark"><span class="cap-t">비동기 아키텍처·성능</span><span class="cap-e">Outbox+가상스레드 · 부하 급증에도 유실 <b>0</b></span><span class="cap-go">부하 테스트<span aria-hidden="true"> →</span></span></a>
-      <a class="cap-cell" href="#tracing"><span class="cap-t">분산 추적·관측</span><span class="cap-e"><b>4서비스</b> 단일 traceId · 경보 <b>10종</b></span><span class="cap-go">트레이싱<span aria-hidden="true"> →</span></span></a>
+      <a class="cap-cell" href="#tracing"><span class="cap-t">분산 추적·관측</span><span class="cap-e"><b>4서비스</b> 단일 traceId · 경보 <b>11종</b></span><span class="cap-go">트레이싱<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#races"><span class="cap-t">동시성·멱등 제어</span><span class="cap-e">SKIP LOCKED·원자 Lua · 이중차감 <b>0</b></span><span class="cap-go">경합 방어<span aria-hidden="true"> →</span></span></a>
       <a class="cap-cell" href="#workflow"><span class="cap-t">AI 협업 개발 프로세스</span><span class="cap-e"><b>4단계</b> 라이프사이클 · 리뷰·구현 서브에이전트 격리</span><span class="cap-go">워크플로우<span aria-hidden="true"> →</span></span></a>
     </div>
@@ -369,8 +369,8 @@ import '../../styles/payment-portfolio.css';
       <div class="card-pad why-rows">
         <div class="why-row"><span class="wk bad">기존 동기 방식의 한계</span><span>· 확정 API가 PG 응답을 동기로 대기하는 구조<br>· 이 대기가 길어지면 구매 이탈로 직결<br>· PG 장애 시 서비스 전체 가용성 저하로 번짐</span></div>
         <div class="why-row"><span class="wk good">비동기 아키텍처 전환</span><span>· 요청 접수 즉시 202 Accepted 반환, 실제 승인은 백그라운드 비동기 처리<br>· 클라이언트는 주문 상태를 폴링으로 확인<br>· PG 응답 지연·장애가 사용자 경험(응답성)에 직접 영향 없음</span></div>
-        <div class="why-row"><span class="wk">성능 개선 지표</span><span>· 동일 로직을 동기·비동기로 구현해 k6 부하 테스트 비교<br>· 외부 PG 지연 환경에서 비동기 TPS 약 47.5% 우수<br>· 사용자 체감 응답 시간 9,343ms → 3,423ms 단축<br>· 순간 부하 집중에도 유실 없는 요청 처리 입증<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 정리</span></div>
-        <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 장애에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
+        <div class="why-row"><span class="wk">성능 개선 지표</span><span>· 동일 로직을 동기·비동기로 구현해 k6 부하 테스트 비교<br>· 외부 PG 지연 환경에서 비동기 TPS 약 47.5% 우수<br>· 결제 완료까지 걸린 시간(p95) 9,343ms → 3,423ms<br>· 순간 부하 집중에도 유실 없는 요청 처리 입증<br>측정 모델과 시행착오는 <a class="txt-link" href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">벤치마크 보고서 ↗</a>에 정리</span></div>
+        <div class="why-row"><span class="wk">202 응답의 정합성 보장</span><span>· 202 응답은 두 가지 선행 조건의 완수를 의미<br>· 재고의 안전한 선점<br>· PG 결제 명령의 Outbox(발행 대기열) 적재<br>· 응답 직후 서버 크래시에도 영속화된 두 상태 기반으로 누락 없는 처리 재개</span></div>
       </div>
     </div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/async-outbox" target="_blank" rel="noopener">상세 문서 보기 · 비동기 Outbox 결제 플로우 ↗</a></div>
@@ -398,12 +398,12 @@ import '../../styles/payment-portfolio.css';
         </ul>
       </div>
       <div class="tr3">
-        <div class="tr3-h"><span class="tr3-n">2</span><span class="tr3-t">비동기 처리 (아웃박스 패턴)</span></div>
-        <p class="tr3-why">메시지를 즉시 처리하지 않고 Inbox에 저장했다가 백그라운드 워커가 폴링할 때, 요청 당시의 식별자가 유실된다.</p>
+        <div class="tr3-h"><span class="tr3-n">2</span><span class="tr3-t">비동기 처리 (inbox 경유)</span></div>
+        <p class="tr3-why">명령을 받은 스레드가 inbox에 기록만 하고 PG 호출은 다른 워커가 맡거나, 워커가 멈춰 폴링 워커가 나중에 이어받으면 요청 당시의 식별자가 유실된다.</p>
         <ul class="tr3-list">
           <li>수신 시점에 <code>traceparent</code>를 추출해 DB 레코드와 함께 영속화</li>
-          <li>백그라운드 워커가 해당 레코드를 선점(Poll)하는 순간, 저장된 식별자를 바탕으로 문맥을 복원</li>
-          <li>지수 백오프에 의해 수십 분 뒤에 재시도되더라도 동일한 <code>traceId</code>가 일관되게 유지</li>
+          <li>큐에 넣을 때 현재 추적 문맥을 작업과 함께 담아, 큐를 꺼낸 워커가 그 문맥 안에서 처리</li>
+          <li>큐를 놓쳐 폴링 워커가 회수할 때도 레코드에 저장해 둔 식별자로 문맥을 복원해 같은 <code>traceId</code>를 유지</li>
         </ul>
       </div>
       <div class="tr3">
@@ -476,7 +476,7 @@ import '../../styles/payment-portfolio.css';
         </ul>
       </div>
     </div>
-    <div class="meas-note reveal"><b>별도 DB 재현</b> · MySQL에 직접 SQL을 실행한 5,000건 비교에서 결과 UPDATE 첫 시도 데드락 28 → 0건. 전체 결제와 다른 실험이며 각 조건 1회,</div>
+    <div class="meas-note reveal"><b>별도 DB 재현</b> · MySQL에 직접 SQL을 실행한 5,000건 비교에서 결과 UPDATE 첫 시도 데드락 28 → 0건. 전체 결제와 다른 실험이며 조건마다 1회 측정했다.</div>
     <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-inbox-index-merge-deadlock" target="_blank" rel="noopener">상세 분석 · GitHub Wiki ↗</a></div>
     <div class="wiki-more reveal"><a href="/blog/pg-inbox-index-merge-deadlock/">원인 추적과 실험 · 기술 글 ↗</a></div>
   </section>
@@ -568,7 +568,7 @@ import '../../styles/payment-portfolio.css';
       </div>
       <div class="card card-pad" id="pgCfDetail" aria-live="polite"></div>
     </div>
-    <div class="meas-note res reveal"><b>결과</b> · 서버 장애·워커 타임아웃 동시 처리·재시도 한도 소진 같은 엣지케이스에서 <strong>PG와 DB의 상태 정합성을 자동으로 복구한다.</strong></div>
+    <div class="meas-note res reveal"><b>결과</b> · 서버 크래시·워커 타임아웃 동시 처리·재시도 한도 소진 같은 엣지케이스에서 <strong>PG와 DB의 상태 정합성을 자동으로 복구한다.</strong></div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/state-management" target="_blank" rel="noopener">상세 문서 보기 · 상태 머신과 복구 체계 ↗</a></div>
   </section>
 
@@ -593,9 +593,9 @@ import '../../styles/payment-portfolio.css';
     <div class="card why-async reveal">
       <div class="card-head"><h3>설계 의도</h3></div>
       <div class="card-pad why-rows">
-        <div class="why-row"><span class="wk">비동기 워커 위임</span><span>· 느린 PG 호출을 인메모리 큐에 넘겨 수신 스레드 즉시 반환<br>· 가상 스레드 워커가 꺼내 처리해 스레드 고갈 없이 처리량 확보</span></div>
+        <div class="why-row"><span class="wk">비동기 워커 위임</span><span>· 느린 PG 호출을 인메모리 큐에 넘겨 수신 스레드 즉시 반환 · 밀린 작업은 크기가 정해진 큐에서 대기<br>· 가상 스레드 워커 수만큼만 PG를 동시에 호출 · 큐 길이로 적체를 바로 확인</span></div>
         <div class="why-row"><span class="wk">커밋 후 큐 적재</span><span>· inbox 저장이 커밋된 뒤에만 큐에 적재 · 저장에 실패한 명령은 큐에 들어가지 않음<br>· 워커는 빈 큐에서 잠든 채 대기하다 적재 즉시 깨어남 · 큐를 반복 조회하지 않음</span></div>
-        <div class="why-row"><span class="wk">DB 폴링 안전망</span><span>· 큐는 메모리에만 있어 서버 크래시 시 대기 중인 항목이 사라짐<br>· inbox(5초)·outbox(2초) 폴링 워커가 DB에 남은 미처리 행을 찾아 다시 처리</span></div>
+        <div class="why-row"><span class="wk">DB 폴링 안전망</span><span>· 큐는 메모리에만 있어 서버 크래시 시 대기 중인 항목이 사라짐 · 큐가 가득 차면 새 항목은 적재하지 않음<br>· inbox(5초)·outbox(2초) 폴링 워커가 DB에 남은 미처리 행을 찾아 다시 처리</span></div>
         <div class="why-row"><span class="wk">트랜잭션 경계 분리</span><span>· 행 선점(짧은 TX) → PG 호출(트랜잭션 밖) → 결과·outbox 기록(한 TX)<br>· PG 응답을 기다리는 동안 DB 커넥션을 쥐지 않고, 결과와 보낼 메시지는 함께 커밋</span></div>
         <div class="why-row"><span class="wk">멱등 · 중복 차단</span><span>· 주문당 1행 제약(UNIQUE)으로 중복 수신 필터 · 종결된 주문은 저장한 결과를 다시 회신<br>· 행 선점 잠금(SKIP LOCKED)으로 동시 워커의 PG 중복 호출 차단</span></div>
         <div class="why-row"><span class="wk">Self-loop 재시도 · 격리</span><span>· 재시도 전용 인프라 없이 발행 시각을 늦춘 outbox 행으로 같은 Kafka 토픽에 재발행 · 지수 백오프 4회<br>· 시도 횟수(pg_inbox.attempt) 한도 소진 시 DLQ로 자동 격리</span></div>
@@ -618,7 +618,7 @@ import '../../styles/payment-portfolio.css';
           <div class="trial win">
             <div class="trial-h"><span class="trial-no">최종</span><span class="trial-mark" role="img" aria-label="해결">✓</span></div>
             <div class="trial-t">논블로킹 큐 + 가상 스레드 워커</div>
-            <div class="trial-d">offer()로 호출 스레드는 즉시 반환하고 워커가 I/O 대기를 흡수해 <b>고부하에서도 요청 유실 0</b></div>
+            <div class="trial-d">offer()로 호출 스레드는 즉시 반환하고, 워커 수만큼만 동시에 처리해 시도 ①의 무제한 점유를 막아 <b>고부하에서도 요청 유실 0</b></div>
           </div>
         </div>
       </div>
@@ -726,8 +726,8 @@ import '../../styles/payment-portfolio.css';
     <details class="const-panel fold reveal">
       <summary>핵심 운영 상수 4개<span class="fold-cue">펼치기</span></summary>
       <div class="consts">
-        <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 대부분의 벤더 5xx·타임아웃은 수 초 내 회복<br>· 지수 백오프 4회 시도로 일시 장애 극복<br>· 초과 시 장기 장애로 간주해 중복 승인 위험을 차단하려 즉시 격리</span></div>
-        <div class="const"><span class="cv">1h</span><span class="ck">PG 메시지 중복 방지 TTL</span><span class="cs">Redis SET NX EX · PT1H</span><span class="cw">· 메시지 재전송은 컨슈머 재시작·파티션 리밸런싱 직후 단시간에 집중<br>· 1시간 TTL로 위험 구간을 충분히 커버하면서 Redis 메모리도 안정적 통제</span></div>
+        <div class="const"><span class="cv">4</span><span class="ck">PG 재시도 한도</span><span class="cs">RetryPolicy.MAX_ATTEMPTS · 소진 시 격리</span><span class="cw">· 일시 오류(5xx·타임아웃)는 2초에서 시작해 3배씩 늘린 간격(±25%)으로 재시도 · 2·6·18초<br>· 4번째 시도까지 실패하면 결과를 판단할 수 없는 장기 장애로 보고 DLQ로 보내 격리</span></div>
+        <div class="const"><span class="cv">60s</span><span class="ck">inbox 좀비 회수 기준</span><span class="cs">in-progress-timeout-ms · 60000</span><span class="cw">· PENDING·IN_PROGRESS로 60초 넘게 멈춘 inbox 행을 폴링 워커가 다시 처리<br>· 마지막 재시도 백오프 상한(약 22.5초)보다 길게 잡아, 예약된 재시도보다 먼저 깨어나 PG를 중복 호출하지 않게 함</span></div>
         <div class="const"><span class="cv">P8D</span><span class="ck">재고·product 멱등 TTL</span><span class="cs">691200s = 7d + 1d</span><span class="cw">· Kafka 기본 보관 주기 동안(7일) 재전송 위험 존재<br>· 중복 방지 TTL을 하루 더 긴 8일로 설정해 이중 차감·정합성 훼손 원천 차단</span></div>
         <div class="const"><span class="cv">1s×5</span><span class="ck">결과 처리 재시도</span><span class="cs">FixedBackOff · 초과 시 events.confirmed.dlq</span><span class="cw">· 재시도가 길어지면 후속 결제까지 밀리는 위험 존재<br>· 1초 간격 5회 시도 후 실패 시 즉시 DLQ 라우팅으로 파이프라인 병목 해소</span></div>
       </div>
@@ -798,7 +798,7 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="workflow">
     <div class="sec-head reveal">
       <h2>개발 워크플로우</h2>
-      <p>단일 기능 개발은 설계 → 계획 → 구현 → 마무리 4단계 라이프사이클을 따른다.<br>각 단계별로 명확한 산출물을 생성하며, 엄격한 리뷰를 통과해야만 다음 단계로 진입할 수 있다.</p>
+      <p>여러 파일에 걸치거나 동작 결정이 필요한 기능은 설계 → 계획 → 구현 → 마무리 4단계로 진행하고, 한두 파일 수정은 바로 고친다.<br>개발자는 사전 브리핑·합의 브리핑·리뷰 결과 세 지점에서 진행을 승인하고, 그 사이 단계는 승인 범위 안에서 이어진다.</p>
     </div>
     <div class="wf-flow-wrap reveal">
       <div class="wf-flow-legend">
@@ -809,33 +809,34 @@ import '../../styles/payment-portfolio.css';
       <div class="wf-flow">
         <div class="wf-stage">
           <div class="wf-st-h"><span class="wf-st-no">01</span>Discuss</div>
-          <div class="wf-act main">인터뷰 · 설계 문서</div>
-          <div class="wf-act judge">Reviewer<span class="wf-cond"> + Domain Expert</span> 판정<span class="wf-loop">↺ revise 최대 2회</span></div>
-          <div class="wf-detail">문제·범위를 정의하고 설계 문서를 작성한다. 결정마다 근거와 기각한 대안을 함께 기록.</div>
+          <div class="wf-act main">요구 구체화 · 사전 브리핑 → 설계 문서 → 합의 브리핑</div>
+          <div class="wf-act gate">개발자 확인 · 사전 브리핑으로 방향 합의</div>
+          <div class="wf-act judge">risk-reviewer 사전 점검<span class="wf-cond"> · 핵심 경로 변경일 때</span><span class="wf-loop">↺ 최대 2회</span></div>
+          <div class="wf-detail">코드로 확인할 수 있는 것은 먼저 확인하고, 동작·범위·외부 계약이 걸린 결정만 묻는다. 결정마다 근거와 기각한 대안을 함께 기록.</div>
         </div>
         <div class="wf-gate">개발자<br>확인</div>
         <div class="wf-stage">
           <div class="wf-st-h"><span class="wf-st-no">02</span>Plan</div>
-          <div class="wf-act main">태스크 분해 · PLAN</div>
-          <div class="wf-act judge">Reviewer 판정<span class="wf-loop">↺ revise 최대 2회</span></div>
-          <div class="wf-detail">설계를 TDD 태스크로 분해. 한 태스크 = 한 커밋, 모든 결정이 태스크에 매핑된다.</div>
+          <div class="wf-act main">태스크 분해 · 완료 기준과 검증 명령</div>
+          <div class="wf-detail">요구사항·결정·장애 시나리오가 모두 어떤 태스크의 완료 기준에 걸리는지 직접 점검한다. 따로 맡길 수 있는 묶음은 implementer 후보로 표시.</div>
         </div>
-        <div class="wf-gate">개발자<br>확인</div>
+        <div class="wf-gate pass" aria-hidden="true">→</div>
         <div class="wf-stage">
           <div class="wf-st-h"><span class="wf-st-no">03</span>Execute</div>
-          <div class="wf-act judge">Implementer · TDD 구현<span class="wf-loop">↺ 태스크마다 1회</span></div>
-          <div class="wf-act main">메인은 오케스트레이션</div>
-          <div class="wf-detail">태스크당 Implementer 1회. 실패 테스트(RED) → 구현(GREEN) → 정리(REFACTOR).</div>
+          <div class="wf-act main">태스크 단위 TDD 구현 · 태스크마다 커밋</div>
+          <div class="wf-act judge">implementer<span class="wf-cond"> · 분리 가능한 묶음만 위임</span></div>
+          <div class="wf-detail">실패 테스트를 먼저 쓰고 기대한 이유로 실패하는지 확인한 뒤 구현한다. 위임한 결과도 메인이 diff와 검증 결과를 직접 확인.</div>
         </div>
-        <div class="wf-gate">개발자<br>확인</div>
+        <div class="wf-gate pass" aria-hidden="true">→</div>
         <div class="wf-stage">
           <div class="wf-st-h"><span class="wf-st-no">04</span>Ship</div>
-          <div class="wf-act judge">Reviewer 교차 리뷰<span class="wf-loop">↺ 재리뷰 최대 1회</span></div>
-          <div class="wf-act main">메인 검증 · PR 생성</div>
-          <div class="wf-detail">전체 diff 교차 리뷰 → 변경 설명 페이지 자동 생성 → 테스트·린트 검증 → PR.</div>
+          <div class="wf-act judge">reviewer · risk-reviewer 병렬 리뷰<span class="wf-loop">↺ 수정분 재검토 1회</span></div>
+          <div class="wf-act gate">개발자 확인 · 지적별 수정 여부</div>
+          <div class="wf-act main">전체 검증 · 문서 동기화 · 완료 요약</div>
+          <div class="wf-detail">두 검토자는 같은 diff를 받고 서로의 결론을 보지 않는다. 띄운 애플리케이션에서 판정 시나리오를 실행하고, HTML 변경 설명은 원할 때만 만든다.</div>
         </div>
       </div>
-      <p class="wf-flow-note"><b>생성자 ≠ 판정자.</b> 메인이 만든 산출물을 메인이 판정하지 않도록 리뷰·구현만 서브에이전트로 격리했다. 각 단계는 개발자 확인을 거쳐야 다음으로 넘어가고, 모든 루프에는 반복 상한이 있다.</p>
+      <p class="wf-flow-note"><b>생성자 ≠ 판정자.</b> 메인이 만든 코드를 메인이 판정하지 않도록 리뷰는 서브에이전트에 맡기고, 두 검토자의 결론을 서로 섞지 않는다. 개발자는 세 지점에서만 멈춰 승인하고, 루프마다 반복 상한을 둔다.</p>
     </div>
     <div class="wf-guard reveal">
       <div class="wf-guard-h">규칙 강제 · 자동 검사</div>
@@ -859,7 +860,7 @@ import '../../styles/payment-portfolio.css';
         <div class="wf-guard-cell">
           <span class="wf-guard-when">CI</span>
           <span class="wf-guard-what">서비스별 전체 재검사</span>
-          <span class="wf-guard-effect">실패 시 머지 불가</span>
+          <span class="wf-guard-effect">실패 시 PR에 표시</span>
         </div>
       </div>
       <p class="wf-flow-note"><b>같은 실수가 반복되면 지침이 아니라 검사를 추가한다.</b> AI에게 '이렇게 하지 마라'를 한 줄 더 적어 두는 것으로는 다음 작업에서 또 같은 실수가 나온다.</p>
@@ -876,10 +877,10 @@ import '../../styles/payment-portfolio.css';
   <section class="blk" id="alerting">
     <div class="sec-head reveal">
       <h2>관측과 알람</h2>
-      <p>단순 지표 수집을 넘어 4개 영역에 걸친 10개의 핵심 경보 규칙을 도입했다.<br>25종의 회귀 테스트와 인위적 장애 주입으로 예외 징후 감지 능력을 검증했다.</p>
+      <p>단순 지표 수집을 넘어 4개 영역에 걸친 11개의 핵심 경보 규칙을 도입했다.<br>경보 규칙 테스트 39건과 인위적 장애 주입으로 예외 징후 감지 능력을 검증했다.</p>
     </div>
     <details class="card fold reveal">
-      <summary>4개 영역 · 10개 핵심 경보 규칙<span class="fold-cue">펼치기</span></summary>
+      <summary>4개 영역 · 11개 핵심 경보 규칙<span class="fold-cue">펼치기</span></summary>
       <div class="dtable-wrap">
         <table class="dtable" id="alerts-table">
           <thead><tr><th>경보 그룹</th><th>알람 명칭</th><th>장애 징후 및 영향</th><th>트리거 조건</th></tr></thead>
@@ -907,7 +908,7 @@ import '../../styles/payment-portfolio.css';
       <div class="sub-label" style="margin-top: 26px;">회고</div>
       <div class="retro">
         <div class="retro-item"><b>분산 환경에서의 데이터 정합성과 운영 비용</b><span>DB와 Kafka 간의 분산 트랜잭션을 처리하기 위해 멱등성 처리와 보상 로직을 직접 구현했다.<br>자연스럽게 Outbox 패턴을 도입하게 되었고, 이를 정리하는 워커까지 구성하며 분산 환경에서 정합성을 지키기 위해 필요한 실질적인 운영 비용을 체감했다.</span></div>
-        <div class="retro-item"><b>비동기 처리와 리소스 관리의 중요성</b><span>비동기 도입이 단건의 응답 속도보다는 시스템의 전체적인 처리량과 안정성에 기여한다는 점을 확인했다.<br>무제한적인 비동기 스레드 생성으로 커넥션 풀 고갈을 겪은 후, 동시성 상한(ConcurrencyThrottle)을 설정하고 워커를 통한 큐잉 방식으로 개선하여 안정적인 부하 처리 구조를 구축했다.</span></div>
+        <div class="retro-item"><b>비동기 처리와 리소스 관리의 중요성</b><span>비동기 도입이 단건의 응답 속도보다는 시스템의 전체적인 처리량과 안정성에 기여한다는 점을 확인했다.<br>무제한적인 비동기 스레드 생성으로 커넥션 풀 고갈을 겪었고, 동시성 상한(ConcurrencyThrottle)으로는 호출 스레드가 대기에 묶여 해결되지 않았다. 결국 논블로킹 큐와 워커 방식으로 개선하여 안정적인 부하 처리 구조를 구축했다.</span></div>
         <div class="retro-item"><b>실행 컨텍스트 유실 문제 해결과 로깅</b><span>가상 스레드와 비동기 워커를 넘나드는 과정에서 Trace ID가 유실되는 문제를 겪었다.<br>디버깅이 끊기는 구간을 하나씩 식별하고 실행 컨텍스트(Context)가 명시적으로 전파되도록 개선하여, 전체 결제 흐름을 누락 없이 추적할 수 있는 환경을 마련했다.</span></div>
       </div>
     </div>
