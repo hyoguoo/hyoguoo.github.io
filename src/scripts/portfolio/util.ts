@@ -1,10 +1,51 @@
-// @ts-nocheck
-// payment-platform 포트폴리오 · 공용 렌더 헬퍼 (이스케이프·SVG 빌더·색 토큰). 이식된 vanilla JS.
-export const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-export function esc(s){return String(s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];});}
-export function escBr(s){return esc(s).replace(/\n/g,"<br>");}  /* 줄바꿈(\n)만 <br>로 · 불렛 산문용 */
-export function chips(a){return (a||[]).map(function(c){return '<span class="chip">'+esc(c)+"</span>";}).join("");}
-const SVGNS="http://www.w3.org/2000/svg";
-export function sv(t,a){var e=document.createElementNS(SVGNS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
-export const CV={ready:"--st-ready",inprog:"--st-inprog",done:"--st-done",failed:"--st-failed",quar:"--st-quar",expired:"--st-expired",recover:"--st-recover",
-          payment:"--svc-payment",pg:"--svc-pg",product:"--svc-product",user:"--svc-user",infra:"--svc-infra"};
+// Browser-only SVG and HTML helpers. No collection/build-time module imports this file.
+export const reduce = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
+export function esc(value: unknown): string {
+  const entities: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  return String(value).replace(/[&<>"']/g, (char) => entities[char]);
+}
+export function escBr(value: unknown): string {
+  return esc(value).replace(/\n/g, "<br>");
+}
+export function chips(values?: string[]): string {
+  return (values ?? [])
+    .map((value) => `<span class="chip">${esc(value)}</span>`)
+    .join("");
+}
+export function sv<K extends keyof SVGElementTagNameMap>(
+  tag: K,
+  attrs: Record<string, string | number>,
+): SVGElementTagNameMap[K] {
+  const element = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  Object.entries(attrs).forEach(([key, value]) =>
+    element.setAttribute(key, String(value)),
+  );
+  return element;
+}
+export function requiredElement(id: string): HTMLElement {
+  const element = document.getElementById(id);
+  if (!element) throw new Error(`Missing portfolio element: #${id}`);
+  return element;
+}
+export const CV: Record<string, string> = {
+  ready: "--st-ready",
+  inprog: "--st-inprog",
+  done: "--st-done",
+  failed: "--st-failed",
+  quar: "--st-quar",
+  expired: "--st-expired",
+  recover: "--st-recover",
+  payment: "--svc-payment",
+  pg: "--svc-pg",
+  product: "--svc-product",
+  user: "--svc-user",
+  infra: "--svc-infra",
+};

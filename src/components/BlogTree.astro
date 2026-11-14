@@ -1,4 +1,6 @@
 ---
+import { groupBlogPosts } from '../lib/blog';
+import { formatDate } from '../lib/content';
 import { getCollection } from 'astro:content';
 import TreeSection from './TreeSection.astro';
 import { CATEGORY_ORDER, getHue } from '../data/tagColors';
@@ -7,45 +9,8 @@ const allPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
 });
 
-type PostItem = { id: string; title: string; url: string; date: Date };
+const sortedCategories = groupBlogPosts(allPosts, CATEGORY_ORDER);
 
-const categories = new Map<string, PostItem[]>();
-
-for (const post of allPosts) {
-  const tags = post.data.tags as string[] | undefined;
-  const category = tags?.[0] ?? '기타';
-
-  if (!categories.has(category)) {
-    categories.set(category, []);
-  }
-
-  // Keep the list ordered by its displayed date: the original publication date.
-  const date = post.data.date ?? new Date(0);
-
-  categories.get(category)!.push({
-    id: post.id,
-    title: post.data.title,
-    url: `/${post.id}/`,
-    date,
-  });
-}
-
-for (const posts of categories.values()) {
-  posts.sort((a, b) => b.date.getTime() - a.date.getTime());
-}
-
-const sortedCategories = [...categories.entries()].sort(([a], [b]) => {
-  const ai = CATEGORY_ORDER.indexOf(a);
-  const bi = CATEGORY_ORDER.indexOf(b);
-  if (ai !== -1 && bi !== -1) return ai - bi;
-  if (ai !== -1) return -1;
-  if (bi !== -1) return 1;
-  return a.localeCompare(b);
-});
-
-function formatDate(date: Date) {
-  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-}
 ---
 
 <div class="blog-tree">
@@ -151,10 +116,4 @@ function formatDate(date: Date) {
     font-size: 0.9rem;
   }
 
-<section class="authors">
-  <h3>Authors</h3>
-  <ul>
-    <li><a href="/blog/authors/hyoguoo/">hyoguoo</a></li>
-  </ul>
-</section>
 </style>

@@ -1,7 +1,13 @@
+interface Scenario {
+  name: string; grp?: string; impact?: string;
+  outcome: { color: string; status: string; props: string[] };
+  hops: { edge: string; kind: string; label: string; state?: string;
+    why?: { tag: string; text: string; src?: string; dref?: number } }[];
+}
 // payment-platform 포트폴리오 데이터 · 콘텐츠/지오메트리. 렌더 로직과 분리(유지보수·편집 격리).
 // 정본 페이지: src/pages/payment-platform-portfolio/index.astro
 
-export const SCN_NODES = {
+export const SCN_NODES: Record<string, { x: number; y: number; w: number; h: number; t: string; s: string }> = {
     browser:{x:40,y:54,w:120,h:44,t:"브라우저",s:"CLIENT"},
     payment:{x:250,y:54,w:150,h:48,t:"payment",s:"ORCHESTRATOR"},
     pg:{x:470,y:54,w:130,h:48,t:"pg",s:"VENDOR GUARD"},
@@ -12,7 +18,7 @@ export const SCN_NODES = {
     admin:{x:690,y:200,w:130,h:44,t:"admin",s:"관리자 복구"}
   };
 
-export const SCN_EDGES = {
+export const SCN_EDGES: Record<string, string> = {
     "browser>payment":"M160,76 L250,78",
     "payment>pg":"M400,70 L470,70",
     "pg>payment":"M470,90 L400,90",
@@ -28,7 +34,7 @@ export const SCN_EDGES = {
     "admin>payment":"M690,214 Q470,300 360,100"
   };
 
-export const SCENARIOS = [
+export const SCENARIOS: Scenario[] = [
     {name:"정상 결제",grp:"정상 · 재시도",outcome:{status:"DONE",color:"done",props:["재고 확정 멱등 흡수","EOS 원자 커밋"]},hops:[
       {edge:"browser>payment",kind:"normal",label:"checkout · confirm",state:"READY → IN_PROGRESS"},
       {edge:"payment>redis",kind:"normal",label:"재고 선차감 (Lua atomic)"},

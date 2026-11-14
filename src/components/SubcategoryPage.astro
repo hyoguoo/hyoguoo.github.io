@@ -1,4 +1,5 @@
 ---
+import { groupDocs } from '../lib/docs';
 import { getCollection } from 'astro:content';
 import { docsSections } from '../data/docsSections';
 import LinkList from './LinkList.astro';
@@ -9,61 +10,20 @@ interface Props {
 
 const { subcategory } = Astro.props;
 
-const allDocs = await getCollection('docs', ({ id }) => {
+const allDocs = await getCollection('docs', ({ id, data }) => {
   const parts = id.split('/');
   const last = parts[parts.length - 1];
   // 직접 자식 depth만 포함 (docs/<subcategory>/<slug>)
   // 더 깊은 경로(예: docs/java/effective-java/item1)는 제외
   return (
-    id.startsWith(`docs/${subcategory}/`) &&
+    !data.draft && id.startsWith(`docs/${subcategory}/`) &&
     parts.length === 3 &&
     !['index', 'index.md', 'index.mdx'].includes(last)
   );
 });
 
-// Map slug → doc
-const docBySlug = new Map(
-  allDocs.map(doc => {
-    const slug = doc.id.replace(`docs/${subcategory}/`, '');
-    return [slug, { title: doc.data.title, url: `/${doc.id}/` }];
-  })
-);
+const grouped = groupDocs(allDocs, subcategory, docsSections[subcategory]);
 
-const sections = docsSections[subcategory];
-
-type DocItem = { title: string; url: string };
-
-let grouped: { label: string; docs: DocItem[] }[];
-
-if (sections) {
-  const accountedSlugs = new Set<string>();
-
-  grouped = sections
-    .map(section => {
-      const docs = section.slugs
-        .filter(slug => docBySlug.has(slug))
-        .map(slug => {
-          accountedSlugs.add(slug);
-          return docBySlug.get(slug)!;
-        });
-      return { label: section.label, docs };
-    })
-    .filter(s => s.docs.length > 0);
-
-  // Docs not in any section config → append as 기타
-  const uncategorized = [...docBySlug.entries()]
-    .filter(([slug]) => !accountedSlugs.has(slug))
-    .map(([, doc]) => doc)
-    .sort((a, b) => a.title.localeCompare(b.title));
-
-  if (uncategorized.length > 0) {
-    grouped.push({ label: '기타', docs: uncategorized });
-  }
-} else {
-  // No section config: flat list sorted alphabetically
-  const docs = [...docBySlug.values()].sort((a, b) => a.title.localeCompare(b.title));
-  grouped = [{ label: '', docs }];
-}
 ---
 
 <div class="subcategory-page">

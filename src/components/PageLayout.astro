@@ -1,5 +1,7 @@
 ---
 import '../styles/pages.css';
+import ThemeProvider from './ThemeProvider.astro';
+import Analytics from './Analytics.astro';
 
 interface Props {
   title: string;
@@ -16,11 +18,11 @@ const {
   title,
   description,
   activePage,
-  canonical,
-  ogTitle,
-  ogDescription,
-  ogUrl,
-  sitemap = false,
+  canonical = new URL(Astro.url.pathname, Astro.site).href,
+  ogTitle = title,
+  ogDescription = description,
+  ogUrl = canonical,
+  sitemap = true,
 } = Astro.props;
 ---
 
@@ -36,14 +38,7 @@ const {
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" />
   {canonical && <link rel="canonical" href={canonical} />}
   {sitemap && <link rel="sitemap" href="/sitemap-index.xml" />}
-  <script>
-    (function() {
-      var stored = localStorage.getItem('starlight-theme');
-      var theme = stored === 'dark' || stored === 'light' ? stored
-        : window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', theme);
-    })();
-  </script>
+  <ThemeProvider />
   {ogTitle && <meta property="og:title" content={ogTitle} />}
   {ogDescription && <meta property="og:description" content={ogDescription} />}
   {ogUrl && <meta property="og:url" content={ogUrl} />}
@@ -55,19 +50,7 @@ const {
   {ogTitle && <meta name="twitter:title" content={ogTitle} />}
   {ogDescription && <meta name="twitter:description" content={ogDescription} />}
   {ogTitle && <meta name="twitter:image" content="https://hyoguoo.github.io/og.png" />}
-  <script is:inline>
-    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8';
-      document.head.appendChild(script);
-
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-KBCBB0D7H8');
-    }
-  </script>
+  <Analytics />
   <style is:global>
     *, *::before, *::after { box-sizing: border-box; }
 
@@ -347,38 +330,8 @@ const {
 </footer>
 
 <script>
-  (function() {
-    var sel = document.getElementById('theme-select');
-    if (!sel) return;
-
-    function parseTheme(v) {
-      return v === 'dark' || v === 'light' ? v : 'auto';
-    }
-    function loadTheme() {
-      return parseTheme(localStorage.getItem('starlight-theme'));
-    }
-    function storeTheme(t) {
-      localStorage.setItem('starlight-theme', t === 'dark' || t === 'light' ? t : '');
-    }
-    function applyTheme(t) {
-      var resolved = t === 'auto'
-        ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark')
-        : t;
-      document.documentElement.setAttribute('data-theme', resolved);
-    }
-
-    sel.value = loadTheme();
-
-    sel.addEventListener('change', function() {
-      var t = parseTheme(sel.value);
-      storeTheme(t);
-      applyTheme(t);
-    });
-
-    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', function() {
-      if (loadTheme() === 'auto') applyTheme('auto');
-    });
-  })();
+  import { initializeTheme } from '../scripts/theme';
+  initializeTheme();
 
   /* Scroll-triggered fade-in observer */
   (function() {

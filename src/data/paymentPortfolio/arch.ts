@@ -1,7 +1,7 @@
 // payment-platform 포트폴리오 데이터 · 콘텐츠/지오메트리. 렌더 로직과 분리(유지보수·편집 격리).
 // 정본 페이지: src/pages/payment-platform-portfolio/index.astro
 
-export const ARCH_NODES = {
+export const ARCH_NODES: Record<string, { x: number; y: number; w: number; h: number; t: string; s: string; color: string; role: string; store: string; chan: string }> = {
     browser:{x:90,y:60,w:120,h:40,t:"브라우저",s:"CLIENT",color:"infra",role:"결제 요청 시작 (checkout / confirm) + 상태 폴링",store:"-",chan:"HTTP → gateway"},
     gateway:{x:90,y:170,w:120,h:40,t:"gateway",s:"ROUTER",color:"infra",role:"Spring Cloud Gateway · 라우팅 진입점",store:"-",chan:"→ payment · product · user"},
     eureka:{x:620,y:302,w:120,h:40,t:"eureka",s:"DISCOVERY",color:"infra",role:"서비스 디스커버리 · 전 서비스 등록/조회",store:"-",chan:"모든 서비스 discovery"},

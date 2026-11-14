@@ -1,0 +1,102 @@
+[
+  {
+    "title": "서로 다른 주문의 UPDATE가 충돌한 이유 — MySQL Index Merge 데드락",
+    "link": "https://hyoguoo.github.io/blog/pg-inbox-index-merge-deadlock/",
+    "pubDate": "Mon, 05 Oct 2026 00:00:00 GMT"
+  },
+  {
+    "title": "결제 복구 상태 분리 — 부하 구간에서 안전장치가 만든 처리 정지 해소",
+    "link": "https://hyoguoo.github.io/blog/payment-recovery-awaiting-result/",
+    "pubDate": "Sun, 06 Sep 2026 00:00:00 GMT"
+  },
+  {
+    "title": "재고 선차감 캐시 분해 — Redis 샤딩을 전제로 원자성 경계 조정",
+    "link": "https://hyoguoo.github.io/blog/stock-gate-per-product/",
+    "pubDate": "Sat, 22 Aug 2026 00:00:00 GMT"
+  },
+  {
+    "title": "결제 시스템 MSA 전환기 — 분산 환경의 제약조건과 아키텍처 의사결정",
+    "link": "https://hyoguoo.github.io/blog/msa-transition-decisions/",
+    "pubDate": "Sun, 09 Aug 2026 00:00:00 GMT"
+  },
+  {
+    "title": "결제 복구 상태 모델 설계 — 장애 내성을 갖춘 상태 전이",
+    "link": "https://hyoguoo.github.io/blog/payment-recovery-state-design/",
+    "pubDate": "Fri, 10 Apr 2026 00:00:00 GMT"
+  },
+  {
+    "title": "비동기 결제 처리 플로우 구현 — Outbox 패턴부터 LinkedBlockingQueue Worker까지",
+    "link": "https://hyoguoo.github.io/blog/async-payment-flow/",
+    "pubDate": "Tue, 31 Mar 2026 00:00:00 GMT"
+  },
+  {
+    "title": "Checkout API 멱등성 보장 — Caffeine 캐시와 TOCTOU 경쟁 조건 해결",
+    "link": "https://hyoguoo.github.io/blog/checkout-idempotency/",
+    "pubDate": "Wed, 25 Mar 2026 00:00:00 GMT"
+  },
+  {
+    "title": "AI 코드 생성의 통제 — 서브에이전트 기반 4단계 워크플로우",
+    "link": "https://hyoguoo.github.io/blog/ai-backend-development-workflow/",
+    "pubDate": "Tue, 03 Mar 2026 00:00:00 GMT"
+  },
+  {
+    "title": "전략 패턴을 통한 결제 게이트웨이 추상화 및 확장성 확보",
+    "link": "https://hyoguoo.github.io/blog/payment-gateway-strategy-pattern/",
+    "pubDate": "Sat, 22 Nov 2025 00:00:00 GMT"
+  },
+  {
+    "title": "보상 트랜잭션 실패 상황 극복 가능한 결제 플로우 설계",
+    "link": "https://hyoguoo.github.io/blog/payment-compensation-transaction/",
+    "pubDate": "Sun, 02 Nov 2025 00:00:00 GMT"
+  },
+  {
+    "title": "결제 이력 추적 및 핵심 지표 모니터링 시스템 구현",
+    "link": "https://hyoguoo.github.io/blog/payment-history-and-metrics/",
+    "pubDate": "Mon, 22 Sep 2025 00:00:00 GMT"
+  },
+  {
+    "title": "System.out.println()의 동작 원리와 로깅 프레임워크",
+    "link": "https://hyoguoo.github.io/blog/java-print-performance/",
+    "pubDate": "Tue, 05 Aug 2025 00:00:00 GMT"
+  },
+  {
+    "title": "Logger 성능 저하 방지와 구조화된 로깅 설계",
+    "link": "https://hyoguoo.github.io/blog/log-structure-and-performance/",
+    "pubDate": "Sun, 03 Aug 2025 00:00:00 GMT"
+  },
+  {
+    "title": "결제 상태 전환 관리와 재시도 로직을 통한 결제 복구 시스템 구축",
+    "link": "https://hyoguoo.github.io/blog/payment-status-with-retry/",
+    "pubDate": "Mon, 14 Oct 2024 00:00:00 GMT"
+  },
+  {
+    "title": "외부 의존성 제어를 통한 결제 프로세스 다양한 시나리오 검증",
+    "link": "https://hyoguoo.github.io/blog/payment-system-test/",
+    "pubDate": "Tue, 01 Oct 2024 00:00:00 GMT"
+  },
+  {
+    "title": "MySQL COUNT() 함수의 동작 원리와 성능",
+    "link": "https://hyoguoo.github.io/blog/how-count-query-work/",
+    "pubDate": "Mon, 03 Jun 2024 00:00:00 GMT"
+  },
+  {
+    "title": "트랜잭션 범위 최소화를 통한 성능 및 안정성 향상",
+    "link": "https://hyoguoo.github.io/blog/minimize-transaction-scope/",
+    "pubDate": "Fri, 23 Feb 2024 00:00:00 GMT"
+  },
+  {
+    "title": "멀티 스레드 테스트에서 발생하는 @Transactional가 주는 문제",
+    "link": "https://hyoguoo.github.io/blog/multi-thread-test/",
+    "pubDate": "Sun, 07 Jan 2024 00:00:00 GMT"
+  },
+  {
+    "title": "`@Transactional`을 통한 선언적 트랜잭션 관리 방식에서 Self Invocation 문제가 발생하는 이유",
+    "link": "https://hyoguoo.github.io/blog/transactional-self-invocation/",
+    "pubDate": "Mon, 11 Dec 2023 00:00:00 GMT"
+  },
+  {
+    "title": "Spring Data JPA Cursor 기반 페이징 성능 개선기",
+    "link": "https://hyoguoo.github.io/blog/cursor-based-paging-in-spring-data-jpa/",
+    "pubDate": "Fri, 01 Dec 2023 00:00:00 GMT"
+  }
+]

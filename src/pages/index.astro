@@ -2,44 +2,30 @@
 import { getCollection } from 'astro:content';
 import PageLayout from '../components/PageLayout.astro';
 import { getHue } from '../data/tagColors';
+import { contentDate, newestFirst, formatDate, isDocsArticle } from '../lib/content';
 
 const allBlogPosts = await getCollection('docs', ({ id, data }) => {
   return id.startsWith('blog/') && !data.draft;
 });
 
 const allDocs = await getCollection('docs', ({ id, data }) => {
-  return id.startsWith('docs/') && id.split('/').length >= 3 && !data.draft;
+  return isDocsArticle(id) && !data.draft;
 });
 
 const latestBlogPosts = allBlogPosts
 .filter(p => p.data.date)
-.sort((a, b) => {
-  const aDate = new Date(a.data.lastUpdated ?? a.data.date ?? 0);
-  const bDate = new Date(b.data.lastUpdated ?? b.data.date ?? 0);
-  return bDate.getTime() - aDate.getTime();
-})
+.sort(newestFirst)
 .slice(0, 6);
 
 const DOCS_PAGE_SIZE = 12;
 const DOCS_MAX = 48;
 
 const latestDocs = allDocs
-.filter(d => d.data.lastUpdated)
-.sort((a, b) => {
-  const aDate = new Date(a.data.lastUpdated ?? 0);
-  const bDate = new Date(b.data.lastUpdated ?? 0);
-  return bDate.getTime() - aDate.getTime();
-})
+.filter(d => contentDate(d.data.lastUpdated))
+.sort(newestFirst)
 .slice(0, DOCS_MAX);
 
-function formatDate(date: Date | string | undefined) {
-  if (!date) return '';
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
+
 ---
 
 <PageLayout

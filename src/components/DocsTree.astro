@@ -1,4 +1,5 @@
 ---
+import { isDocsArticle } from '../lib/content';
 import { getCollection } from 'astro:content';
 import TreeSection from './TreeSection.astro';
 import LinkList from './LinkList.astro';
@@ -8,10 +9,7 @@ import { getHue } from '../data/tagColors';
 // docsLoader id format: 'docs/subcategory/slug' for docs, 'docs/subcategory' for index pages
 
 // Subcategories that have at least one doc (= migrated)
-const allDocs = await getCollection('docs', ({ id }) => {
-  const parts = id.split('/');
-  return parts[0] === 'docs' && parts.length >= 3;
-});
+const allDocs = await getCollection('docs', ({ id, data }) => isDocsArticle(id) && !data.draft);
 
 const migratedSubcategories = new Set(
   allDocs.map(doc => doc.id.split('/')[1])

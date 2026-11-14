@@ -50,7 +50,7 @@ li:has(a[href$="rss.xml"]) {
 }
 
 /* Hide duplicate blog metadata in content area (rendered in title area via PageTitle override) */
-.sl-markdown-content > .metadata {
+.sl-markdown-content > .sl-blog-metadata {
   display: none !important;
 }
 
@@ -86,15 +86,15 @@ li:has(a[href$="rss.xml"]) {
 }
 
 /* Blog post: hide plugin's own prev/next navigation */
-.post-footer .pagination {
+.sl-blog-post-footer .sl-blog-pagination {
   display: none;
 }
 
 /* Blog listing: show only first paragraph, truncated to 2 lines */
-.posts article.preview .sl-markdown-content > * {
+.sl-blog-posts .sl-blog-preview .sl-markdown-content > * {
   display: none;
 }
-.posts article.preview .sl-markdown-content > p:first-child {
+.sl-blog-posts .sl-blog-preview .sl-markdown-content > p:first-child {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -102,4 +102,29 @@ li:has(a[href$="rss.xml"]) {
   color: var(--sl-color-gray-3);
   font-size: var(--sl-text-sm);
   margin: 0;
+}
+
+/* Preserve the custom blog index while the plugin owns pagination routes. */
+[data-blog-index] .content-panel:first-of-type { display: block; }
+[data-blog-index] .content-panel:nth-of-type(2) { border-top: 1px solid var(--sl-color-hairline-light); }
+
+/* Starlight 0.39+ reserves a wider TOC. Retain the site's existing desktop proportions. */
+@media (min-width: 72rem) {
+  [data-has-sidebar][data-has-toc] .main-pane {
+    width: calc(var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2);
+  }
+  .right-sidebar-container {
+    width: calc(var(--sl-sidebar-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2);
+  }
+}
+
+/* The native paginated route hides its TOC; the custom index retains its overview. */
+@media (min-width: 72rem) {
+  [data-blog-index][data-has-toc] .right-sidebar-panel { display: block; }
+}
+[data-blog-index][data-has-toc] mobile-starlight-toc { display: block; }
+@media (max-width: 71.999rem) {
+  [data-blog-index][data-has-toc] .main-frame {
+    padding-top: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height));
+  }
 }

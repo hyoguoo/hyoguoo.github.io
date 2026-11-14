@@ -1,57 +1,34 @@
 // @ts-check
-import fs from 'node:fs';
-import path from 'node:path';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 import starlightBlog from 'starlight-blog';
+import { blogIndexPlugin } from './src/build/blog-index-plugin.ts';
+import { BLOG_CONFIG } from './src/data/blogConfig.ts';
+import { buildLastModMap } from './src/build/sitemap.mjs';
 
-const CONTENT_ROOT = './src/content/docs';
-
-function buildLastModMap() {
-	const map = new Map();
-	const walk = (dir, urlBase) => {
-		for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-			const full = path.join(dir, entry.name);
-			if (entry.isDirectory()) {
-				walk(full, urlBase + '/' + entry.name);
-				continue;
-			}
-			if (!/\.mdx?$/.test(entry.name)) continue;
-
-			const raw = fs.readFileSync(full, 'utf-8');
-			const fmMatch = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-			if (!fmMatch) continue;
-			const lu = fmMatch[1].match(/^lastUpdated:\s*(.+)$/m);
-			if (!lu) continue;
-			const dateStr = lu[1].trim().replace(/^['"]|['"]$/g, '');
-			const date = new Date(dateStr);
-			if (isNaN(date.getTime())) continue;
-
-			const stem = entry.name.replace(/\.mdx?$/, '');
-			const pathname = stem === 'index' ? urlBase + '/' : urlBase + '/' + stem + '/';
-			map.set(pathname || '/', date.toISOString());
-		}
-	};
-	walk(CONTENT_ROOT, '');
-	return map;
-}
-
-const lastModMap = buildLastModMap();
+const lastModMap = buildLastModMap(new URL('./src/content/docs/', import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
+	output: 'static',
+	redirects: {
+		'/docs/java/object-class/string-class': '/docs/java/string-class/#string-클래스의-equals',
+		'/docs/java/variable/wrapper-class': '/docs/java/wrapper-class/',
+		'/docs/java/effective-java/item33/item28': '/docs/java/effective-java/item28/',
+	},
+	trailingSlash: 'always',
 	site: 'https://hyoguoo.github.io',
 	server: {
 		port: 4322,
 		host: true,
 	},
-	preview: {
-		port: 4322,
-	},
 	integrations: [
 		starlight({
+			disable404Route: true, // Local 404 page keeps GitHub Pages output without a duplicate route.
 			title: "hyoguoo.log",
+			routeMiddleware: './src/routeMiddleware.ts',
+			expressiveCode: { shiki: { langAlias: { gradle: 'groovy', redis: 'shellsession' } } },
 			description: 'Backend Engineer, Java & Spring',
 			defaultLocale: 'root',
 			locales: {
@@ -73,22 +50,6 @@ export default defineConfig({
 					},
 				},
 				{
-					tag: 'script',
-					content: `
-						if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-							const script = document.createElement('script');
-							script.async = true;
-							script.src = 'https://www.googletagmanager.com/gtag/js?id=G-KBCBB0D7H8';
-							document.head.appendChild(script);
-
-							window.dataLayer = window.dataLayer || [];
-							function gtag(){dataLayer.push(arguments);}
-							gtag('js', new Date());
-							gtag('config', 'G-KBCBB0D7H8');
-						}
-					`,
-				},
-				{
 					tag: 'meta',
 					attrs: { property: 'og:image', content: 'https://hyoguoo.github.io/og.png' },
 				},
@@ -100,170 +61,102 @@ export default defineConfig({
 					tag: 'meta',
 					attrs: { name: 'twitter:image', content: 'https://hyoguoo.github.io/og.png' },
 				},
-				{
-					// Synchronous: detect blog pages and remove sidebar data attribute before render
-					tag: 'script',
-					content: `(function(){if(window.location.pathname.startsWith('/blog')){document.documentElement.setAttribute('data-no-sidebar','');document.documentElement.removeAttribute('data-has-sidebar');}})();`,
-				},
-				{
-					tag: 'script',
-					attrs: { type: 'module' },
-					content: [
-						`import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';`,
-						`const getTheme = () => document.documentElement.dataset.theme === 'light' ? 'default' : 'dark';`,
-						`mermaid.initialize({ startOnLoad: false, theme: getTheme() });`,
-						`async function renderMermaid() {`,
-						`  const blocks = document.querySelectorAll('pre[data-language="mermaid"] code');`,
-						`  for (const code of blocks) {`,
-						`    const ecLines = code.querySelectorAll('.ec-line');`,
-						`    const source = ecLines.length > 0`,
-						`      ? Array.from(ecLines).map(l => (l.textContent || '').replace(/\\n$/, '')).join('\\n').trim()`,
-						`      : (code.textContent || '').trim();`,
-						`    if (!source) continue;`,
-						`    const wrapper = document.createElement('div');`,
-						`    wrapper.className = 'mermaid-diagram not-content';`,
-						`    wrapper.dataset.mermaidSource = source;`,
-						`    wrapper.style.cssText = 'overflow-x:auto;padding:1rem;text-align:center;';`,
-						`    try {`,
-						`      const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).slice(2), source);`,
-						`      wrapper.innerHTML = svg;`,
-						`      const pre = code.closest('pre');`,
-						`      const expressive = pre && pre.closest('.expressive-code');`,
-						`      if (expressive) {`,
-						`        expressive.querySelectorAll('link[rel="stylesheet"], script[src]').forEach(el => document.head.appendChild(el));`,
-						`      }`,
-						`      (expressive || pre).replaceWith(wrapper);`,
-						`    } catch (e) { console.error('Mermaid render error:', e); }`,
-						`  }`,
-						`}`,
-						`async function reRenderMermaid() {`,
-						`  const wrappers = document.querySelectorAll('.mermaid-diagram');`,
-						`  for (const wrapper of wrappers) {`,
-						`    const source = wrapper.dataset.mermaidSource;`,
-						`    if (!source) continue;`,
-						`    try {`,
-						`      const { svg } = await mermaid.render('mermaid-' + Math.random().toString(36).slice(2), source);`,
-						`      wrapper.innerHTML = svg;`,
-						`    } catch (e) { console.error('Mermaid re-render error:', e); }`,
-						`  }`,
-						`}`,
-						`const observer = new MutationObserver((mutations) => {`,
-						`  for (const mutation of mutations) {`,
-						`    if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {`,
-						`      mermaid.initialize({ startOnLoad: false, theme: getTheme() });`,
-						`      reRenderMermaid();`,
-						`    }`,
-						`  }`,
-						`});`,
-						`observer.observe(document.documentElement, { attributes: true });`,
-						`renderMermaid();`,
-					].join('\n'),
-				},
 			],
 			plugins: [
-				starlightBlog({
-					title: 'Blog',
-					postCount: 5,
-					recentPostCount: 10,
-					navigation: 'none',
-					authors: {
-						hyoguoo: {
-							name: 'hyoguoo',
-							title: 'Backend Engineer',
-							url: 'https://github.com/hyoguoo',
-						},
-					},
-				}),
+				starlightBlog(BLOG_CONFIG),
+				blogIndexPlugin(),
 			],
 			sidebar: [
 				{
 					label: 'Computer Architecture',
 					collapsed: true,
-					autogenerate: { directory: 'docs/computer-architecture', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/computer-architecture', collapsed: true } }],
 				},
 				{
 					label: 'Operating System',
 					collapsed: true,
-					autogenerate: { directory: 'docs/operating-system', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/operating-system', collapsed: true } }],
 				},
 				{
 					label: 'Network',
 					collapsed: true,
-					autogenerate: { directory: 'docs/network', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/network', collapsed: true } }],
 				},
 				{
 					label: 'Secure',
 					collapsed: true,
-					autogenerate: { directory: 'docs/secure', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/secure', collapsed: true } }],
 				},
 				{
 					label: 'Java',
 					collapsed: true,
-					autogenerate: { directory: 'docs/java', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/java', collapsed: true } }],
 				},
 				{
 					label: 'Node.js',
 					collapsed: true,
-					autogenerate: { directory: 'docs/nodejs', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/nodejs', collapsed: true } }],
 				},
 				{
 					label: 'Spring',
 					collapsed: true,
-					autogenerate: { directory: 'docs/spring', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/spring', collapsed: true } }],
 				},
 				{
 					label: 'OOP',
 					collapsed: true,
-					autogenerate: { directory: 'docs/oop', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/oop', collapsed: true } }],
 				},
 				{
 					label: 'MySQL',
 					collapsed: true,
-					autogenerate: { directory: 'docs/mysql', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/mysql', collapsed: true } }],
 				},
 				{
 					label: 'Redis',
 					collapsed: true,
-					autogenerate: { directory: 'docs/redis', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/redis', collapsed: true } }],
 				},
 				{
 					label: 'Kafka',
 					collapsed: true,
-					autogenerate: { directory: 'docs/kafka', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/kafka', collapsed: true } }],
 				},
 				{
 					label: 'ELK',
 					collapsed: true,
-					autogenerate: { directory: 'docs/elk', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/elk', collapsed: true } }],
 				},
 				{
 					label: 'Docker',
 					collapsed: true,
-					autogenerate: { directory: 'docs/docker', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/docker', collapsed: true } }],
 				},
 				{
 					label: 'Large-Scale System',
 					collapsed: true,
-					autogenerate: { directory: 'docs/large-scale-system', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/large-scale-system', collapsed: true } }],
 				},
 				{
 					label: 'Test',
 					collapsed: true,
-					autogenerate: { directory: 'docs/test', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/test', collapsed: true } }],
 				},
 				{
 					label: 'AI-Assisted Development',
 					collapsed: true,
-					autogenerate: { directory: 'docs/ai-assisted-development', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/ai-assisted-development', collapsed: true } }],
 				},
 				{
 					label: 'Setting',
 					collapsed: true,
-					autogenerate: { directory: 'docs/setting', collapsed: true },
+					items: [{ autogenerate: { directory: 'docs/setting', collapsed: true } }],
 				},
 			],
 			components: {
 				Head: './src/components/Head.astro',
+				ThemeProvider: './src/components/ThemeProvider.astro',
+				ThemeSelect: './src/components/ThemeSelect.astro',
 				Footer: './src/components/Footer.astro',
 				Header: './src/components/Header.astro',
 				MobileMenuFooter: './src/components/MobileMenuFooter.astro',

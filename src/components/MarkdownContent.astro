@@ -1,0 +1,20 @@
+---
+import Default from '@astrojs/starlight/components/MarkdownContent.astro';
+import BlogContent from 'starlight-blog/components/MarkdownContent.astro';
+import { getCollection } from 'astro:content';
+import BlogTree from './BlogTree.astro';
+import { BLOG_CONFIG } from '../data/blogConfig';
+const isBlogPost = Astro.locals.starlightRoute.entry.id.startsWith('blog/') && Boolean(Astro.locals.starlightRoute.entry.data.date);
+const isBlogIndex = Astro.url.pathname === '/blog/';
+const pageCount = isBlogIndex
+  ? Math.ceil((await getCollection('docs', ({ id, data }) => id.startsWith('blog/') && !data.draft)).length / BLOG_CONFIG.postCount)
+  : 0;
+---
+{isBlogIndex ? (
+  <Default>
+    <BlogTree />
+    <nav class="pagination" aria-label="Blog pages">
+      {Array.from({ length: Math.max(0, pageCount - 1) }, (_, i) => i + 2).map(page => <a href={`/blog/${page}/`}>{page}</a>)}
+    </nav>
+  </Default>
+) : isBlogPost ? <BlogContent><slot /></BlogContent> : <Default><slot /></Default>}

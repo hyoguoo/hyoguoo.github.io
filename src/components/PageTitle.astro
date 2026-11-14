@@ -1,7 +1,8 @@
 ---
 import EntryMeta from './EntryMeta.astro';
 import BlogSeries from './BlogSeries.astro';
-import config from 'virtual:starlight-blog-config';
+import { BLOG_CONFIG as config } from '../data/blogConfig';
+import { titleHtml } from '../lib/metadata';
 import type { StarlightBlogAuthor } from 'starlight-blog/schema';
 
 const { entry } = Astro.locals.starlightRoute;
@@ -12,18 +13,20 @@ const isBlogPost = entry?.id?.startsWith('blog/') && !!entry?.data?.date;
 const isDocsPage = entry?.id?.startsWith('docs/');
 const showMeta = isBlogPost || isDocsPage;
 
+const configuredAuthors: Record<string, StarlightBlogAuthor> = config.authors;
+
 function resolveAuthors(entry: typeof Astro.locals.starlightRoute.entry): StarlightBlogAuthor[] {
   const rawAuthors = entry?.data?.authors;
   if (!rawAuthors) {
     return Object.values(config.authors);
   }
   if (typeof rawAuthors === 'string') {
-    const found = config.authors[rawAuthors];
+    const found = configuredAuthors[rawAuthors];
     return found ? [found] : [{ name: rawAuthors }];
   }
   if (Array.isArray(rawAuthors)) {
     return rawAuthors.map((a: string | StarlightBlogAuthor) =>
-      typeof a === 'string' ? (config.authors[a] ?? { name: a }) : a
+      typeof a === 'string' ? (configuredAuthors[a] ?? { name: a }) : a
     );
   }
   return [rawAuthors as StarlightBlogAuthor];
@@ -40,7 +43,7 @@ const authors: StarlightBlogAuthor[] = showMeta ? resolveAuthors(entry) : [];
 
 // Convert backtick-wrapped text to <code> for inline code in titles
 const rawTitle = entry?.data?.title ?? '';
-const titleHtml = rawTitle.replace(/`([^`]+)`/g, '<code>$1</code>');
+const renderedTitle = titleHtml(rawTitle);
 
 // Back to parent button
 const pathname = Astro.url.pathname;
@@ -64,7 +67,7 @@ const parentName = parentPath
     <a href={parentPath}><span aria-hidden="true">←</span> {parentName}</a>
   </div>
 )}
-<h1 id="_top" set:html={titleHtml} />
+<h1 id="_top" set:html={renderedTitle} />
 {showMeta && <EntryMeta {date} {lastUpdated} {authors} />}
 {isBlogPost && <BlogSeries currentId={entry?.id ?? ''} />}
 

@@ -8,13 +8,11 @@ interface Props {
 const { currentId } = Astro.props;
 
 // Find which series the current post belongs to
-let activeSeriesKey: SeriesKey | undefined;
 let activeSeries: typeof BLOG_SERIES[SeriesKey] | undefined;
 
 for (const key in BLOG_SERIES) {
   const series = BLOG_SERIES[key as SeriesKey];
   if (series.posts.some(post => post.id === currentId)) {
-    activeSeriesKey = key as SeriesKey;
     activeSeries = series;
     break;
   }

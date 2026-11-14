@@ -67,17 +67,19 @@ const log = (...args) => console.log('[export-pdf]', ...args);
 function startDevServer() {
   return new Promise((resolve, reject) => {
     log(`astro dev 서버 기동 중... (포트: ${CONFIG.devServerPort})`);
-    const proc = spawn('npm', ['run', 'dev', '--', '--port', String(CONFIG.devServerPort)], {
+    const proc = spawn('npm', ['run', 'dev', '--', '--ignore-lock', '--port', String(CONFIG.devServerPort)], {
       cwd: process.cwd(),
       env: process.env,
       detached: true,
     });
     
     let settled = false;
+    let timeout;
     const onData = (buf) => {
       const match = buf.toString().match(/https?:\/\/localhost:(\d+)\/?/);
       if (match && !settled) {
         settled = true;
+        clearTimeout(timeout);
         resolve({ proc, base: `http://localhost:${match[1]}` });
       }
     };
@@ -85,11 +87,11 @@ function startDevServer() {
     proc.stdout.on('data', onData);
     proc.stderr.on('data', onData);
     proc.on('exit', (code) => {
-      if (!settled) { settled = true; reject(new Error(`dev 서버 종료 (코드: ${code})`)); }
+      if (!settled) { settled = true; clearTimeout(timeout); reject(new Error(`dev 서버 종료 (코드: ${code})`)); }
     });
     
-    setTimeout(() => {
-      if (!settled) { settled = true; reject(new Error('dev 서버 기동 시간 초과 (60s)')); }
+    timeout = setTimeout(() => {
+      if (!settled) { settled = true; clearTimeout(timeout); stopDevServer(proc); reject(new Error('dev 서버 기동 시간 초과 (60s)')); }
     }, 60000);
   });
 }

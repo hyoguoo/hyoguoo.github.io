@@ -69,12 +69,11 @@ import PageLayout from '../../components/PageLayout.astro';
             <img
               src="https://streak-stats.demolab.com?user=hyoguoo&theme=dark&hide_border=true&background=1e293b&ring=3b82f6&fire=3b82f6&currStreakLabel=94a3b8&sideLabels=94a3b8&dates=94a3b8&currStreakNum=e2e8f0&sideNums=e2e8f0"
               alt="GitHub Streak Stats"
-              onerror="onStatImgError(this)"
             />
           </div>
           <div class="stats-item">
             <a href="https://solved.ac/profile/hyoguoo" target="_blank" rel="noopener">
-              <img src="https://mazassumnida.wtf/api/v2/generate_badge?boj=hyoguoo" alt="Solved.ac Badge" onerror="onStatImgError(this)" />
+              <img src="https://mazassumnida.wtf/api/v2/generate_badge?boj=hyoguoo" alt="Solved.ac Badge" />
             </a>
           </div>
         </div>
@@ -109,12 +108,8 @@ import PageLayout from '../../components/PageLayout.astro';
   </main>
 
   <script>
-    function onStatImgError(img) {
-      img.closest('.stats-item').style.display = 'none';
-      const allHidden = [...document.querySelectorAll('.stats-item')]
-        .every(el => el.style.display === 'none');
-      if (allHidden) document.getElementById('stats-section').style.display = 'none';
-    }
+    import { initializeStats } from '../../scripts/about-stats';
+    initializeStats();
   </script>
 </PageLayout>
 
