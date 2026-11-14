@@ -25,11 +25,17 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: '.nvmrc'
           cache: npm
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Check types
+        run: npm run check
+
+      - name: Unit tests
+        run: npm test
 
       - name: Setup Pages
         id: pages
@@ -37,6 +43,12 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Install test browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser tests
+        run: npm run test:browser
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

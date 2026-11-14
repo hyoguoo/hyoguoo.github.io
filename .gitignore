@@ -131,3 +131,6 @@ dist/
 .env
 .env.*
 !.env.example
+
+# Local design prototypes and browser comparison captures
+/work/design-directions/
