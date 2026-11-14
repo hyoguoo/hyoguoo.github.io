@@ -21,10 +21,10 @@
 
 | 섹션 | URL | 레이아웃 |
 |------|-----|---------|
-| 랜딩 | `/` | 커스텀 Astro (Starlight 없음) |
+| 랜딩 | `/` | 커스텀 Astro + 공통 헤더 |
 | Blog | `/blog/`, `/blog/<slug>/` | Starlight + starlight-blog |
 | Docs | `/docs/`, `/docs/<name>/`, `/docs/<name>/<slug>/` | Starlight |
-| About | `/about/` | 커스텀 Astro (Starlight 없음) |
+| About | `/about/` | 커스텀 Astro + 공통 헤더 |
 
 콘텐츠는 **단일 `docs` 컬렉션** (`src/content/docs/`)으로 관리:
 - `src/content/docs/blog/` → Blog 포스트
@@ -45,14 +45,15 @@ src/
 │   └── docs/        ← Docs 문서 마크다운 (서브카테고리별 디렉토리)
 ├── pages/
 │   ├── index.astro          ← 랜딩 페이지 (PageLayout 사용)
-│   ├── blog/index.astro     ← /blog/ 라우트 오버라이드
+│   ├── …                    ← Blog 라우트는 starlight-blog가 소유
 │   └── about/               ← About 페이지 (PageLayout activePage="about")
-├── components/      ← Starlight 오버라이드 컴포넌트(9개) + 커스텀 컴포넌트(9개)
+├── components/      ← Starlight 오버라이드 + 공통 목록·테마 UI
 ├── styles/
 │   ├── tokens.css   ← 원시 색상 토큰 (--t-*), 단일 진실 원천
 │   ├── pages.css    ← Landing/About 시맨틱 변수 (--color-*), tokens.css import
 │   └── custom.css   ← Starlight CSS 변수 오버라이드 (--sl-*), tokens.css import
 └── data/
+    ├── siteProfile.ts   ← 직군·소개 문구
     ├── tagColors.ts     ← TAG_HUES (태그→색상 hue), CATEGORY_ORDER (Blog 카테고리 순서)
     ├── docsGroups.ts    ← DOCS_GROUPS (DocsTree 시각적 그루핑, 10개 그룹)
     ├── docsSections.ts  ← Docs 서브카테고리별 섹션 config (15개 서브카테고리)
@@ -67,7 +68,7 @@ src/
 title: 포스팅 제목
 date: YYYY-MM-DD          # 최초 게시일
 lastUpdated: YYYY-MM-DD   # 수정 시 반드시 갱신, 정렬 기준
-tags: [Java]              # ⚠️ 필수: BlogTree 카테고리 그룹핑 기준 (첫 번째 태그)
+tags: [Java]              # ⚠️ 필수: BlogArchive 주 카테고리 기준 (첫 번째 태그)
 ---
 ```
 
@@ -109,7 +110,7 @@ description: ""           # SEO용. 작성 시 한 문장 요약 권장
 
 ## Blog 태그
 
-`tags` 배열의 **첫 번째 태그**가 BlogTree 카테고리 그룹핑 기준.
+`tags` 배열의 **첫 번째 태그**가 BlogArchive 주 카테고리 기준.
 
 현재 사용 중인 태그: `Java`, `Spring & JPA`, `MySQL`, `AI`
 

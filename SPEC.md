@@ -1,6 +1,6 @@
 # Blog 프로젝트 스펙
 
-> 최종 업데이트: 2026-02-28
+> 최종 업데이트: 2026-11-15
 
 ---
 
@@ -45,7 +45,7 @@
 
 ```
 hyoguoo.github.io/
-├── /                    ← 포트폴리오 랜딩 페이지
+├── /                    ← 개인 블로그 홈
 ├── /about/              ← 자기소개 (why-developer, study-log 등)
 ├── /blog/               ← 실무 경험 포스팅 (tech-log)
 └── /docs/               ← 학습 레퍼런스 (사이드바 네비게이션)
@@ -65,15 +65,17 @@ notes/blog/                       ← Astro 프로젝트 루트
 │   │   ├── blog/                 ← Blog 포스트 마크다운
 │   │   └── docs/                 ← Docs 문서 마크다운 (서브카테고리별)
 │   ├── pages/
-│   │   ├── index.astro           ← 포트폴리오 메인 랜딩 (PageLayout 사용)
-│   │   ├── blog/index.astro      ← /blog/ 라우트 오버라이드
-│   │   └── about/                ← About 페이지 (PageLayout 사용)
-│   ├── components/               ← Starlight 오버라이드(9개) + 커스텀(9개)
+│   │   ├── index.astro           ← 개인 블로그 홈 (PageLayout 사용)
+│   │   ├── about/                ← About 페이지 (PageLayout 사용)
+│   │   └── …                     ← 나머지 고유 페이지
+│   ├── components/               ← Starlight 오버라이드 + 공통 UI
 │   ├── styles/
 │   │   ├── tokens.css            ← 원시 색상 토큰 (--t-*)
 │   │   ├── pages.css             ← Landing/About 변수 (--color-*)
-│   │   └── custom.css            ← Starlight CSS 변수 (--sl-*)
+│   │   ├── custom.css            ← Starlight CSS 변수 (--sl-*)
+│   │   └── interactions.css      ← 공통 링크 피드백
 │   └── data/
+│       ├── siteProfile.ts        ← 직군·소개 문구
 │       ├── tagColors.ts          ← Blog 카테고리 색상·순서
 │       ├── docsGroups.ts         ← DocsTree 그루핑 config
 │       ├── docsSections.ts       ← 서브카테고리 섹션 config
@@ -99,28 +101,24 @@ notes/blog/                       ← Astro 프로젝트 루트
 
 ### 4-1. 랜딩 페이지 (`/`)
 
-방문자가 사이트 전체를 빠르게 파악할 수 있는 단순한 허브 페이지.
+개인 블로그의 최근 기록과 각 영역으로 들어가는 링크를 제공한다.
 
-**구성 (위→아래)**
+1. 이름, `Software Engineer`, 소개 문구와 오구 이미지
+2. 최근 수정한 Blog 3개: 제목·날짜·첫 번째 태그·기존 description
+3. 최근 수정한 Docs 4개: 제목·날짜·주제·기존 description
+4. Blog·Docs 전체 목록으로 이동
 
-1. **Hero**: 이름 + 한 줄 소개 (Backend Engineer, Java & Spring) + About / GitHub 링크
-2. **최신 블로그 포스팅**: tech-log 최신 글 3개 카드 리스팅 (제목, 날짜, 태그) — frontmatter의 `lastUpdated` 기준 정렬 (수동 입력)
-3. **최신 Docs**: docs 최근 수정 문서 3개 카드 리스팅 (제목, 카테고리) — 각 문서 frontmatter의 `lastUpdated` 기준 정렬 (수동 입력)
-4. **섹션 안내**: Blog / Docs / About 각 섹션 한 줄 설명 + 링크
+문구는 `src/data/siteProfile.ts`에서 관리한다. 홈에 전체 주제 목록이나 학습 경로를 추가하지 않는다. 목록의 설명은 기본 표시하고, 링크에는 배경·제목·화살표의 짧은 반응을 제공한다. 모션 감소 설정을 따른다.
 
-**원칙**
-- 스크롤 최소화, 과도한 애니메이션 없음
-- 각 카드는 해당 글로 바로 이동
+홈·About·Blog·Docs는 같은 `SiteHeader`를 사용한다. 로고·검색·네비게이션·테마의 위치와 표현을 공유하며, 모바일의 Docs 문서 탐색은 기존 sidebar 메뉴를 유지한다. 홈의 Blog는 날짜 열과 제목 크기로 강약을 주고 Docs 영역만 옅은 배경으로 구분한다.
 
 ### 4-2. About 섹션 (`/about/`)
 
-단일 페이지. 다른 개발자 블로그의 "About Me" 페이지와 동일한 형태.
-
-- 프로필 (이름, 직군 소개)
-- 기술 스택
-- GitHub / 연락처 링크
-- 기존 about 포스팅 (why-developer, study-log 등)은 별도 페이지로 링크 또는 동일 페이지 내 섹션으로 편입
-- 댓글 없음 (단순 소개 페이지)
+- 프로필, 직군, 스택을 한정하지 않는 소개 문구와 오구 이미지
+- 기존 기술 스택, GitHub·LinkedIn·Email 링크
+- 기존 GitHub·solved.ac 통계 이미지. 로딩 실패 항목은 숨긴다.
+- ‘기록’에 Study Log·1일 1커밋 글 링크를 묶는다. 과거 날짜의 학습 목록을 미리보기로 노출하지 않는다.
+- 댓글 없음
 
 ### 4-3. Blog 섹션 (`/blog/`)
 
@@ -131,27 +129,26 @@ notes/blog/                       ← Astro 프로젝트 루트
 ---
 title: 포스팅 제목
 date: YYYY-MM-DD          # 최초 게시일 (starlight-blog 표시용), 마이그레이션 시 최초 커밋 날짜로 설정
-lastUpdated: YYYY-MM-DD   # 수정 시 수동 갱신, 목록 및 랜딩 페이지 정렬 기준
-tags: [Spring, JPA]
+lastUpdated: YYYY-MM-DD   # 수정 시 수동 갱신, 홈의 최근 기록 정렬 기준
+tags: [Spring & JPA]      # 첫 번째 태그가 목록의 주 카테고리
 ---
 ```
 
 **목록 페이지 (`/blog/`)**
-- 포스팅 카드 리스팅 (제목, 날짜, 태그, 요약 1~2줄) — `lastUpdated` 기준 정렬
-- 태그 필터링
-- 페이지네이션
+- 제목·날짜·첫 번째 태그·description을 보여주는 행 목록
+- 플러그인의 공개 데이터에서 게시 순서와 태그 URL을 사용
+- 기존 5개 단위 페이지네이션, 태그·작성자 아카이브 URL 유지
 
 **태그 구성** (기존 콘텐츠 기준)
-- `Payment` — 결제 시스템 구현 경험 시리즈
 - `Java` — Java 언어 심화
-- `Spring` — Spring / JPA 실무 팁
-- `Database` — MySQL 등 DB 관련
-- `Architecture` — 설계, 패턴
+- `Spring & JPA` — Spring / JPA 실무 경험
+- `MySQL` — MySQL 동작과 문제 해결
+- `AI` — AI 도구 활용 경험
 
 **개별 포스팅 페이지**
-- 제목, 날짜, 태그
-- 본문 (마크다운)
-- 이전 글 / 다음 글 네비게이션
+- 제목, 작성·수정일, 작성자와 태그
+- 시리즈 제목·현재 순서와 펼칠 수 있는 전체 글 링크
+- 본문 (마크다운), 기존 목차·앵커
 - Giscus 댓글 (하단)
 
 ### 4-4. Docs 섹션 (`/docs/`)
@@ -168,31 +165,26 @@ lastUpdated: YYYY-MM-DD   # 수정 시 수동 갱신, 랜딩 페이지 정렬 �
 CS 기초부터 실무 기술 스택까지 개념을 정리한 학습 레퍼런스 (기존 GitBook docs).
 
 **레이아웃**
-- 좌측 사이드바: 카테고리 트리 네비게이션 (Starlight 기본)
+- 좌측 사이드바: 목록과 글 화면이 공유하는 분야·주제·섹션·문서 탐색
 - 우측: 본문
 - 상단: 전체 검색 (Starlight 기본 내장)
 
-**사이드바 카테고리 구성** (기존 폴더 구조 그대로)
-- Computer Architecture
-- Operating System
-- Network
-- Secure
-- Java
-- Spring
-- OOP
-- MySQL
-- Redis
-- Kafka
-- Docker
-- Large-Scale System
-- Test
-- AI-Assisted Development
-- Setting
+**탐색과 목록**
+- `DOCS_GROUPS`의 분야 → 기술 주제 구조로 전체 목록을 표시한다.
+- 분야는 세로로 이어지고 각 분야 안의 주제는 두 열로 배치한다. 서로 다른 분야를 같은 높이의 두 열에 맞추지 않는다. 모바일은 한 열로 표시한다.
+- 주제 안에서는 `docsSections`의 하위 섹션 → 문서 순서를 사용한다. 시간 순으로 바꾸지 않는다.
+- 목록에서는 제목 아래에 기존 frontmatter description을 기본 표시한다.
+- 목록과 개별 글 모두 같은 위계의 사이드바를 사용한다. 현재 문서의 묶음은 열어두며 모바일 메뉴에서도 현재 링크가 보이게 한다.
+- 개별 글에는 경로·작성/수정일·작성자를 표시한다. description은 목록·SEO 메타데이터에만 사용한다. 본문은 읽기 폭과 제목 크기를 조정하고 기존 코드·표·TOC·앵커를 유지한다.
+- 헤더의 공통 테마 선택기는 자동·라이트·다크를 지원한다.
+
+**사이드바 카테고리 구성**
+`src/data/docsGroups.ts`의 10개 분야·20개 주제를 사용한다. 카테고리 이름과 분야 순서를 이 문서에 중복 정의하지 않는다.
 
 **개별 문서 페이지**
-- 브레드크럼 네비게이션 (Starlight 기본)
+- Docs·주제·중첩 목차로 돌아가는 경로 링크
 - 본문 (마크다운)
-- 이전 / 다음 문서 네비게이션 (Starlight 기본)
+- 기존 본문 TOC와 앵커
 - Giscus 댓글 (하단)
 
 ---
@@ -208,4 +200,4 @@ CS 기초부터 실무 기술 스택까지 개념을 정리한 학습 레퍼런�
 
 ## 6. 미결 사항
 
-> 현재 없음
+기술 진단의 남은 항목과 검증 한계는 [ARCHITECTURE.md](ARCHITECTURE.md)의 ‘현재 남은 항목’을 따른다.

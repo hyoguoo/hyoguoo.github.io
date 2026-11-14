@@ -1,201 +1,78 @@
 ---
 name: structure
-description: "사이트 구조와 컴포넌트 역할 파악. 사이트 구조, CSS 아키텍처, 컴포넌트 역할 확인이 필요할 때, 새 기능 추가 전 현황 파악, Starlight 업그레이드 영향도 검토 시 사용한다."
+description: "사이트 구조, CSS 아키텍처, 컴포넌트 역할과 Starlight 업그레이드 영향도를 확인한다."
 ---
 
-# /structure - 사이트 구조 & 컴포넌트 역할
+# /structure — 사이트 구조와 책임
 
-## Triggers
-- 사이트 구조, 컴포넌트 역할, CSS 아키텍처 파악이 필요할 때
-- 새 기능 추가 전 현황 파악
-- 특정 파일의 역할 확인
-- Starlight 업그레이드 영향도 검토 시
+새 UI를 추가하거나 레이아웃·컴포넌트·Starlight 호환 지점을 확인할 때 사용한다. 실행 환경, 검증 명령과 남은 항목은 루트 `ARCHITECTURE.md`를 함께 읽는다.
 
----
+## 라우트와 렌더링
 
-## 레이아웃 시스템 (2가지)
+이 사이트는 Astro SSG이며 GitHub Pages로 배포한다. 콘텐츠는 단일 `docs` 컬렉션이다.
 
-| 영역 | URL | 레이아웃 | 파일 |
-|------|-----|---------|------|
-| Landing | `/` | 순수 커스텀 HTML | `src/pages/index.astro` |
-| About | `/about/` | 순수 커스텀 HTML | `src/pages/about/index.astro` |
-| Blog 목록 | `/blog/` | Starlight (hasSidebar=false) | `src/pages/blog/index.astro` |
-| Blog 포스트 | `/blog/<slug>/` | Starlight + starlight-blog | content collection |
-| Docs 목록 | `/docs/` | Starlight | `src/content/docs/docs/index.mdx` |
-| Docs 서브카테고리 | `/docs/<cat>/` | Starlight | `src/content/docs/docs/<cat>/index.mdx` |
-| Docs 문서 | `/docs/<cat>/<slug>/` | Starlight (사이드바) | content collection |
+| 영역 | 위치 | 렌더링 |
+| --- | --- | --- |
+| 홈 `/` | `src/pages/index.astro` | `PageLayout` + 최근 Blog 3개·Docs 4개 |
+| About `/about/` | `src/pages/about/index.astro` | `PageLayout` + 프로필·Skills·Stats·기록 링크 |
+| Blog·태그·작성자·페이지 번호 | starlight-blog 라우트 | `MarkdownContent` → `BlogArchive` |
+| Blog 개별 글 | `src/content/docs/blog/` | 플러그인의 공개 `MarkdownContent` |
+| Docs 전체 목록 | `src/content/docs/docs/index.mdx` | `DocsTree` |
+| Docs 주제 목록 | `src/content/docs/docs/<key>/index.mdx` | `SubcategoryPage` → `LinkList` |
+| Docs 개별 글·중첩 목차 | `src/content/docs/docs/` | Starlight의 본문·목차 |
 
-**Landing/About**: `PageLayout.astro`를 공유 HTML 쉘로 사용 (Starlight 없음)
-**Blog/Docs**: Starlight 레이아웃 + 9개의 컴포넌트 오버라이드
+`src/pages/blog/index.astro`는 없다. `src/build/blog-index-plugin.ts`가 플러그인 다음에 MarkdownContent 오버라이드를 등록한다. 라우트 소유권을 별도 Astro 페이지로 덮어쓰지 않는다.
 
----
+## 공통 UI
 
-## CSS 아키텍처 (3계층)
+| 파일 | 책임 |
+| --- | --- |
+| `PageLayout.astro` | 홈/About의 head·공통 헤더 연결·footer |
+| `SiteHeader.astro` | 모든 영역의 같은 로고·검색·네비게이션·테마 배치 |
+| `SiteSearch.astro` | 기존 Starlight 검색 재사용과 두 레이아웃의 검색 색상·유틸리티 연결 |
+| `SiteMobileMenu.astro` | 홈/About/Blog 목록 메뉴·Escape·바깥 클릭·리스너 정리 |
+| `ThemePicker.astro` | native 자동·라이트·다크 선택기와 Icon |
+| `ThemeSelect.astro` | ThemePicker를 Starlight 슬롯에 연결 |
+| `ContentPreview.astro` | 홈·Blog 목록의 날짜 열·색상 글자·제목·description과 작은 Docs 행 |
+| `CategoryTag.astro` | 기존 TAG_HUES를 따르는 작은 라벨 |
+| `BlogArchive.astro` | 플러그인의 공개 게시 데이터와 태그 href, 5개 단위 페이지 |
+| `DocsTree.astro` | 분야를 세로로 잇고 각 분야 안에서 주제·설명·섹션을 두 열로 배치 |
+| `DocsNavigation.astro` | Docs 목록·글의 분야·주제·섹션·중첩 책 문서 탐색 |
+| `SubcategoryPage.astro` | docsSections 순서에 따른 하위 섹션·문서 |
+| `LinkList.astro` | Docs의 제목·기존 description·링크 |
+| `EntryMeta.astro` | 개별 글의 게시/수정일·작성자 |
+| `BlogSeries.astro` | native details로 기존 시리즈의 순서·현재 글 탐색 |
 
-```
-src/styles/tokens.css   (--t-*)     ← 원시값, 단일 진실 원천
-    ↓ @import
-src/styles/custom.css   (--sl-*)    ← Starlight 변수 매핑 (Docs/Blog에 적용)
-src/styles/pages.css    (--color-*) ← Landing/About 변수 매핑
-    ↓ import in
-src/components/PageLayout.astro     ← Landing/About 공유 레이아웃에서 로드
-```
+About은 Study Log·1일 1커밋 글 링크만 표시한다. 과거 날짜의 학습 목록이나 추정한 활동을 미리보기에 추가하지 않는다.
 
-**테마 변경 방법**: `src/styles/tokens.css` 한 곳만 수정하면 전체 반영.
+## 데이터와 순수 로직
 
-| 접두사 | 파일 | 사용 위치 |
-|--------|------|---------|
-| `--t-*` | `tokens.css` | 내부 참조 전용 (다른 곳에서 직접 사용 금지) |
-| `--sl-*` | `custom.css` | Starlight 컴포넌트 (Docs/Blog) |
-| `--color-*` | `pages.css` | Landing/About 페이지 |
+- `siteProfile.ts`: 기술 스택을 한정하지 않는 직군·소개 문구.
+- `tagColors.ts`: 태그 hue와 Blog 주 카테고리 순서. 첫 번째 태그가 주 카테고리이다.
+- `docsGroups.ts`: 분야 → 주제 구조. `docsSections.ts`: 주제 → 하위 섹션 → 문서 순서.
+- `blogConfig.ts`: 블로그 페이지 크기·작성자. RSS·태그·작성자 URL은 플러그인이 관리한다.
+- `lib/blog.ts`: 공개 게시 데이터의 필터·기존 페이지 경계 계산. 자체 태그 slug를 만들지 않는다.
+- `lib/docs.ts`: 기존 섹션 순서·미배정 문서 처리, 날짜 있는 글만 세는 주제별 집계와 sidebar의 중첩 문서 순서. 중첩 목차를 글 수에 중복 집계하지 않는다.
+- `lib/content.ts`: 날짜·URL. 홈은 수정일, Blog 아카이브는 플러그인의 게시 순서를 따른다.
 
----
+새 Docs 주제는 `/section` skill에 따라 그룹·섹션·sidebar·index를 함께 갱신한다. 학습 로드맵을 UI 탐색 대신 새로 만들지 않는다.
 
-## 컴포넌트 카탈로그
+## CSS와 브라우저 경계
 
-### Starlight 오버라이드 (9개, `astro.config.mjs` → `components:` 등록)
+`tokens.css`는 원시 색상 값, `pages.css`는 홈/About 변수와 레이아웃, `custom.css`는 Starlight 변수와 호환 지점을 관리한다. `interactions.css`는 두 레이아웃이 공유하는 행 배경·제목·화살표의 짧은 피드백을 관리한다. 세로 강조선·자동 진입 애니메이션은 쓰지 않으며, 모션 감소 설정을 따른다.
 
-| 파일 | 역할 | 주의사항 |
-|------|------|---------|
-| `Header.astro` | Starlight 헤더 + `/blog/` 모바일 메뉴 조건부 추가 | `isBlogList` 분기로 `BlogMobileMenu` 렌더 |
-| `Sidebar.astro` | `/about/*` 숨김, `/blog*` MobileMenuFooter만, 나머지 기본 | `sl-sidebar-restore` 커스텀 엘리먼트 버그 패치 포함 |
-| `PageTitle.astro` | 뒤로가기 버튼 + 백틱→`<code>` 변환 + EntryMeta | `Astro.locals.starlightRoute` 내부 API 사용 |
-| `Pagination.astro` | **의도적으로 빈 파일** — Docs prev/next 완전 제거 | starlight-blog의 PrevNextLinks가 별도 처리 |
-| `SocialIcons.astro` | 상단 네비 (Blog/Docs/About/GitHub), 현재 섹션 accent 색상 | — |
-| `ThemeSelect.astro` | 기본 Starlight ThemeSelect passthrough | **⚠️ 절대 astro.config.mjs에서 제거 금지**: starlight-blog가 ThemeSelect를 오버라이드해 "Blog" 링크를 주입하는 것을 차단 |
-| `SiteTitle.astro` | 로고 + 사이트명 링크 | — |
-| `Footer.astro` | Docs tags 뱃지 + Giscus 댓글 조건부 | `showGiscus` 조건, `Astro.locals.starlightRoute?.entry` 내부 API |
-| `MobileMenuFooter.astro` | 모바일 사이드바 ThemeSelect 위치 조정 | `is:global`로 Starlight 내부 클래스 직접 참조 → **업그레이드 시 취약** |
+`ThemeProvider.astro` + 동기 `theme-bootstrap.js`가 첫 화면을 설정하고, `scripts/theme.ts`가 선택기·저장소·시스템 변경을 동기화한다. 브라우저 코드에서 Astro 컬렉션·빌드 모듈을 import하지 않는다. Giscus·분석·Mermaid는 각각의 `src/scripts/` 모듈이 담당한다.
 
-### 커스텀 컴포넌트 (9개)
+## 오버라이드와 업그레이드 확인
 
-| 파일 | 역할 | Props / 의존 |
-|------|------|------------|
-| `PageLayout.astro` | Landing/About 공통 HTML 쉘 (head meta, header/nav, footer, ThemeSelect JS) | `title`, `description`, `activePage?`, OG tags, `sitemap?` / **`<style is:global>` 필수** |
-| `BlogMobileMenu.astro` | `/blog/` 전용 모바일 메뉴 Web Component | — |
-| `EntryMeta.astro` | 날짜(최초 작성일/수정일) + 작성자 표시 | Blog 포스트·Docs 문서 공통 사용 |
-| `Giscus.astro` | Giscus 댓글 스크립트 | `src/data/giscusConfig.ts`에서 설정 로드 |
-| `BlogTree.astro` | `/blog/` 카테고리별 포스트 그루핑 목록 | `TreeSection.astro`, `src/data/tagColors.ts` (CATEGORY_ORDER) |
-| `DocsTree.astro` | `/docs/` 그룹별 서브카테고리 트리 | `TreeSection.astro`, `LinkList.astro`, `src/data/docsGroups.ts` |
-| `SubcategoryPage.astro` | `/docs/<cat>/` 섹션별 문서 목록 | `subcategory: string` / `LinkList.astro`, `src/data/docsSections.ts` |
-| `BlogSeries.astro` | 블로그 시리즈 네비게이션 (순번 + 읽는 중 표시) | `currentId: string` / `src/data/blogSeries.ts` |
-| `TreeSection.astro` | 카드 컨테이너 (border + radius + bg-nav) + 섹션 레이블 | `label: string`, `labelVariant?: 'accent' \| 'muted'` |
-| `LinkList.astro` | 링크 리스트 (→ 화살표, hover accent, disabled 지원) | `items: { title: string; url: string \| null }[]`, `label?: string` |
+- `Header.astro`: SiteHeader에 연결하고, 사이트 메뉴와 기존 Starlight 문서 sidebar 메뉴를 구분한다.
+- `SiteSearch.astro`: Starlight의 전역 번역 초기화와 공개 Search 컴포넌트에 의존한다. 커스텀 페이지에서 starlightRoute를 읽지 않는다. 검색 엔진·키보드·모달 동작은 복제하지 않는다.
+- `PageLayout.astro`의 head는 Starlight와 같은 CSS 레이어 순서를 먼저 선언한다. 이를 빼면 뒤에 로드된 reset이 검색 모달의 중앙 배치를 덮을 수 있다. 업그레이드 시 설치된 Starlight의 layers.css 순서와 함께 확인한다.
+- `Sidebar.astro`: Docs 목록·개별 글 모두 DocsNavigation. 현재 글의 상위 details는 SSR에서 열고, docs-navigation.ts가 sidebar pane만 스크롤한다. 분리 시 toggle 리스너를 해제한다.
+- `PageTitle.astro`: 목록의 제목·설명·문서 수와 개별 글의 경로·간결한 메타데이터·접이식 시리즈. 글 헤더에는 description을 반복하지 않으며 목록·SEO에 유지한다. 백틱 제목 이스케이프 유지.
+- `Pagination.astro`: 의도적으로 빈 파일. 블로그의 페이지 번호는 BlogArchive가 렌더한다.
+- `Footer.astro`: 날짜 있는 Blog·Docs 글만 댓글, Docs 글만 태그. About·각종 인덱스에는 댓글 없음.
+- `ThemeSelect.astro`는 제거하지 않는다. 플러그인의 기본 오버라이드가 주입하는 Blog 링크를 막는다.
+- `MobileMenuFooter.astro`, `custom.css`: Starlight 내부 클래스·header 여백·sidebar/TOC 폭에 의존한다.
 
-> **`PageLayout.astro` `is:global` 이유**: Astro 스코프 CSS는 슬롯 콘텐츠에 scope hash가 붙지 않아 `.container` 등의 스타일이 미적용됨. `is:global`로만 해결 가능. Landing/About 전용이므로 전역 오염 위험 없음.
-
-> **`TreeSection` labelVariant**: `accent` = Blog 카테고리 (accent 색상, 일반 크기), `muted` = Docs 그룹 레이블 (gray, uppercase, 소형)
-
-> **`LinkList` disabled**: `url === null` → `<span>`(disabled)으로 렌더. DocsTree에서 미마이그레이션 서브카테고리에 사용.
-
----
-
-## 데이터 레이어 (`src/data/`)
-
-| 파일 | exports | 사용처 |
-|------|---------|--------|
-| `tagColors.ts` | `TAG_HUES: Record<string, number>` (태그→HSL hue, 18개), `CATEGORY_ORDER: string[]` (카테고리 표시 순서) | `src/pages/index.astro` (랜딩 태그 색상), `BlogTree.astro` (카테고리 정렬) |
-| `docsGroups.ts` | `DOCS_GROUPS: DocsGroup[]` (10개 그룹, 16개 서브카테고리) | `DocsTree.astro` |
-| `blogSeries.ts` | `BLOG_SERIES: Record<string, Series>` (ID 기반 시리즈 매핑) | `BlogSeries.astro` |
-| `docsSections.ts` | `docsSections: Record<string, SectionConfig>` (15개 서브카테고리) | `SubcategoryPage.astro` |
-| `giscusConfig.ts` | `repo`, `repoId`, `category`, `categoryId` | `Giscus.astro` |
-
-> **새 Blog 카테고리 추가**: `tagColors.ts`에 hue 추가
-> **새 Docs 서브카테고리 추가**: `docsGroups.ts` + `docsSections.ts` + `astro.config.mjs` sidebar 모두 업데이트
-> **⚠️ `astro.config.mjs` sidebar는 별도 관리** — `docsGroups.ts`와 동기화 필요
-
----
-
-## 블로그 시리즈 시스템 (Series Navigation)
-
-시리즈 게시글 상단에 순번과 목록을 표시하는 시스템.
-
-1.  **데이터 정의**: `src/data/blogSeries.ts`에 시리즈 제목과 포함될 포스트 ID(`blog/slug`) 목록을 순서대로 정의.
-2.  **트리거**: `PageTitle.astro`에서 현재 페이지가 블로그 포스트(`isBlogPost`)인 경우 `BlogSeries.astro`에 `currentId`를 전달.
-3.  **매칭**: `BlogSeries.astro`는 `blogSeries.ts` 데이터를 순회하며 `currentId`가 포함된 시리즈가 있는지 확인.
-4.  **렌더링**: 매칭된 시리즈가 있으면 순번(`index + 1`)과 함께 목록을 출력하며, 현재 포스트는 '읽는 중' 상태로 표시.
-
----
-
-## Astro Content Collection 구조
-
-컬렉션은 `docs` 단 하나. Blog와 Docs가 같은 컬렉션을 공유.
-
-```ts
-// src/content.config.ts
-collections = {
-  docs: defineCollection({
-    loader: docsLoader(),
-    schema: docsSchema({ extend: (context) => blogSchema(context) }),
-  }),
-};
-```
-
-### ID 포맷 (확장자 없음)
-```
-blog/null-overloading           → /blog/null-overloading/
-docs/java                       → /docs/java/           (java/index.mdx의 ID)
-docs/java/class                 → /docs/java/class/
-```
-
-### docsLoader ID 포맷 — getCollection 쿼리 패턴
-```ts
-// 일반 docs 문서 (index 제외)
-({ id }) => id.split('/').length >= 3 && id.split('/')[0] === 'docs'
-
-// subcategory index 페이지만
-({ id }) => id.split('/').length === 2 && id.split('/')[0] === 'docs'
-```
-
-**이 포맷을 잘못 가정하면 DocsTree에서 링크가 `<a>` 대신 `<span>`으로 렌더링된다.**
-
----
-
-## Giscus 표시 조건 (`Footer.astro`)
-
-```ts
-const isIndexPage = /^\/(blog|docs)\/?$/.test(Astro.url.pathname);
-const showGiscus = !isSplash && !isAbout && !isIndexPage;
-```
-
-- ❌ 비활성: splash 페이지, `/about/*`, `/blog/`, `/docs/`
-- ✅ 활성: Blog 포스트, Docs 문서 페이지
-
----
-
-## starlight-blog 독립 시스템
-
-starlight-blog는 Starlight의 `Pagination` 오버라이드와 **무관하게** 자체 컴포넌트를 주입한다.
-
-| 항목 | 위치 | 제어 방법 |
-|------|------|----------|
-| Blog 포스트 prev/next | `.post-footer .pagination` | `custom.css`에서 `display: none` |
-| "Blog" 고정 링크 (헤더) | ThemeSelect 내 주입 | `ThemeSelect.astro` 오버라이드로 우회 |
-| `/blog/` 기본 라우트 | starlight-blog 내부 | `src/pages/blog/index.astro`로 오버라이드 |
-
----
-
-## Blog 사이드바 없음 처리 메커니즘
-
-`astro.config.mjs`의 `<head>` 인라인 스크립트 (동기 실행):
-```js
-if (window.location.pathname.startsWith('/blog')) {
-  document.documentElement.setAttribute('data-no-sidebar', '');
-  document.documentElement.removeAttribute('data-has-sidebar');
-}
-```
-→ `custom.css`에서 `[data-no-sidebar]`로 레이아웃 픽스 적용.
-
----
-
-## Starlight 업그레이드 취약점
-
-버전 업 시 반드시 확인:
-
-| 파일 | 의존 대상 | 위험도 |
-|------|---------|--------|
-| `MobileMenuFooter.astro` | `.sidebar-content`, `.mobile-preferences` 클래스명 | 높음 |
-| `Sidebar.astro` | `#starlight__sidebar`, `sl-sidebar-restore` 커스텀 엘리먼트 | 높음 |
-| `custom.css` | `.posts article.preview .sl-markdown-content`, `.post-footer .pagination` | 중간 |
-| `PageTitle.astro` | `Astro.locals.starlightRoute` 내부 API | 중간 |
-| `Footer.astro` | `Astro.locals.starlightRoute?.entry` 내부 API | 중간 |
+화면 변경 후 `npm run validate`로 URL·RSS·메타데이터·검색·Mermaid·공통 UI를 확인한다. 실제 검사 범위와 남은 한계는 ARCHITECTURE.md에 기록한다.

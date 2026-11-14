@@ -34,7 +34,7 @@ description: "payment-platform-portfolio 페이지(/payment-platform-portfolio/)
 src/pages/payment-platform-portfolio/index.astro   ← 마크업(정적 문구 + 빈 컨테이너) · 633줄
 src/styles/payment-portfolio.css                   ← 스타일 전부 · 829줄
 src/scripts/portfolio/                              ← 렌더 로직 (7개)
-   ├─ main.ts        엔트리. import 순서 = 실행 순서
+   ├─ main.ts        엔트리. initializeDiagrams → initializeScenarios → initializePanels → initializeInteractions → initializeMotion 순서로 호출
    ├─ diagrams.ts    아키텍처맵·스윔레인·단계·트레이스·결제상태머신·PG플로우·헥사고날
    ├─ scenario.ts    시나리오 지도·타임라인·재생 컨트롤
    ├─ panels.ts      벤치차트·PG상태머신·매트릭스·결정·경합·알람·정리 + 스크롤/nav
@@ -95,5 +95,5 @@ src/data/paymentPortfolio/                          ← 콘텐츠 상수 (12개,
 - **수치 이중화**: 일부 지표는 데이터 파일과 `index.astro`(설명 문단·`.sr-only` 접근성 요약)에 **둘 다** 들어 있다. 하나만 고치면 화면과 낭독기 내용이 어긋난다. 수치 수정 시 `index.astro`에서 같은 값을 grep해 함께 갱신.
 - **빈 컨테이너 오해 금지**: `index.astro`의 `<div id="benchChart">` 등은 비어 있는 게 정상. 내용은 스크립트가 그린다.
 - **배럴 갱신**: 데이터 **파일 신설** 시에만 `index.ts`에 export 추가. 기존 파일의 상수 값 수정은 배럴 무관.
-- **스크립트는 vanilla JS 이식본**(`@ts-nocheck`, `var`/함수 표현식). 스타일 통일보다 기존 패턴에 맞추는 걸 우선.
+- **스크립트는 타입 검사되는 브라우저 모듈**이다. `@ts-nocheck`는 제거했다. 데이터와 SVG/HTML 렌더 객체를 구분하고, 초기화 순서는 `main.ts`에서 유지한다. 순수 해시 검증은 `src/lib/portfolio-state.ts`, 저장소 접근은 `src/scripts/storage.ts`를 사용한다.
 - 색 토큰(`--svc-*` 서비스별, `--st-*` 상태별)은 `payment-portfolio.css`에 정의, 스크립트는 `util.ts`의 `CV` 맵으로 참조.
