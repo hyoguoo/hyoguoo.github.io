@@ -1,0 +1,12 @@
+---
+import { getHue } from '../data/tagColors';
+interface Props { label: string; href?: string; plain?: boolean }
+const { label, href, plain = false } = Astro.props;
+const Element = href ? 'a' : 'span';
+---
+<Element class:list={['category-tag', { plain }]} href={href} style={`--category-hue:${getHue(label)}`}>{label}</Element>
+<style>
+  .category-tag { display: inline-flex; align-items: center; max-width: 100%; padding: .1rem .45rem; border-radius: 3px; font-size: .7rem; font-weight: 550; line-height: 1.65; background: light-dark(hsl(var(--category-hue) 55% 94%), hsl(var(--category-hue) 32% 22%)); color: light-dark(hsl(var(--category-hue) 65% 26%), hsl(var(--category-hue) 70% 78%)); text-decoration: none; overflow-wrap: anywhere; }
+  a.category-tag:hover { filter: brightness(.95); text-decoration: none; }
+  .category-tag.plain { padding: 0; border-radius: 0; background: transparent; font-weight: 500; font-size: .72rem; }
+</style>

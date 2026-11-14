@@ -1,22 +1,6 @@
 ---
-import Default from '@astrojs/starlight/components/Header.astro';
-import BlogMobileMenu from './BlogMobileMenu.astro';
-
-/*
-  On the blog list page (/blog/) hasSidebar is false, so PageFrame does not
-  render the <nav class="sidebar"> element at all — meaning no MobileMenuToggle
-  (hamburger button) exists.  We add a custom mobile-only nav menu in the
-  header for this case.
-
-  Detection: the blog list page sets data-no-sidebar AND hasSidebar is false.
-  We check the pathname server-side and inject a custom toggle only on /blog/.
-
-  The BlogMobileMenu component contains the Web Component class definition,
-  markup, and styles.  See src/components/BlogMobileMenu.astro for details.
-*/
-const isBlogList = Astro.url.pathname === '/blog/' || Astro.url.pathname === '/blog';
+import SiteHeader from './SiteHeader.astro';
+import { isBlogArchive } from '../lib/blog';
+const siteMenu = isBlogArchive(Astro.url.pathname) || Astro.url.pathname.startsWith('/about/');
 ---
-
-<Default {...Astro.props} />
-
-{isBlogList && <BlogMobileMenu />}
+<SiteHeader mobileMenu={siteMenu ? 'site' : 'sidebar'} />

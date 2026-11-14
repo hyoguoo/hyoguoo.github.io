@@ -1,157 +1,45 @@
 ---
-import { BLOG_SERIES, type SeriesKey } from '../data/blogSeries';
+import { Icon } from '@astrojs/starlight/components';
+import { BLOG_SERIES } from '../data/blogSeries';
 
-interface Props {
-  currentId: string;
-}
-
+interface Props { currentId: string }
 const { currentId } = Astro.props;
-
-// Find which series the current post belongs to
-let activeSeries: typeof BLOG_SERIES[SeriesKey] | undefined;
-
-for (const key in BLOG_SERIES) {
-  const series = BLOG_SERIES[key as SeriesKey];
-  if (series.posts.some(post => post.id === currentId)) {
-    activeSeries = series;
-    break;
-  }
-}
-
-if (!activeSeries) return null;
+const series = Object.values(BLOG_SERIES).find(series => series.posts.some(post => post.id === currentId));
+const currentIndex = series?.posts.findIndex(post => post.id === currentId) ?? -1;
 ---
 
-<div class="series-block">
-  <div class="series-header">
-    <span class="series-badge">SERIES</span>
-    <h2 class="series-title">{activeSeries.title}</h2>
-  </div>
+{series && <details class="series-block not-content">
+  <summary>
+    <span class="series-label">시리즈</span>
+    <span class="series-title">{series.title}</span>
+    <span class="series-position" aria-label={`${series.posts.length}편 중 ${currentIndex + 1}번째 글`}>{currentIndex + 1} / {series.posts.length}</span>
+    <Icon name="right-caret" size="1rem" class="caret" />
+  </summary>
   <ol class="series-list">
-    {activeSeries.posts.map((post, index) => {
-      const isCurrent = post.id === currentId;
-      return (
-        <li class:list={['series-item', { 'is-current': isCurrent }]}>
-          <span class="item-number">{index + 1}</span>
-          {isCurrent ? (
-            <span class="item-link">
-              <span class="item-title">{post.title}</span>
-              <span class="current-indicator">OPEN</span>
-            </span>
-          ) : (
-            <a href={`/${post.id}/`} class="item-link">
-              <span class="item-title">{post.title}</span>
-            </a>
-          )}
-        </li>
-      );
-    })}
+    {series.posts.map((post, index) => <li class:list={{ 'is-current': post.id === currentId }}>
+      <span class="item-number" aria-hidden="true">{index + 1}</span>
+      {post.id === currentId ? <span class="current-title" aria-current="page">{post.title}<small>현재 글</small></span> : <a href={`/${post.id}/`}>{post.title}</a>}
+    </li>)}
   </ol>
-</div>
+</details>}
 
 <style>
-  .series-block {
-    margin: 2rem 0;
-    padding: 1.25rem 1.5rem;
-    background: var(--sl-color-bg-nav);
-    border: 1px solid var(--sl-color-hairline);
-    border-radius: 8px;
-  }
-
-  .series-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 1px solid var(--sl-color-hairline);
-  }
-
-  .series-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    padding: 0.1rem 0.4rem;
-    background: var(--sl-color-text-accent);
-    color: white;
-    border-radius: 4px;
-    letter-spacing: 0.05em;
-  }
-
-  .series-title {
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--sl-color-text);
-    margin: 0;
-  }
-
-  .series-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  .series-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-  }
-
-  .item-number {
-    flex-shrink: 0;
-    width: 1.25rem;
-    height: 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.75rem;
-    font-weight: 700;
-    color: var(--sl-color-gray-3);
-    background: var(--sl-color-bg-inline-code);
-    border-radius: 50%;
-    margin-top: 0.125rem;
-  }
-
-  .is-current .item-number {
-    background: var(--sl-color-text-accent);
-    color: white;
-  }
-
-  .item-link {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.5rem;
-    text-decoration: none;
-    color: var(--sl-color-text-muted);
-    transition: color 0.15s;
-  }
-
-  a.item-link:hover {
-    color: var(--sl-color-text-accent);
-    text-decoration: underline;
-  }
-
-  .is-current .item-link {
-    color: var(--sl-color-text);
-    font-weight: 600;
-  }
-
-  .current-indicator {
-    font-size: 0.7rem;
-    color: var(--sl-color-text-accent);
-    background: var(--sl-color-accent-low);
-    padding: 0.05rem 0.3rem;
-    border-radius: 4px;
-    font-weight: 700;
-    white-space: nowrap;
-  }
-
-  .item-title {
-    flex: 1;
-    min-width: 0;
-  }
+  .series-block { margin-top: 1.6rem; border: 1px solid var(--sl-color-hairline); border-radius: 8px; }
+  summary { display: flex; align-items: center; gap: .75rem; padding: .9rem 1rem; cursor: pointer; list-style: none; border-radius: inherit; transition: background-color 180ms ease-out; }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover { background: var(--sl-color-gray-6); }
+  summary:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 2px; }
+  .series-label, .series-position { font-size: .75rem; color: var(--sl-color-gray-3); white-space: nowrap; }
+  .series-title { flex: 1; font-size: .85rem; font-weight: 500; }
+  .caret { flex-shrink: 0; color: var(--sl-color-gray-3); transition: transform 180ms ease-out; }
+  details[open] .caret { transform: rotate(90deg); }
+  .series-list { list-style: none; padding: .5rem .6rem .75rem; margin: 0; border-top: 1px solid var(--sl-color-hairline); }
+  li { display: flex; align-items: baseline; gap: .65rem; padding: .45rem .5rem; font-size: .8rem; line-height: 1.6; border-radius: 4px; }
+  .item-number { flex: 0 0 1.25rem; color: var(--sl-color-gray-3); font-size: .7rem; text-align: right; font-variant-numeric: tabular-nums; }
+  a { color: var(--sl-color-text); text-decoration: none; }
+  a:hover { color: var(--sl-color-text-accent); text-decoration: underline; }
+  .is-current { background: color-mix(in srgb, var(--sl-color-text-accent) 9%, transparent); color: var(--sl-color-text-accent); }
+  small { display: inline-block; margin-left: .6rem; font-size: .7rem; color: var(--sl-color-gray-3); white-space: nowrap; }
+  @media (max-width: 30rem) { summary { gap: .5rem; padding: .8rem; } .series-label { display: none; } }
+  @media (prefers-reduced-motion: reduce) { summary, .caret { transition: none; } }
 </style>

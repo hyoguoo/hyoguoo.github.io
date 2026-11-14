@@ -1,0 +1,46 @@
+---
+// Starlight initializes translations on all routes; Search does not require route data.
+import Search from '@astrojs/starlight/components/Search.astro';
+---
+<div class="site-header-search"><Search /></div>
+<style>
+  .site-header-search {
+    min-width: 0;
+    --sl-color-white: var(--t-text);
+    --sl-color-black: var(--t-bg);
+    --sl-color-gray-1: var(--t-text);
+    --sl-color-gray-2: var(--t-text);
+    --sl-color-gray-3: var(--t-text-muted);
+    --sl-color-gray-4: var(--t-border-hover);
+    --sl-color-gray-5: var(--t-border);
+    --sl-color-gray-6: var(--t-surface);
+    --sl-color-text: var(--t-text);
+    --sl-color-text-invert: var(--t-bg);
+    --sl-color-text-accent: var(--t-accent-high);
+    --sl-color-accent: var(--t-accent);
+    --sl-color-accent-high: var(--t-accent-high);
+    --sl-color-accent-low: var(--t-accent-low);
+    --sl-color-backdrop-overlay: color-mix(in srgb, var(--t-bg) 75%, transparent);
+    --sl-shadow-lg: var(--t-shadow-lg);
+    --sl-text-sm: .82rem;
+    --sl-text-xl: 1.1rem;
+    --pagefind-ui-scale: .9;
+    --pagefind-ui-primary: var(--t-accent-high);
+    --pagefind-ui-text: var(--t-text);
+    --pagefind-ui-background: var(--t-bg);
+    --pagefind-ui-border: var(--t-border);
+    --pagefind-ui-tag: var(--t-surface-high);
+    --pagefind-ui-font: inherit;
+  }
+  .site-header-search :global(.sl-flex) { display: flex; }
+  .site-header-search :global(.sl-hidden) { display: none; }
+  .site-header-search :global(button[data-open-modal]) { min-height: 2.5rem; color: var(--t-text-muted); }
+  .site-header-search :global(button[data-open-modal] > svg) { width: 1rem; height: 1rem; }
+  .site-header-search :global(dialog) { font-family: Pretendard, 'Apple SD Gothic Neo', sans-serif; color: var(--t-text); }
+  @media (min-width: 50rem) {
+    .site-header-search :global([class~='md:sl-block']) { display: block; }
+    .site-header-search :global([class~='md:sl-flex']) { display: flex; }
+    .site-header-search :global([class~='md:sl-hidden']) { display: none; }
+    .site-header-search :global(button[data-open-modal]) { max-width: 22rem; background: transparent; }
+  }
+</style>

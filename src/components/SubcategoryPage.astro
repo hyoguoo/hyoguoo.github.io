@@ -28,10 +28,10 @@ const grouped = groupDocs(allDocs, subcategory, docsSections[subcategory]);
 
 <div class="subcategory-page">
   {grouped.map(({ label, docs }) => (
-    <LinkList
+    <section class="doc-section"><LinkList
       label={label || undefined}
-      items={docs.map(doc => ({ title: doc.title, url: doc.url }))}
-    />
+      items={docs.map(doc => ({ title: doc.title, url: doc.url, description: doc.description }))}
+    /></section>
   ))}
 </div>
 
@@ -39,7 +39,7 @@ const grouped = groupDocs(allDocs, subcategory, docsSections[subcategory]);
   .subcategory-page {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.75rem;
     padding: 0.25rem 0;
   }
 </style>

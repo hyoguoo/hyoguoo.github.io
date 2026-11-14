@@ -1,0 +1,12 @@
+/* Shared link feedback across custom pages and Starlight lists. */
+.site-link { color: var(--color-text, var(--sl-color-text)); text-decoration: none; border-radius: .5rem; transition: background-color 180ms ease-out, color 180ms ease-out; }
+.site-link-title { min-width: 0; display: inline-block; transition: transform 180ms ease-out, color 180ms ease-out; }
+.site-link-arrow { display: inline-block; flex-shrink: 0; color: var(--color-text-muted, var(--sl-color-gray-3)); opacity: .55; font-size: .9rem; font-weight: 400; transition: transform 180ms ease-out, color 180ms ease-out, opacity 180ms ease-out; }
+.site-link:hover, .site-link:focus-visible { color: var(--color-text, var(--sl-color-text)); background: var(--color-surface, var(--sl-color-gray-6)); text-decoration: none; }
+.site-link:hover .site-link-title, .site-link:focus-visible .site-link-title { color: var(--color-accent-light, var(--sl-color-text-accent)); transform: translateX(3px); }
+.site-link:hover .site-link-arrow, .site-link:focus-visible .site-link-arrow { color: var(--color-accent-light, var(--sl-color-text-accent)); transform: translateX(4px); opacity: 1; }
+.site-link:active { background: var(--color-surface-high, var(--sl-color-gray-5)); }
+@media (prefers-reduced-motion: reduce) {
+  .site-link, .site-link-title, .site-link-arrow { transition: none; }
+  .site-link-title, .site-link-arrow { transform: none !important; }
+}

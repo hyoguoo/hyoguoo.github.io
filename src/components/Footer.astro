@@ -1,7 +1,7 @@
 ---
 import Default from '@astrojs/starlight/components/Footer.astro';
 import Giscus from './Giscus.astro';
-import { getHue } from '../data/tagColors';
+import CategoryTag from './CategoryTag.astro';
 
 const entry = Astro.locals.starlightRoute.entry;
 
@@ -15,14 +15,14 @@ const showGiscus = !isSplash && !isAbout && !isIndexPage && Boolean(entry.data.d
 const entryId = entry.id;
 const isDocsPage = entryId?.startsWith('docs/');
 const docsTags = isDocsPage ? entry.data.tags : undefined;
-const showDocsTags = isDocsPage && docsTags && docsTags.length > 0 && !isIndexPage;
+const showDocsTags = isDocsPage && Boolean(entry.data.date) && docsTags && docsTags.length > 0 && !isIndexPage;
 ---
 
 <Default {...Astro.props} />
 {showDocsTags && (
   <div class="docs-tags">
     {docsTags!.map((tag: string) => (
-      <span class="docs-tag" style={`--tag-hue: ${getHue(tag)}`}>{tag}</span>
+      <CategoryTag label={tag} />
     ))}
   </div>
 )}
@@ -36,17 +36,4 @@ const showDocsTags = isDocsPage && docsTags && docsTags.length > 0 && !isIndexPa
     margin: 1.5rem 0 1rem;
   }
 
-  .docs-tag {
-    font-size: var(--sl-text-xs);
-    padding: 0.2rem 0.6rem;
-    background: hsl(var(--tag-hue, 220), 55%, 18%);
-    color: hsl(var(--tag-hue, 220), 80%, 72%);
-    border-radius: 4px;
-    white-space: nowrap;
-  }
-
-  :root[data-theme='light'] .docs-tag {
-    background: hsl(var(--tag-hue, 220), 60%, 92%);
-    color: hsl(var(--tag-hue, 220), 55%, 32%);
-  }
 </style>

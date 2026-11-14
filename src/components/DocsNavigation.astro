@@ -1,0 +1,90 @@
+---
+import { getCollection } from 'astro:content';
+import { Icon } from '@astrojs/starlight/components';
+import { DOCS_GROUPS } from '../data/docsGroups';
+import { docsSections } from '../data/docsSections';
+import { getHue } from '../data/tagColors';
+import { docsCatalog, docsNavigationSections } from '../lib/docs';
+const entries = await getCollection('docs', ({ id, data }) => id.startsWith('docs/') && !data.draft);
+const catalog = docsCatalog(entries, DOCS_GROUPS, docsSections);
+const pathname = Astro.url.pathname;
+const containsCurrent = (url: string) => pathname === url || pathname.startsWith(url);
+---
+<docs-navigation class="docs-directory">
+  <a class="all-docs" href="/docs/" aria-current={pathname === '/docs/' ? 'page' : undefined}>Docs</a>
+  {catalog.map(group => (
+    <section class="field-group">
+      <h2>{group.label}</h2>
+      <ul>{group.items.map(item => {
+        const sections = docsNavigationSections(entries, item.key, docsSections[item.key]);
+        const active = item.url && containsCurrent(item.url);
+        return (
+          <li><details class="topic" open={Boolean(active)}>
+            <summary class:list={{ 'active-topic': active }}>
+              <span class="topic-name" style={`--topic-hue:${getHue(item.label)}`}>{item.label}</span>
+              <small>{item.count}</small>
+              <Icon name="right-caret" size=".85rem" class="caret" />
+            </summary>
+            <div class="topic-contents">
+              {item.url && <a href={item.url} aria-current={pathname === item.url ? 'page' : undefined}>
+                주제 개요 <span aria-hidden="true">→</span>
+              </a>}
+              {sections.map(section => (
+                <details class="doc-group" open={Boolean(section.overview && containsCurrent(section.overview)) || section.docs.some(doc => containsCurrent(doc.url))}>
+                  <summary>{section.label || item.label}<Icon name="right-caret" size=".75rem" class="caret" /></summary>
+                  <ul>
+                    {section.overview && <li>
+                      <a href={section.overview} aria-current={pathname === section.overview ? 'page' : undefined}>전체 목차</a>
+                    </li>}
+                    {section.docs.map(doc => <li>
+                      {doc.children.length ? (
+                        <details class="book" open={containsCurrent(doc.url)}>
+                          <summary>{doc.title}<Icon name="right-caret" size=".75rem" class="caret" /></summary>
+                          <ul>
+                            <li><a href={doc.url} aria-current={pathname === doc.url ? 'page' : undefined}>전체 목차</a></li>
+                            {doc.children.map(child => <li>
+                              <a href={child.url} aria-current={pathname === child.url ? 'page' : undefined}>{child.title}</a>
+                            </li>)}
+                          </ul>
+                        </details>
+                      ) : <a href={doc.url} aria-current={pathname === doc.url ? 'page' : undefined}>{doc.title}</a>}
+                    </li>)}
+                  </ul>
+                </details>
+              ))}
+            </div>
+          </details></li>
+        );
+      })}</ul>
+    </section>
+  ))}
+</docs-navigation>
+<script>
+  import '../scripts/docs-navigation';
+</script>
+<style>
+  docs-navigation { display: block; }
+  .all-docs { font-weight: 600; margin-bottom: 1.15rem; }
+  .field-group { margin-bottom: 1.3rem; }
+  h2 { font-size: .7rem; font-weight: 450; color: var(--sl-color-gray-3); margin: 0 0 .4rem; letter-spacing: .01em; }
+  ul { list-style: none; padding: 0; margin: 0; }
+  summary, a { display: flex; align-items: center; gap: .5rem; padding: .4rem .45rem; color: var(--sl-color-text); font-size: .8rem; line-height: 1.55; border-radius: 5px; text-decoration: none; transition: background-color 180ms ease-out, color 180ms ease-out; }
+  summary { cursor: pointer; list-style: none; }
+  summary::-webkit-details-marker { display: none; }
+  summary:hover, a:hover, summary:focus-visible, a:focus-visible { background: var(--sl-color-gray-6); text-decoration: none; }
+  summary:focus-visible { outline: 2px solid var(--sl-color-text-accent); outline-offset: 2px; }
+  a[aria-current='page'] { color: var(--sl-color-text-accent); background: color-mix(in srgb, var(--sl-color-text-accent) 9%, transparent); font-weight: 600; }
+  .active-topic { color: var(--sl-color-white); font-weight: 600; }
+  .topic-name { display: flex; align-items: baseline; gap: .5rem; flex: 1; }
+  .topic-name::before { content: ''; height: 5px; width: 5px; flex-shrink: 0; border-radius: 50%; background: light-dark(hsl(var(--topic-hue) 45% 48%),hsl(var(--topic-hue) 45% 65%)); }
+  small { flex-shrink: 0; color: var(--sl-color-gray-3); font-size: .7rem; font-weight: 400; }
+  .caret { flex-shrink: 0; margin-left: auto; color: var(--sl-color-gray-3); transition: transform 180ms ease-out; }
+  details[open] > summary > .caret { transform: rotate(90deg); }
+  .topic-contents { padding: .25rem 0 .5rem .75rem; }
+  .topic-contents > a { color: var(--sl-color-gray-3); font-size: .75rem; justify-content: space-between; }
+  .doc-group > summary { font-size: .72rem; color: var(--sl-color-gray-3); margin-top: .3rem; }
+  .doc-group > ul { padding-left: .45rem; }
+  .doc-group a, .book > summary { font-size: .77rem; }
+  .book ul { padding-left: .65rem; }
+  @media (prefers-reduced-motion: reduce) { a, summary, .caret { transition: none; } }
+</style>

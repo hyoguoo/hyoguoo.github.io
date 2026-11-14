@@ -1,0 +1,28 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+interface Props { id?: string }
+const { id } = Astro.props;
+---
+<label class="theme-picker">
+  <span class="sr-only">테마</span>
+  <Icon name="laptop" class="theme-icon theme-icon-auto" />
+  <Icon name="sun" class="theme-icon theme-icon-light" />
+  <Icon name="moon" class="theme-icon theme-icon-dark" />
+  <select {id} data-theme-picker aria-label="테마" autocomplete="off">
+    <option value="auto">자동</option>
+    <option value="light">라이트</option>
+    <option value="dark">다크</option>
+  </select>
+</label>
+<style>
+  .theme-picker { display: inline-flex; align-items: center; gap: .35rem; min-height: 2.25rem; padding: 0 .5rem; border-radius: .5rem; color: var(--t-text-muted); background: var(--t-surface-high); }
+  .theme-picker:focus-within { outline: 2px solid var(--t-accent-light); outline-offset: 2px; }
+  .theme-picker :global(.theme-icon) { display: none; width: 1rem; height: 1rem; flex-shrink: 0; }
+  .theme-picker:has([value='auto']:checked) :global(.theme-icon-auto),
+  .theme-picker:has([value='light']:checked) :global(.theme-icon-light),
+  .theme-picker:has([value='dark']:checked) :global(.theme-icon-dark) { display: block; }
+  select { font: inherit; font-size: .8rem; color: var(--t-text); background: transparent; border: 0; min-height: 2.25rem; max-width: 5.5rem; padding: 0 .15rem; cursor: pointer; }
+  option { color: var(--t-text); background: var(--t-bg); }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  @media (pointer: coarse) { .theme-picker, select { min-height: 2.75rem; } }
+</style>

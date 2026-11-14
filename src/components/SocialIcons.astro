@@ -1,57 +1,15 @@
 ---
 const pathname = Astro.url.pathname;
-const isBlog = pathname.startsWith('/blog');
-const isDocs = pathname.startsWith('/docs');
-const isAbout = pathname.startsWith('/about');
+const links = [{href:'/',label:'Home'},{href:'/blog/',label:'Blog'},{href:'/docs/',label:'Docs'},{href:'/about/',label:'About'}];
 ---
-
-<nav class="site-nav">
-  <a href="/blog/" class:list={['nav-link', { 'nav-link--active': isBlog }]}>Blog</a>
-  <a href="/docs/" class:list={['nav-link', { 'nav-link--active': isDocs }]}>Docs</a>
-  <a href="/about/" class:list={['nav-link', { 'nav-link--active': isAbout }]}>About</a>
-  <a href="https://github.com/hyoguoo" class="nav-link" target="_blank" rel="noopener noreferrer me">GitHub</a>
+<nav class="site-nav site-navigation" aria-label="주요 페이지">
+  {links.map(link => <a href={link.href} aria-current={pathname === link.href ? 'page' : link.href !== '/' && pathname.startsWith(link.href) ? 'location' : undefined}>{link.label}</a>)}
 </nav>
-
 <style>
-  .site-nav {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-
-  .nav-link {
-    font-size: var(--sl-text-sm);
-    font-weight: 500;
-    color: var(--sl-color-gray-2);
-    text-decoration: none;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.25rem;
-    transition: color 0.15s;
-  }
-
-  .nav-link:hover {
-    color: var(--sl-color-white);
-  }
-
-  .nav-link--active {
-    color: var(--sl-color-accent-high);
-    font-weight: 600;
-  }
-
-  .nav-link--active:hover {
-    color: var(--sl-color-accent-high);
-    opacity: 0.85;
-  }
-
-  :root[data-theme='light'] .nav-link {
-    color: var(--sl-color-gray-5);
-  }
-
-  :root[data-theme='light'] .nav-link:hover {
-    color: var(--sl-color-black);
-  }
-
-  :root[data-theme='light'] .nav-link--active {
-    color: var(--sl-color-accent-high);
-  }
+  .site-nav { display: flex; align-items: center; gap: 1.4rem; }
+  a { position: relative; padding-block: .45rem; color: var(--t-text-muted); font-size: .8rem; font-weight: 450; line-height: 1.5; text-decoration: none; }
+  a:hover { color: var(--t-text); text-decoration: none; }
+  a[aria-current] { color: var(--t-text); font-weight: 550; }
+  a[aria-current]::after { content: ''; position: absolute; inset-inline: 0; bottom: -.05rem; height: 1px; background: var(--t-accent-light); }
+  @media (max-width: 49.999rem) { .site-nav { justify-content: space-between; width: 100%; gap: 1rem; } a { min-height: 2.75rem; display: inline-flex; align-items: center; } }
 </style>

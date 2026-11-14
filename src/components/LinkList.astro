@@ -1,132 +1,35 @@
 ---
 interface Props {
-  items: { title: string; url: string | null; hue?: number }[];
+  items: { title: string; url: string | null; hue?: number; description?: string; detail?: string; outline?: string }[];
   label?: string;
   compact?: boolean;
 }
 const { items, label, compact = false } = Astro.props;
 ---
-
-{label && <h2 class:list={['list-label', { compact }]}>{label}</h2>}
+{label && <h2 class="list-label">{label}<small>{items.length}개</small></h2>}
 <ul class:list={['link-list', { compact }]}>
-  {items.map(item => (
-    <li>
-      {item.url
-        ? <a href={item.url} class="link-row" style={item.hue !== undefined ? `--item-hue: ${item.hue}` : undefined}>
-            <span class:list={['link-title', { 'link-title--colored': item.hue !== undefined }]}>
-              {item.title}
-            </span>
-            <span class="link-arrow" aria-hidden="true">→</span>
-          </a>
-        : <span class="link-row link-row--disabled" style={item.hue !== undefined ? `--item-hue: ${item.hue}` : undefined}>
-            <span class:list={['link-title', { 'link-title--colored': item.hue !== undefined }]}>
-              {item.title}
-            </span>
-          </span>
-      }
-    </li>
-  ))}
+  {items.map(item => <li>
+    {item.url ? <a href={item.url} class="site-link link-row">
+      <span class="link-heading"><span class:list={['site-link-title', { 'topic-title': item.hue !== undefined }]} style={item.hue !== undefined ? `--item-hue:${item.hue}` : undefined}>{item.title}</span><span class="link-detail">{item.detail && <small>{item.detail}</small>}<span class="site-link-arrow" aria-hidden="true">→</span></span></span>
+      {item.description && <span class="link-description">{item.description}</span>}
+      {item.outline && <span class="link-outline">{item.outline}</span>}
+    </a> : <span class="link-row link-row--disabled">{item.title}</span>}
+  </li>)}
 </ul>
-
 <style>
-  .list-label {
-    font-size: 1.15rem;
-    font-weight: 700;
-    text-transform: none;
-    letter-spacing: -0.01em;
-    color: var(--sl-color-text-accent);
-    margin: 0 0 0.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid var(--sl-color-text-accent);
-    opacity: 0.9;
-  }
-
-  .list-label.compact {
-    margin-bottom: 0;
-    padding-bottom: 0.1rem;
-  }
-
-  .link-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .link-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 1rem;
-    font-weight: 500;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--sl-color-hairline);
-    text-decoration: none;
-    color: var(--sl-color-text);
-    transition: all 0.2s ease;
-    position: relative;
-  }
-
-  .link-title--colored {
-    padding-left: 0.75rem;
-  }
-
-  .link-title--colored::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 1.2rem;
-    background: hsl(var(--item-hue), 60%, 65%);
-    border-radius: 2px;
-    opacity: 0.7;
-    transition: all 0.2s ease;
-  }
-
-  :root[data-theme='light'] .link-title--colored::before {
-    background: hsl(var(--item-hue), 60%, 45%);
-    opacity: 0.5;
-  }
-
-  .link-list.compact li:first-child .link-row {
-    padding-top: 0;
-  }
-
-  .link-list.compact .link-row {
-    padding: 0.2rem 0;
-  }
-
-  li:last-child .link-row {
-    border-bottom: none;
-  }
-
-  a.link-row:hover {
-    color: var(--sl-color-text-accent);
-    padding-left: 0.25rem;
-  }
-
-  a.link-row:hover .link-title--colored::before {
-    height: 1.4rem;
-    opacity: 1;
-    width: 4px;
-  }
-
-  .link-arrow {
-    color: var(--sl-color-gray-3);
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    transition: color 0.15s;
-  }
-
-  a.link-row:hover .link-arrow {
-    color: var(--sl-color-text-accent);
-  }
-
-  .link-row--disabled {
-    color: var(--sl-color-gray-3);
-    cursor: default;
-  }
+  .list-label { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; font-size: 1rem; font-weight: 600; line-height: 1.65; color: var(--sl-color-text); margin: 0 0 .55rem; padding-bottom: .6rem; border-bottom: 1px solid var(--sl-color-hairline); }
+  .list-label small { font-size: .7rem; font-weight: 400; color: var(--sl-color-gray-3); }
+  .link-list { list-style: none; margin: 0; padding: 0; }
+  .link-list li { margin: 0; padding: .15rem 0; }
+  .link-row { display: block; padding: .75rem .85rem; color: var(--sl-color-text); font-size: 1rem; line-height: 1.65; }
+  .link-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; font-weight: 580; }
+  .link-description { display: block; color: var(--sl-color-gray-3); font-size: .82rem; font-weight: 400; line-height: 1.85; margin-top: .4rem; }
+  .link-outline { display: block; color: var(--sl-color-gray-3); font-size: .72rem; font-weight: 400; line-height: 1.8; margin-top: .35rem; }
+  .link-detail { display: inline-flex; align-items: center; gap: .8rem; flex-shrink: 0; color: var(--sl-color-gray-3); }
+  .link-detail small { font-size: .7rem; font-weight: 400; }
+  .topic-title { display: inline-flex; align-items: baseline; gap: .55rem; }
+  .topic-title::before { content: ''; height: 5px; width: 5px; flex-shrink: 0; border-radius: 50%; background: light-dark(hsl(var(--item-hue) 45% 48%),hsl(var(--item-hue) 45% 65%)); }
+  .link-row--disabled { color: var(--sl-color-gray-3); }
+  .compact .link-row { padding-block: .4rem; }
+  @media (max-width: 40rem) { .link-row { font-size: .92rem; padding-inline: .6rem; } .link-heading { gap: .7rem; } .link-detail { gap: .5rem; } }
 </style>

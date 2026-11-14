@@ -2,11 +2,12 @@
 import '../styles/pages.css';
 import ThemeProvider from './ThemeProvider.astro';
 import Analytics from './Analytics.astro';
+import SiteHeader from './SiteHeader.astro';
 
 interface Props {
   title: string;
   description: string;
-  activePage?: 'about';
+  activePage?: 'home' | 'about';
   canonical?: string;
   ogTitle?: string;
   ogDescription?: string;
@@ -27,9 +28,11 @@ const {
 ---
 
 <!doctype html>
-<html lang="ko">
+<html lang="ko" class:list={{ 'home-layout': activePage === 'home' }}>
 <head>
   <meta charset="UTF-8" />
+  <!-- Shared Starlight widgets require the same layer order as Starlight pages. -->
+  <style is:inline>@layer starlight.base, starlight.reset, starlight.core, starlight.content, starlight.components, starlight.components.icon, starlight.components.aside, starlight.utils;</style>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content={description} />
   <meta name="google-site-verification" content="zQ7fN1J9KvTYUQHViHtn7XF6uQ1y6Q8WqrDdul-exu0" />
@@ -51,302 +54,18 @@ const {
   {ogDescription && <meta name="twitter:description" content={ogDescription} />}
   {ogTitle && <meta name="twitter:image" content="https://hyoguoo.github.io/og.png" />}
   <Analytics />
-  <style is:global>
-    *, *::before, *::after { box-sizing: border-box; }
-
-    body {
-      background: var(--color-bg);
-      color: var(--color-text);
-      font-family: 'Pretendard', 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif;
-      margin: 0;
-      padding: 0;
-      line-height: 1.7;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    .container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
-
-    /* Header */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: color-mix(in srgb, var(--color-bg) 85%, transparent);
-      backdrop-filter: blur(12px) saturate(1.5);
-      -webkit-backdrop-filter: blur(12px) saturate(1.5);
-      border-bottom: 1px solid var(--color-border);
-      padding: 0.75rem 0;
-      transition: border-color var(--t-duration) var(--t-ease);
-    }
-
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .nav-brand {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: var(--color-text);
-      text-decoration: none;
-      transition: color var(--t-duration) var(--t-ease);
-    }
-
-    .nav-brand:hover {
-      color: var(--color-accent-light);
-    }
-
-    .nav-icon {
-      flex-shrink: 0;
-      border-radius: 4px;
-      transition: transform var(--t-duration) var(--t-ease-bounce);
-    }
-
-    .nav-brand:hover .nav-icon {
-      transform: rotate(-6deg) scale(1.05);
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 0.25rem;
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      align-items: center;
-    }
-
-    .nav-links a {
-      color: var(--color-text-muted);
-      text-decoration: none;
-      font-size: 0.88rem;
-      font-weight: 450;
-      padding: 0.35rem 0.65rem;
-      border-radius: var(--t-radius-sm);
-      transition: color var(--t-duration) var(--t-ease),
-                  background var(--t-duration) var(--t-ease);
-    }
-
-    .nav-links a:hover {
-      color: var(--color-accent-light);
-      background: var(--color-accent-glow);
-    }
-
-    .nav-links a[aria-current] {
-      color: var(--color-accent-light);
-      font-weight: 550;
-      background: var(--color-accent-glow);
-    }
-
-    @media (max-width: 600px) {
-      nav {
-        flex-wrap: nowrap;
-        gap: 0.5rem;
-        padding: 0;
-      }
-      .nav-brand {
-        flex-shrink: 0;
-      }
-      .nav-links {
-        gap: 0;
-        flex-shrink: 1;
-        min-width: 0;
-        justify-content: flex-end;
-      }
-      .nav-links a {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.35rem;
-        white-space: nowrap;
-      }
-      /*
-        Theme select: icon-only on mobile.
-        The label is sized to fit just the monitor icon (1.75rem). The native
-        <select> is overlaid on top with opacity:0 so the icon stays visible
-        while the invisible select remains fully interactive — tapping the icon
-        area opens the OS-native dropdown.
-      */
-      .theme-select-wrap {
-        flex-shrink: 0;
-      }
-      .theme-select-label {
-        width: 1.75rem;
-        height: 1.75rem;
-      }
-      .theme-select-label .theme-select-icon {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-      .theme-caret {
-        display: none;
-      }
-      #theme-select {
-        position: absolute;
-        inset: 0;
-        width: 1.75rem;
-        height: 1.75rem;
-        padding: 0;
-        opacity: 0;
-        cursor: pointer;
-      }
-    }
-
-    .sr-only {
-      position: absolute; width: 1px; height: 1px;
-      padding: 0; margin: -1px; overflow: hidden;
-      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
-    }
-
-    .theme-select-label {
-      position: relative;
-      display: inline-flex;
-      align-items: center;
-      color: var(--color-text-muted);
-      cursor: pointer;
-      padding: 0.35rem 0.5rem;
-      border-radius: var(--t-radius-sm);
-      transition: color var(--t-duration) var(--t-ease),
-                  background var(--t-duration) var(--t-ease);
-    }
-
-    .theme-select-label:hover {
-      color: var(--color-accent-light);
-      background: var(--color-accent-glow);
-    }
-
-    .theme-select-icon {
-      position: absolute;
-      left: 0.5rem;
-      pointer-events: none;
-    }
-
-    .theme-caret {
-      position: absolute;
-      right: 0;
-      pointer-events: none;
-    }
-
-    #theme-select {
-      border: 0;
-      background: transparent;
-      appearance: none;
-      color: inherit;
-      cursor: pointer;
-      font-size: 0.88rem;
-      font-family: inherit;
-      padding: 0.25rem;
-      padding-left: 1.25rem;
-      padding-right: 1.25rem;
-      outline: none;
-    }
-
-    #theme-select option {
-      background: var(--color-surface);
-      color: var(--color-text);
-    }
-
-    /* Footer */
-    footer {
-      border-top: 1px solid var(--color-border);
-      padding: 2.5rem 0;
-      text-align: center;
-      color: var(--color-text-muted);
-      font-size: 0.82rem;
-      margin-top: 3rem;
-      letter-spacing: 0.01em;
-    }
-
-    footer p {
-      margin: 0;
-      opacity: 0.8;
-    }
-
-    /* ── Scroll-triggered fade-in ── */
-    .observe-fade {
-      opacity: 0;
-      transform: translateY(16px);
-      transition: opacity var(--t-duration-slow) var(--t-ease),
-                  transform var(--t-duration-slow) var(--t-ease);
-    }
-
-    .observe-fade.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  </style>
   <slot name="head" />
 </head>
 <body>
-<header>
-  <nav class="container">
-    <a href="/" class="nav-brand">
-      <img src="/nav-icon.svg" width="20" height="20" alt="" class="nav-icon" />
-      hyoguoo.log
-    </a>
-    <ul class="nav-links">
-      <li><a href="/blog/">Blog</a></li>
-      <li><a href="/docs/">Docs</a></li>
-      <li><a href="/about/" aria-current={activePage === 'about' ? 'page' : undefined}>About</a></li>
-      <li><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub</a></li>
-      <li class="theme-select-wrap">
-        <label class="theme-select-label">
-          <span class="sr-only">Theme</span>
-          <svg class="theme-select-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <rect x="2" y="3" width="20" height="14" rx="2"/>
-            <line x1="8" y1="21" x2="16" y2="21"/>
-            <line x1="12" y1="17" x2="12" y2="21"/>
-          </svg>
-          <select id="theme-select" autocomplete="off">
-            <option value="dark">Dark</option>
-            <option value="light">Light</option>
-            <option value="auto">Auto</option>
-          </select>
-          <svg class="theme-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </label>
-      </li>
-    </ul>
-  </nav>
-</header>
-
+<header class="site-header"><SiteHeader /></header>
 <slot />
-
-<footer>
-  <div class="container">
-    <slot name="footer">
-      <p>© {new Date().getFullYear()} hyoguoo.log</p>
-    </slot>
-  </div>
-</footer>
-
+<footer class="site-footer"><div class="container"><div class="footer-content">
+  <slot name="footer"><p>© {new Date().getFullYear()} hyoguoo.log</p></slot>
+  <nav aria-label="관련 링크"><a href="https://github.com/hyoguoo" target="_blank" rel="noopener">GitHub ↗</a><a href="/about/">About</a></nav>
+</div></div></footer>
 <script>
   import { initializeTheme } from '../scripts/theme';
   initializeTheme();
-
-  /* Scroll-triggered fade-in observer */
-  (function() {
-    var targets = document.querySelectorAll('.observe-fade');
-    if (!targets.length) return;
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.05 });
-    targets.forEach(function(t) { observer.observe(t); });
-  })();
 </script>
 </body>
 </html>

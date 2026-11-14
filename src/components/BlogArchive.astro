@@ -1,0 +1,37 @@
+---
+import ContentPreview from './ContentPreview.astro';
+import CategoryTag from './CategoryTag.astro';
+import { blogArchive } from '../lib/blog';
+import { CATEGORY_ORDER } from '../data/tagColors';
+import { BLOG_CONFIG } from '../data/blogConfig';
+const pathname = Astro.url.pathname;
+const posts = Astro.locals.starlightBlog.posts.filter(post => !post.draft);
+const author = pathname.startsWith('/blog/authors/') ? Astro.locals.starlightRoute.entry.data.title : undefined;
+const archive = blogArchive(posts, pathname, BLOG_CONFIG.postCount, CATEGORY_ORDER, author);
+---
+<div class="blog-archive">
+  <nav class="category-nav" aria-label="블로그 카테고리"><ul>
+    <li><a href="/blog/" aria-current={!archive.selectedTag && !author ? 'location' : undefined}><span>전체</span><small>{posts.length}</small></a></li>
+    {archive.categories.map(category => <li><a href={category.href} aria-current={category.label === archive.selectedTag ? 'page' : undefined}><CategoryTag label={category.label} /><small>{category.count}</small></a></li>)}
+  </ul></nav>
+  <section class="archive-posts" aria-label="글 목록"><h2 class="sr-only">글 목록</h2><p class="archive-count">{archive.selectedTag ?? author ?? '전체 글'} · {archive.total}개</p>
+    {archive.posts.map(post => <ContentPreview editorial title={post.title} href={post.href} description={post.entry.data.description} date={post.createdAt} category={post.tags[0]?.label} categoryHref={post.tags[0]?.href} />)}
+    {archive.pageCount > 1 && <nav class="archive-pagination" aria-label="Blog pages">{Array.from({ length: archive.pageCount }, (_,i) => i+1).map(page => <a href={page === 1 ? '/blog/' : `/blog/${page}/`} aria-current={page === archive.page ? 'page' : undefined}>{page}</a>)}</nav>}
+  </section>
+</div>
+<style>
+  .blog-archive { display: grid; grid-template-columns: 11rem minmax(0,1fr); gap: 2.25rem; }
+  .archive-posts { min-width: 0; }
+  .category-nav ul { list-style: none; margin: 0; padding: 0; }
+  .category-nav li { margin: 0; }
+  .category-nav a { display: flex; justify-content: space-between; align-items: baseline; gap: .65rem; padding: .55rem .4rem; margin-inline: -.4rem; border-radius: 4px; font-size: .8rem; text-decoration: none; color: var(--sl-color-text); }
+  .category-nav a:hover, .category-nav a:focus-visible { background: var(--sl-color-gray-6); }
+  .category-nav a[aria-current] { font-weight: 600; color: var(--sl-color-text-accent); }
+  .category-nav small { font-size: .7rem; color: var(--sl-color-gray-3); flex-shrink: 0; }
+  .archive-count { font-size: .8rem; color: var(--sl-color-gray-3); margin: 0; padding-bottom: .7rem; border-bottom: 1px solid var(--sl-color-hairline); }
+  .archive-pagination { display: flex; gap: .5rem; margin-top: 1.5rem; }
+  .archive-pagination a { display: inline-flex; justify-content: center; align-items: center; min-width: 2rem; min-height: 2rem; font-size: .85rem; color: var(--sl-color-text); text-decoration: none; border-bottom: 2px solid transparent; }
+  .archive-pagination a[aria-current] { color: var(--sl-color-text-accent); border-bottom-color: currentColor; }
+  @media (max-width: 40rem) { .blog-archive { grid-template-columns: 1fr; gap: 1.5rem; } .category-nav ul { display: flex; flex-wrap: wrap; gap: .1rem 1rem; } .category-nav a { gap: .5rem; } }
+  @media (pointer: coarse) { .category-nav a, .archive-pagination a { min-height: 2.75rem; } }
+</style>

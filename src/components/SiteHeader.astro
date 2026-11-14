@@ -1,0 +1,37 @@
+---
+import SiteTitle from './SiteTitle.astro';
+import SocialIcons from './SocialIcons.astro';
+import SiteSearch from './SiteSearch.astro';
+import SiteMobileMenu from './SiteMobileMenu.astro';
+import ThemeSelect from './ThemeSelect.astro';
+interface Props { mobileMenu?: 'site' | 'sidebar' }
+const { mobileMenu = 'site' } = Astro.props;
+---
+<div class="site-header-bar" data-pagefind-ignore>
+  <SiteTitle />
+  <SiteSearch />
+  <div class="header-navigation"><SocialIcons /></div>
+  <div class="header-theme"><ThemeSelect id="theme-select" /></div>
+  {mobileMenu === 'site' && <SiteMobileMenu />}
+</div>
+<style>
+  .site-header-bar { display: grid; grid-template-columns: minmax(9rem, .65fr) minmax(8rem, 1fr) auto auto; align-items: center; gap: 1.75rem; height: 100%; padding-inline: var(--site-nav-pad); font-family: Pretendard, 'Apple SD Gothic Neo', sans-serif; }
+  .header-navigation { margin-left: auto; }
+  .header-theme { display: flex; align-items: center; padding-left: 1.25rem; border-left: 1px solid var(--t-border); }
+  @media (max-width: 49.999rem) {
+    .site-header-bar { grid-template-columns: minmax(0,1fr) auto auto; gap: 1rem; padding-right: calc(var(--site-nav-pad) + 3.25rem); }
+    .header-navigation { display: none; }
+    .header-theme { padding-left: 0; border: 0; }
+    .header-theme :global(.theme-picker) { width: 2.5rem; height: 2.5rem; min-height: 2.5rem; padding: .75rem; position: relative; }
+    .header-theme :global(select) { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; opacity: 0; padding: 0; }
+  }
+  @media (max-width: 23rem) { .site-header-bar { gap: .5rem; } }
+</style>
+<style is:global>
+  :root { --site-nav-pad: clamp(1.25rem, 3vw, 2.5rem); --sl-nav-pad-x: var(--site-nav-pad); --sl-nav-height: 4rem; }
+  header.header, header.site-header { padding: 0 !important; border-bottom: 1px solid var(--t-border); background: var(--t-bg); }
+  header.site-header { position: sticky; top: 0; height: var(--sl-nav-height); z-index: 100; }
+  @media (max-width: 49.999rem) {
+    .sl-menu-button { top: .75rem !important; inset-inline-end: var(--site-nav-pad) !important; width: 2.5rem !important; height: 2.5rem !important; border-radius: .5rem !important; background: var(--t-surface-high) !important; color: var(--t-text) !important; box-shadow: none !important; }
+  }
+</style>

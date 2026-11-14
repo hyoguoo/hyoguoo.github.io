@@ -1,25 +1,5 @@
 ---
-// Reuse Starlight's markup and icons; own the storage/event behavior.
-import { Icon } from '@astrojs/starlight/components';
-import Select from '@astrojs/starlight/components/Select.astro';
+import ThemePicker from './ThemePicker.astro';
+interface Props { id?: string }
 ---
-<starlight-theme-select>
-  <Select label={Astro.locals.t('themeSelect.accessibleLabel')} width="6.25em" options={[
-    { label: Astro.locals.t('themeSelect.dark'), selected: false, value: 'dark' },
-    { label: Astro.locals.t('themeSelect.light'), selected: false, value: 'light' },
-    { label: Astro.locals.t('themeSelect.auto'), selected: true, value: 'auto' },
-  ]}>
-    <Fragment slot="icon">
-      <Icon name="moon" class="sl-theme-icon-dark" />
-      <Icon name="sun" class="sl-theme-icon-light" />
-      <Icon name="laptop" class="sl-theme-icon-auto" />
-    </Fragment>
-  </Select>
-</starlight-theme-select>
-<style>
-  @layer starlight.components {
-    starlight-theme-select:has([value='dark']:not(:checked)) :global(.sl-theme-icon-dark),
-    starlight-theme-select:has([value='light']:not(:checked)) :global(.sl-theme-icon-light),
-    starlight-theme-select:has([value='auto']:not(:checked)) :global(.sl-theme-icon-auto) { display: none; }
-  }
-</style>
+<starlight-theme-select><ThemePicker id={Astro.props.id} /></starlight-theme-select>

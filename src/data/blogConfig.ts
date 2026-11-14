@@ -1,4 +1,5 @@
 import type { StarlightBlogUserConfig } from 'starlight-blog';
+import { SITE_PROFILE } from './siteProfile';
 
 export const BLOG_CONFIG = {
   title: 'Blog',
@@ -7,6 +8,6 @@ export const BLOG_CONFIG = {
   navigation: 'none',
   structuredData: false, // Head.astro owns article and breadcrumb metadata.
   authors: {
-    hyoguoo: { name: 'hyoguoo', title: 'Backend Engineer', url: 'https://github.com/hyoguoo' },
+    hyoguoo: { name: 'hyoguoo', title: SITE_PROFILE.role, url: 'https://github.com/hyoguoo' },
   },
 } satisfies StarlightBlogUserConfig;

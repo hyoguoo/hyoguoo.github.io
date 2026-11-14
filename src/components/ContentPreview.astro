@@ -1,0 +1,48 @@
+---
+import CategoryTag from './CategoryTag.astro';
+import { contentDate, formatDate } from '../lib/content';
+interface Props {
+  title: string; href: string; description?: string; date?: unknown;
+  category?: string; categoryHref?: string; compact?: boolean;
+  editorial?: boolean;
+}
+const { title, href, description, date, category, categoryHref, compact = false, editorial = false } = Astro.props;
+const parsedDate = contentDate(date);
+---
+<article class:list={['content-preview', { compact, editorial: editorial && Boolean(parsedDate) }]}>
+  {editorial && parsedDate && <time class="preview-datestamp" datetime={parsedDate.toISOString()}><span>{parsedDate.getUTCFullYear()}</span><span>{parsedDate.toISOString().slice(5,10).replace('-', '.')}</span></time>}
+  <div class="preview-content">
+  <div class="preview-meta">
+    {category && <CategoryTag label={category} href={categoryHref} plain={editorial || compact} />}
+    {!editorial && parsedDate && <time datetime={parsedDate.toISOString()}>{formatDate(parsedDate)}</time>}
+  </div>
+  <a class="site-link preview-link" href={href}>
+    <h3 class="preview-title"><span class="site-link-title">{title}</span><span class="site-link-arrow" aria-hidden="true">→</span></h3>
+    {description && <p class="preview-description">{description}</p>}
+  </a>
+  </div>
+</article>
+<style>
+  .content-preview { padding: 1.25rem 0; border-bottom: 1px solid var(--color-border, var(--sl-color-hairline)); }
+  .content-preview:last-child { border-bottom: 0; }
+  .preview-meta { display: flex; align-items: center; flex-wrap: wrap; gap: .45rem .7rem; margin-bottom: .65rem; font-size: .7rem; color: var(--color-text-muted, var(--sl-color-gray-3)); }
+  .preview-link { display: block; padding: .5rem .65rem; margin: -.5rem -.65rem; }
+  .preview-title { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin: 0; font-size: 1.05rem; line-height: 1.65; letter-spacing: -.025em; font-weight: 620; }
+  .preview-description { margin: .55rem 0 0; color: var(--color-text-muted, var(--sl-color-gray-3)); font-size: .82rem; line-height: 1.85; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .compact { padding: 1.05rem 0; }
+  .compact .preview-title { font-size: .9rem; }
+  .compact .preview-description { font-size: .78rem; }
+  .preview-content { min-width: 0; }
+  .editorial { display: grid; grid-template-columns: 3.25rem minmax(0,1fr); column-gap: 1.1rem; padding-block: 1.75rem; }
+  .preview-datestamp { display: flex; flex-direction: column; gap: .15rem; padding-top: .1rem; color: var(--t-text-muted); font-size: .7rem; font-variant-numeric: tabular-nums; }
+  .preview-datestamp span:last-child { font-size: .82rem; color: var(--t-text); }
+  .editorial .preview-title { font-size: 1.15rem; line-height: 1.55; font-weight: 650; letter-spacing: -.035em; }
+  .editorial .preview-meta { margin-bottom: .7rem; }
+  .editorial .preview-description { margin-top: .75rem; }
+  @media (max-width: 40rem) {
+    .editorial { grid-template-columns: 1fr; row-gap: .45rem; padding-block: 1.4rem; }
+    .preview-datestamp { flex-direction: row; gap: .3rem; }
+    .preview-datestamp span:last-child { font-size: inherit; color: inherit; }
+    .editorial .preview-title { font-size: 1.05rem; }
+  }
+</style>

@@ -3,6 +3,7 @@
    reference these tokens so all pages stay in sync. */
 
 :root {
+  color-scheme: dark;
   /* Dark mode (default) */
   --t-bg:           #16181f;
   --t-surface:      #1e2029;
@@ -43,6 +44,7 @@
 }
 
 [data-theme='light'] {
+  color-scheme: light;
   --t-bg:           #fafafc;
   --t-surface:      #ffffff;
   --t-surface-high: #f0f1f5;

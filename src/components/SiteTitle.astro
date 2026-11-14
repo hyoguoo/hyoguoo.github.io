@@ -1,31 +1,7 @@
 ---
 ---
-
-<a href="/" class="site-title sl-flex">
-  <img src="/nav-icon.svg" width="20" height="20" alt="" class="site-icon" />
-  <span translate="no">hyoguoo.log</span>
-</a>
-
+<a href="/" class="site-title nav-brand" translate="no">hyoguoo.log</a>
 <style>
-  @layer starlight.core {
-    .site-title {
-      align-items: center;
-      gap: 0.5rem;
-      font-size: var(--sl-text-h4);
-      font-weight: 600;
-      color: var(--sl-color-text-accent);
-      text-decoration: none;
-      white-space: nowrap;
-      min-width: 0;
-    }
-
-    .site-icon {
-      flex-shrink: 0;
-      border-radius: 4px;
-    }
-
-    span {
-      overflow: hidden;
-    }
-  }
+  .site-title { display: inline-block; color: var(--t-text); font-size: 1.2rem; font-weight: 740; letter-spacing: -.055em; line-height: 1.4; text-decoration: none; white-space: nowrap; min-width: 0; width: fit-content; }
+  .site-title:hover { color: var(--t-text); text-decoration: none; }
 </style>

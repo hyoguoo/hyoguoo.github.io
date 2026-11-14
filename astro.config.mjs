@@ -4,6 +4,7 @@ import starlight from '@astrojs/starlight';
 import sitemap from '@astrojs/sitemap';
 import starlightBlog from 'starlight-blog';
 import { blogIndexPlugin } from './src/build/blog-index-plugin.ts';
+import { SITE_PROFILE } from './src/data/siteProfile.ts';
 import { BLOG_CONFIG } from './src/data/blogConfig.ts';
 import { buildLastModMap } from './src/build/sitemap.mjs';
 
@@ -29,7 +30,7 @@ export default defineConfig({
 			title: "hyoguoo.log",
 			routeMiddleware: './src/routeMiddleware.ts',
 			expressiveCode: { shiki: { langAlias: { gradle: 'groovy', redis: 'shellsession' } } },
-			description: 'Backend Engineer, Java & Spring',
+			description: SITE_PROFILE.description,
 			defaultLocale: 'root',
 			locales: {
 				root: { label: '한국어', lang: 'ko' },

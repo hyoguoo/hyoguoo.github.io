@@ -1,0 +1,48 @@
+---
+import { Icon } from '@astrojs/starlight/components';
+import SocialIcons from './SocialIcons.astro';
+---
+<site-mobile-menu class="site-menu-wrap">
+  <button type="button" aria-expanded="false" aria-label="사이트 메뉴" aria-controls="site-mobile-nav" class="site-menu-button">
+    <Icon name="bars" class="icon-open" size="20" />
+    <Icon name="close" class="icon-close" size="20" />
+  </button>
+  <div id="site-mobile-nav" class="site-nav-pane" hidden>
+    <SocialIcons />
+  </div>
+</site-mobile-menu>
+<script>
+  class SiteMobileMenu extends HTMLElement {
+    private button = this.querySelector('button')!;
+    private pane = this.querySelector<HTMLElement>('.site-nav-pane')!;
+    private events?: AbortController;
+
+    connectedCallback() {
+      this.events?.abort();
+      this.events = new AbortController();
+      const { signal } = this.events;
+      this.button.addEventListener('click', () => this.isExpanded() ? this.close() : this.open(), { signal });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && this.isExpanded()) { this.close(); this.button.focus(); }
+      }, { signal });
+      document.addEventListener('click', event => {
+        if (this.isExpanded() && event.target instanceof Node && !this.contains(event.target)) this.close();
+      }, { signal, capture: true });
+    }
+    disconnectedCallback() { this.events?.abort(); this.close(); }
+    isExpanded() { return this.button.getAttribute('aria-expanded') === 'true'; }
+    open() { this.button.setAttribute('aria-expanded', 'true'); this.pane.hidden = false; }
+    close() { this.button.setAttribute('aria-expanded', 'false'); this.pane.hidden = true; }
+  }
+  if (!customElements.get('site-mobile-menu')) customElements.define('site-mobile-menu', SiteMobileMenu);
+</script>
+<style>
+  .site-menu-wrap { display: none; }
+  @media (max-width: 49.999rem) {
+    .site-menu-wrap { display: block; position: fixed; top: .75rem; inset-inline-end: var(--site-nav-pad); z-index: 110; }
+  }
+  .site-menu-button { display: flex; align-items: center; justify-content: center; width: 2.5rem; height: 2.5rem; padding: .5rem; border: 0; border-radius: .5rem; background: var(--t-surface-high); color: var(--t-text); cursor: pointer; }
+  .site-menu-button[aria-expanded='true'] :global(.icon-open), .site-menu-button:not([aria-expanded='true']) :global(.icon-close) { display: none; }
+  .site-nav-pane { position: fixed; inset: 4rem 0 auto; padding: .75rem var(--site-nav-pad); background: var(--t-bg); border-bottom: 1px solid var(--t-border); }
+  .site-nav-pane[hidden] { display: none; }
+</style>

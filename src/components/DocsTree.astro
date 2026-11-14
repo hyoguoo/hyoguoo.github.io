@@ -1,58 +1,25 @@
 ---
-import { isDocsArticle } from '../lib/content';
 import { getCollection } from 'astro:content';
-import TreeSection from './TreeSection.astro';
 import LinkList from './LinkList.astro';
 import { DOCS_GROUPS } from '../data/docsGroups';
+import { docsSections } from '../data/docsSections';
 import { getHue } from '../data/tagColors';
-
-// docsLoader id format: 'docs/subcategory/slug' for docs, 'docs/subcategory' for index pages
-
-// Subcategories that have at least one doc (= migrated)
-const allDocs = await getCollection('docs', ({ id, data }) => isDocsArticle(id) && !data.draft);
-
-const migratedSubcategories = new Set(
-  allDocs.map(doc => doc.id.split('/')[1])
-);
-
-// Subcategories that have an index page: id is exactly 'docs/subcategory' (2 parts)
-const indexPages = await getCollection('docs', ({ id }) => {
-  const parts = id.split('/');
-  return parts.length === 2 && parts[0] === 'docs';
-});
-
-const subcategoriesWithIndex = new Set(indexPages.map(p => p.id.split('/')[1]));
-
-const visibleGroups = DOCS_GROUPS.map(group => ({
-  ...group,
-  items: group.items.filter(item => migratedSubcategories.has(item.key)),
-})).filter(group => group.items.length > 0);
+import { docsCatalog } from '../lib/docs';
+const catalog = docsCatalog(await getCollection('docs', ({ id }) => id.startsWith('docs/')), DOCS_GROUPS, docsSections);
 ---
-
 <div class="docs-tree">
-  {visibleGroups.length === 0 ? (
-    <p class="empty-state">문서가 없습니다.</p>
-  ) : visibleGroups.map(group => (
-    <TreeSection label={group.label} labelVariant="accent">
-      <LinkList items={group.items.map(item => ({
-        title: item.label,
-        url: subcategoriesWithIndex.has(item.key) ? `/docs/${item.key}/` : null,
-        hue: getHue(item.label),
-      }))} />
-    </TreeSection>
-  ))}
+  {catalog.map(group => <section class:list={['docs-group', { single: group.items.length === 1 }]}><h2>{group.label}<small>{group.items.length}개 주제</small></h2>
+    <LinkList items={group.items.map(item => ({ title: item.label, url: item.url, hue: getHue(item.label), description: item.description, detail: `${item.count}개 문서`, outline: item.sections.slice(0,3).join(' · ') + (item.sections.length > 3 ? ` 외 ${item.sections.length - 3}개 섹션` : '') }))} />
+  </section>)}
 </div>
-
 <style>
-  .docs-tree {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding: 1rem 0;
-  }
-
-  .empty-state {
-    color: var(--sl-color-gray-3);
-    font-size: 0.9rem;
-  }
+  .docs-tree { display: flex; flex-direction: column; gap: 2.25rem; }
+  .docs-group { min-width: 0; margin-block: 0; }
+  .docs-group h2 { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; margin: 0 0 .4rem; padding-bottom: .75rem; border-bottom: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); font-size: .85rem; font-weight: 550; }
+  .docs-group h2 small { color: var(--sl-color-gray-3); font-weight: 400; font-size: .7rem; }
+  .docs-group :global(.link-list) { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 2.25rem; }
+  .docs-group.single :global(.link-list) { grid-template-columns: 1fr; }
+  .docs-group :global(.link-list li) { padding-block: .4rem; }
+  .docs-group :global(.link-row) { margin-inline: -.6rem; padding-inline: .6rem; }
+  @media (max-width: 40rem) { .docs-group :global(.link-list) { grid-template-columns: 1fr; } }
 </style>

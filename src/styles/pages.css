@@ -1,69 +1,32 @@
-/* Shared semantic CSS variables for Landing and About pages.
-   Consumes raw tokens from tokens.css.
-   Import this file in src/pages/index.astro and src/pages/about/index.astro
-   instead of defining these variables inline in each page. */
 @import './tokens.css';
-
+@import './interactions.css';
 :root {
-  --color-bg:           var(--t-bg);
-  --color-surface:      var(--t-surface);
-  --color-surface-high: var(--t-surface-high);
-  --color-border:       var(--t-border);
-  --color-border-hover: var(--t-border-hover);
-  --color-text:         var(--t-text);
-  --color-text-muted:   var(--t-text-muted);
-  --color-accent:       var(--t-accent);
-  --color-accent-light: var(--t-accent-light);
-  --color-accent-glow:  var(--t-accent-glow);
-  --max-width: 800px;
+  --color-bg: var(--t-bg); --color-surface: var(--t-surface); --color-surface-high: var(--t-surface-high);
+  --color-border: var(--t-border); --color-border-hover: var(--t-border-hover);
+  --color-text: var(--t-text); --color-text-muted: var(--t-text-muted);
+  --color-accent: var(--t-accent); --color-accent-light: var(--t-accent-light);
+  --color-accent-glow: var(--t-accent-glow); --max-width: 1000px;
 }
-
-[data-theme='light'] {
-  --color-bg:           var(--t-bg);
-  --color-surface:      var(--t-surface);
-  --color-surface-high: var(--t-surface-high);
-  --color-border:       var(--t-border);
-  --color-border-hover: var(--t-border-hover);
-  --color-text:         var(--t-text);
-  --color-text-muted:   var(--t-text-muted);
-  --color-accent:       var(--t-accent);
-  --color-accent-light: var(--t-accent-light);
-  --color-accent-glow:  var(--t-accent-glow);
+:root.home-layout { --max-width: 1120px; }
+* , *::before, *::after { box-sizing: border-box; }
+body { margin: 0; background: var(--color-bg); color: var(--color-text); font-family: Pretendard, 'Apple SD Gothic Neo', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 1rem; line-height: 1.75; -webkit-font-smoothing: antialiased; }
+.container { width: 100%; max-width: var(--max-width); margin-inline: auto; padding-inline: 2.5rem; }
+.profile-intro { display: flex; justify-content: space-between; align-items: center; gap: 2rem; padding-block: 2.5rem 2rem; }
+.profile-intro h1 { margin: 0; color: var(--color-accent-light); font-size: 2.5rem; font-weight: 720; line-height: 1.25; letter-spacing: -.045em; }
+.profile-role { font-size: .78rem; color: var(--color-text-muted); margin: 0 0 .5rem; }
+.profile-description { font-size: .86rem; color: var(--color-text-muted); margin: .65rem 0 0; }
+.profile-avatar { width: 5rem; height: 5rem; border-radius: 50%; object-fit: contain; background: white; flex-shrink: 0; }
+.section-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; padding-bottom: .65rem; margin: 0; border-bottom: 1px solid var(--color-border); }
+.section-heading h2 { margin: 0; font-size: 1.15rem; font-weight: 650; letter-spacing: -.02em; }
+.section-heading a { font-size: .78rem; color: var(--color-accent-light); text-decoration: none; white-space: nowrap; }
+.site-footer .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .8rem; padding-block: 1.35rem 1.75rem; margin-top: 1.75rem; border-top: 1px solid var(--color-border); color: var(--color-text-muted); font-size: .72rem; }
+.site-footer p { margin: 0; }
+.site-footer nav { display: flex; gap: 1.2rem; }
+.site-footer a { color: inherit; text-decoration: none; }
+.site-footer a:hover { color: var(--color-accent-light); text-decoration: underline; }
+@media (max-width: 40rem) {
+  .container { padding-inline: 1.35rem; }
+  .profile-intro { padding-block: 1.75rem; gap: 1rem; }
+  .profile-intro h1 { font-size: 2.1rem; }
+  .profile-avatar { width: 4rem; height: 4rem; }
 }
-
-/* ── Global animation utilities ── */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-@keyframes slideInLeft {
-  from { opacity: 0; transform: translateX(-8px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
-}
-
-.animate-fade-in-up {
-  animation: fadeInUp var(--t-duration-slow) var(--t-ease) both;
-}
-
-.animate-stagger > * {
-  opacity: 0;
-  animation: fadeInUp var(--t-duration-slow) var(--t-ease) both;
-}
-
-.animate-stagger > *:nth-child(1) { animation-delay: 0ms; }
-.animate-stagger > *:nth-child(2) { animation-delay: 60ms; }
-.animate-stagger > *:nth-child(3) { animation-delay: 120ms; }
-.animate-stagger > *:nth-child(4) { animation-delay: 180ms; }
-.animate-stagger > *:nth-child(5) { animation-delay: 240ms; }
-.animate-stagger > *:nth-child(6) { animation-delay: 300ms; }

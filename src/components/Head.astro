@@ -81,11 +81,12 @@ const breadcrumbSchema = {
 
 <Default />
 <Analytics />
-<script is:inline>
+<script is:inline define:vars={{ articleKind: isArticle ? (isDocs ? 'docs' : 'blog') : null }}>
+  if (articleKind) document.documentElement.dataset.article = articleKind;
   if (location.pathname === '/blog/' || location.pathname.startsWith('/blog/')) {
     document.documentElement.setAttribute('data-no-sidebar', '');
     document.documentElement.removeAttribute('data-has-sidebar');
-    if (location.pathname === '/blog/') document.documentElement.setAttribute('data-blog-index', '');
+    if (/^\/blog\/(?:\d+\/|tags\/[^/]+\/|authors\/[^/]+\/)?$/.test(location.pathname)) document.documentElement.setAttribute('data-blog-archive', '');
   }
 </script>
 <script>

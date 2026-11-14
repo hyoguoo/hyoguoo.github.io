@@ -1,5 +1,6 @@
 /* Custom CSS - Starlight overrides + global design enhancements */
 @import './tokens.css';
+@import './interactions.css';
 
 :root {
   --sl-color-accent-low: var(--t-accent-low);
@@ -70,21 +71,6 @@ li:has(a[href$="rss.xml"]) {
   }
 }
 
-/*
-  Blog list page: the custom Header.astro adds a fixed hamburger button
-  (blog-menu-wrap) at inset-inline-end on mobile. Starlight's PageFrame only
-  adds the header padding-inline-end compensation when data-has-sidebar is
-  present. On blog pages (no sidebar) we must add it ourselves so the search
-  button is not obscured by the hamburger.
-*/
-@media (max-width: 49.999rem) {
-  [data-no-sidebar] .header {
-    padding-inline-end: calc(
-      var(--sl-nav-gap) + var(--sl-nav-pad-x) + var(--sl-menu-button-size)
-    ) !important;
-  }
-}
-
 /* Blog post: hide plugin's own prev/next navigation */
 .sl-blog-post-footer .sl-blog-pagination {
   display: none;
@@ -104,27 +90,34 @@ li:has(a[href$="rss.xml"]) {
   margin: 0;
 }
 
-/* Preserve the custom blog index while the plugin owns pagination routes. */
-[data-blog-index] .content-panel:first-of-type { display: block; }
-[data-blog-index] .content-panel:nth-of-type(2) { border-top: 1px solid var(--sl-color-hairline-light); }
-
-/* Starlight 0.39+ reserves a wider TOC. Retain the site's existing desktop proportions. */
+/* Listing pages use the plugin's public data and routes with the shared previews. */
+[data-blog-archive] .content-panel:first-of-type { display: block; }
+[data-blog-archive] .content-panel:nth-of-type(2) { border-top: 0; }
 @media (min-width: 72rem) {
-  [data-has-sidebar][data-has-toc] .main-pane {
-    width: calc(var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2);
-  }
-  .right-sidebar-container {
-    width: calc(var(--sl-sidebar-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2);
-  }
+  [data-has-sidebar][data-has-toc] .main-pane { width: calc(var(--sl-content-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2); }
+  .right-sidebar-container { width: calc(var(--sl-sidebar-width) + (100% - var(--sl-content-width) - var(--sl-sidebar-width)) / 2); }
 }
 
-/* The native paginated route hides its TOC; the custom index retains its overview. */
-@media (min-width: 72rem) {
-  [data-blog-index][data-has-toc] .right-sidebar-panel { display: block; }
+/* Reading pages share the directory's quieter hierarchy; wide code still scrolls. */
+:root[data-article='docs'] {
+  --sl-content-width: 50rem;
+  --sl-text-h1: 2rem;
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.2rem;
+  --sl-text-h4: 1.05rem;
 }
-[data-blog-index][data-has-toc] mobile-starlight-toc { display: block; }
-@media (max-width: 71.999rem) {
-  [data-blog-index][data-has-toc] .main-frame {
-    padding-top: calc(var(--sl-nav-height) + var(--sl-mobile-toc-height));
-  }
+:root[data-article='blog'] {
+  --sl-content-width: 54rem;
+  --sl-text-h1: 2.15rem;
+  --sl-text-h2: 1.65rem;
+  --sl-text-h3: 1.3rem;
+}
+[data-article] .sl-markdown-content { line-height: 1.85; }
+[data-article] .content-panel:first-of-type { padding-bottom: 0; }
+[data-article] .content-panel:first-of-type > .sl-container { padding-bottom: 1.4rem; border-bottom: 1px solid var(--sl-color-hairline); }
+[data-article] .content-panel + .content-panel { border-top: 0; }
+[data-article='docs'] .sl-markdown-content h2 { letter-spacing: -.015em; }
+[data-article] .sl-markdown-content .sl-heading-wrapper { scroll-margin-top: calc(var(--sl-nav-height) + 1.5rem); }
+@media (max-width: 49.999rem) {
+  :root[data-article] { --sl-text-h1: 1.75rem; --sl-text-h2: 1.35rem; --sl-text-h3: 1.15rem; }
 }
