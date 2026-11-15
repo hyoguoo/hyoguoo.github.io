@@ -7,6 +7,7 @@ import { blogIndexPlugin } from './src/build/blog-index-plugin.ts';
 import { SITE_PROFILE } from './src/data/siteProfile.ts';
 import { BLOG_CONFIG } from './src/data/blogConfig.ts';
 import { buildLastModMap } from './src/build/sitemap.mjs';
+import { sitemapMirrors } from './src/build/sitemap-mirrors.mjs';
 
 const lastModMap = buildLastModMap(new URL('./src/content/docs/', import.meta.url));
 
@@ -177,5 +178,6 @@ export default defineConfig({
 				return item;
 			},
 		}),
+		sitemapMirrors(),
 	],
 });
