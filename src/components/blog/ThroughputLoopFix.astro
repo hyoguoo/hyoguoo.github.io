@@ -1,0 +1,35 @@
+---
+const metrics = [
+  { label: '부하 중 처리', before: '초당 20.4건', after: '초당 99.8건' },
+  { label: 'DB 커넥션을 얻은 횟수', before: '초당 3,164~5,078회', after: '초당 약 890회' },
+  { label: 'DB 커넥션 대기', before: '평균 33ms', after: '0.5ms 이하' },
+];
+---
+<figure class="pt-fix-figure" aria-labelledby="pt-fix-title">
+  <div class="figure-heading" id="pt-fix-title">사용자 화면 테스트 초당 100건, 결과 반영 스레드 1개 → 3개</div>
+  <div class="metrics">
+    {metrics.map(metric => (
+      <section class="metric" aria-label={`${metric.label}: ${metric.before}에서 ${metric.after}`}>
+        <span class="label">{metric.label}</span>
+        <span class="before">{metric.before}</span>
+        <span class="arrow" aria-hidden="true">↓</span>
+        <span class="after">{metric.after}</span>
+      </section>
+    ))}
+  </div>
+</figure>
+<style>
+  .pt-fix-figure { --warn: #a44235; --good: #286596; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-fix-figure { --warn: #eea397; --good: #8abde7; }
+  .pt-fix-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.8rem; margin-top: 1rem !important; }
+  .metric { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.8rem 0.5rem; border: 1px solid var(--sl-color-hairline); background: var(--sl-color-bg-nav); text-align: center; }
+  .label { font-size: 0.76rem; font-weight: 600; color: var(--sl-color-white); }
+  .before { font-size: 0.8rem; font-variant-numeric: tabular-nums; color: var(--warn); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .arrow { font-size: 0.8rem; color: var(--sl-color-gray-2); }
+  .after { font-size: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--good); }
+  @media (max-width: 40rem) {
+    .metrics { grid-template-columns: 1fr; }
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+const maximum = 220;
+const stages = [
+  { label: '변경 전', change: '결과 반영 스레드 1', kept: 120, piled: 140 },
+  { label: '결과 반영 개선 뒤', change: '결과 반영 스레드 3', kept: 140, piled: 160 },
+  { label: '최종', change: '+ 명령 수신 3 · 승인 워커 64 · 결과 발행 워커 8', kept: 180, piled: 200 },
+];
+const percent = (value: number) => `${value / maximum * 100}%`;
+---
+<figure class="pt-boundary-figure" aria-labelledby="pt-boundary-title" aria-describedby="pt-boundary-caption">
+  <div class="figure-heading" id="pt-boundary-title">처리 한계가 있는 구간의 이동 (요청 건/초)</div>
+  <div class="legend" aria-hidden="true">
+    <span><i class="swatch kept"></i>안정 처리된 속도</span>
+    <span><i class="swatch range"></i>처리 한계가 있는 구간</span>
+    <span><i class="swatch piled"></i>적체가 누적된 속도</span>
+  </div>
+  <div class="axis" aria-hidden="true">
+    {[0, 40, 80, 120, 160, 200].map(value => <span style={`left: ${percent(value)}`}>{value}</span>)}
+  </div>
+  <div class="stages">
+    {stages.map(stage => (
+      <section class="stage" aria-label={`${stage.label}: ${stage.kept}건은 안정 처리, ${stage.piled}건은 적체 누적`}>
+        <div class="stage-heading"><span class="label">{stage.label}</span><span class="change">{stage.change}</span></div>
+        <div class="track" aria-hidden="true">
+          <div class="kept-bar" style={`width: ${percent(stage.kept)}`}></div>
+          <div class="range" style={`left: ${percent(stage.kept)}; width: ${percent(stage.piled - stage.kept)}`}></div>
+          <i class="piled-mark" style={`left: ${percent(stage.piled)}`}></i>
+        </div>
+        <div class="values"><span>{stage.kept} 안정 처리</span><span>{stage.piled} 적체 누적</span></div>
+      </section>
+    ))}
+  </div>
+  <figcaption id="pt-boundary-caption">요청 속도별 3분 측정 결과다. 처리 한계는 20건 단위로 탐색해, 안정 처리한 속도와 적체가 누적된 속도 사이의 구간으로 표기했다.</figcaption>
+</figure>
+<style>
+  .pt-boundary-figure { --good: #286596; --warn: #a44235; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-boundary-figure { --good: #8abde7; --warn: #eea397; }
+  .pt-boundary-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-top: 0.5rem !important; font-size: 0.78rem; }
+  .swatch { display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.35rem; vertical-align: -0.1rem; }
+  .swatch.kept { background: var(--good); }
+  .swatch.range { background: repeating-linear-gradient(45deg, var(--sl-color-gray-4) 0 3px, transparent 3px 6px); border: 1px solid var(--sl-color-gray-3); }
+  .swatch.piled { background: var(--warn); width: 0.2rem; }
+  .axis { position: relative; height: 1.6rem; margin-top: 0.6rem !important; border-bottom: 1px solid var(--sl-color-hairline); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+  .axis span { position: absolute; bottom: 0.3rem; transform: translateX(-50%); }
+  .axis span:first-child { transform: none; }
+  .stages { display: grid; gap: 1.1rem; margin-top: 0.9rem !important; }
+  .stage-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.7rem; font-size: 0.8rem; }
+  .label { font-weight: 600; color: var(--sl-color-white); }
+  .change { font-size: 0.74rem; color: var(--sl-color-gray-2); }
+  .track { position: relative; height: 0.9rem; margin-top: 0.3rem !important; background: var(--sl-color-bg-nav); }
+  .kept-bar { position: absolute; left: 0; top: 0; bottom: 0; background: var(--good); }
+  .range { position: absolute; top: 0; bottom: 0; background: repeating-linear-gradient(45deg, var(--sl-color-gray-4) 0 3px, transparent 3px 6px); border-block: 1px solid var(--sl-color-gray-3); }
+  .piled-mark { position: absolute; top: -0.2rem; bottom: -0.2rem; width: 3px; background: var(--warn); }
+  .values { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 0.25rem !important; font-size: 0.74rem; font-variant-numeric: tabular-nums; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+</style>

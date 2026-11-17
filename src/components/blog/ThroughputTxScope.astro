@@ -1,0 +1,66 @@
+---
+type Bar = { from: number; to: number; text: string; tone?: 'pg' | 'db' | 'hold' };
+const scenarios: { title: string; note: string; kind: 'ok' | 'ng'; pg: Bar[]; db: Bar[] }[] = [
+  {
+    title: '정상 승인',
+    note: '커넥션은 저장할 때만 잠깐 사용',
+    kind: 'ok',
+    pg: [{ from: 12, to: 62, text: '승인 호출' }],
+    db: [{ from: 0, to: 10, text: '선점' }, { from: 64, to: 76, text: '저장' }],
+  },
+  {
+    title: '예외 · 변경 전',
+    note: 'PG 상태 조회 내내 커넥션 점유 (최대 약 13초)',
+    kind: 'ng',
+    pg: [{ from: 12, to: 50, text: '승인 호출 → 이미 처리됨' }, { from: 56, to: 94, text: '상태 조회' }],
+    db: [{ from: 0, to: 10, text: '선점' }, { from: 53, to: 100, text: '커넥션 점유', tone: 'hold' }],
+  },
+  {
+    title: '예외 · 변경 후',
+    note: '조회는 트랜잭션 밖에서, 커넥션은 반영할 때만 사용',
+    kind: 'ok',
+    pg: [{ from: 12, to: 50, text: '승인 호출 → 이미 처리됨' }, { from: 52, to: 86, text: '상태 조회' }],
+    db: [{ from: 0, to: 10, text: '선점' }, { from: 88, to: 100, text: '반영' }],
+  },
+];
+---
+<figure class="pt-tx-figure" aria-labelledby="pt-tx-title">
+  <div class="figure-heading" id="pt-tx-title">승인 처리 중 DB 커넥션을 사용하는 구간</div>
+  <div class="scenarios">
+    {scenarios.map(sc => (
+      <section class={`scenario ${sc.kind}`} aria-label={`${sc.title}: ${sc.note}`}>
+        <div class="sc-heading"><span class="sc-title">{sc.title}</span><span class="sc-note">{sc.note}</span></div>
+        <div class="lanes" aria-hidden="true">
+          <span class="lane-label">외부 PG</span>
+          <div class="lane">
+            {sc.pg.map(bar => <span class="bar pg" style={`left: ${bar.from}%; width: ${bar.to - bar.from}%`}>{bar.text}</span>)}
+          </div>
+          <span class="lane-label">DB 커넥션</span>
+          <div class="lane">
+            {sc.db.map(bar => <span class:list={['bar', bar.tone === 'hold' ? 'hold' : 'db']} style={`left: ${bar.from}%; width: ${bar.to - bar.from}%`}>{bar.text}</span>)}
+          </div>
+        </div>
+      </section>
+    ))}
+  </div>
+  <div class="axis" aria-hidden="true"><span>시간 →</span></div>
+</figure>
+<style>
+  .pt-tx-figure { --warn: #a44235; --warn-bg: rgba(164, 66, 53, 0.16); --good: #286596; --good-bg: rgba(40, 101, 150, 0.16); margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-tx-figure { --warn: #eea397; --warn-bg: rgba(238, 163, 151, 0.18); --good: #8abde7; --good-bg: rgba(138, 189, 231, 0.18); }
+  .pt-tx-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .scenarios { display: grid; gap: 1.2rem; margin-top: 1rem !important; }
+  .sc-heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.2rem 1rem; font-size: 0.8rem; }
+  .sc-title { font-weight: 600; color: var(--sl-color-white); }
+  .ok .sc-note { color: var(--good); }
+  .ng .sc-note { color: var(--warn); font-weight: 600; }
+  .lanes { display: grid; grid-template-columns: 4.6rem 1fr; align-items: center; gap: 0.3rem 0.6rem; margin-top: 0.4rem !important; }
+  .lane-label { font-size: 0.7rem; color: var(--sl-color-gray-2); }
+  .lane { position: relative; height: 1.5rem; background: var(--sl-color-bg-nav); border-left: 1px solid var(--sl-color-hairline); }
+  .bar { position: absolute; top: 0.15rem; bottom: 0.15rem; display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 0 0.25rem; font-size: 0.66rem; white-space: nowrap; border-radius: 2px; }
+  .bar.pg { background: var(--sl-color-gray-5, transparent); border: 1px solid var(--sl-color-gray-3); color: var(--sl-color-text); }
+  .bar.db { background: var(--good-bg); border: 1px solid var(--good); color: var(--sl-color-white); }
+  .bar.hold { background: var(--warn-bg); border: 2px solid var(--warn); color: var(--warn); font-weight: 600; }
+  .axis { display: flex; justify-content: flex-end; margin-top: 0.5rem !important; font-size: 0.68rem; color: var(--sl-color-gray-2); }
+</style>

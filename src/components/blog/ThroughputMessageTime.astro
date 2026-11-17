@@ -1,0 +1,52 @@
+---
+const maximum = 14;
+const phases = [
+  { label: '부하 첫 60초', save: 7.0, publish: 3.1, commit: 3.0, total: '약 13ms', rate: '72.8건/초', busy: '약 95%' },
+  { label: '부하 60초 이후', save: 4.9, publish: 1.7, commit: 1.5, total: '약 8.1ms', rate: '121.2건/초', busy: '약 98%' },
+  { label: '요청을 멈춘 뒤', save: 2.8, publish: 0.8, commit: 0.6, total: '약 4.2ms', rate: '187.3건/초', busy: '약 79%' },
+];
+const percent = (value: number) => `${value / maximum * 100}%`;
+---
+<figure class="pt-time-figure" aria-labelledby="pt-time-title" aria-describedby="pt-time-caption">
+  <div class="figure-heading" id="pt-time-title">결과 반영 스레드 1개의 메시지당 처리 시간 (초당 140건 요청)</div>
+  <div class="legend" aria-hidden="true">
+    <span><i class="swatch save"></i>결제 완료 저장 등</span>
+    <span><i class="swatch publish"></i>재고 확정 메시지 발행</span>
+    <span><i class="swatch commit"></i>읽은 위치 기록과 커밋</span>
+  </div>
+  <div class="phases">
+    {phases.map(phase => (
+      <section class="phase" aria-label={`${phase.label}: 메시지당 ${phase.total}, 처리 ${phase.rate}, 스레드 사용률 ${phase.busy}`}>
+        <div class="phase-heading">
+          <span class="label">{phase.label}</span>
+          <span class="stats"><b>{phase.total}</b> · {phase.rate} · 스레드 사용률 {phase.busy}</span>
+        </div>
+        <div class="track" aria-hidden="true">
+          <div class="part save" style={`width: ${percent(phase.save)}`}></div>
+          <div class="part publish" style={`width: ${percent(phase.publish)}`}></div>
+          <div class="part commit" style={`width: ${percent(phase.commit)}`}></div>
+        </div>
+      </section>
+    ))}
+  </div>
+  <figcaption id="pt-time-caption">"결제 완료 저장 등"은 전체 리스너 처리 시간에서 발행 시간을 뺀 값이다.</figcaption>
+</figure>
+<style>
+  .pt-time-figure { --save: #286596; --publish: #6f8fb0; --commit: #b9c7d6; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-time-figure { --save: #8abde7; --publish: #5d87ad; --commit: #3c5670; }
+  .pt-time-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-top: 0.5rem !important; font-size: 0.78rem; }
+  .swatch { display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.35rem; vertical-align: -0.1rem; }
+  .save { background: var(--save); }
+  .publish { background: var(--publish); }
+  .commit { background: var(--commit); }
+  .phases { display: grid; gap: 1.1rem; margin-top: 1rem !important; }
+  .phase-heading { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.2rem 1rem; font-size: 0.8rem; }
+  .label { font-weight: 600; color: var(--sl-color-white); }
+  .stats { font-variant-numeric: tabular-nums; }
+  .stats b { color: var(--sl-color-white); }
+  .track { display: flex; height: 1rem; margin-top: 0.3rem !important; background: var(--sl-color-bg-nav); }
+  .part { height: 100%; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+</style>

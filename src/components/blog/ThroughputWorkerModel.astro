@@ -1,0 +1,77 @@
+---
+const panels = [
+  {
+    kind: 'before',
+    title: '변경 전: 작업을 넘기기만 하는 워커',
+    queue: 2,
+    workers: ['넘기고 바로 다음 작업', '넘기고 바로 다음 작업'],
+    calls: 9,
+    more: true,
+    result: '동시 요청 제한 없음',
+  },
+  {
+    kind: 'after',
+    title: '변경 후: 작업을 직접 처리하는 워커',
+    queue: 7,
+    workers: ['작업 1건 처리 중', '작업 1건 처리 중'],
+    calls: 2,
+    more: false,
+    result: '동시 요청 최대 2건 = 워커 수',
+  },
+];
+---
+<figure class="pt-worker-figure" aria-labelledby="pt-worker-title">
+  <div class="figure-heading" id="pt-worker-title">워커 방식에 따른 동시 처리 상한 (워커 2개 예시)</div>
+  <div class="panels">
+    {panels.map(panel => (
+      <section class={`panel ${panel.kind}`} aria-label={`${panel.title}: ${panel.result}`}>
+        <span class="title">{panel.title}</span>
+        <div class="flow">
+          <div class="col">
+            <span class="col-label">대기열</span>
+            <span class="queue" aria-hidden="true">{Array.from({ length: panel.queue }).map(() => <i></i>)}</span>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="col">
+            <span class="col-label">워커</span>
+            {panel.workers.map(text => <span class="worker">{text}</span>)}
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="col">
+            <span class="col-label">외부 PG 호출 중</span>
+            <span class="calls" aria-hidden="true">
+              {Array.from({ length: panel.calls }).map(() => <i></i>)}
+              {panel.more && <b>…</b>}
+            </span>
+          </div>
+        </div>
+        <span class="result">{panel.result}</span>
+      </section>
+    ))}
+  </div>
+</figure>
+<style>
+  .pt-worker-figure { --warn: #a44235; --good: #286596; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-worker-figure { --warn: #eea397; --good: #8abde7; }
+  .pt-worker-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1rem !important; }
+  .panel { display: flex; flex-direction: column; gap: 0.8rem; padding: 0.8rem; border: 1px solid var(--sl-color-hairline); border-top: 3px solid var(--tone); }
+  .before { --tone: var(--warn); }
+  .after { --tone: var(--good); }
+  .title { font-size: 0.86rem; font-weight: 600; color: var(--sl-color-white); }
+  .flow { display: grid; grid-template-columns: minmax(0, 0.9fr) auto minmax(0, 1.2fr) auto minmax(0, 1fr); align-items: center; gap: 0.4rem; }
+  .col { display: flex; flex-direction: column; gap: 0.3rem; min-width: 0; }
+  .col-label { font-size: 0.68rem; color: var(--sl-color-gray-2); }
+  .arrow { color: var(--sl-color-gray-2); font-size: 0.85rem; }
+  .queue, .calls { display: flex; flex-wrap: wrap; gap: 3px; min-height: 1.2rem; padding: 3px; border: 1px solid var(--sl-color-hairline); background: var(--sl-color-bg-nav); align-content: flex-start; }
+  .queue { border-radius: 0.4rem; }
+  .queue i, .calls i { display: block; width: 0.55rem; height: 0.55rem; border-radius: 2px; background: var(--sl-color-gray-3); }
+  .calls i { background: var(--tone); }
+  .calls b { font-size: 0.7rem; line-height: 0.55rem; color: var(--tone); }
+  .worker { padding: 0.2rem 0.35rem; font-size: 0.68rem; line-height: 1.4; border: 1px solid var(--tone); background: var(--sl-color-bg); }
+  .result { font-size: 0.82rem; font-weight: 600; color: var(--tone); }
+  @media (max-width: 50rem) {
+    .panels { grid-template-columns: 1fr; }
+  }
+</style>

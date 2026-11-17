@@ -1,0 +1,62 @@
+---
+const width = 240;
+const height = 90;
+const panels = [
+  {
+    kind: 'kept',
+    title: '안정 처리',
+    example: '초당 120건 회차',
+    note: '48초에 최대 1,407건 → 156초부터 30건대 유지',
+    max: 1500,
+    points: [[0, 0], [15, 500], [48, 1407], [90, 800], [130, 200], [156, 33], [180, 33]],
+  },
+  {
+    kind: 'piled',
+    title: '적체 누적',
+    example: '초당 160건 회차',
+    note: '3분 내내 늘어 180초에 10,336건',
+    max: 11000,
+    points: [[0, 0], [30, 1600], [60, 3400], [90, 5200], [120, 6900], [150, 8600], [180, 10336]],
+  },
+];
+const toPath = (points: number[][], max: number) =>
+  points.map(([x, y]) => `${(x / 180 * width).toFixed(1)},${(height - y / max * height).toFixed(1)}`).join(' ');
+---
+<figure class="pt-judge-figure" aria-labelledby="pt-judge-title">
+  <div class="figure-heading" id="pt-judge-title">3분 동안 밀린 결제 건수의 두 가지 모양</div>
+  <div class="panels">
+    {panels.map(panel => (
+      <section class={`panel ${panel.kind}`} aria-label={`${panel.title}: ${panel.example}, ${panel.note}`}>
+        <div class="panel-heading"><span class="title">{panel.title}</span><span class="example">{panel.example}</span></div>
+        <svg viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="none" role="img" aria-hidden="true">
+          <line x1="0" y1={height} x2={width} y2={height} class="axis" />
+          <polyline points={toPath(panel.points, panel.max)} class="line" />
+        </svg>
+        <div class="ticks" aria-hidden="true"><span>0초</span><span>90초</span><span>180초</span></div>
+        <span class="note">{panel.note}</span>
+      </section>
+    ))}
+  </div>
+</figure>
+<style>
+  .pt-judge-figure { --good: #286596; --warn: #a44235; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-judge-figure { --good: #8abde7; --warn: #eea397; }
+  .pt-judge-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.2rem; margin-top: 1rem !important; }
+  .panel { padding: 0.7rem; border: 1px solid var(--sl-color-hairline); border-top: 3px solid var(--tone); }
+  .kept { --tone: var(--good); }
+  .piled { --tone: var(--warn); }
+  .panel-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; }
+  .title { font-size: 0.86rem; font-weight: 600; color: var(--tone); }
+  .example { font-size: 0.72rem; color: var(--sl-color-gray-2); }
+  svg { display: block; width: 100%; height: 5.5rem; margin-top: 0.6rem; overflow: visible; }
+  .axis { stroke: var(--sl-color-hairline); stroke-width: 1; }
+  .line { fill: none; stroke: var(--tone); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+  .ticks { display: flex; justify-content: space-between; margin-top: 0.2rem !important; font-size: 0.66rem; color: var(--sl-color-gray-2); }
+  .note { display: block; margin-top: 0.4rem; font-size: 0.76rem; line-height: 1.6; }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+  @media (max-width: 40rem) {
+    .panels { grid-template-columns: 1fr; }
+  }
+</style>

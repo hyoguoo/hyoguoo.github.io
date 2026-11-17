@@ -1,0 +1,118 @@
+---
+interface Props {
+  title: string;
+  highlight?: string[];
+  badge?: string;
+  caption?: string;
+}
+
+const { title, highlight = [], badge = '병목', caption } = Astro.props;
+
+type Step = { key: string; number: number; action: string; detail: string };
+type Service = { kind: 'service'; name: string; tone: string; steps: Step[] };
+type Message = { kind: 'message'; key: string; name: string; before: string };
+
+const flow: (Service | Message)[] = [
+  { kind: 'service', name: '결제 서비스', tone: 'payment', steps: [
+    { key: 'accept', number: 1, action: '요청 접수', detail: '접수 응답 후 결제 명령 발행' },
+  ] },
+  { kind: 'message', key: 'command-topic', name: '결제 명령', before: 'command' },
+  { kind: 'service', name: 'PG 서비스', tone: 'pg', steps: [
+    { key: 'command', number: 2, action: '명령 수신', detail: 'DB에 저장하고 대기열에 넣음' },
+    { key: 'approve', number: 3, action: '승인 워커', detail: '외부 PG에 승인 요청' },
+    { key: 'publish', number: 4, action: '결과 발행 워커', detail: '승인 결과 메시지 발행' },
+  ] },
+  { kind: 'message', key: 'result-topic', name: '승인 결과', before: 'result' },
+  { kind: 'service', name: '결제 서비스', tone: 'payment', steps: [
+    { key: 'result', number: 5, action: '결과 반영', detail: '결제 완료 저장, 재고 확정 메시지 발행' },
+  ] },
+  { kind: 'message', key: 'stock-topic', name: '재고 확정', before: 'stock' },
+  { kind: 'service', name: '상품 서비스', tone: 'product', steps: [
+    { key: 'stock', number: 6, action: '재고 확정', detail: '미리 차감한 재고를 확정' },
+  ] },
+];
+
+const headingId = `pt-pipeline-${title.replace(/[^0-9A-Za-z가-힣]+/g, '-')}`;
+const describe = highlight.length > 0
+  ? `${title}. 강조한 단계: ${flow.flatMap(item => item.kind === 'service' ? item.steps : []).filter(step => highlight.includes(step.key)).map(step => step.action).join(', ')}`
+  : title;
+---
+<figure class="pt-pipeline-figure" aria-labelledby={headingId} aria-description={describe}>
+  <div class="figure-heading" id={headingId}>{title}</div>
+  <div class="flow">
+    {flow.map(item => item.kind === 'message' ? (
+      <div class:list={['message', { piled: highlight.includes(item.before) }]} aria-label={`${item.name} 메시지 큐${highlight.includes(item.before) ? ', 미처리 메시지 쌓임' : ''}`}>
+        <span class="queue-tag">Kafka</span>
+        <span class="queue" aria-hidden="true">
+          {Array.from({ length: highlight.includes(item.before) ? 7 : 2 }).map(() => <i></i>)}
+        </span>
+        <span class="message-name">{item.name}</span>
+        {highlight.includes(item.before) && <span class="piled-label">쌓임</span>}
+      </div>
+    ) : (
+      <section class:list={['service', item.tone, { wide: item.steps.length > 1 }]} aria-label={item.name}>
+        <span class="service-name">{item.name}</span>
+        <ol class="steps">
+          {item.steps.map(step => {
+            const active = highlight.includes(step.key);
+            return (
+              <li class:list={['step', { active }]}>
+                <span class="number" aria-hidden="true">{step.number}</span>
+                <div class="step-body">
+                  <span class="action">{step.action}</span>
+                  {active && <span class="badge">{badge}</span>}
+                  <span class="detail">{step.detail}</span>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    ))}
+  </div>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
+<style>
+  .pt-pipeline-figure { --warn: #a44235; --warn-bg: rgba(164, 66, 53, 0.08); --payment: #286596; --pg: #6b5a9e; --product: #3c7a52; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-pipeline-figure { --warn: #eea397; --warn-bg: rgba(238, 163, 151, 0.1); --payment: #8abde7; --pg: #b9a8e6; --product: #8fcfa3; }
+  .pt-pipeline-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+
+  .flow { display: grid; grid-template-columns: minmax(0, 1fr) 4.4rem minmax(0, 1.25fr) 4.4rem minmax(0, 1fr) 4.4rem minmax(0, 1fr); align-items: stretch; margin-top: 1rem !important; }
+
+  .service { display: flex; flex-direction: column; min-width: 0; border: 1px solid var(--sl-color-hairline); border-top: 3px solid var(--tone); background: var(--sl-color-bg-nav); }
+  .payment { --tone: var(--payment); }
+  .pg { --tone: var(--pg); }
+  .product { --tone: var(--product); }
+  .service-name { padding: 0.35rem 0.5rem; font-size: 0.72rem; font-weight: 600; color: var(--tone); border-bottom: 1px solid var(--sl-color-hairline); }
+  .steps { list-style: none; padding: 0.4rem; margin: 0; display: flex; flex-direction: column; gap: 0.4rem; flex: 1; justify-content: center; }
+  .step { position: relative; display: flex; gap: 0.4rem; padding: 0.4rem; border: 1px solid transparent; background: var(--sl-color-bg); }
+  .wide .step:not(:last-child)::after { content: '↓'; position: absolute; left: 0.75rem; bottom: -0.85rem; z-index: 1; font-size: 0.7rem; color: var(--sl-color-gray-2); }
+  .step.active { border-color: var(--warn); background: var(--warn-bg); }
+  .number { display: flex; justify-content: center; align-items: center; flex-shrink: 0; width: 1.15rem; height: 1.15rem; border: 1px solid var(--sl-color-hairline); border-radius: 50%; font-size: 0.65rem; }
+  .active .number { border-color: var(--warn); color: var(--warn); }
+  .step-body { min-width: 0; }
+  .action { font-size: 0.8rem; font-weight: 600; color: var(--sl-color-white); }
+  .badge { margin-left: 0.3rem; font-size: 0.65rem; font-weight: 600; color: var(--warn); border: 1px solid var(--warn); border-radius: 0.25rem; padding: 0 0.25rem; white-space: nowrap; }
+  .detail { display: block; margin-top: 0.15rem; font-size: 0.7rem; line-height: 1.5; }
+
+  .message { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 0.25rem; padding: 0 0.3rem; text-align: center; }
+  .queue-tag { font-size: 0.6rem; letter-spacing: 0.02em; color: var(--sl-color-gray-2); }
+  .queue { position: relative; display: flex; justify-content: flex-end; gap: 2px; width: 100%; height: 1.1rem; padding: 2px 0.55rem 2px 3px; border: 1px solid var(--sl-color-gray-3); border-radius: 0.55rem; background: var(--sl-color-bg); box-sizing: border-box; }
+  .queue::after { content: ''; position: absolute; right: -0.4rem; top: 50%; transform: translateY(-50%); border: 0.3rem solid transparent; border-left: 0.35rem solid var(--sl-color-gray-3); }
+  .queue i { display: block; flex: 0 0 0.32rem; height: 100%; border-radius: 1px; background: var(--sl-color-gray-3); }
+  .piled .queue { border-color: var(--warn); background: var(--warn-bg); }
+  .piled .queue::after { border-left-color: var(--warn); }
+  .piled .queue i { background: var(--warn); }
+  .message-name { font-size: 0.66rem; line-height: 1.35; }
+  .piled .message-name { color: var(--warn); font-weight: 600; }
+  .piled-label { font-size: 0.62rem; font-weight: 600; color: var(--warn); }
+
+  figcaption { margin-top: 0.6rem; font-size: 0.78rem; line-height: 1.7; }
+
+  @media (max-width: 50rem) {
+    .flow { grid-template-columns: 1fr; }
+    .message { flex-direction: row; justify-content: flex-start; gap: 0.5rem; padding: 0.5rem 0 0.5rem 0.2rem; }
+    .queue { width: 5rem; flex-shrink: 0; }
+  }
+</style>

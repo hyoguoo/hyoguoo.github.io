@@ -1,0 +1,54 @@
+---
+const tests = [
+  { kind: 'ok', title: '서버 처리량 테스트', query: '상태 조회 없음', rate: 99.9, rateNote: '안정 처리', wait: '없음' },
+  { kind: 'ng', title: '사용자 화면 테스트', query: '주문마다 1초 간격 상태 조회', rate: 20.4, rateNote: '적체 누적', wait: '평균 33ms' },
+];
+---
+<figure class="pt-query-figure" aria-labelledby="pt-query-title">
+  <div class="figure-heading" id="pt-query-title">같은 조건, 다른 결과 (스레드 1개 · 초당 100건 요청)</div>
+  <div class="cards">
+    {tests.map((test, index) => (
+      <>
+        {index === 1 && <div class="diff" aria-hidden="true"><span>차이</span><b>상태 조회</b></div>}
+        <section class={`card ${test.kind}`} aria-label={`${test.title}: ${test.query}, 부하 중 처리 초당 ${test.rate}건, DB 커넥션 대기 ${test.wait}`}>
+          <span class="title">{test.title}</span>
+          <span class="query">{test.query}</span>
+          <div class="metric">
+            <span class="metric-label">부하 중 처리</span>
+            <span class="metric-value">초당 {test.rate}건</span>
+            <div class="track" aria-hidden="true"><div class="bar" style={`width: ${test.rate}%`}></div></div>
+            <span class="metric-note">{test.rateNote}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">DB 커넥션 대기</span>
+            <span class="metric-value">{test.wait}</span>
+          </div>
+        </section>
+      </>
+    ))}
+  </div>
+</figure>
+<style>
+  .pt-query-figure { --warn: #a44235; --good: #286596; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-query-figure { --warn: #eea397; --good: #8abde7; }
+  .pt-query-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .cards { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 0.8rem; margin-top: 1rem !important; }
+  .card { display: flex; flex-direction: column; gap: 0.6rem; padding: 0.8rem; border: 1px solid var(--sl-color-hairline); border-top: 3px solid var(--tone); background: var(--sl-color-bg-nav); }
+  .ok { --tone: var(--good); }
+  .ng { --tone: var(--warn); }
+  .title { font-size: 0.88rem; font-weight: 600; color: var(--sl-color-white); }
+  .query { font-size: 0.74rem; color: var(--sl-color-gray-2); }
+  .metric { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 0.6rem; align-items: baseline; }
+  .metric-label { font-size: 0.74rem; }
+  .metric-value { font-size: 0.95rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--tone); text-align: right; }
+  .track { grid-column: 1 / -1; height: 0.5rem; background: var(--sl-color-bg); }
+  .bar { height: 100%; background: var(--tone); }
+  .metric-note { grid-column: 1 / -1; font-size: 0.7rem; color: var(--tone); }
+  .diff { display: flex; flex-direction: column; align-items: center; gap: 0.15rem; padding: 0.4rem 0.5rem; border: 1px dashed var(--sl-color-gray-3); border-radius: 0.4rem; font-size: 0.68rem; }
+  .diff b { font-size: 0.78rem; color: var(--sl-color-white); }
+  @media (max-width: 40rem) {
+    .cards { grid-template-columns: 1fr; }
+    .diff { flex-direction: row; justify-self: center; gap: 0.4rem; }
+  }
+</style>

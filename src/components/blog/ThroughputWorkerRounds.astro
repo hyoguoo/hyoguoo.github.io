@@ -1,0 +1,54 @@
+---
+const maximum = 180;
+const target = 160;
+const rounds = [
+  { label: '비교 기준', setting: '명령 수신 1 · 워커 상한 없음', done: 141.6, blocked: '명령 수신 (스레드 1개)', kind: 'base' },
+  { label: '상한 복원 + 승인 워커 32', setting: '명령 수신 3 · 결과 발행 워커 1', done: 129.5, blocked: '승인 워커 (약 145~149건/초)', kind: 'worse' },
+  { label: '상한 복원 + 승인 워커 64', setting: '명령 수신 3 · 결과 발행 워커 1', done: 130.6, blocked: '결과 발행 워커 (약 143~146건/초)', kind: 'worse' },
+  { label: '상한 복원 + 승인 워커 64 + 결과 발행 워커 8', setting: '명령 수신 3', done: 159.7, blocked: '없음 (대기열 0건)', kind: 'better' },
+];
+const percent = (value: number) => `${value / maximum * 100}%`;
+---
+<figure class="pt-rounds-figure" aria-labelledby="pt-rounds-title" aria-describedby="pt-rounds-caption">
+  <div class="figure-heading" id="pt-rounds-title">초당 160건 요청에서 부하 중 결제 완료(건/초)</div>
+  <p class="scale-note">모든 막대에 같은 0~180 축 적용 · 점선은 보낸 요청 160건/초</p>
+  <div class="rounds">
+    {rounds.map(round => (
+      <section class={`round ${round.kind}`} aria-label={`${round.label}: 부하 중 ${round.done}건, 병목 ${round.blocked}`}>
+        <div class="round-heading">
+          <span class="label">{round.label}</span>
+          <span class="setting">{round.setting}</span>
+        </div>
+        <div class="track" aria-hidden="true">
+          <div class="bar" style={`width: ${percent(round.done)}`}></div>
+          <i class="target" style={`left: ${percent(target)}`}></i>
+        </div>
+        <div class="round-foot">
+          <span class="value">{round.done}</span>
+          <span class="blocked">병목: {round.blocked}</span>
+        </div>
+      </section>
+    ))}
+  </div>
+  <figcaption id="pt-rounds-caption">네 회차 모두 결과 반영 스레드는 3개다.</figcaption>
+</figure>
+<style>
+  .pt-rounds-figure { --warn: #a44235; --good: #286596; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-rounds-figure { --warn: #eea397; --good: #8abde7; }
+  .pt-rounds-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .scale-note { margin-top: 0.45rem !important; font-size: 0.78rem; line-height: 1.7; }
+  .rounds { display: grid; gap: 1.1rem; margin-top: 1rem !important; }
+  .round-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.2rem 0.7rem; font-size: 0.8rem; }
+  .label { font-weight: 600; color: var(--sl-color-white); }
+  .setting { font-size: 0.74rem; color: var(--sl-color-gray-2); }
+  .track { position: relative; height: 0.9rem; margin-top: 0.3rem !important; background: var(--sl-color-bg-nav); }
+  .bar { height: 100%; background: var(--sl-color-gray-3); }
+  .worse .bar { background: var(--warn); }
+  .better .bar { background: var(--good); }
+  .target { position: absolute; top: -0.2rem; bottom: -0.2rem; border-left: 1px dashed var(--sl-color-white); }
+  .round-foot { display: flex; justify-content: space-between; gap: 1rem; margin-top: 0.25rem !important; font-size: 0.76rem; }
+  .value { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--sl-color-white); }
+  .worse .blocked { color: var(--warn); }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+</style>

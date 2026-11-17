@@ -17,6 +17,7 @@ export const BLOG_SERIES = {
       { id: "blog/stock-gate-per-product", title: "재고 선차감 캐시 분해 — Redis 샤딩을 전제로 원자성 경계 조정" },
       { id: "blog/payment-recovery-awaiting-result", title: "결제 복구 상태 분리 — 부하 구간에서 안전장치가 만든 처리 정지 해소" },
       { id: "blog/pg-inbox-index-merge-deadlock", title: "서로 다른 주문의 UPDATE가 충돌한 이유 — MySQL Index Merge 데드락" },
+      { id: "blog/payment-throughput-bottlenecks", title: "요청이 늘수록 결제 처리가 느려진 이유 — 처리량 측정으로 찾은 병목과 워커 상한" },
     ]
   }
 } as const;

@@ -1,0 +1,56 @@
+---
+const maximum = 250;
+const rows = [
+  { label: '초당 120건 요청', sent: 120, done: 119.8, note: '안정 처리' },
+  { label: '초당 140건 요청', sent: 140, done: 109.5, note: '적체 누적' },
+  { label: '초당 160건 요청', sent: 160, done: 102.3, note: '적체 누적' },
+];
+const percent = (value: number) => `${value / maximum * 100}%`;
+---
+<figure class="pt-rate-figure" aria-labelledby="pt-rate-title">
+  <div class="figure-heading" id="pt-rate-title">보낸 요청과 부하 중 처리한 결제 (변경 전)</div>
+  <div class="legend" aria-hidden="true">
+    <span><i class="swatch sent"></i>보낸 요청(건/초)</span>
+    <span><i class="swatch done"></i>부하 중 결제 완료(건/초)</span>
+  </div>
+  <div class="axis" aria-hidden="true">
+    {[0, 50, 100, 150, 200, 250].map(value => <span style={`left: ${percent(value)}`}>{value}</span>)}
+  </div>
+  <div class="rows">
+    {rows.map(row => (
+      <section class="row" aria-label={`${row.label}: 부하 중 ${row.done}건 처리, ${row.note}`}>
+        <div class="row-heading"><span class="label">{row.label}</span><span class:list={['note', { warn: row.done < row.sent - 1 }]}>{row.note}</span></div>
+        <div class="track" aria-hidden="true"><div class="bar sent" style={`width: ${percent(row.sent)}`}></div></div>
+        <div class="track" aria-hidden="true"><div class="bar done" style={`width: ${percent(row.done)}`}><span class="value">{row.done}</span></div></div>
+      </section>
+    ))}
+    <section class="row after" aria-label="요청을 멈춘 뒤 밀린 결제를 초당 약 240건 처리">
+      <div class="row-heading"><span class="label">요청을 멈춘 뒤</span><span class="note">밀린 결제를 처리한 속도</span></div>
+      <div class="track" aria-hidden="true"><div class="bar released" style={`width: ${percent(242)}`}><span class="value">약 240</span></div></div>
+    </section>
+  </div>
+</figure>
+<style>
+  .pt-rate-figure { --warn: #a44235; margin: 1.75rem 0; padding: 1.25rem 0; border-block: 1px solid var(--sl-color-hairline); color: var(--sl-color-text); }
+  :global([data-theme='dark']) .pt-rate-figure { --warn: #eea397; }
+  .pt-rate-figure :is(div, p, section, ol, li, i) { margin-block: 0; }
+  .figure-heading { font-size: 0.95rem; font-weight: 600; color: var(--sl-color-white); }
+  .legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.2rem; margin-top: 0.5rem !important; font-size: 0.78rem; }
+  .swatch { display: inline-block; width: 0.75rem; height: 0.75rem; margin-right: 0.35rem; vertical-align: -0.1rem; }
+  .swatch.sent, .bar.sent { background: var(--sl-color-gray-4); }
+  .swatch.done, .bar.done { background: var(--sl-color-text-accent); }
+  .axis { position: relative; height: 1.6rem; margin-top: 0.6rem !important; border-bottom: 1px solid var(--sl-color-hairline); font-size: 0.7rem; font-variant-numeric: tabular-nums; }
+  .axis span { position: absolute; bottom: 0.3rem; transform: translateX(-50%); }
+  .axis span:first-child { transform: none; }
+  .axis span:last-child { transform: translateX(-100%); }
+  .rows { display: grid; gap: 1.1rem; margin-top: 0.9rem !important; }
+  .row-heading { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.8rem; }
+  .label { font-weight: 600; color: var(--sl-color-white); }
+  .note.warn { color: var(--warn); }
+  .track { height: 0.9rem; margin-top: 0.25rem !important; background: var(--sl-color-bg-nav); }
+  .bar { position: relative; height: 100%; }
+  .value { position: absolute; left: calc(100% + 0.4rem); top: 50%; transform: translateY(-50%); font-size: 0.72rem; font-variant-numeric: tabular-nums; color: var(--sl-color-white); white-space: nowrap; }
+  .row.after { padding-top: 0.9rem; border-top: 1px dashed var(--sl-color-hairline); }
+  .bar.released { background: var(--sl-color-gray-3); }
+  figcaption { margin-top: 1rem; font-size: 0.78rem; line-height: 1.7; }
+</style>
