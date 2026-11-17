@@ -95,6 +95,11 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'docs/java', collapsed: true } }],
 				},
 				{
+					label: 'Kotlin',
+					collapsed: true,
+					items: [{ autogenerate: { directory: 'docs/kotlin', collapsed: true } }],
+				},
+				{
 					label: 'Node.js',
 					collapsed: true,
 					items: [{ autogenerate: { directory: 'docs/nodejs', collapsed: true } }],

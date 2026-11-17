@@ -1,5 +1,6 @@
 export const TAG_HUES: Record<string, number> = {
   'Java': 25,
+  'Kotlin': 325,
   'Spring': 125,
   'Spring & JPA': 125,
   'MySQL': 225,

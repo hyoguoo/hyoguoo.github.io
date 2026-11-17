@@ -1,6 +1,12 @@
 export type SectionConfig = { label: string; slugs: string[] }[];
 
 export const docsSections: Record<string, SectionConfig> = {
+  kotlin: [
+    {
+      label: 'Foundations',
+      slugs: ['introduction'],
+    },
+  ],
   java: [
     {
       label: 'JVM',

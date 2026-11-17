@@ -21,6 +21,7 @@ export const DOCS_GROUPS: DocsGroup[] = [
   ]},
   { label: 'Language & Runtime', items: [
     { key: 'java', label: 'Java' },
+    { key: 'kotlin', label: 'Kotlin' },
     { key: 'nodejs', label: 'Node.js' },
   ]},
   { label: 'Framework', items: [
