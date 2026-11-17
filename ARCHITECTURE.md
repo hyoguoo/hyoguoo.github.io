@@ -40,7 +40,7 @@
 - `MobileMenuFooter.astro`, `Sidebar.astro`, `docs-navigation.ts`: Starlight sidebar pane의 스크롤·native popover toggle 연결
 - `ThemePicker.astro` / `ThemeSelect.astro`: native select·Icon과 헤더/모바일 메뉴 연결
 - `custom.css`: `sl-blog-*` 클래스, 제목·메타데이터, 본문·목차 폭, 모바일 목차 높이
-- `tests/fixtures/routes.json`, `rss.json`: 이 리팩터링 전 경로와 RSS 항목의 보존 기준. 새 문서를 추가할 때 기존 경로를 임의로 삭제하지 않는다.
+- `tests/fixtures/routes.json`: 이 리팩터링 전 경로의 보존 기준. 새 문서를 추가할 때 기존 경로를 임의로 삭제하지 않는다. RSS는 현재 게시글 frontmatter의 제목·URL·게시일과 최신순 정렬을 검증하고, Docs 목록과 시리즈는 설정 파일의 링크 순서와 대조한다.
 
 ## 검증 명령
 

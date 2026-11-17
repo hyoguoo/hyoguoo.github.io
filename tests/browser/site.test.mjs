@@ -1,5 +1,8 @@
 import { before, after, test } from 'node:test';
 import assert from 'node:assert/strict';
+import { parse } from 'yaml';
+import { DOCS_GROUPS } from '../../src/data/docsGroups.ts';
+import { BLOG_SERIES } from '../../src/data/blogSeries.ts';
 import { startBrowser, isolatedPage } from '../helpers/browser.mjs';
 let site;
 before(async () => { site = await startBrowser(); });
@@ -133,7 +136,20 @@ test('existing routes, RSS items, sitemap URLs and article metadata survive the 
   try {
     const rss = await readFile('dist/blog/rss.xml', 'utf8');
     const items = await page.evaluate(xml => [...new DOMParser().parseFromString(xml, 'application/xml').querySelectorAll('item')].map(item => Object.fromEntries(['title', 'link', 'pubDate'].map(key => [key, item.querySelector(key).textContent]))), rss);
-    assert.deepEqual(items, JSON.parse(await readFile('tests/fixtures/rss.json', 'utf8')));
+    const blogRoot = 'src/content/docs/blog';
+    const posts = [];
+    for (const file of await readdir(blogRoot, { recursive: true })) {
+      if (!/\.mdx?$/.test(file)) continue;
+      const source = await readFile(`${blogRoot}/${file}`, 'utf8');
+      const data = parse(source.match(/^---\r?\n([\s\S]*?)\r?\n---/)[1]);
+      if (!data.date || data.draft) continue;
+      const slug = data.slug ?? `blog/${file.replace(/\.mdx?$/, '').replace(/\/index$/, '')}`;
+      posts.push({ title: data.title, link: `https://hyoguoo.github.io/${slug}/`, pubDate: new Date(data.date).toUTCString() });
+    }
+    posts.sort((a, b) => Date.parse(b.pubDate) - Date.parse(a.pubDate) || a.title.localeCompare(b.title));
+    // The plugin includes at least the latest 20 posts, plus any remaining posts in the current archive period.
+    assert.ok(items.length >= Math.min(20, posts.length));
+    assert.deepEqual(items, posts.slice(0, items.length));
     const sitemap = await readFile('dist/sitemap-0.xml', 'utf8');
     const sitemapUrls = await page.evaluate(xml => [...new DOMParser().parseFromString(xml, 'application/xml').querySelectorAll('url > loc')].map(element => element.textContent), sitemap);
     for (const href of sitemapUrls) {
@@ -217,8 +233,11 @@ test('Docs keeps the configured hierarchy and displays descriptions before hover
   const { context, page, errors } = await isolatedPage(site.browser);
   try {
     await page.goto(site.base + '/docs/');
-    assert.equal(await page.locator('.docs-tree > section').count(), 10);
-    assert.equal(await page.locator('.docs-tree .link-row').count(), 20);
+    const groups = page.locator('.docs-tree > section');
+    assert.equal(await groups.count(), DOCS_GROUPS.length);
+    for (const [index, group] of DOCS_GROUPS.entries()) {
+      assert.deepEqual(await groups.nth(index).locator('.link-row').evaluateAll(links => links.map(link => link.getAttribute('href'))), group.items.map(item => `/docs/${item.key}/`));
+    }
     await page.goto(site.base + '/docs/computer-architecture/');
     assert.deepEqual(await page.locator('.subcategory-page .list-label').evaluateAll(headings => headings.map(h=>h.firstChild.textContent)), ['Fundamentals','CPU & Execution']);
     assert.equal(await page.locator('.subcategory-page .link-description:visible').count(), 6);
@@ -359,7 +378,7 @@ test('Blog article header shares compact metadata while retaining series links a
     assert.ok(await page.locator('.sl-markdown-content').evaluate(el => el.getBoundingClientRect().top < innerHeight));
     await page.locator('.series-block summary').focus(); await page.keyboard.press('Enter');
     assert.notEqual(await page.locator('.series-block').getAttribute('open'), null);
-    assert.equal(await page.locator('.series-list li').count(), 15);
+    assert.deepEqual(await page.locator('.series-list li').evaluateAll(items => items.map(item => item.querySelector('a')?.getAttribute('href') ?? location.pathname)), BLOG_SERIES.payment.posts.map(post => `/${post.id}/`));
     assert.equal(await page.locator('.series-list [aria-current="page"]').count(), 1);
     await page.locator('.series-block summary').click();
     const anchor = page.locator('.right-sidebar a[href^="#"]:visible').nth(1);
