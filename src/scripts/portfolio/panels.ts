@@ -12,6 +12,9 @@ import {
   LIMITS,
   BENCH_META,
   BENCH_BARS,
+  DEADLOCK_COMPARE,
+  CAPACITY_AXIS,
+  CAPACITY_STAGES,
 } from "../../data/paymentPortfolio";
 
 export function initializePanels(): void {
@@ -116,6 +119,105 @@ export function initializePanels(): void {
         "</div>";
       mount.appendChild(row);
     });
+  })();
+
+  /* ================= §02c MSA 데드락 전후 (전후 막대) ================= */
+  (function () {
+    var mount = requiredElement("deadlockChart");
+    if (!mount) return;
+    function pct(v: number, max: number) {
+      return ((v / max) * 100).toFixed(2) + "%";
+    }
+    DEADLOCK_COMPARE.forEach(function (d) {
+      var fmt = function (v: number) {
+        return (d.unit === "초" ? v.toFixed(2) : String(v)) + d.unit;
+      };
+      var rows = [
+        { label: "기존 (status)", value: d.before, kind: "base" },
+        { label: "변경 후 (status, updated_at)", value: d.after, kind: "now" },
+      ]
+        .map(function (r) {
+          return (
+            '<div class="dd-meas ' +
+            r.kind +
+            '"><div class="dd-lbl"><span>' +
+            esc(r.label) +
+            '</span><span class="dd-num">' +
+            esc(fmt(r.value)) +
+            '</span></div><div class="dd-track" aria-hidden="true"><div class="dd-bar" style="width:' +
+            pct(r.value, d.max) +
+            '"></div></div></div>'
+          );
+        })
+        .join("");
+      var ticks = d.ticks
+        .map(function (t, i) {
+          var cls = i === 0 ? ' class="at-start"' : i === d.ticks.length - 1 ? ' class="at-end"' : "";
+          return "<span" + cls + ' style="left:' + pct(t, d.max) + '">' + t + "</span>";
+        })
+        .join("");
+      var metric = document.createElement("div");
+      metric.className = "dd-metric";
+      metric.innerHTML =
+        '<div class="dd-head"><span class="dd-name">' +
+        esc(d.k) +
+        '</span><span class="bench-tag">' +
+        esc(d.tag) +
+        "</span></div>" +
+        rows +
+        '<div class="dd-ticks" aria-hidden="true">' +
+        ticks +
+        "</div>";
+      mount.appendChild(metric);
+    });
+  })();
+
+  /* ================= §02d MSA 처리 한계 구간의 이동 (구간 막대) ================= */
+  (function () {
+    var mount = requiredElement("capacityChart");
+    if (!mount) return;
+    var max = CAPACITY_AXIS.max;
+    function pct(v: number) {
+      return ((v / max) * 100).toFixed(2) + "%";
+    }
+    var axis =
+      '<div class="cs-axis" aria-hidden="true">' +
+      CAPACITY_AXIS.ticks
+        .map(function (t) {
+          return '<span' + (t === 0 ? ' class="at-start"' : "") + ' style="left:' + pct(t) + '">' + t + "</span>";
+        })
+        .join("") +
+      "</div>";
+    var stages = CAPACITY_STAGES.map(function (s) {
+      return (
+        '<div class="cs-stage">' +
+        '<div class="cs-head"><span class="cs-label">' +
+        esc(s.label) +
+        '</span><span class="cs-change">' +
+        esc(s.change) +
+        "</span></div>" +
+        '<div class="cs-track" aria-hidden="true">' +
+        '<span class="cs-kept" style="width:' +
+        pct(s.kept) +
+        '"></span>' +
+        '<span class="cs-range" style="left:' +
+        pct(s.kept) +
+        ";width:" +
+        pct(s.piled - s.kept) +
+        '"></span>' +
+        '<i class="cs-piled" style="left:' +
+        pct(s.piled) +
+        '"></i>' +
+        "</div>" +
+        '<div class="cs-values"><span>' +
+        s.kept +
+        " 안정 처리</span><span>" +
+        s.piled +
+        " 적체 누적</span></div>" +
+        "</div>"
+      );
+    }).join("");
+    mount.innerHTML = axis + '<div class="cs-stages">' + stages + "</div>";
   })();
 
   /* ================= §04b PG STATE MACHINE ================= */

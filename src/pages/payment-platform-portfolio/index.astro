@@ -397,7 +397,7 @@ import Analytics from '../../components/Analytics.astro';
       </div>
       <div class="tr3">
         <div class="tr3-h"><span class="tr3-n">3</span><span class="tr3-t">스레드 컨텍스트 스위칭</span></div>
-        <p class="tr3-why">PG사 API 호출이 가상 스레드(Virtual Thread) 풀로 위임될 때, 기존 추적 문맥(<code>OTel Context</code>)과 로깅 식별자(<code>MDC</code>)가 전파되지 않는다.</p>
+        <p class="tr3-why">결제 서비스가 커밋 직후 Outbox 발행을 가상 스레드(Virtual Thread)로 위임할 때, 기존 추적 문맥(<code>OTel Context</code>)과 로깅 식별자(<code>MDC</code>)가 전파되지 않는다.</p>
         <ul class="tr3-list">
           <li>메인 스레드에서 작업을 위임하기 직전, 현재의 추적 문맥과 로깅 식별자를 스냅샷으로 캡처</li>
           <li>가상 스레드 안에서도 문맥을 자동 복원하는 커스텀 실행기(<code>ContextAwareVirtualThreadExecutors</code>)를 만들어 적용</li>
@@ -435,18 +435,11 @@ import Analytics from '../../components/Analytics.astro';
     <div class="meas-note reveal"><b>해석</b><br>· 비동기 처리의 목표는 E2E(결제 완료까지)를 줄이는 게 아니라, HTTP 스레드를 빨리 비워 처리량·가용성을 높이는 도구<br>· 외부 의존이 느려질 때 시스템 전체가 마비되지 않게 하는 안전장치</div>
       <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/Benchmark-Report" target="_blank" rel="noopener">상세 문서 보기 · 벤치마크 보고서 ↗</a></div>
     <div class="card reveal" style="margin-top: 24px;">
-      <div class="card-head"><h3>MSA · pg_inbox 결과 저장 데드락 개선</h3><span class="term-tag">인덱스 변경 전후 · 각 1회</span></div>
+      <div class="card-head"><h3>MSA · pg_inbox 결과 저장 데드락 개선</h3><span class="term-tag">2026-08 측정 · Phase 6</span></div>
       <div class="card-pad">
-        <div class="bench-cond"><span><b>전체 결제 측정</b> 결제 서비스 2대 · PG 서비스 2대 · 초당 40건 · Fake PG 응답 100~300ms. 완료 시간은 HTTP 202 접수부터 상태 조회로 완료를 확인할 때까지이며, 폴링 대기도 포함한다.</span></div>
-      </div>
-      <div class="dtable-wrap">
-        <table class="dtable">
-          <thead><tr><th scope="col">전체 결제 지표</th><th scope="col">기존 (status)</th><th scope="col">변경 후 (status, updated_at)</th></tr></thead>
-          <tbody>
-            <tr><td class="t-name">결제 완료 시간 p99</td><td>73.10초</td><td>9.28초</td></tr>
-            <tr><td class="t-name">승인 결과 저장 데드락</td><td>163건</td><td>0건</td></tr>
-          </tbody>
-        </table>
+        <div class="bench-cond"><span><b>전체 결제 측정</b> 결제 서비스 2대 · PG 서비스 2대 · 초당 40건 · Fake PG 응답 100~300ms · 인덱스 변경 전후 각 1회. 완료 시간은 HTTP 202 접수부터 상태 조회로 완료를 확인할 때까지이며, 폴링 대기도 포함한다.</span></div>
+        <p class="sr-only">화면 낭독기용 요약: 인덱스를 교체한 뒤 결제 완료 시간 p99는 73.10초에서 9.28초로, 승인 결과 저장 데드락은 163건에서 0건으로 줄었다.</p>
+        <div class="dd-chart" id="deadlockChart"></div>
       </div>
       <div class="card-pad">
         <ul class="bench-findings" role="list">
@@ -466,8 +459,57 @@ import Analytics from '../../components/Analytics.astro';
       </div>
     </div>
     <div class="meas-note reveal"><b>별도 DB 재현</b> · MySQL에 직접 SQL을 실행한 5,000건 비교에서 결과 UPDATE 첫 시도 데드락 28 → 0건. 전체 결제와 다른 실험이며 조건마다 1회 측정했다.</div>
-    <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-inbox-index-merge-deadlock" target="_blank" rel="noopener">상세 분석 · GitHub Wiki ↗</a></div>
-    <div class="wiki-more reveal"><a href="/blog/pg-inbox-index-merge-deadlock/">원인 추적과 실험 · 기술 글 ↗</a></div>
+    <div class="wiki-more reveal"><a href="https://github.com/hyoguoo/payment-platform/wiki/pg-inbox-index-merge-deadlock" target="_blank" rel="noopener">상세 분석 · GitHub Wiki ↗</a><a href="/blog/pg-inbox-index-merge-deadlock/">원인 추적과 실험 · 기술 글 ↗</a></div>
+    <div class="card reveal" style="margin-top: 24px;">
+      <div class="card-head"><h3>MSA · 결제 처리 병목 개선</h3><span class="term-tag">2026-11 측정 · Phase 6</span></div>
+      <div class="card-pad">
+        <div class="bench-cond"><span><b>처리 한계 측정</b> 노트북 한 대에서 서버와 k6를 함께 실행 · Fake PG 응답 100~300ms · 요청 속도마다 3분 유지</span></div>
+        <p class="sr-only">화면 낭독기용 요약: 처리 한계가 있는 구간은 변경 전 초당 120~140건, 결과 반영 스레드를 3개로 늘린 뒤 140~160건, 명령 수신 스레드와 워커까지 바꾼 최종 코드에서 180~200건이다.</p>
+        <div class="cap-chart" id="capacityChart"></div>
+        <div class="bench-legend">
+          <span class="lg"><i class="sw-kept"></i>안정 처리된 속도</span>
+          <span class="lg"><i class="sw-range"></i>처리 한계가 있는 구간</span>
+          <span class="lg"><i class="sw-piled"></i>적체가 누적된 속도</span>
+          <span class="lg sep" aria-hidden="true">·</span>
+          <span class="lg">요청 건/초</span>
+        </div>
+        <p class="cs-caption">안정 처리는 부하 중 밀린 결제가 줄어든 속도, 적체 누적은 계속 늘어난 속도다. 요청 속도를 20건 단위로 올리며 찾았다.</p>
+      </div>
+      <div class="dtable-wrap">
+        <table class="dtable">
+          <thead><tr><th scope="col">처리 지표</th><th scope="col">변경 전</th><th scope="col">최종</th></tr></thead>
+          <tbody>
+            <tr><td class="t-name">처리 한계 (안정 처리 / 적체 누적)</td><td>초당 120 / 140건</td><td>초당 180 / 200건</td></tr>
+            <tr><td class="t-name">초당 160건 요청 중 결제 완료</td><td>초당 102.3건</td><td>초당 159.7건</td></tr>
+            <tr><td class="t-name">요청 종료 뒤 밀린 결제 처리</td><td>42.9초</td><td>0.3초</td></tr>
+            <tr><td class="t-name">초당 100건, 1초 간격 30회 조회 안에 완료 확인</td><td>18,001건 중 411건</td><td>18,001건 전부 (p95 2.06초 · p99 3.14초)</td></tr>
+            <tr><td class="t-name">결제·재고 전수 대조</td><td>일치</td><td>일치</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-pad">
+        <ul class="bench-findings" role="list">
+          <li>
+            <span class="bench-findings-label">결과 반영</span>
+            <p>승인 결과를 반영하는 스레드 1개가 초당 약 120건에서 포화(사용률 약 98%) · 파티션 수에 맞춰 3개로 늘리고 주문별 처리 순서 유지</p>
+          </li>
+          <li>
+            <span class="bench-findings-label">명령 수신</span>
+            <p>PG 서비스의 결제 명령 수신도 스레드 1개(Spring Boot 기본값)라 다음 병목 · 같은 방식으로 3개로 확대</p>
+          </li>
+          <li>
+            <span class="bench-findings-label">워커 상한</span>
+            <p>작업마다 새 가상 스레드를 만들어 <strong>동시 처리 상한이 없던 워커</strong>를 설계대로 복원 · 이후 결과 발행 워커 1개가 초당 약 145건에서 막혀, 측정으로 승인 워커 64개 · 결과 발행 워커 8개 결정</p>
+          </li>
+          <li>
+            <span class="bench-findings-label">커넥션 구간</span>
+            <p>PG가 '이미 처리된 결제'로 응답한 건은 트랜잭션 안에서 PG에 상태를 다시 조회해, 응답을 기다리는 동안 DB 커넥션을 점유 · 워커 64개가 커넥션 30개보다 많아 이런 건이 몰리면 커넥션 고갈 위험 · 재조회를 트랜잭션 밖으로 옮겨 결과 저장에만 커넥션 사용</p>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="meas-note reveal"><b>측정 범위</b> · 처리 한계 구간은 요청 속도마다 한 번씩 측정해 찾았다. 초당 200건에서는 밀린 결제가 부하 중 느리게만 줄었고, 상품 서비스의 재고 확정 적체는 부하 내내 늘었다. 완료 확인 p95는 최종 설정의 두 회차에서 1.06초, 2.06초로 달라 목표(p95 3초 · p99 5초) 통과 여부만 비교했다.</div>
+    <div class="wiki-more reveal"><a href="/blog/payment-throughput-bottlenecks/">병목 추적과 측정 과정 · 기술 글 ↗</a></div>
   </section>
 
   <!-- §03 SCENARIO THEATER -->
@@ -887,10 +929,10 @@ import Analytics from '../../components/Analytics.astro';
   <section class="blk" id="summary">
     <div class="sec-head reveal">
       <h2>주요 해결 과제 및 회고</h2>
-      <p>결제 플랫폼을 구축하며 해결한 4가지 과제와 그 해법이 남긴 과제, 그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
+      <p>결제 플랫폼을 구축하며 해결한 5가지 과제와 그 해법이 남긴 과제, 그리고 프로젝트를 지나며 배운 것을 함께 정리했다.</p>
     </div>
     <div class="reveal">
-      <div class="sub-label">핵심 해결 과제 · 4</div>
+      <div class="sub-label">핵심 해결 과제 · 5</div>
       <div class="solves" id="solves-grid"></div>
       <div class="sub-label" style="margin-top: 26px;">남은 과제</div>
       <div class="limits" id="limits-grid"></div>
