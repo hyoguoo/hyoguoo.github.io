@@ -18,7 +18,7 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 // --- 전역 설정 (유지보수를 위해 변경될 수 있는 값들을 상단으로 분리) ---
 const CONFIG = {
   route: process.env.ROUTE || '/payment-platform-portfolio/',
-  siteUrl: 'https://hyoguoo.github.io/payment-platform-portfolio',
+  siteUrl: 'https://hyoguoo.github.io/payment-platform-portfolio/',
   outPath: process.env.OUT || 'export-portfolio/payment-platform-portfolio.pdf',
   reuseServer: process.env.SERVER || '',
   devServerPort: 4333,

@@ -19,7 +19,7 @@ export default defineConfig({
 		'/docs/java/variable/wrapper-class': '/docs/java/wrapper-class/',
 		'/docs/java/effective-java/item33/item28': '/docs/java/effective-java/item28/',
 	},
-	trailingSlash: 'always',
+	trailingSlash: 'ignore',
 	site: 'https://hyoguoo.github.io',
 	server: {
 		port: 4322,
