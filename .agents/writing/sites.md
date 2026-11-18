@@ -8,7 +8,7 @@
 |---|---|
 | `src/content/docs/blog/` | blog |
 | `src/content/docs/docs/` | docs |
-| `src/pages/payment-platform-portfolio/`, `src/data/paymentPortfolio/` | portfolio(인터랙티브). 편집 위치는 `portfolio` 스킬 |
+| `src/pages/payment-platform-portfolio/`, `src/data/paymentPortfolio/` | portfolio(인터랙티브). 편집 위치와 주의사항은 `portfolio` 스킬(`.agents/skills/portfolio/SKILL.md`) |
 
 - 글을 추가하는 절차(slug, frontmatter, 카테고리 등록)는 `add` 스킬, frontmatter·태그·내부 링크 규칙은 `AGENTS.md`에 있다.
 
