@@ -138,39 +138,7 @@ description: "한 문장 요약"       # SEO og:description — /description 가
 
 ## 제목 컨벤션
 
-콘텐츠 성격에 따라 제목 언어를 구분한다.
-
-- **Blog**: 한글 제목을 기본으로 사용한다. 기술 용어·API·메서드명·고유명사는 공식 영문 표기를 유지한다.
-- **Docs (지식 정리)**: 영문 제목을 기본으로 사용하며, 한글을 병기하지 않는다.
-- 사용자가 제목을 명시하면 사용자 요청을 우선한다.
-
-아래 표는 Docs의 영문 제목에 적용한다.
-
-| 경우 | 처리 방법 | 예시 |
-|------|----------|------|
-| 일반 영문 | 그대로 | `Spring IoC Container` |
-| 약어 | 풀네임을 괄호 안에 추가 | `AOP (Aspect-Oriented Programming)` |
-| SQL 키워드 | 그대로 (대문자 유지) | `SELECT`, `INSERT`, `ENUM` |
-| API·메서드명 | 그대로 | `@Transactional`, `getBean()` |
-| 고유명사 | 공식 표기 그대로 | `Redis`, `Docker`, `Spring Boot` |
-
-주요 약어 확장 목록:
-
-| 약어 | 풀네임 |
-|------|--------|
-| AOP | Aspect-Oriented Programming |
-| CAS | Compare-And-Swap |
-| CORS | Cross-Origin Resource Sharing |
-| DNS | Domain Name System |
-| HTTP | HyperText Transfer Protocol |
-| HTTPS | HyperText Transfer Protocol Secure |
-| JDBC | Java Database Connectivity |
-| JPA | Java Persistence API |
-| JWT | JSON Web Token |
-| JVM | Java Virtual Machine |
-| OAuth | Open Authorization |
-| SpEL | Spring Expression Language |
-| URI | Uniform Resource Identifier |
+Blog·Docs의 제목 규칙은 사용자 수준 `writing` 스킬의 blog·docs 장르를 따른다. Docs 제목에 쓰는 약어의 풀네임은 `.agents/writing/glossary.md`에 있다. 사용자가 제목을 명시하면 사용자 요청을 우선한다.
 
 ---
 
