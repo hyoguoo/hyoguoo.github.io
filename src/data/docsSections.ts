@@ -4,7 +4,7 @@ export const docsSections: Record<string, SectionConfig> = {
   kotlin: [
     {
       label: 'Foundations',
-      slugs: ['introduction'],
+      slugs: ['introduction', 'basic-syntax-and-types'],
     },
   ],
   java: [
