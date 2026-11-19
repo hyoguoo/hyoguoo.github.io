@@ -8,7 +8,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Core Language',
-      slugs: ['null-safety'],
+      slugs: ['null-safety', 'functions-and-lambdas'],
     },
   ],
   java: [
