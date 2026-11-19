@@ -6,6 +6,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Foundations',
       slugs: ['introduction', 'basic-syntax-and-types'],
     },
+    {
+      label: 'Core Language',
+      slugs: ['null-safety'],
+    },
   ],
   java: [
     {
