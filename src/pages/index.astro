@@ -3,9 +3,10 @@ import { getCollection } from 'astro:content';
 import PageLayout from '../components/PageLayout.astro';
 import ContentPreview from '../components/ContentPreview.astro';
 import { SITE_PROFILE } from '../data/siteProfile';
-import { contentUrl, newestFirst, updatedDate, isDocsArticle } from '../lib/content';
-const posts = (await getCollection('docs', ({ id, data }) => id.startsWith('blog/') && !data.draft)).sort(newestFirst).slice(0, 3);
-const docs = (await getCollection('docs', ({ id, data }) => isDocsArticle(id) && !data.draft && Boolean(data.date))).sort(newestFirst).slice(0, 4);
+import { contentUrl, updatedDate, isDocsArticle } from '../lib/content';
+import { newestFirstThenCommitted } from '../lib/gitUpdated';
+const posts = (await getCollection('docs', ({ id, data }) => id.startsWith('blog/') && !data.draft)).sort(newestFirstThenCommitted).slice(0, 3);
+const docs = (await getCollection('docs', ({ id, data }) => isDocsArticle(id) && !data.draft && Boolean(data.date))).sort(newestFirstThenCommitted).slice(0, 4);
 ---
 <PageLayout title="hyoguoo.log" description={SITE_PROFILE.description} activePage="home" sitemap={true}>
   <main class="container home-page">

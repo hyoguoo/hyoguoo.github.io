@@ -21,6 +21,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history: the landing page orders same-date entries by their latest commit.
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v4
