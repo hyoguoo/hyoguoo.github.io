@@ -11,6 +11,12 @@ export const docsSections: Record<string, SectionConfig> = {
       slugs: ['null-safety', 'functions-and-lambdas', 'classes-and-properties', 'inheritance-and-objects'],
     },
   ],
+  aws: [
+    {
+      label: 'Foundations',
+      slugs: ['introduction'],
+    },
+  ],
   java: [
     {
       label: 'JVM',

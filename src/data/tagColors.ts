@@ -23,6 +23,7 @@ export const TAG_HUES: Record<string, number> = {
   'DDD': 145,
   'ELK': 175,
   'Node.js': 95,
+  'AWS': 35,
 };
 
 export const CATEGORY_ORDER: string[] = [

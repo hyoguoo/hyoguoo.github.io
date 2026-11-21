@@ -38,6 +38,7 @@ export const DOCS_GROUPS: DocsGroup[] = [
   { label: 'Build & Infra', items: [
     { key: 'gradle', label: 'Gradle' },
     { key: 'docker', label: 'Docker' },
+    { key: 'aws', label: 'AWS' },
   ]},
   { label: 'System Architecture', items: [
     { key: 'large-scale-system', label: 'Large-Scale System' },

@@ -140,6 +140,11 @@ export default defineConfig({
 					items: [{ autogenerate: { directory: 'docs/docker', collapsed: true } }],
 				},
 				{
+					label: 'AWS',
+					collapsed: true,
+					items: [{ autogenerate: { directory: 'docs/aws', collapsed: true } }],
+				},
+				{
 					label: 'Large-Scale System',
 					collapsed: true,
 					items: [{ autogenerate: { directory: 'docs/large-scale-system', collapsed: true } }],
