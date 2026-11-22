@@ -118,6 +118,7 @@ li:has(a[href$="rss.xml"]) {
 [data-article] .content-panel + .content-panel { border-top: 0; }
 [data-article='docs'] .sl-markdown-content h2 { letter-spacing: -.015em; }
 [data-article] .sl-markdown-content .sl-heading-wrapper { scroll-margin-top: calc(var(--sl-nav-height) + 1.5rem); }
+.sl-markdown-content :is(th, td) { word-break: keep-all; overflow-wrap: break-word; }
 @media (max-width: 49.999rem) {
   :root[data-article] { --sl-text-h1: 1.75rem; --sl-text-h2: 1.35rem; --sl-text-h3: 1.15rem; }
 }
