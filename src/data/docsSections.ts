@@ -16,6 +16,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Foundations',
       slugs: ['introduction', 'identity-and-access-management', 'vpc-networking', 'application-load-balancer'],
     },
+    {
+      label: 'Compute',
+      slugs: ['container-services'],
+    },
   ],
   java: [
     {
