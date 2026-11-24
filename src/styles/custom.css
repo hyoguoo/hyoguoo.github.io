@@ -100,14 +100,14 @@ li:has(a[href$="rss.xml"]) {
 
 /* Reading pages share the directory's quieter hierarchy; wide code still scrolls. */
 :root[data-article='docs'] {
-  --sl-content-width: 50rem;
+  --sl-content-width: 56rem;
   --sl-text-h1: 2rem;
   --sl-text-h2: 1.5rem;
   --sl-text-h3: 1.2rem;
   --sl-text-h4: 1.05rem;
 }
 :root[data-article='blog'] {
-  --sl-content-width: 54rem;
+  --sl-content-width: 56rem;
   --sl-text-h1: 2.15rem;
   --sl-text-h2: 1.65rem;
   --sl-text-h3: 1.3rem;
