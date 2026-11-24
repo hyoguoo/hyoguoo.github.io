@@ -298,8 +298,6 @@ flowchart TD
     res --> why["4. 거부 이유"]
 ```
 
-네트워크 경로(보안 그룹, 라우팅, NAT)는 Networking and Load Balancing 문서에서 다룬다.
-
 ### AccessDenied 메시지 읽기
 
 위 1~4번에 필요한 값은 대부분 `AccessDenied` 메시지에 들어 있다. 앞 절의 역할 `order-api`가 `receipts/a.pdf`에 파일을 쓰려다 거부되면 다음 메시지를 받는다.
