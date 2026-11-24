@@ -14,7 +14,7 @@ export const docsSections: Record<string, SectionConfig> = {
   aws: [
     {
       label: 'Foundations',
-      slugs: ['introduction', 'identity-and-access-management', 'vpc-networking'],
+      slugs: ['introduction', 'identity-and-access-management', 'vpc-networking', 'application-load-balancer'],
     },
   ],
   java: [
