@@ -40,11 +40,7 @@ AWS API 요청에는 자격 증명으로 만든 서명이 붙는다. AWS는 먼�
 
 ### 역할과 임시 자격 증명
 
-역할에는 비밀번호나 액세스 키가 없으므로 역할 자체로는 요청에 서명할 수 없다.
-
-1. 주체가 역할을 맡겠다고 AWS STS(Security Token Service)에 요청
-2. STS는 역할의 신뢰 정책을 확인한 뒤 임시 자격 증명을 발급
-3. 이후 AWS API 요청에는 이 임시 자격 증명으로 서명
+역할에는 비밀번호나 액세스 키가 없으므로 역할 자체로는 요청에 서명할 수 없다. 주체는 AWS STS(Security Token Service)에서 역할의 임시 자격 증명을 받아 요청에 서명한다.
 
 ```mermaid
 sequenceDiagram
@@ -201,39 +197,12 @@ AWS 액세스 키는 Secrets Manager에 넣어 둬도 꺼낼 때 다시 자격 �
 
 ### ECS에서 Secret을 받는 방식
 
-ECS에서 실행하는 주문 API 서버는 DB 비밀번호를 두 가지 방식으로 받을 수 있다.
+ECS에서 실행하는 주문 API 서버는 DB 비밀번호를 두 방식으로 받을 수 있다.
 
-#### 방식 1. 애플리케이션이 SDK로 직접 조회
+- SDK로 직접 조회: 컨테이너가 시작된 뒤 애플리케이션이 Task role로 Secrets Manager를 호출
+- 환경 변수로 주입: ECS가 컨테이너를 시작하기 전에 Execution role로 값을 꺼내 환경 변수에 넣음
 
-컨테이너가 시작된 뒤 애플리케이션 코드가 AWS SDK로 Secrets Manager를 호출한다. 호출에는 애플리케이션이 쓰는 역할인 Task role의 임시 자격 증명이 쓰인다.
-
-```mermaid
-sequenceDiagram
-    participant ECS
-    participant App as 주문 API 서버
-    participant SM as Secrets Manager
-    ECS ->> App: 컨테이너 시작
-    App ->> SM: GetSecretValue 요청, Task role로 서명
-    SM -->> App: DB 비밀번호
-```
-
-#### 방식 2. ECS가 환경 변수로 주입
-
-ECS가 컨테이너를 시작하기 전에 Secrets Manager를 호출해 값을 꺼내고, 환경 변수에 넣은 채로 컨테이너를 시작한다.
-호출하는 쪽이 ECS이므로, ECS가 실행 준비에 쓰는 역할인 Execution role의 임시 자격 증명이 쓰인다.
-
-```mermaid
-sequenceDiagram
-    participant ECS
-    participant App as 주문 API 서버
-    participant SM as Secrets Manager
-    ECS ->> SM: GetSecretValue 요청, Execution role로 서명
-    SM -->> ECS: DB 비밀번호
-    ECS ->> App: DB_PASSWORD 환경 변수를 넣고 컨테이너 시작
-```
-
-방식 2는 애플리케이션 코드를 고치지 않고 Task 정의에 설정을 더한다. Task 정의는 ECS에서 컨테이너를 어떻게 실행할지 적은 JSON 설정으로, 이미지·CPU·메모리·환경 변수·역할 등을 담는다.
-그 안의 `secrets` 항목에 어떤 환경 변수에 어떤 Secret의 값을 넣을지 적는다.
+환경 변수로 주입할 때는 Task definition의 `secrets` 항목에 어떤 환경 변수에 어떤 Secret의 값을 넣을지 적는다.
 
 ```json
 "secrets": [
@@ -244,7 +213,7 @@ sequenceDiagram
 ]
 ```
 
-애플리케이션은 Secrets Manager를 몰라도 된다. `application.yml`에는 환경 변수를 읽는 자리만 둔다.
+애플리케이션은 Secrets Manager를 몰라도 되며, `application.yml`에는 환경 변수를 읽는 자리만 둔다.
 
 ```yaml
 spring:
@@ -252,7 +221,7 @@ spring:
     password: ${DB_PASSWORD}
 ```
 
-#### 두 방식의 차이
+두 방식은 다음과 같이 다르다.
 
 |             구분              | SDK로 직접 조회      | ECS가 환경 변수로 주입        |
 |:-----------------------------:|:---------------------|:------------------------------|
@@ -274,15 +243,13 @@ spring:
 
 비밀번호를 자동으로 교체하지 않는다면 코드 변경이 없는 환경 변수 주입이 간단하다. 자동 교체를 쓰거나 실행 중에 바뀐 값을 반영해야 하면 SDK로 조회한다.
 
-#### 피해야 할 설정
+다음 설정은 피한다.
 
-|                   설정                    | 문제                                                                                               | 대신 쓰는 방법                  |
-|:-----------------------------------------:|:---------------------------------------------------------------------------------------------------|:--------------------------------|
-| Task 정의의 `environment`에 비밀번호 평문 | Task 정의를 조회할 수 있는 사람에게 모두 보이고, 버전 이력에도 남음                                | `secrets`에 Secret ARN 지정     |
-|  자동 교체와 환경 변수 주입을 함께 사용   | 실행 중인 컨테이너는 시작할 때 받은 예전 비밀번호를 계속 써서, 교체 후 새 DB 연결이 실패할 수 있음 | 교체 후 재배포하거나 SDK로 조회 |
-|       요청마다 Secrets Manager 호출       | API 비용과 지연이 늘고 호출량 제한에 걸릴 수 있음                                                  | 시작할 때 한 번 조회하거나 캐시 |
-|      정책의 `Resource`를 `*`로 지정       | 다른 서비스의 Secret까지 꺼낼 수 있음                                                              | 필요한 Secret ARN으로 한정      |
-|      시작 로그에 환경 변수 전체 출력      | 비밀번호가 로그에 그대로 남음                                                                      | 비밀 값은 출력에서 제외         |
+|                      설정                       | 문제                                                                                               | 대신 쓰는 방법                  |
+|:-----------------------------------------------:|:---------------------------------------------------------------------------------------------------|:--------------------------------|
+| Task definition의 `environment`에 비밀번호 평문 | Task definition을 조회할 수 있는 사람에게 모두 보이고, revision 이력에도 남음                      | `secrets`에 Secret ARN 지정     |
+|     자동 교체와 환경 변수 주입을 함께 사용      | 실행 중인 컨테이너는 시작할 때 받은 예전 비밀번호를 계속 써서, 교체 후 새 DB 연결이 실패할 수 있음 | 교체 후 재배포하거나 SDK로 조회 |
+|         정책의 `Resource`를 `*`로 지정          | 다른 서비스의 Secret까지 꺼낼 수 있음                                                              | 필요한 Secret ARN으로 한정      |
 
 [What is AWS Secrets Manager?](https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html)
 
