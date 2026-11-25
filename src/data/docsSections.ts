@@ -10,6 +10,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Core Language',
       slugs: ['null-safety', 'functions-and-lambdas', 'classes-and-properties', 'inheritance-and-objects'],
     },
+    {
+      label: 'Everyday Kotlin',
+      slugs: ['collections-and-sequences'],
+    },
   ],
   aws: [
     {
