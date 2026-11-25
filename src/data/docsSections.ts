@@ -12,7 +12,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Everyday Kotlin',
-      slugs: ['collections-and-sequences'],
+      slugs: ['collections-and-sequences', 'scope-functions-and-idioms'],
     },
   ],
   aws: [
