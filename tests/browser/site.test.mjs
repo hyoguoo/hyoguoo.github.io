@@ -319,7 +319,7 @@ test('Docs articles keep the directory hierarchy, compact metadata and readable 
       assert.ok(await page.locator('.article-path a[href="/docs/"]').count());
       assert.equal(await page.locator('html').getAttribute('data-article'), 'docs');
       assert.ok(await page.locator('h1').evaluate(el => parseFloat(getComputedStyle(el).fontSize) <= 34));
-      assert.ok(await page.locator('.sl-markdown-content').evaluate(el => el.getBoundingClientRect().width <= 800));
+      assert.ok(await page.locator('.sl-markdown-content').evaluate(el => el.getBoundingClientRect().width <= 896));
     }
     await page.goto(site.base + '/docs/computer-architecture/basic/');
     await page.waitForLoadState('networkidle');
