@@ -18,6 +18,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Framework Integration',
       slugs: ['java-interoperability'],
     },
+    {
+      label: 'Verification and Migration',
+      slugs: ['testing-and-regression'],
+    },
   ],
   aws: [
     {
