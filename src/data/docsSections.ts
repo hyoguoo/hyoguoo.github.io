@@ -14,6 +14,10 @@ export const docsSections: Record<string, SectionConfig> = {
       label: 'Everyday Kotlin',
       slugs: ['collections-and-sequences', 'scope-functions-and-idioms', 'type-modeling-and-generics'],
     },
+    {
+      label: 'Framework Integration',
+      slugs: ['java-interoperability'],
+    },
   ],
   aws: [
     {
