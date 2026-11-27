@@ -16,7 +16,7 @@ export const docsSections: Record<string, SectionConfig> = {
     },
     {
       label: 'Framework Integration',
-      slugs: ['java-interoperability'],
+      slugs: ['java-interoperability', 'spring-boot-integration'],
     },
     {
       label: 'Verification and Migration',
